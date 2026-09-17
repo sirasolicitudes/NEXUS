@@ -673,33 +673,34 @@
         }
 
         .nexus-modal-content {
-            background: white;
+            background: #ffffff;
             border-radius: 20px;
             max-width: 700px;
             width: 90%;
-            max-height: 90vh;
-            overflow-y: scroll;
-            overflow-x: hidden;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             animation: slideUp 0.4s ease;
         }
 
         /* Scrollbar personalizado estable para evitar cambios de layout */
-        .nexus-modal-content::-webkit-scrollbar {
+        .nexus-modal-body::-webkit-scrollbar {
             width: 8px;
         }
 
-        .nexus-modal-content::-webkit-scrollbar-track {
+        .nexus-modal-body::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 4px;
         }
 
-        .nexus-modal-content::-webkit-scrollbar-thumb {
+        .nexus-modal-body::-webkit-scrollbar-thumb {
             background: var(--color-primary);
             border-radius: 4px;
         }
 
-        .nexus-modal-content::-webkit-scrollbar-thumb:hover {
+        .nexus-modal-body::-webkit-scrollbar-thumb:hover {
             background: var(--color-secondary);
         }
 
@@ -716,24 +717,74 @@
 
         .nexus-modal-header {
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            padding: 30px;
+            padding: 22px 24px;
             border-radius: 20px 20px 0 0;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .nexus-modal-header::after {
+            content: '';
+            position: absolute;
+            top: -40%; right: -10%;
+            width: 180px; height: 180px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .nexus-modal-header-text {
+            flex: 1;
+            z-index: 1;
+            min-width: 0;
+        }
+
+        .nexus-modal-header-eyebrow {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            font-weight: 600;
+            color: #fff;
         }
 
         .nexus-modal-header h2 {
-            font-family: 'Audiowide', cursive;
-            font-size: 28px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
             color: white;
             margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            text-shadow: none;
         }
 
         .nexus-modal-header .icon {
-            font-size: 48px;
+            font-size: 34px;
             color: white;
-            margin-bottom: 15px;
-            animation: pulse 2s infinite;
+            margin-bottom: 0;
+            flex-shrink: 0;
+            z-index: 1;
+            animation: pulse 2.4s infinite;
+        }
+
+        .nexus-modal-close {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            flex-shrink: 0;
+            z-index: 1;
+            transition: all 0.25s ease;
+        }
+
+        .nexus-modal-close:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
         }
 
         @keyframes pulse {
@@ -742,23 +793,30 @@
         }
 
         .nexus-modal-body {
-            padding: 30px;
+            padding: 22px 24px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
 
         .nexus-preview-section {
-            background: var(--color-light);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid var(--color-primary);
+            background: transparent;
+            border-left: none;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 20px;
         }
 
         .nexus-preview-section h3 {
             font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--color-dark);
-            margin: 0 0 15px 0;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--color-light);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -770,7 +828,7 @@
             align-items: flex-start;
             padding: 10px 0;
             gap: 12px;
-            border-bottom: 1px solid rgba(5, 84, 242, 0.1);
+            border-bottom: 1px solid #f1f5f9;
         }
 
         .nexus-preview-item:last-child {
@@ -825,27 +883,28 @@
         }
 
         .nexus-modal-footer {
-            padding: 20px 30px;
-            border-top: 1px solid rgba(5, 84, 242, 0.1);
+            padding: 16px 24px;
+            border-top: 1px solid #f1f5f9;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .nexus-modal-btn {
             flex: 1;
             max-width: 200px;
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: 13px 24px;
+            border-radius: 10px;
             font-family: 'Poppins', sans-serif;
-            font-size: 16px;
+            font-size: 14.5px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             border: none;
         }
 
@@ -4298,16 +4357,16 @@
             }
 
             .nexus-modal-header {
-                padding: 20px 16px !important;
+                padding: 18px 16px !important;
             }
 
             .nexus-modal-header h2 {
-                font-size: 22px !important;
+                font-size: 16px !important;
             }
 
             .nexus-modal-header .icon {
-                font-size: 36px !important;
-                margin-bottom: 10px !important;
+                font-size: 28px !important;
+                margin-bottom: 0 !important;
             }
 
             .nexus-modal-body {
@@ -4315,9 +4374,9 @@
             }
 
             .nexus-preview-section {
-                padding: 14px 12px !important;
-                border-radius: 10px !important;
-                margin-bottom: 12px !important;
+                padding: 0 !important;
+                border-radius: 0 !important;
+                margin-bottom: 16px !important;
             }
 
             .nexus-preview-item {
@@ -8277,7 +8336,11 @@
         <div class="nexus-modal-content">
             <div class="nexus-modal-header">
                 <div class="icon">✓</div>
-                <h2>Confirma tu Solicitud</h2>
+                <div class="nexus-modal-header-text">
+                    <div class="nexus-modal-header-eyebrow">Nexus · Confirmación</div>
+                    <h2>Confirma tu Solicitud</h2>
+                </div>
+                <button class="nexus-modal-close" title="Cerrar" onclick="closeNexusModal()">×</button>
             </div>
             <div class="nexus-modal-body" id="nexusPreviewContent">
                 <!-- El contenido se generará dinámicamente -->
@@ -8443,8 +8506,8 @@
         <!-- Contenido principal -->
         <div style="position: relative; z-index: 1; text-align: center;">
             <!-- Título estilo Hero -->
-            <div class="nexus-loading-title" style="font-family: 'Audiowide', cursive; font-size: 48px; color: white; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
-                <span class="highlight" style="color: var(--color-tertiary);">NEXUS</span>
+            <div class="nexus-loading-title hero-title" style="font-family: 'Audiowide', cursive; font-size: 48px; color: white; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
+                <span class="highlight" style="color: #ffffff;">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></span>
             </div>
             
             <!-- Texto principal -->
@@ -9243,6 +9306,43 @@
          * @param {string} customFilename - Nombre personalizado para el archivo (opcional)
          * @returns {Promise<Object>} Respuesta con fileId, fileUrl y filename
          */
+        /**
+         * Fetch con timeout y reintentos. Sin esto, si Apps Script (o la red
+         * móvil) se queda sin responder, el fetch nunca se resuelve ni
+         * rechaza y el overlay de "Subiendo archivos..." queda colgado para
+         * siempre. Con timeout, tras `timeoutMs` se aborta y se reintenta.
+         */
+        async function nexusFetchJSON(url, options = {}, timeoutMs = 20000, retries = 2) {
+            let ultimoError;
+            for (let intento = 0; intento <= retries; intento++) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), timeoutMs);
+                try {
+                    const res = await fetch(url, { ...options, signal: controller.signal });
+                    clearTimeout(timer);
+                    const texto = await res.text();
+                    try {
+                        return JSON.parse(texto);
+                    } catch (parseErr) {
+                        // Apps Script a veces responde con una página HTML de error
+                        // (límite de ejecuciones concurrentes, sobrecarga, etc.) en
+                        // vez del JSON esperado. Se trata como error transitorio y
+                        // se reintenta en lugar de romper toda la subida.
+                        throw new Error('El servidor respondió de forma inesperada (no-JSON)');
+                    }
+                } catch (err) {
+                    clearTimeout(timer);
+                    ultimoError = (err && err.name === 'AbortError')
+                        ? new Error('El servidor no respondió a tiempo. Verifica tu conexión.')
+                        : err;
+                    if (intento < retries) {
+                        await new Promise(r => setTimeout(r, 1200 * (intento + 1))); // backoff
+                    }
+                }
+            }
+            throw ultimoError;
+        }
+
         async function nexusSubirArchivoDrive(file, solicitudId, folderType = "SOLICITUDES", fileNumber = "1", totalFiles = 1, currentFileIndex = 0, onProgress = null, customFilename = null) {
             try {
                 // Validar que sea un archivo válido
@@ -9286,8 +9386,7 @@
                     fileNumber: fileNumber
                 });
 
-                const resSesion = await fetch(`${NEXUS_SCRIPT_URL}?${paramsSesion.toString()}`);
-                const dataSesion = await resSesion.json();
+                const dataSesion = await nexusFetchJSON(`${NEXUS_SCRIPT_URL}?${paramsSesion.toString()}`, {}, 20000, 2);
 
                 if (!dataSesion.success) {
                     throw new Error(dataSesion.error || 'Error obteniendo la sesión de subida');
@@ -9303,6 +9402,10 @@
                     const xhr = new XMLHttpRequest();
                     xhr.open('PUT', uploadUrl, true);
                     xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+                    // Sin timeout, si la red se queda "muda" (no hay error ni
+                    // respuesta) esta promesa nunca se resuelve y el overlay
+                    // de subida queda colgado para siempre. Video: 5 min, resto: 90s.
+                    xhr.timeout = (file.type === 'video/mp4') ? 300000 : 90000;
 
                     // Notificación de progreso
                     xhr.upload.onprogress = (e) => {
@@ -9314,7 +9417,7 @@
                                 onProgress(fileProgress);
                             } else {
                                 // Actualizar loading overlay
-                                updateNexusLoadingProgress(totalProgress, `Subiendo archivo ${currentFileIndex + 1} de ${totalFiles}: ${file.name} (${fileProgress}%)`);
+                                updateNexusLoadingProgress(totalProgress, `Subiendo archivo ${currentFileIndex + 1} de ${totalFiles}...`);
                             }
                         }
                     };
@@ -9346,8 +9449,12 @@
                 });
 
                 // 3. Recuperar el fileId más reciente de la carpeta usando Apps Script
-
-                updateNexusLoadingProgress(Math.round(((currentFileIndex + 1) * 100) / totalFiles), `Verificando archivo en Drive: ${file.name}`);
+                if (typeof onProgress === 'function') {
+                    // Marcar este archivo como completado dentro del progreso combinado
+                    onProgress(100);
+                } else {
+                    updateNexusLoadingProgress(Math.round(((currentFileIndex + 1) * 100) / totalFiles), `Verificando archivo en Drive...`);
+                }
                 
                 const fileIdParams = new URLSearchParams({
                     action: 'getLatestFileId',
@@ -9356,8 +9463,7 @@
                     fileSize: file.size
                 });
 
-                const fileIdResponse = await fetch(`${NEXUS_SCRIPT_URL}?${fileIdParams.toString()}`);
-                const fileIdData = await fileIdResponse.json();
+                const fileIdData = await nexusFetchJSON(`${NEXUS_SCRIPT_URL}?${fileIdParams.toString()}`, {}, 20000, 2);
 
                 let fileId;
                 if (fileIdData.success && fileIdData.data.fileId) {
@@ -9413,16 +9519,41 @@
         async function nexusSubirMultiplesArchivos(files, solicitudId, folderType = "SOLICITUDES") {
             const fileArray = Array.from(files);
             const totalFiles = fileArray.length;
-            const uploadPromises = fileArray.map((file, index) => {
-                const fileNumber = (index + 1).toString(); // Número de archivo: 1, 2, 3, etc.
-                return nexusSubirArchivoDrive(file, solicitudId, folderType, fileNumber, totalFiles, index);
-            });
 
-            // Usamos allSettled (en vez de Promise.all) para poder distinguir
-            // qué archivos sí llegaron a subirse aunque otro haya fallado.
-            // Con Promise.all, si un archivo falla se pierde la referencia a
-            // los que sí subieron correctamente y quedan huérfanos en Drive.
-            const settled = await Promise.allSettled(uploadPromises);
+            // Progreso individual por archivo (0-100).
+            const fileProgresses = new Array(totalFiles).fill(0);
+            const reportarProgreso = (index, valor) => {
+                fileProgresses[index] = valor;
+                const totalPct = Math.round(fileProgresses.reduce((a, b) => a + b, 0) / totalFiles);
+                const completados = fileProgresses.filter(p => p >= 100).length;
+                const texto = totalFiles > 1
+                    ? `Subiendo archivo ${Math.min(completados + 1, totalFiles)} de ${totalFiles}...`
+                    : `Subiendo archivo...`;
+                updateNexusLoadingProgress(totalPct, texto);
+            };
+
+            // Subimos los archivos DE UNO EN UNO (no en paralelo). Cuando se
+            // suben varios en paralelo, Apps Script recibe varias peticiones
+            // concurrentes al mismo Web App y a veces responde con una página
+            // HTML de error en vez del JSON esperado (límite de ejecuciones
+            // simultáneas). Subir en serie es un poco más lento pero es fiable.
+            const settled = [];
+            for (let index = 0; index < fileArray.length; index++) {
+                const file = fileArray[index];
+                const fileNumber = (index + 1).toString(); // Número de archivo: 1, 2, 3, etc.
+                try {
+                    const resultado = await nexusSubirArchivoDrive(
+                        file, solicitudId, folderType, fileNumber, totalFiles, index,
+                        (pct) => reportarProgreso(index, pct)
+                    );
+                    settled.push({ status: 'fulfilled', value: resultado });
+                } catch (err) {
+                    settled.push({ status: 'rejected', reason: err });
+                    // Si un archivo falla, no tiene sentido seguir subiendo el
+                    // resto: la solicitud completa fallará de todas formas.
+                    break;
+                }
+            }
 
             const exitosos = settled
                 .filter(r => r.status === 'fulfilled')
@@ -17767,19 +17898,19 @@
 
             const viewerHTML = `
                 <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 12, 30, 0.96); z-index: 10000; display: flex; flex-direction: column; font-family: inherit;">
-                    <div style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
+                    <div style="flex-shrink: 0; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
                         <div style="color: #fff;">
                             <div style="font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; font-weight: 700;">NEXUS · Visor de Archivos</div>
                             <div style="font-size: 1.05rem; font-weight: 700;" id="nexus-viewer-name">${photos[currentIndex].nombre}</div>
                         </div>
                         <button onclick="nexusCloseImageViewer()" style="width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.18); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                     </div>
-                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px;">
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px; min-height: 0; overflow: hidden;">
                         <button id="nexus-viewer-prev-btn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === 0 ? 'disabled' : ''}>◀</button>
-                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 92%; max-height: 82vh; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">
+                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">
                         <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
                     </div>
-                    <div style="padding: 18px 24px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div style="flex-shrink: 0; padding: 18px 24px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
                         <div style="display: flex; gap: 10px;">
                             <a id="nexus-viewer-download-btn" href="${photos[currentIndex].downloadUrl}" download="${photos[currentIndex].nombre}" style="padding: 10px 20px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-download"></i> Descargar</a>
