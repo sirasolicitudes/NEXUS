@@ -9418,14 +9418,36 @@
                 return nexusSubirArchivoDrive(file, solicitudId, folderType, fileNumber, totalFiles, index);
             });
 
-            try {
-                const results = await Promise.all(uploadPromises);
+            // Usamos allSettled (en vez de Promise.all) para poder distinguir
+            // qué archivos sí llegaron a subirse aunque otro haya fallado.
+            // Con Promise.all, si un archivo falla se pierde la referencia a
+            // los que sí subieron correctamente y quedan huérfanos en Drive.
+            const settled = await Promise.allSettled(uploadPromises);
 
-                return results;
-            } catch (error) {
-                console.error('❌ Error al subir archivos:', error);
-                throw error;
+            const exitosos = settled
+                .filter(r => r.status === 'fulfilled')
+                .map(r => r.value);
+            const fallidos = settled.filter(r => r.status === 'rejected');
+
+            if (fallidos.length > 0) {
+                console.error(`❌ ${fallidos.length} de ${totalFiles} archivo(s) fallaron al subir. Eliminando ${exitosos.length} archivo(s) huérfano(s) ya subidos...`);
+
+                // Borrar de Drive los que sí se alcanzaron a subir, para que
+                // no queden huérfanos: si falla uno, la solicitud completa
+                // debe fallar y no debe quedar ningún archivo suelto.
+                await Promise.allSettled(
+                    exitosos
+                        .filter(r => r && r.fileId)
+                        .map(r => nexusEliminarArchivoDriveViaScript(r.fileId))
+                );
+
+                const motivo = (fallidos[0].reason && fallidos[0].reason.message)
+                    ? fallidos[0].reason.message
+                    : 'Error desconocido al subir archivo';
+                throw new Error(`Falló la subida de ${fallidos.length} de ${totalFiles} archivo(s): ${motivo}`);
             }
+
+            return exitosos;
         }
 
         /**
@@ -10684,6 +10706,11 @@
         // ============================================================
 
         async function nexusGuardarSolicitud(formData, formId = null) {
+            // Declaradas fuera del try para poder usarlas también en el catch:
+            // si las fotos ya subieron a Drive pero algo falla más adelante
+            // (Firestore/RTDB), necesitamos poder borrarlas desde ahí también.
+            let archivosUrls = [];
+            let resumenArchivosSubidos = '';
             try {
                 // Transformar datos si es necesario
                 const plainData = transformFormDataToPlain(formData);
@@ -10699,8 +10726,6 @@
                 const docId = 'NEXUS-' + Date.now();
 
                 // Subir archivos a Google Drive si se proporcionó un formId
-                let archivosUrls = [];
-                let resumenArchivosSubidos = '';
                 if (formId && typeof nexusSubirFotosFormulario === 'function') {
                     try {
 
@@ -10852,6 +10877,15 @@
 
             } catch (error) {
                 console.error('❌ Error al guardar solicitud:', error);
+
+                // Si ya se habían subido archivos a Drive (archivosUrls) pero algo
+                // falló después (Firestore, RTDB, estadísticas, etc.), esas fotos
+                // quedarían huérfanas en la carpeta. Las eliminamos aquí antes de
+                // avisarle al usuario.
+                if (archivosUrls.length > 0) {
+                    await nexusEliminarArchivosPorUrls(archivosUrls);
+                }
+
                 showToast({ 
                     type: 'error', 
                     title: 'Error al guardar', 
@@ -10859,6 +10893,24 @@
                 });
                 return null;
             }
+        }
+
+        /**
+         * Elimina de Drive todos los archivos correspondientes a un arreglo de
+         * URLs (usa nexusExtraerFileIdDrive + nexusEliminarArchivoDriveViaScript).
+         * Pensada para "rollback": cuando algún paso posterior a la subida de
+         * archivos falla y esos archivos quedarían huérfanos.
+         * @param {string[]} urls - URLs de Drive a eliminar
+         */
+        async function nexusEliminarArchivosPorUrls(urls) {
+            if (!Array.isArray(urls) || urls.length === 0) return;
+            console.warn(`🧹 Eliminando ${urls.length} archivo(s) huérfano(s) de Drive...`);
+            await Promise.allSettled(
+                urls
+                    .map(url => (typeof nexusExtraerFileIdDrive === 'function') ? nexusExtraerFileIdDrive(url) : null)
+                    .filter(Boolean)
+                    .map(fileId => nexusEliminarArchivoDriveViaScript(fileId))
+            );
         }
 
         // ============================================================
@@ -15828,13 +15880,17 @@
                 nexusActualizarUIAuth();
             }
 
-            showToast({ type: 'success', title: 'Sesión finalizada', message: 'Has cerrado sesión correctamente en NEXUS.' });
+            // Limpiar formularios, selecciones y caché de cupos en memoria,
+            // sin recargar la página completa (eso causaba un segundo salto
+            // visual ~1s después de volver al hero).
+            if (typeof nexusResetActiveForm === 'function') {
+                nexusResetActiveForm();
+            }
+            if (typeof nexusCacheCupos !== 'undefined') {
+                nexusCacheCupos = {};
+            }
 
-            // Reiniciar también todo el estado de la app recargando la página
-            // (limpia formularios, listeners, caché de cupos, etc.).
-            setTimeout(function() {
-                window.location.href = window.location.pathname;
-            }, 700);
+            showToast({ type: 'success', title: 'Sesión finalizada', message: 'Has cerrado sesión correctamente en NEXUS.' });
         }
 
         // ─── Listener global del estado de Auth ────────────────────────
@@ -16475,28 +16531,15 @@
             }
         }
         
-        // Inicializar cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verificar si estamos en la sección de inicio
-            const inicioSection = document.getElementById('inicio');
-            if (inicioSection && inicioSection.classList.contains('active')) {
-                // Pequeño delay para asegurar que el elemento esté listo
-                setTimeout(() => {
-                    initVantaFog();
-                }, 100);
-            }
-        });
-        
-        // También inicializar cuando la ventana esté completamente cargada
-        window.addEventListener('load', function() {
-            const inicioSection = document.getElementById('inicio');
-            if (inicioSection && inicioSection.classList.contains('active')) {
-                // Reiniciar con un nuevo zoom aleatorio
-                setTimeout(() => {
-                    initVantaFog();
-                }, 200);
-            }
-        });
+        // NOTA: La inicialización en la carga inicial ya la dispara
+        // showSection('inicio'), llamado una sola vez en el listener
+        // DOMContentLoaded principal (más arriba en el archivo). Antes
+        // había además dos listeners aquí (DOMContentLoaded y load) que
+        // también llamaban a initVantaFog(): eso hacía que la animación
+        // se inicializara 3 veces seguidas al entrar (una por cada
+        // listener), reiniciándose con un zoom aleatorio distinto cada
+        // vez y retrasando que se viera la definitiva. Se eliminaron
+        // para que solo se inicialice una vez al cargar.
         
         // Variables globales básicas
         let nexusSelectedRequestId = null;
