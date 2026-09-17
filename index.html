@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17689,21 +17689,117 @@
         }
 
         // Construye los archivos adjuntos (previsualización embebida de Drive)
+        // ============================================================
+        // VISOR DE IMÁGENES INLINE (dentro de la misma página, sin
+        // abrir pestañas/ventanas nuevas) — portado del mismo patrón
+        // que ya usan "Panel Lateral" y "Extraer Información".
+        // ============================================================
+        function nexusOpenImageViewer(photos, startIndex) {
+            if (!photos || photos.length === 0) return;
+            let currentIndex = startIndex || 0;
+
+            const viewerHTML = `
+                <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; flex-direction: column;">
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative;">
+                        <button id="nexus-viewer-prev-btn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === 0 ? 'disabled' : ''}>◀</button>
+                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 90%; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+                        <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
+                    </div>
+                    <div style="padding: 20px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="color: white;">
+                            <div style="font-size: 1.1rem; font-weight: 600;" id="nexus-viewer-name">${photos[currentIndex].nombre}</div>
+                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 5px;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <a id="nexus-viewer-download-btn" href="${photos[currentIndex].downloadUrl}" download="${photos[currentIndex].nombre}" style="padding: 10px 20px; background: #2d6a4f; color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">📥 Descargar</a>
+                            <button onclick="nexusCloseImageViewer()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">✕ Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', viewerHTML);
+            document.body.style.overflow = 'hidden';
+
+            const prevBtn = document.getElementById('nexus-viewer-prev-btn');
+            const nextBtn = document.getElementById('nexus-viewer-next-btn');
+            const viewerImage = document.getElementById('nexus-viewer-image');
+            const downloadBtn = document.getElementById('nexus-viewer-download-btn');
+            const nameEl = document.getElementById('nexus-viewer-name');
+            const countEl = document.getElementById('nexus-viewer-count');
+
+            function actualizarVisor() {
+                const photo = photos[currentIndex];
+                viewerImage.src = photo.url;
+                viewerImage.alt = photo.nombre;
+                downloadBtn.href = photo.downloadUrl;
+                downloadBtn.download = photo.nombre;
+                nameEl.textContent = photo.nombre;
+                countEl.textContent = `${currentIndex + 1} de ${photos.length}`;
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex === photos.length - 1;
+                prevBtn.style.opacity = currentIndex === 0 ? '0.3' : '1';
+                nextBtn.style.opacity = currentIndex === photos.length - 1 ? '0.3' : '1';
+            }
+
+            prevBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (currentIndex > 0) { currentIndex--; actualizarVisor(); }
+            });
+            nextBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (currentIndex < photos.length - 1) { currentIndex++; actualizarVisor(); }
+            });
+
+            function manejarTeclado(e) {
+                if (e.key === 'ArrowLeft' && currentIndex > 0) { currentIndex--; actualizarVisor(); }
+                else if (e.key === 'ArrowRight' && currentIndex < photos.length - 1) { currentIndex++; actualizarVisor(); }
+                else if (e.key === 'Escape') { nexusCloseImageViewer(); }
+            }
+            document.addEventListener('keydown', manejarTeclado);
+            window._nexusImageViewerKeyHandler = manejarTeclado;
+        }
+
+        function nexusCloseImageViewer() {
+            const viewer = document.getElementById('nexus-image-viewer-overlay');
+            if (viewer) {
+                viewer.remove();
+                document.body.style.overflow = '';
+                if (window._nexusImageViewerKeyHandler) {
+                    document.removeEventListener('keydown', window._nexusImageViewerKeyHandler);
+                    window._nexusImageViewerKeyHandler = null;
+                }
+            }
+        }
+
         function nexusExtractArchivosHTML(archivosDriveStr) {
             if (!archivosDriveStr || !archivosDriveStr.trim()) return '';
             const urls = archivosDriveStr.split(',').map(u => u.trim()).filter(Boolean);
             if (urls.length === 0) return '';
 
+            // Construir el arreglo de fotos para el visor con navegación
+            const photosParaVisor = urls.map((url, i) => {
+                const fileId = nexusExtraerFileIdDrive(url);
+                return {
+                    url: fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600` : url,
+                    downloadUrl: fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url,
+                    nombre: `Archivo ${i + 1}`
+                };
+            });
+            window._nexusArchivosAdjuntosActuales = photosParaVisor;
+
             const cards = urls.map((url, i) => {
                 const fileId = nexusExtraerFileIdDrive(url);
                 if (!fileId) return '';
-                const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
                 const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
                 return `
                     <div class="nexus-extract-photo-card">
-                        <iframe class="nexus-extract-photo-frame" src="${previewUrl}" loading="lazy" allow="autoplay"></iframe>
+                        <a href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})" title="Clic para ampliar">
+                            <img class="nexus-extract-photo-frame" src="${thumbUrl}" loading="lazy" alt="Archivo adjunto ${i + 1}">
+                        </a>
                         <div class="nexus-extract-photo-actions">
-                            <a class="nx-open" href="${url}" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Ver</a>
+                            <a class="nx-open" href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})"><i class="fas fa-expand"></i> Ampliar</a>
                             <a class="nx-download" href="${downloadUrl}" target="_blank" rel="noopener"><i class="fas fa-download"></i> Descargar</a>
                         </div>
                     </div>`;
