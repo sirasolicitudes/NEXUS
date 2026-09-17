@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -9839,18 +9839,24 @@
                 "Buchivacoa", "Puerto Cumarebo"
             ],
             "Región Los Andes": [
-                "Mérida", "Valera", "Trujillo", "Boconó",
-                "San Cristóbal", "Táriba", "Rubio", "San Antonio",
-                "La Fría"
+                "El Vigía", "Mérida", "Tovar",
+                "Hotel Valle Grande", "La Grita", "Rubio",
+                "San Cristóbal", "San Juan de Colón", "Ureña",
+                "Boconó", "Trujillo", "Valera"
             ],
             "Región Oriental": [
-                "Barcelona", "Puerto La Cruz", "Anaco", "El Tigre",
-                "Maturín", "Punta de Mata", "Carúpano", "Cumaná",
-                "Sucre"
+                "Anaco", "Barcelona", "Cantaura", "El Tigre",
+                "Isidora Agnes, Ciudad Bolívar", "Guasipati",
+                "Profª Mirelva Martínez, San Félix", "Upata", "Maturín",
+                "Punta de Mata", "Cumaná", "Cumanacoa", "Carúpano",
+                "Güiria", "Tucupita", "Casacoima", "La Asunción",
+                "Puerto Ayacucho"
             ],
             "Región Los Llanos": [
-                "San Juan de los Morros", "Calabozo", "Acarigua",
-                "Portuguesa", "Guanare", "Barinas", "San Fernando de Apure"
+                "Altagracia de Orituco", "Calabozo", "San Juan de los Morros",
+                "Valle de la Pascua", "Zaraza", "San Carlos de Cojedes",
+                "Tinaquillo", "San Fernando de Apure", "Guasdualito",
+                "Barinas", "Santa Bárbara de Barinas", "Acarigua", "Guanare"
             ]
         };
 
@@ -13091,7 +13097,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Especialidades
@@ -13200,7 +13206,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Patologías
@@ -13300,7 +13306,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Patologías Pediátricas
@@ -13400,7 +13406,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Patologías Oftalmológicas
@@ -13500,7 +13506,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Vacunas
@@ -13600,7 +13606,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Información de la efeméride
@@ -13658,7 +13664,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Nombre del fallecido
@@ -13735,7 +13741,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Tipo de arte seleccionado
@@ -13810,7 +13816,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Tipo de actividad seleccionado
@@ -13918,7 +13924,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Nombre de la actividad
@@ -14021,7 +14027,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Tipo de prenda seleccionado
@@ -14161,7 +14167,7 @@
                 formData.location.push({ label: 'Región', value: regionSelect.textContent });
             }
             if (unidadSelect) {
-                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.trim() });
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
             }
 
             // Tamaño de pendón seleccionado
@@ -15810,10 +15816,22 @@
                 console.warn("Error en signOut:", e);
             }
             NexusSession.clear();
+
+            // Volver al hero (inicio) de inmediato, sin depender únicamente del
+            // recargo de página: así, aunque la navegación esté restringida
+            // (iframes, vistas previas, etc.), el usuario nunca queda "atrapado"
+            // en la sección/formulario donde estaba con la sesión ya cerrada.
+            if (typeof showSection === 'function') {
+                showSection('inicio');
+            }
+            if (typeof nexusActualizarUIAuth === 'function') {
+                nexusActualizarUIAuth();
+            }
+
             showToast({ type: 'success', title: 'Sesión finalizada', message: 'Has cerrado sesión correctamente en NEXUS.' });
 
-            // Reiniciar todo el estado de la app y volver al inicio (hero),
-            // en vez de dejar al usuario en la sección/formulario donde estaba.
+            // Reiniciar también todo el estado de la app recargando la página
+            // (limpia formularios, listeners, caché de cupos, etc.).
             setTimeout(function() {
                 window.location.href = window.location.pathname;
             }, 700);
@@ -16062,15 +16080,18 @@
 
         // Ordena (más recientes primero) y dispara el render de tarjetas paginadas.
         function nexusOrdenarYRenderizar(list) {
+            // Extrae el epoch numérico de un ID con formato "NEXUS-<timestamp>".
+            // Es la única fuente de tiempo realmente fiable y ordenable, ya que
+            // el campo "Timestamp" guarda solo la hora en texto (ej: "8:00 a. m."),
+            // no una fecha completa, y NO sirve para ordenar cronológicamente.
+            function nexusEpochDeId(id) {
+                if (!id) return 0;
+                var match = String(id).match(/NEXUS-(\d+)/);
+                return match ? parseInt(match[1], 10) : 0;
+            }
+
             list.sort(function(a, b) {
-                // Intentar ordenar por Timestamp primero
-                if (a.Timestamp && b.Timestamp) {
-                    return new Date(b.Timestamp) - new Date(a.Timestamp);
-                }
-                // Fallback: ordenar por ID (que contiene timestamp)
-                var idA = a.id || '';
-                var idB = b.id || '';
-                return idB.localeCompare(idA);
+                return nexusEpochDeId(b.id) - nexusEpochDeId(a.id);
             });
 
             _nexusSolicitudesData = list;
@@ -16613,6 +16634,17 @@
                 const urls = requestData.ArteFinal.split(',').map(url => url.trim()).filter(url => url !== '');
 
                 if (urls.length > 0) {
+                    // Fotos para el visor con navegación (compartido con Extraer Información)
+                    const fotosArteFinal = urls.map((url, idx) => {
+                        const fid = nexusExtractFileIdFromUrl(url);
+                        return {
+                            url: fid ? `https://drive.google.com/thumbnail?id=${fid}&sz=w1600` : url,
+                            downloadUrl: fid ? `https://drive.google.com/uc?export=download&id=${fid}` : url,
+                            nombre: `Archivo ${idx + 1}`
+                        };
+                    });
+                    window._nexusArteFinalActual = fotosArteFinal;
+
                     if (urls.length === 1) {
                         // Solo un archivo - mostrarlo centrado
                         const fileId = nexusExtractFileIdFromUrl(urls[0]);
@@ -16621,7 +16653,7 @@
                                 <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400"
                                      alt="Archivo adjunto"
                                      style="max-width: 100%; max-height: 100%; object-fit: contain; cursor: pointer;"
-                                     onclick="nexusAbrirVisorImagen('${urls[0]}')">
+                                     onclick="nexusOpenImageViewer(window._nexusArteFinalActual, 0)">
                             `;
                         }
                     } else {
@@ -16632,7 +16664,7 @@
                             if (fileId) {
                                 galleryHtml += `
                                     <div style="aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid var(--color-tertiary);"
-                                         onclick="nexusAbrirVisorImagen('${url}')">
+                                         onclick="nexusOpenImageViewer(window._nexusArteFinalActual, ${index})">
                                         <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w100"
                                              alt="Archivo ${index + 1}"
                                              style="width: 100%; height: 100%; object-fit: cover;">
@@ -16655,25 +16687,6 @@
             return match ? match[1] : null;
         }
 
-        function nexusAbrirVisorImagen(url) {
-            const overlay = document.getElementById('nxImageViewerOverlay');
-            const image = document.getElementById('nxViewerImage');
-            if (overlay && image) {
-                // Convertir URL de Drive a URL de imagen directa
-                const fileId = nexusExtractFileIdFromUrl(url);
-                if (fileId) {
-                    image.src = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                    overlay.classList.add('active');
-                }
-            }
-        }
-
-        function nexusCerrarVisorImagen() {
-            const overlay = document.getElementById('nxImageViewerOverlay');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
-        }
 
         // Habilitar botones de acciones
         function nexusEnableActionButtons() {
@@ -17696,23 +17709,38 @@
         // ============================================================
         function nexusOpenImageViewer(photos, startIndex) {
             if (!photos || photos.length === 0) return;
+
+            // Si ya hay un visor abierto, no abrir otro encima (evita apilar overlays)
+            if (document.getElementById('nexus-image-viewer-overlay')) return;
+
+            // Ocultar el modal de "Extraer Información" mientras se ve la imagen ampliada
+            const extractOverlay = document.getElementById('nexusExtractOverlay');
+            if (extractOverlay && extractOverlay.classList.contains('active')) {
+                extractOverlay.classList.remove('active');
+                window._nexusReabrirExtractAlCerrarVisor = true;
+            }
+
             let currentIndex = startIndex || 0;
 
             const viewerHTML = `
-                <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; flex-direction: column;">
-                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative;">
-                        <button id="nexus-viewer-prev-btn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === 0 ? 'disabled' : ''}>◀</button>
-                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 90%; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
-                        <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; font-size: 2rem; padding: 20px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
-                    </div>
-                    <div style="padding: 20px; background: rgba(0,0,0,0.8); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                        <div style="color: white;">
-                            <div style="font-size: 1.1rem; font-weight: 600;" id="nexus-viewer-name">${photos[currentIndex].nombre}</div>
-                            <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 5px;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
+                <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 12, 30, 0.96); z-index: 10000; display: flex; flex-direction: column; font-family: inherit;">
+                    <div style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
+                        <div style="color: #fff;">
+                            <div style="font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; font-weight: 700;">NEXUS · Visor de Archivos</div>
+                            <div style="font-size: 1.05rem; font-weight: 700;" id="nexus-viewer-name">${photos[currentIndex].nombre}</div>
                         </div>
+                        <button onclick="nexusCloseImageViewer()" style="width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.18); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                    </div>
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px;">
+                        <button id="nexus-viewer-prev-btn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === 0 ? 'disabled' : ''}>◀</button>
+                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 92%; max-height: 82vh; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">
+                        <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
+                    </div>
+                    <div style="padding: 18px 24px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
                         <div style="display: flex; gap: 10px;">
-                            <a id="nexus-viewer-download-btn" href="${photos[currentIndex].downloadUrl}" download="${photos[currentIndex].nombre}" style="padding: 10px 20px; background: #2d6a4f; color: white; border-radius: 6px; text-decoration: none; font-weight: 600;">📥 Descargar</a>
-                            <button onclick="nexusCloseImageViewer()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">✕ Cerrar</button>
+                            <a id="nexus-viewer-download-btn" href="${photos[currentIndex].downloadUrl}" download="${photos[currentIndex].nombre}" style="padding: 10px 20px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-download"></i> Descargar</a>
+                            <button onclick="nexusCloseImageViewer()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -17768,6 +17796,12 @@
                 if (window._nexusImageViewerKeyHandler) {
                     document.removeEventListener('keydown', window._nexusImageViewerKeyHandler);
                     window._nexusImageViewerKeyHandler = null;
+                }
+                // Volver a mostrar el modal de "Extraer Información" que estaba abierto
+                if (window._nexusReabrirExtractAlCerrarVisor) {
+                    window._nexusReabrirExtractAlCerrarVisor = false;
+                    const extractOverlay = document.getElementById('nexusExtractOverlay');
+                    if (extractOverlay) extractOverlay.classList.add('active');
                 }
             }
         }
@@ -18065,8 +18099,7 @@
                 if (editOverlay && editOverlay.classList.contains('active')) nexusCerrarEditarSolicitud();
                 const nxOverlay = document.getElementById('nxOverlay');
                 if (nxOverlay && nxOverlay.classList.contains('active')) nxClose();
-                const nxImageViewerOverlay = document.getElementById('nxImageViewerOverlay');
-                if (nxImageViewerOverlay && nxImageViewerOverlay.classList.contains('active')) nexusCerrarVisorImagen();
+                if (document.getElementById('nexus-image-viewer-overlay')) nexusCloseImageViewer();
             }
         });
 
@@ -19458,25 +19491,6 @@
       <div class="nx-actions" style="margin: 0 auto;">
         <button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalInstagram()">Cancelar</button>
         <button class="nx-btn nx-btn-primary" onclick="nexusGuardarLinksDesdeModal()"><i class="fas fa-save"></i> Guardar Cambios</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- NEXUS IMAGE VIEWER MODAL -->
-<div class="nx-overlay" id="nxImageViewerOverlay" style="z-index: 20000;">
-  <div class="nx-modal" style="max-width: 90vw; max-height: 90vh; display: flex; flex-direction: column;">
-    <div class="nx-head">
-      <button class="nx-close" onclick="nexusCerrarVisorImagen()" aria-label="Cerrar">✕</button>
-      <p class="nx-eyebrow">NEXUS · VISOR DE IMÁGENES</p>
-      <h2 class="nx-title">Vista Previa</h2>
-    </div>
-    <div class="nx-body" style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-      <img id="nxViewerImage" src="" alt="Vista previa" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-    </div>
-    <div class="nx-foot">
-      <div class="nx-actions" style="margin: 0 auto;">
-        <button class="nx-btn nx-btn-primary" onclick="window.open(document.getElementById('nxViewerImage').src, '_blank')">Abrir en Drive</button>
       </div>
     </div>
   </div>
