@@ -652,7 +652,6 @@
         }
 
         .formularios-container,
-        .artes-container,
         .estadisticas-container,
         .reportes-container {
             padding: 40px;
@@ -4377,7 +4376,6 @@
             /* Contenedores y Secciones */
             .formularios-container,
             .solicitudes-container,
-            .artes-container,
             .estadisticas-container,
             .reportes-container {
                 padding: 16px 12px !important;
@@ -6106,6 +6104,34 @@
         /* Estado finalizado/rechazado atenÃºa sutilmente la tarjeta */
         .theme-finalizada { opacity: 0.88; }
         .theme-rechazada  { opacity: 0.85; filter: grayscale(15%); }
+
+        /* Artes finales (usuarios normales): ARTE LISTO brilla para indicar que hay algo por descargar */
+        .solicitud-card-mockup.card-arte-listo {
+            opacity: 1;
+            border-color: rgba(255, 214, 102, 0.95);
+            animation: arteListoGlow 2.2s ease-in-out infinite;
+        }
+        @keyframes arteListoGlow {
+            0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,214,102,0.85), 0 0 14px rgba(255,214,102,0.35); }
+            50%      { box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,214,102,1),    0 0 30px rgba(255,214,102,0.75); }
+        }
+        .card-adaptive-badge.badge-arte-listo {
+            background: #ffd666;
+            color: #3b2a00;
+            border-color: rgba(255, 255, 255, 0.7);
+            text-shadow: none;
+            box-shadow: 0 2px 10px rgba(255, 214, 102, 0.55);
+        }
+        .card-adaptive-badge.badge-arte-listo i,
+        .card-adaptive-badge.badge-arte-descargado i,
+        .card-adaptive-badge.badge-arte-solicitada i { margin-right: 6px; }
+        .card-adaptive-badge.badge-arte-solicitada { border-style: dashed; }
+        @media (prefers-reduced-motion: reduce) {
+            .solicitud-card-mockup.card-arte-listo {
+                animation: none;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,214,102,0.95), 0 0 18px rgba(255,214,102,0.5);
+            }
+        }
 
         /* Controles de PaginaciÃ³n */
         .solicitudes-pagination {
@@ -9011,21 +9037,6 @@
             </div>
         </section>
 
-        <!-- Artes Finales Section -->
-        <section id="artes" class="section hidden">
-            <div class="section-header">
-                <h2 class="section-title">Artes Finales</h2>
-                <p class="section-subtitle">Revisión y aprobación de artes finales</p>
-            </div>
-            <div class="artes-container">
-                <div class="placeholder-box">
-                    <div class="placeholder-icon">🎨</div>
-                    <h3>Artes Finales</h3>
-                    <p>Aquí aparecerán las artes finales para revisión</p>
-                </div>
-            </div>
-        </section>
-
         <!-- Estadisticas Section -->
         <section id="estadisticas" class="section hidden">
             <div class="section-header">
@@ -9363,6 +9374,7 @@
                             <li><strong>Respaldo histórico:</strong> Se guardará una copia consolidada en Firestore (<code>reportes_historicos</code>) y RTDB (<code>est_pasadas</code>).</li>
                             <li><strong>Descarga obligatoria:</strong> Se emitirán los 3 PDFs definitivos.</li>
                             <li><strong>Purga Google Drive:</strong> Se eliminarán por lotes los archivos y artes finales asociados a solicitudes cerradas de este mes.</li>
+                            <li><strong>Artes sin descargar:</strong> Los artes finales que los usuarios aún no hayan descargado se eliminarán con la purga.</li>
                             <li><strong>Purga Bases de Datos:</strong> Se eliminarán las solicitudes finalizadas/rechazadas en Firestore y RTDB, preservando vivas las activas.</li>
                         </ul>
                     </div>
@@ -11077,6 +11089,8 @@
                 const rtdbUpdateData = {};
 
                 if (folderType === "ARTES") {
+                    // Un arte nuevo o corregido vuelve a quedar disponible para que el usuario lo descargue
+                    updateData.ArteEstado = 'ARTE LISTO';
                     if (replace) {
                         // Reemplazar completamente el campo ArteFinal
                         updateData.ArteFinal = fileUrl;
@@ -13992,7 +14006,7 @@
         // Función para mostrar secciones
         function showSection(sectionId) {
             // Verificar autenticación para secciones protegidas
-            const seccionesProtegidas = ['formularios', 'solicitudes', 'artes', 'estadisticas', 'reportes'];
+            const seccionesProtegidas = ['formularios', 'solicitudes', 'estadisticas', 'reportes'];
             if (seccionesProtegidas.includes(sectionId)) {
                 if (!NexusSession.user || !NexusSession.user.uid) {
                     showToast({
@@ -18118,8 +18132,29 @@
                     archivosAdjuntos = urls.length;
                 }
 
+                // Flujo de descarga de artes: solo para usuarios normales y solo si la solicitud está FINALIZADA.
+                //   LISTO -> brilla y abre el modal de descarga | DESCARGADO -> abre el modal de "solicitar de nuevo"
+                //   SOLICITADA -> esperando al admin (sin clic)
+                var esUsuarioNormal = !(typeof nexusEsDisenador === 'function' && nexusEsDisenador());
+                var arteFlujo = '';
+                if (esUsuarioNormal && estatus === 'FINALIZADA' && archivosAdjuntos > 0) {
+                    var arteEst = String(s.ArteEstado || '').toUpperCase();
+                    arteFlujo = arteEst === 'DESCARGADO' ? 'DESCARGADO' : (arteEst === 'DESCARGA SOLICITADA' ? 'SOLICITADA' : 'LISTO');
+                }
+                if (arteFlujo === 'LISTO') themeClass += ' card-arte-listo';
+
                 var badgeText = '';
-                if (archivosAdjuntos > 0) {
+                var badgeClass = esPrioritaria ? 'badge-prioridad' : '';
+                if (arteFlujo === 'LISTO') {
+                    badgeText = '<i class="fas fa-download"></i> ARTE LISTO';
+                    badgeClass = 'badge-arte-listo';
+                } else if (arteFlujo === 'DESCARGADO') {
+                    badgeText = '<i class="fas fa-check"></i> DESCARGADO';
+                    badgeClass = 'badge-arte-descargado';
+                } else if (arteFlujo === 'SOLICITADA') {
+                    badgeText = '<i class="fas fa-clock"></i> DESCARGA SOLICITADA';
+                    badgeClass = 'badge-arte-solicitada';
+                } else if (archivosAdjuntos > 0 && !esUsuarioNormal) {
                     badgeText = archivosAdjuntos === 1 ? 'ARTE ADJUNTO (1)' : 'ARTES ADJUNTOS (' + archivosAdjuntos + ')';
                 } else if (esPrioritaria) {
                     badgeText = 'PRIORIZAR';
@@ -18135,14 +18170,25 @@
                 var horaFormateada = (s.Hora || 'N/A').replace('AM', 'a.m.').replace('PM', 'p.m.');
                 var fechaPublicacion = (s.Fecha || 'N/A') + (s.Hora && s.Hora !== 'N/A' ? ' | ' + horaFormateada : '');
 
+                // Clic de la tarjeta: staff abre el panel; el usuario normal solo puede abrir el modal
+                // de arte cuando la solicitud está FINALIZADA con arte (LISTO / DESCARGADO).
+                var cardAttrs;
+                if (!esUsuarioNormal) {
+                    cardAttrs = ' onclick="nexusOpenPanelForRequest(\'' + (s.id || '') + '\')" style="cursor: pointer;"';
+                } else if (arteFlujo === 'LISTO' || arteFlujo === 'DESCARGADO') {
+                    cardAttrs = ' onclick="nexusAbrirModalArte(\'' + (s.id || '') + '\')" onkeydown="if(event.key===\'Enter\'){this.click();}" role="button" tabindex="0" style="cursor: pointer;"';
+                } else {
+                    cardAttrs = ' style="cursor: default;"' + (arteFlujo === 'SOLICITADA' ? ' title="Esperando la autorización del administrador"' : '');
+                }
+
                 html += 
-                    '<div class="solicitud-card-mockup ' + themeClass + '" onclick="nexusOpenPanelForRequest(\'' + (s.id || '') + '\')" style="cursor: pointer;">' +
+                    '<div class="solicitud-card-mockup ' + themeClass + '"' + cardAttrs + '>' +
                         '<div class="card-top-circles">' +
                             '<div class="card-circle ' + statusCircleClass + '" title="Estatus: ' + estatus + '">' + shortStatus + '</div>' +
                             designerHtml +
                             supportHtml +
                         '</div>' +
-                        '<div class="card-adaptive-badge ' + (esPrioritaria ? 'badge-prioridad' : '') + '">' + badgeText + '</div>' +
+                        '<div class="card-adaptive-badge ' + badgeClass + '">' + badgeText + '</div>' +
                         '<div class="card-req-id">' + (s.id || 'NEXUS-SOLICITUD') + '</div>' +
                         '<div class="card-info-group">' +
                             '<div class="card-info-title">Tipo de Solicitud</div>' +
@@ -18261,22 +18307,20 @@
                 if (mainNavUl) {
                     var menuHtml = '';
                     if (isStaff) {
-                        // Menú para Staff: Diseñadores ven 4 pestañas, Administradores ven 5 pestañas (incluyendo Reportes)
+                        // Menú para Staff: Diseñadores ven 3 pestañas, Administradores ven 4 pestañas (incluyendo Reportes)
                         var esAdminUser = (typeof nexusEsAdmin === 'function') ? nexusEsAdmin() : (NexusSession.role === 'ADMIN' || NexusSession.role === 'Admin Principal');
                         menuHtml = 
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'formularios\')">Formularios</a></li>' +
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>' +
-                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'artes\')">Artes Finales</a></li>' +
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'estadisticas\')">Estadisticas</a></li>';
                         if (esAdminUser) {
                             menuHtml += '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'reportes\')">Reportes</a></li>';
                         }
                     } else {
-                        // Menú restringido para Usuarios Regulares (3 pestañas)
+                        // Menú restringido para Usuarios Regulares (2 pestañas)
                         menuHtml = 
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'formularios\')">Formularios</a></li>' +
-                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>' +
-                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'artes\')">Artes Finales</a></li>';
+                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>';
                     }
                     menuHtml += 
                         '<li id="nav-user-item" class="nav-user-item">' +
@@ -18763,15 +18807,21 @@
         function nexusActualizarSeccionDisenador(requestData) {
             const seccion = document.getElementById('nexusDesignerAssignSection');
             const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
+            const btnAutorizar = document.getElementById('nexusBtnAutorizarDescarga');
 
             if (!nexusEsAdmin()) {
                 if (btnInstagram) btnInstagram.classList.add('hidden');
+                if (btnAutorizar) btnAutorizar.classList.add('hidden');
                 if (!seccion) return;
                 seccion.classList.add('hidden');
                 return;
             }
 
             if (btnInstagram) btnInstagram.classList.remove('hidden');
+            if (btnAutorizar) {
+                btnAutorizar.classList.remove('hidden');
+                if (typeof window.nexusActualizarBadgeAutorizar === 'function') window.nexusActualizarBadgeAutorizar();
+            }
 
             if (!seccion) return;
             seccion.classList.remove('hidden');
@@ -21107,6 +21157,10 @@
                 <button id="nexusBtnInstagramLinks" class="nexus-panel-btn hidden" onclick="nexusAbrirModalInstagram()" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white;">
                     <i class="fab fa-instagram"></i> Gestionar Links de Instagram
                 </button>
+                <button id="nexusBtnAutorizarDescarga" class="nexus-panel-btn hidden" onclick="nexusAbrirModalAutorizarDescarga()" style="background: linear-gradient(135deg, #2d6a4f, #40916c); color: white;">
+                    <i class="fas fa-unlock"></i> Autorizar descarga
+                    <span id="nexusAutorizarBadge" style="display:none; margin-left:8px; padding:1px 9px; border-radius:999px; background:#ffd666; color:#3b2a00; font-weight:800; font-size:0.75rem;">0</span>
+                </button>
             </div>
 
             <!-- Acciones Especiales (Solo Admin) -->
@@ -21621,6 +21675,468 @@
         } else {
             nexusRenderInstagramHome();
         }
+    </script>
+
+    <!-- ============================================================
+         ARTES FINALES: DESCARGA POR EL USUARIO Y AUTORIZACIÓN DEL ADMIN
+         - Usuario normal: tarjeta FINALIZADA con arte -> ARTE LISTO -> DESCARGADO
+           -> (si falla) DESCARGA SOLICITADA -> el admin autoriza -> ARTE LISTO.
+         - El estado vive en Firestore (solicitudes/{id}.ArteEstado).
+         - Las peticiones de re-descarga viven en RTDB: solicitudes_redescarga/{id}.
+         ============================================================ -->
+    <style>
+        .nx-arte-file {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; margin-bottom: 10px;
+            border: 1px solid var(--border); border-radius: 12px;
+            background: var(--panel-2);
+            transition: border-color .2s ease;
+        }
+        .nx-arte-file.done { border-color: rgba(61, 220, 151, 0.45); }
+        .nx-arte-thumb {
+            position: relative; width: 52px; height: 52px; flex-shrink: 0;
+            border-radius: 8px; overflow: hidden;
+            background: rgba(255, 255, 255, 0.04);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--color-tertiary);
+        }
+        .nx-arte-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .nx-arte-file-name { flex: 1; min-width: 0; font-size: 0.88rem; color: var(--color-light); }
+        .nx-arte-file-name small { display: block; margin-top: 2px; font-size: 0.72rem; color: rgba(242, 242, 242, 0.5); }
+        .nx-arte-file.done .nx-arte-file-name small { color: var(--ok); }
+        .nx-arte-file a.nx-btn { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .nx-arte-texto { font-size: 0.86rem; line-height: 1.55; color: rgba(242, 242, 242, 0.75); margin: 0 0 16px; }
+        .nx-arte-note { font-size: 0.76rem; line-height: 1.5; color: rgba(242, 242, 242, 0.55); margin: 14px 0 0; }
+        .nx-arte-motivo {
+            width: 100%; padding: 12px 14px; border-radius: 10px;
+            border: 1px solid var(--border); background: var(--panel-2); color: var(--color-light);
+            font-family: 'Poppins', sans-serif; font-size: 0.88rem; resize: vertical;
+        }
+        .nx-aut-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px; margin-bottom: 10px;
+            border: 1px solid var(--border); border-radius: 12px;
+            background: var(--panel-2);
+        }
+        .nx-aut-info { flex: 1; min-width: 0; }
+        .nx-aut-id { font-size: 0.86rem; font-weight: 600; color: var(--color-light); overflow-wrap: anywhere; }
+        .nx-aut-meta { margin-top: 2px; font-size: 0.75rem; color: rgba(242, 242, 242, 0.55); }
+        .nx-aut-motivo { margin-top: 6px; font-size: 0.78rem; font-style: italic; color: var(--color-tertiary); overflow-wrap: anywhere; }
+        .nx-aut-empty { text-align: center; padding: 28px 10px; font-size: 0.88rem; color: rgba(242, 242, 242, 0.55); }
+    </style>
+
+    <!-- Modal del usuario: descargar el arte / solicitar descarga nuevamente -->
+    <div class="nx-overlay" id="nxArteModalOverlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 520px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarModalArte()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow" id="nxArteEyebrow"></p>
+                <h2 class="nx-title" id="nxArteTitle"></h2>
+            </div>
+            <div class="nx-body" id="nxArteBody" style="text-align: left;"></div>
+        </div>
+    </div>
+
+    <!-- Modal del admin: peticiones de descarga pendientes -->
+    <div class="nx-overlay" id="nxAutorizarDescargaOverlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 620px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarModalAutorizarDescarga()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · SOLO ADMIN</p>
+                <h2 class="nx-title"><i class="fas fa-unlock"></i> Autorizar descarga</h2>
+                <p class="nx-sub">Usuarios que necesitan volver a descargar su arte final.</p>
+            </div>
+            <div class="nx-body" style="text-align: left;">
+                <div id="nxAutorizarLista"></div>
+                <div class="nx-foot">
+                    <span class="nx-count" id="nxAutorizarCount"></span>
+                    <div class="nx-actions">
+                        <button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalAutorizarDescarga()">Cerrar</button>
+                        <button class="nx-btn nx-btn-primary" id="nxAutorizarTodasBtn" onclick="nexusAutorizarTodasDescargas()" disabled><i class="fas fa-check-double"></i> Autorizar todas</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var NODO_REDESCARGA = 'solicitudes_redescarga';
+            var _solId = null;          // solicitud abierta en el modal del usuario
+            var _clicks = {};           // archivos cuyo enlace de descarga ya se pulsó
+            var _ocupado = false;
+            var _listaAdmin = [];       // peticiones cargadas en el modal del admin
+            var _ultimoConteo = 0;      // marca de tiempo del último conteo (throttle del badge)
+
+            function esc(t) {
+                return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            }
+
+            function buscar(id) {
+                var lista = (typeof _nexusSolicitudesData !== 'undefined' && _nexusSolicitudesData) ? _nexusSolicitudesData : [];
+                for (var i = 0; i < lista.length; i++) { if (lista[i].id === id) return lista[i]; }
+                return null;
+            }
+
+            function urlsDe(sol) {
+                return String(sol && sol.ArteFinal || '').split(',').map(function (u) { return u.trim(); }).filter(Boolean);
+            }
+
+            function idDrive(url) {
+                var m = String(url).match(/\/d\/([a-zA-Z0-9_-]+)/) || String(url).match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                return m ? m[1] : null;
+            }
+
+            // LISTO (por defecto, también cuando el campo no existe) | DESCARGADO | SOLICITADA
+            function estadoArte(sol) {
+                var e = String(sol && sol.ArteEstado || '').toUpperCase();
+                if (e === 'DESCARGADO') return 'DESCARGADO';
+                if (e === 'DESCARGA SOLICITADA') return 'SOLICITADA';
+                return 'LISTO';
+            }
+
+            function uidActual() {
+                if (window.auth && window.auth.currentUser && window.auth.currentUser.uid) return window.auth.currentUser.uid;
+                return (typeof NexusSession !== 'undefined' && NexusSession.user && NexusSession.user.uid) ? NexusSession.user.uid : '';
+            }
+
+            function toast(type, title, message, ms) {
+                if (typeof showToast === 'function') showToast({ type: type, title: title, message: message, duration: ms || 3500 });
+            }
+
+            // ─────────────────────────────────────────────
+            //  USUARIO: modal de descarga / re-descarga
+            // ─────────────────────────────────────────────
+            window.nexusAbrirModalArte = function (id) {
+                if (typeof nexusEsDisenador === 'function' && nexusEsDisenador()) return;   // solo usuarios normales
+                var sol = buscar(id);
+                if (!sol || String(sol.Estatus || '').toUpperCase() !== 'FINALIZADA') return; // solo finalizadas
+                var urls = urlsDe(sol);
+                if (!urls.length) return;
+                var estado = estadoArte(sol);
+                if (estado === 'SOLICITADA') return;                                          // esperando al admin
+
+                _solId = id; _clicks = {}; _ocupado = false;
+
+                var eyebrow = document.getElementById('nxArteEyebrow');
+                var title = document.getElementById('nxArteTitle');
+                var body = document.getElementById('nxArteBody');
+                if (!eyebrow || !title || !body) return;
+
+                var chip = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(id) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
+
+                if (estado === 'LISTO') {
+                    eyebrow.textContent = 'NEXUS · ARTE FINAL';
+                    title.innerHTML = '<i class="fas fa-download"></i> Tu arte está listo';
+
+                    var filas = urls.map(function (u, i) {
+                        var fid = idDrive(u);
+                        var dl = fid ? 'https://drive.google.com/uc?export=download&id=' + fid : u;
+                        var th = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w104" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+                        return '<div class="nx-arte-file" id="nxArteFile' + i + '">' +
+                                   '<div class="nx-arte-thumb"><i class="fas fa-file-image"></i>' + th + '</div>' +
+                                   '<div class="nx-arte-file-name">Archivo ' + (i + 1) + '<small id="nxArteFileEst' + i + '">Pendiente de descargar</small></div>' +
+                                   '<a class="nx-btn nx-btn-ghost" href="' + esc(dl) + '" target="_blank" rel="noopener" onclick="nexusArteMarcarClick(' + i + ')"><i class="fas fa-download"></i> Descargar</a>' +
+                               '</div>';
+                    }).join('');
+
+                    body.innerHTML = chip +
+                        '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
+                        filas +
+                        '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>' +
+                        '<div class="nx-foot">' +
+                            '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
+                            '<div class="nx-actions">' +
+                                '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cancelar</button>' +
+                                '<button class="nx-btn nx-btn-primary" id="nxArteConfirmBtn" onclick="nexusArteConfirmarDescarga()" disabled><i class="fas fa-check"></i> Ya descargué mi arte</button>' +
+                            '</div>' +
+                        '</div>';
+                } else {
+                    eyebrow.textContent = 'NEXUS · ARTE DESCARGADO';
+                    title.innerHTML = '<i class="fas fa-redo"></i> ¿Falló la descarga?';
+                    body.innerHTML = chip +
+                        '<p class="nx-arte-texto">Este arte ya figura como descargado. Si el archivo no se guardó bien, solicita al administrador que habilite la descarga nuevamente.</p>' +
+                        '<textarea class="nx-arte-motivo" id="nxArteMotivo" rows="3" maxlength="200" placeholder="Cuéntanos qué pasó (opcional)"></textarea>' +
+                        '<div class="nx-foot">' +
+                            '<span class="nx-count"></span>' +
+                            '<div class="nx-actions">' +
+                                '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cancelar</button>' +
+                                '<button class="nx-btn nx-btn-primary" id="nxArteSolicitarBtn" onclick="nexusArteSolicitarRedescarga()"><i class="fas fa-paper-plane"></i> Solicitar descarga nuevamente</button>' +
+                            '</div>' +
+                        '</div>';
+                }
+
+                var overlay = document.getElementById('nxArteModalOverlay');
+                if (overlay) overlay.classList.add('active');
+            };
+
+            window.nexusCerrarModalArte = function () {
+                var overlay = document.getElementById('nxArteModalOverlay');
+                if (overlay) overlay.classList.remove('active');
+                _solId = null; _clicks = {}; _ocupado = false;
+            };
+
+            // Marca cada archivo cuyo enlace se pulsó; el botón de confirmar se habilita cuando están todos
+            window.nexusArteMarcarClick = function (i) {
+                _clicks[i] = true;
+                var fila = document.getElementById('nxArteFile' + i);
+                if (fila) fila.classList.add('done');
+                var est = document.getElementById('nxArteFileEst' + i);
+                if (est) est.textContent = 'Descarga iniciada';
+
+                var sol = buscar(_solId);
+                var total = sol ? urlsDe(sol).length : 0;
+                var hechos = Object.keys(_clicks).length;
+                var cnt = document.getElementById('nxArteCount');
+                if (cnt) cnt.textContent = hechos + ' de ' + total + ' descargados';
+                var btn = document.getElementById('nxArteConfirmBtn');
+                if (btn && total > 0 && hechos >= total) btn.disabled = false;
+            };
+
+            // ARTE LISTO -> DESCARGADO (1 escritura en Firestore)
+            window.nexusArteConfirmarDescarga = async function () {
+                if (_ocupado || !_solId) return;
+                var id = _solId;
+                var sol = buscar(id);
+                if (!sol || estadoArte(sol) !== 'LISTO') { window.nexusCerrarModalArte(); return; }
+
+                var btn = document.getElementById('nxArteConfirmBtn');
+                var htmlBtn = btn ? btn.innerHTML : '';
+                _ocupado = true;
+                if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...'; }
+
+                try {
+                    await window.fbStore.updateDoc(window.fbStore.doc(window.db, 'solicitudes', id), {
+                        ArteEstado: 'DESCARGADO',
+                        ArteDescargadoPor: (typeof NexusSession !== 'undefined' && NexusSession.nombre) ? NexusSession.nombre : '',
+                        ArteDescargadoFecha: new Date().toISOString(),
+                        ArteDescargas: window.fbStore.increment(1)
+                    });
+                    toast('success', 'Descarga registrada', 'La solicitud ' + id + ' quedó como descargada.');
+                    window.nexusCerrarModalArte();
+                } catch (e) {
+                    console.error('[NEXUS Artes] No se pudo registrar la descarga:', e);
+                    toast('error', 'No se pudo registrar la descarga', 'Revisa tu conexión e inténtalo de nuevo.', 4500);
+                    if (btn) { btn.disabled = false; btn.innerHTML = htmlBtn; }
+                    _ocupado = false;
+                }
+            };
+
+            // DESCARGADO -> DESCARGA SOLICITADA
+            // Primero la petición en RTDB; solo si funciona se marca el estado en Firestore
+            // (si Firestore falla se retira la petición para no dejar datos huérfanos).
+            window.nexusArteSolicitarRedescarga = async function () {
+                if (_ocupado || !_solId) return;
+                var id = _solId;
+                var sol = buscar(id);
+                if (!sol || estadoArte(sol) !== 'DESCARGADO') { window.nexusCerrarModalArte(); return; }
+
+                var btn = document.getElementById('nxArteSolicitarBtn');
+                var htmlBtn = btn ? btn.innerHTML : '';
+                var motivoEl = document.getElementById('nxArteMotivo');
+                var motivo = motivoEl ? motivoEl.value.trim().slice(0, 200) : '';
+                _ocupado = true;
+                if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; }
+
+                var refPeticion = window.fbRT.ref(window.dbRT, NODO_REDESCARGA + '/' + id);
+                try {
+                    var payload = {
+                        solicitudId: id,
+                        unidad: sol.Unidad || '',
+                        usuario: (typeof NexusSession !== 'undefined' && NexusSession.nombre) ? NexusSession.nombre : '',
+                        uid: uidActual(),
+                        tipo: sol.Solicitud || '',
+                        fecha: new Date().toISOString(),
+                        ts: window.fbRT.serverTimestamp()
+                    };
+                    if (motivo) payload.motivo = motivo;
+
+                    await window.fbRT.set(refPeticion, payload);
+                    try {
+                        await window.fbStore.updateDoc(window.fbStore.doc(window.db, 'solicitudes', id), { ArteEstado: 'DESCARGA SOLICITADA' });
+                    } catch (eFs) {
+                        try { await window.fbRT.remove(refPeticion); } catch (eRm) { /* sin acción */ }
+                        throw eFs;
+                    }
+                    toast('success', 'Solicitud enviada', 'El administrador revisará tu petición de descarga.');
+                    window.nexusCerrarModalArte();
+                } catch (e) {
+                    console.error('[NEXUS Artes] No se pudo enviar la petición de re-descarga:', e);
+                    toast('error', 'No se pudo enviar la solicitud', 'Inténtalo de nuevo en unos segundos.', 4500);
+                    if (btn) { btn.disabled = false; btn.innerHTML = htmlBtn; }
+                    _ocupado = false;
+                }
+            };
+
+            // ─────────────────────────────────────────────
+            //  ADMIN: Autorizar descarga
+            // ─────────────────────────────────────────────
+            async function leerPeticiones() {
+                var snap = await window.fbRT.get(window.fbRT.ref(window.dbRT, NODO_REDESCARGA));
+                var salida = [];
+                if (snap.exists()) {
+                    var v = snap.val();
+                    Object.keys(v).forEach(function (k) {
+                        if (v[k] && typeof v[k] === 'object') { v[k]._id = k; salida.push(v[k]); }
+                    });
+                }
+                salida.sort(function (a, b) { return (Number(a.ts) || 0) - (Number(b.ts) || 0); });   // más antiguas primero
+                return salida;
+            }
+
+            function pintarBadge(n) {
+                var badge = document.getElementById('nexusAutorizarBadge');
+                if (!badge) return;
+                badge.textContent = n;
+                badge.style.display = n > 0 ? 'inline-block' : 'none';
+            }
+
+            // Contador del botón del panel. Máx. 1 lectura cada 20 s (el nodo es pequeño, pero no hace falta más).
+            window.nexusActualizarBadgeAutorizar = async function (forzar) {
+                if (typeof nexusEsAdmin !== 'function' || !nexusEsAdmin() || !window.dbRT || !window.fbRT) { pintarBadge(0); return; }
+                if (!forzar && Date.now() - _ultimoConteo < 20000) return;
+                _ultimoConteo = Date.now();
+                try {
+                    var lista = await leerPeticiones();
+                    pintarBadge(lista.length);
+                } catch (e) {
+                    console.warn('[NEXUS Artes] No se pudo contar las peticiones de descarga:', e);
+                }
+            };
+
+            function pintarListaAdmin() {
+                var cont = document.getElementById('nxAutorizarLista');
+                var cnt = document.getElementById('nxAutorizarCount');
+                var todas = document.getElementById('nxAutorizarTodasBtn');
+                if (!cont) return;
+
+                if (!_listaAdmin.length) {
+                    cont.innerHTML = '<div class="nx-aut-empty"><i class="fas fa-check-circle" style="font-size:1.6rem; display:block; margin-bottom:8px; color: var(--ok);"></i>No hay peticiones de descarga pendientes.</div>';
+                } else {
+                    cont.innerHTML = _listaAdmin.map(function (p) {
+                        var f = new Date(p.fecha);
+                        var fecha = isNaN(f.getTime()) ? '' : f.toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' });
+                        return '<div class="nx-aut-row">' +
+                                   '<div class="nx-aut-info">' +
+                                       '<div class="nx-aut-id">' + esc(p._id) + (p.tipo ? ' · ' + esc(p.tipo) : '') + '</div>' +
+                                       '<div class="nx-aut-meta">' + esc(p.usuario || 'Usuario') + ' · ' + esc(p.unidad || 'Sin unidad') + (fecha ? ' · ' + esc(fecha) : '') + '</div>' +
+                                       (p.motivo ? '<div class="nx-aut-motivo">“' + esc(p.motivo) + '”</div>' : '') +
+                                   '</div>' +
+                                   '<button type="button" class="nx-btn nx-btn-primary" data-aut-id="' + esc(p._id) + '"><i class="fas fa-unlock"></i> Autorizar</button>' +
+                               '</div>';
+                    }).join('');
+                }
+                if (cnt) cnt.textContent = _listaAdmin.length + (_listaAdmin.length === 1 ? ' petición' : ' peticiones');
+                if (todas) todas.disabled = _listaAdmin.length === 0;
+                pintarBadge(_listaAdmin.length);
+            }
+
+            window.nexusAbrirModalAutorizarDescarga = async function () {
+                if (typeof nexusEsAdmin !== 'function' || !nexusEsAdmin()) return;
+                var overlay = document.getElementById('nxAutorizarDescargaOverlay');
+                var cont = document.getElementById('nxAutorizarLista');
+                if (cont) cont.innerHTML = '<div class="nx-aut-empty">Cargando peticiones...</div>';
+                if (overlay) overlay.classList.add('active');
+                try {
+                    _listaAdmin = await leerPeticiones();
+                    _ultimoConteo = Date.now();
+                    pintarListaAdmin();
+                } catch (e) {
+                    console.error('[NEXUS Artes] No se pudieron leer las peticiones:', e);
+                    if (cont) cont.innerHTML = '<div class="nx-aut-empty">No se pudieron cargar las peticiones. Inténtalo de nuevo.</div>';
+                }
+            };
+
+            window.nexusCerrarModalAutorizarDescarga = function () {
+                var overlay = document.getElementById('nxAutorizarDescargaOverlay');
+                if (overlay) overlay.classList.remove('active');
+            };
+
+            // Autoriza una petición: Firestore vuelve a ARTE LISTO y se borra el registro de RTDB.
+            // Devuelve 'ok' | 'parcial' (autorizada pero no se pudo borrar el registro) | 'huerfana' (la solicitud ya no existe)
+            async function autorizarUna(id) {
+                var refPeticion = window.fbRT.ref(window.dbRT, NODO_REDESCARGA + '/' + id);
+                try {
+                    await window.fbStore.updateDoc(window.fbStore.doc(window.db, 'solicitudes', id), { ArteEstado: 'ARTE LISTO' });
+                } catch (e) {
+                    if (e && e.code === 'not-found') {   // la solicitud fue purgada: se limpia el registro sobrante
+                        await window.fbRT.remove(refPeticion);
+                        return 'huerfana';
+                    }
+                    throw e;
+                }
+                try {
+                    await window.fbRT.remove(refPeticion);
+                } catch (e2) {
+                    console.warn('[NEXUS Artes] Autorizada, pero no se pudo borrar la petición:', id, e2);
+                    return 'parcial';
+                }
+                return 'ok';
+            }
+
+            function quitarDeLista(id) {
+                _listaAdmin = _listaAdmin.filter(function (p) { return p._id !== id; });
+            }
+
+            async function autorizarDesdeBoton(btn) {
+                var id = btn.getAttribute('data-aut-id');
+                if (!id) return;
+                var html = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                try {
+                    var r = await autorizarUna(id);
+                    if (r === 'parcial') {
+                        toast('warning', 'Autorizada con aviso', 'La descarga se habilitó, pero la petición no se pudo borrar. Vuelve a autorizarla para limpiarla.', 5000);
+                    } else if (r === 'huerfana') {
+                        toast('warning', 'Solicitud inexistente', id + ' ya no existe; se eliminó la petición.', 4000);
+                        quitarDeLista(id);
+                    } else {
+                        toast('success', 'Descarga autorizada', 'El usuario ya puede descargar ' + id + ' de nuevo.');
+                        quitarDeLista(id);
+                    }
+                    pintarListaAdmin();
+                } catch (e) {
+                    console.error('[NEXUS Artes] Error al autorizar:', e);
+                    toast('error', 'No se pudo autorizar', 'Inténtalo de nuevo.', 4000);
+                    btn.disabled = false;
+                    btn.innerHTML = html;
+                }
+            }
+
+            window.nexusAutorizarTodasDescargas = async function () {
+                if (!_listaAdmin.length) return;
+                var btn = document.getElementById('nxAutorizarTodasBtn');
+                if (btn) btn.disabled = true;
+                var ids = _listaAdmin.map(function (p) { return p._id; });
+                var ok = 0, fallos = 0;
+                for (var i = 0; i < ids.length; i++) {
+                    try {
+                        var r = await autorizarUna(ids[i]);
+                        if (r !== 'parcial') quitarDeLista(ids[i]);
+                        ok++;
+                    } catch (e) {
+                        console.error('[NEXUS Artes] Error al autorizar', ids[i], e);
+                        fallos++;
+                    }
+                }
+                pintarListaAdmin();
+                if (fallos) toast('warning', 'Autorización parcial', ok + ' autorizadas, ' + fallos + ' con error.', 5000);
+                else toast('success', 'Descargas autorizadas', ok + (ok === 1 ? ' petición autorizada.' : ' peticiones autorizadas.'));
+            };
+
+            // Delegación de eventos para los botones "Autorizar" de la lista
+            document.addEventListener('click', function (ev) {
+                var b = ev.target && ev.target.closest ? ev.target.closest('button[data-aut-id]') : null;
+                if (b && document.getElementById('nxAutorizarLista') && document.getElementById('nxAutorizarLista').contains(b)) {
+                    autorizarDesdeBoton(b);
+                }
+            });
+        })();
     </script>
 
     <!-- ============================================================
@@ -23879,6 +24395,19 @@ function nexusInicializarReporteDiseno(contenedor) {
                 actualizarProgreso(88, 'Etapa 4: Reseteando RTDB', 'Limpiando nodos de solicitudes finalizadas y estadísticas en RTDB...');
 
                 if (window.dbRT && window.fbRT) {
+                    // Peticiones de re-descarga de artes de las solicitudes purgadas (un solo update multi-ruta)
+                    try {
+                        const borrarPeticiones = {};
+                        solicitudesParaPurgar.forEach(s => {
+                            const rid = s.id || s.docId;
+                            if (rid) borrarPeticiones[rid] = null;
+                        });
+                        if (Object.keys(borrarPeticiones).length > 0) {
+                            await window.fbRT.update(window.fbRT.ref(window.dbRT, 'solicitudes_redescarga'), borrarPeticiones);
+                        }
+                    } catch (eRd) {
+                        console.warn('[NEXUS Purga] Error limpiando solicitudes_redescarga en RTDB:', eRd);
+                    }
                     try {
                         await window.fbRT.remove(window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + cMes));
                     } catch (eRt) {
