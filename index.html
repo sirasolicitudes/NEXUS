@@ -4868,19 +4868,71 @@
             right: 20px;
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.45);
+            color: rgba(255, 255, 255, 0.7);
             font-size: 22px;
             cursor: pointer;
             line-height: 1;
             transition: color 0.2s;
+            z-index: 5;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
         }
         .auth-modal-close:hover { color: #fff; }
 
         /* Logo/Título dentro del modal */
+        /* Cabecera con agujero negro animado (canvas WebGL) */
         .auth-modal-logo {
+            position: relative;
+            isolation: isolate;
+            margin: -36px -32px 22px;   /* sangra hasta los bordes de la tarjeta */
+            height: 210px;
+            padding: 0 16px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
             text-align: center;
-            margin-bottom: 24px;
+            overflow: hidden;
+            border-radius: 20px 20px 0 0;
+            background: #04060d;
         }
+        /* Se funde con el resto de la tarjeta */
+        .auth-modal-logo::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 55%;
+            background: linear-gradient(to bottom, rgba(16, 25, 39, 0) 0%, rgb(16, 25, 39) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .auth-bh-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 0;
+            cursor: grab;
+            touch-action: none;
+        }
+        .auth-bh-canvas.grabbing { cursor: grabbing; }
+        .auth-modal-logo .auth-nexus-title,
+        .auth-modal-logo .auth-modal-subtitle {
+            position: relative;
+            z-index: 2;
+            pointer-events: none;   /* deja pasar el arrastre al canvas */
+        }
+        .auth-modal-logo .auth-nexus-title {
+            text-shadow: 0 0 14px rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.9);
+        }
+        /* Sin WebGL: un anillo luminoso de CSS */
+        .auth-modal-logo.bh-fallback {
+            background:
+                radial-gradient(circle at 50% 40%, #000 0 20%, transparent 21%),
+                radial-gradient(ellipse 45% 14% at 50% 42%, rgba(90, 130, 255, 0.55), transparent 70%),
+                #04060d;
+        }
+        .auth-modal-logo.bh-fallback .auth-bh-canvas { display: none; }
         .auth-modal-logo .auth-nexus-title {
             font-family: 'Audiowide', cursive;
             font-size: 34px;
@@ -4913,8 +4965,9 @@
         }
         .auth-modal-logo .auth-modal-subtitle {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.78);
             margin-top: 4px;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
         }
 
         /* Grupos de campo */
@@ -5140,6 +5193,12 @@
             .auth-modal-card {
                 padding: 26px 18px;
                 border-radius: 16px;
+            }
+            .auth-modal-logo {
+                margin: -26px -18px 18px;
+                height: 185px;
+                padding-bottom: 16px;
+                border-radius: 16px 16px 0 0;
             }
             .auth-field-row {
                 grid-template-columns: 1fr;
@@ -20420,6 +20479,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusLoginModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
+                <canvas class="auth-bh-canvas" data-tint="0.22,0.46,0.95" aria-hidden="true"></canvas>
                 <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Accede a tu cuenta</div>
             </div>
@@ -20460,6 +20520,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusRegisterModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
+                <canvas class="auth-bh-canvas" data-tint="0.10,0.55,1.0" aria-hidden="true"></canvas>
                 <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Crea tu cuenta de solicitante</div>
             </div>
@@ -23889,5 +23950,316 @@ function nexusInicializarReporteDiseno(contenedor) {
         window.nexusPoblarSelectorDeMeses = nexusPoblarSelectorDeMeses;
     </script>
 
+    <script>
+    // ============================================================
+    // CABECERA "AGUJERO NEGRO" DE LOS MODALES DE LOGIN Y REGISTRO
+    // Shader WebGL (sin librerías): lente gravitacional + disco de acreción.
+    //  - Mover el mouse / el dedo sobre el modal inclina la cámara.
+    //  - Arrastrar el encabezado orbita libremente (vuelve suave al soltar).
+    //  - Enfocar o escribir en un campo acelera y aviva el disco.
+    //  - Solo dibuja mientras el modal está visible; respeta "reducir movimiento".
+    // Color: atributo data-tint="r,g,b" (0-1) del <canvas class="auth-bh-canvas">.
+    // ============================================================
+    (function () {
+        'use strict';
+
+        var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
+
+        var FRAG = [
+            '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+            'precision highp float;',
+            '#else',
+            'precision mediump float;',
+            '#endif',
+            'uniform vec2 uRes;',
+            'uniform float uTime;',
+            'uniform vec2 uCam;',
+            'uniform float uEnergy;',
+            'uniform vec3 uTint;',
+            'const float PI = 3.14159265;',
+
+            'float hash21(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }',
+
+            'float vnoise(vec2 p){',
+            '  vec2 i = floor(p); vec2 f = fract(p); f = f*f*(3.0-2.0*f);',
+            '  float a = hash21(i); float b = hash21(i+vec2(1.0,0.0));',
+            '  float c = hash21(i+vec2(0.0,1.0)); float d = hash21(i+vec2(1.0,1.0));',
+            '  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y);',
+            '}',
+
+            // Estrellas de fondo (rejilla sobre la esfera de direcciones)
+            'vec3 stars(vec3 d){',
+            '  float lon = atan(d.z, d.x);',
+            '  float lat = asin(clamp(d.y, -1.0, 1.0));',
+            '  vec3 c = vec3(0.0);',
+            '  for (int l = 0; l < 2; l++) {',
+            '    float fl = float(l);',
+            '    vec2 g = vec2(lon/(2.0*PI)*(420.0+fl*260.0), lat/PI*(210.0+fl*130.0));',
+            '    vec2 id = floor(g); vec2 f = fract(g);',
+            '    float h = hash21(id + fl*31.7);',
+            '    if (h > 0.93) {',
+            '      vec2 pos = vec2(hash21(id+3.1), hash21(id+7.7))*0.6 + 0.2;',
+            '      float dd = length(f - pos);',
+            '      float sz = mix(0.10, 0.22, hash21(id+11.3));',
+            '      float tw = 0.75 + 0.25*sin(uTime*(1.5+3.0*hash21(id+5.5)) + h*40.0);',
+            '      c += smoothstep(sz, 0.0, dd) * tw * mix(vec3(0.75,0.85,1.0), vec3(1.0,0.92,0.85), hash21(id+9.9));',
+            '    }',
+            '  }',
+            '  return c;',
+            '}',
+
+            // Textura del disco: rotación diferencial (kepleriana) con dos fases
+            // desfasadas para que la espiral nunca se enrolle indefinidamente.
+            'float pattern(vec3 q, float tt){',
+            '  float r = length(q.xz);',
+            '  float om = 1.3 * pow(r/3.0, -1.5) * (1.0 + 0.9*uEnergy);',
+            '  float a = atan(q.z, q.x) - tt*om;',
+            '  vec2 dir = vec2(cos(a), sin(a));',
+            '  float clump = vnoise(dir*2.2 + r*0.9)*0.6 + vnoise(dir*5.0 + r*2.3 + 3.7)*0.4;',
+            '  float rings = vnoise(vec2(r*16.0, 1.0))*0.6 + vnoise(vec2(r*40.0, 2.0))*0.4;',
+            '  return clamp(clump*0.9 + rings*0.8, 0.0, 1.5);',
+            '}',
+
+            'vec3 disk(vec3 q, vec3 v, out float alpha){',
+            '  float r = length(q.xz);',
+            '  float rin = 2.5; float rout = 10.0;',
+            '  alpha = 0.0;',
+            '  if (r < rin || r > rout) return vec3(0.0);',
+            '  float T = 8.0;',
+            '  float ph1 = mod(uTime, T); float ph2 = mod(uTime + T*0.5, T);',
+            '  float w1 = 1.0 - abs(ph1/T*2.0 - 1.0); float w2 = 1.0 - abs(ph2/T*2.0 - 1.0);',
+            '  float dens = pattern(q, ph1)*w1 + pattern(q, ph2)*w2;',
+            '  float edge = smoothstep(rin, rin+0.35, r) * (1.0 - smoothstep(rout-4.5, rout, r));',
+            '  float heat = pow(rin/r, 1.6);',
+            // Rampa de azules: azul profundo (borde) → azul medio (uTint) → azul claro → blanco (núcleo)
+            '  float hv = heat + (dens - 0.5)*0.25;',
+            '  vec3 col = mix(vec3(0.02, 0.22, 0.90), uTint, smoothstep(0.0, 0.35, hv));',
+            '  col = mix(col, vec3(0.68, 0.80, 1.0), smoothstep(0.30, 0.65, hv));',
+            '  col = mix(col, vec3(1.0), smoothstep(0.62, 0.95, heat));',
+            '  vec3 vel = normalize(vec3(-q.z, 0.0, q.x));',
+            '  float dop = clamp(1.0 + 0.7*dot(vel, -v), 0.15, 2.0);',
+            '  float bright = (0.30 + 1.6*heat) * (0.30 + dens) * pow(dop, 2.2) * (1.0 + 0.6*uEnergy);',
+            '  alpha = edge * smoothstep(0.12, 0.65, dens);',
+            '  return col * bright;',
+            '}',
+
+            'void main(){',
+            '  vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;',
+            '  uv.y -= 0.07;   // sube el agujero para dejar sitio al título',
+            '  float yaw = uCam.x; float pitch = uCam.y;',
+            '  vec3 ro = 15.0 * vec3(cos(pitch)*sin(yaw), sin(pitch), cos(pitch)*cos(yaw));',
+            '  vec3 fw = normalize(-ro);',
+            '  vec3 rt = normalize(cross(fw, vec3(0.0,1.0,0.0)));',
+            '  vec3 up = cross(rt, fw);',
+            '  vec3 v = normalize(fw*1.15 + rt*uv.x + up*uv.y);',
+            '  vec3 p = ro;',
+            '  vec3 hv = cross(p, v);',
+            '  float h2 = dot(hv, hv);',
+            '  vec3 col = vec3(0.0);',
+            '  float trans = 1.0;',
+            '  float minr = 100.0;',
+            '  bool hit = false;',
+            '  for (int i = 0; i < 120; i++) {',
+            '    float r2 = dot(p, p); float r = sqrt(r2);',
+            '    minr = min(minr, r);',
+            '    if (r < 1.0) { hit = true; break; }',
+            '    if (r > 30.0 && dot(p, v) > 0.0) break;',
+            '    float dt = clamp(0.07*r, 0.035, 1.0);',
+            '    vec3 acc = -1.5 * h2 * p / (r2*r2*r);',
+            '    v = normalize(v + acc*dt);',
+            '    vec3 pn = p + v*dt;',
+            '    if (p.y * pn.y < 0.0) {',
+            '      float t = p.y / (p.y - pn.y);',
+            '      vec3 q = mix(p, pn, t);',
+            '      float al;',
+            '      vec3 dc = disk(q, v, al);',
+            '      col += trans * dc * al;',
+            '      trans *= (1.0 - al);',
+            '      if (trans < 0.02) break;',
+            '    }',
+            '    p = pn;',
+            '  }',
+            '  if (!hit) {',
+            '    col += trans * (stars(v) + uTint*0.02);',
+            '  }',
+            // halo del anillo de fotones
+            '  col += uTint * 0.9 * exp(-pow(max(minr-1.5, 0.0)*2.6, 1.2)) * (hit ? 0.0 : 1.0) * (0.6 + 0.6*uEnergy);',
+            '  col = 1.0 - exp(-col*1.1);',
+            '  gl_FragColor = vec4(col, 1.0);',
+            '}'
+        ].join('\n');
+
+        function compile(gl, type, src) {
+            var s = gl.createShader(type);
+            gl.shaderSource(s, src);
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+                console.warn('[NEXUS] Shader agujero negro:', gl.getShaderInfoLog(s));
+                return null;
+            }
+            return s;
+        }
+
+        function initBlackHole(canvas) {
+            var host = canvas.parentElement;
+            var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+            var gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' })
+                  || canvas.getContext('experimental-webgl');
+            if (!gl) { host.classList.add('bh-fallback'); return; }
+
+            var vs = compile(gl, gl.VERTEX_SHADER, VERT);
+            var fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
+            var prog = gl.createProgram();
+            if (!vs || !fs) { host.classList.add('bh-fallback'); return; }
+            gl.attachShader(prog, vs);
+            gl.attachShader(prog, fs);
+            gl.linkProgram(prog);
+            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+                console.warn('[NEXUS] Programa agujero negro:', gl.getProgramInfoLog(prog));
+                host.classList.add('bh-fallback');
+                return;
+            }
+            gl.useProgram(prog);
+
+            var buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+            var loc = gl.getAttribLocation(prog, 'p');
+            gl.enableVertexAttribArray(loc);
+            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+            var uRes = gl.getUniformLocation(prog, 'uRes');
+            var uTime = gl.getUniformLocation(prog, 'uTime');
+            var uCam = gl.getUniformLocation(prog, 'uCam');
+            var uEnergy = gl.getUniformLocation(prog, 'uEnergy');
+            var uTint = gl.getUniformLocation(prog, 'uTint');
+
+            var tint = (canvas.getAttribute('data-tint') || '0.30,0.45,1.0').split(',').map(Number);
+            gl.uniform3f(uTint, tint[0], tint[1], tint[2]);
+
+            var BASE_PITCH = 0.15;
+            var st = { yaw: 0, pitch: BASE_PITCH, tyaw: 0, tpitch: BASE_PITCH,
+                       dragYaw: 0, dragPitch: 0, energy: 0, dragging: false, lx: 0, ly: 0 };
+            var scale = 0.85, visible = false, raf = 0;
+            var t0 = performance.now(), last = t0, frames = 0, accum = 0;
+
+            function resize() {
+                var r = canvas.getBoundingClientRect();
+                if (!r.width || !r.height) return false;
+                var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                var w = Math.max(2, Math.round(r.width * dpr * scale));
+                var h = Math.max(2, Math.round(r.height * dpr * scale));
+                if (w !== canvas.width || h !== canvas.height) { canvas.width = w; canvas.height = h; }
+                gl.viewport(0, 0, w, h);
+                return true;
+            }
+
+            function draw(t) {
+                gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.uniform1f(uTime, t);
+                gl.uniform2f(uCam, st.yaw, st.pitch);
+                gl.uniform1f(uEnergy, st.energy);
+                gl.drawArrays(gl.TRIANGLES, 0, 3);
+            }
+
+            function frame(now) {
+                raf = 0;
+                if (!visible) return;
+                var dt = Math.min((now - last) / 1000, 0.1);
+                last = now;
+                var t = (now - t0) / 1000;
+
+                var k = 1 - Math.exp(-dt * 4);
+                var ty = st.tyaw + st.dragYaw + 0.30 * Math.sin(t * 0.13);
+                var tp = st.tpitch + st.dragPitch + 0.03 * Math.sin(t * 0.09);
+                st.yaw += (ty - st.yaw) * k;
+                st.pitch += (Math.max(-1.2, Math.min(1.3, tp)) - st.pitch) * k;
+                st.energy *= Math.exp(-dt * 1.3);
+                if (!st.dragging) {   // al soltar, la órbita vuelve suavemente
+                    var back = Math.pow(0.5, dt / 1.5);
+                    st.dragYaw *= back;
+                    st.dragPitch *= back;
+                }
+
+                resize();
+                draw(t);
+
+                // Ajuste automático de resolución si el equipo va justo
+                frames++; accum += dt;
+                if (frames >= 30) {
+                    var avg = accum / frames;
+                    if (avg > 0.034 && scale > 0.45) scale *= 0.8;
+                    frames = 0; accum = 0;
+                }
+                raf = requestAnimationFrame(frame);
+            }
+
+            function start() {
+                if (reduce) {          // movimiento reducido: un solo fotograma estático
+                    if (resize()) draw(2.5);
+                    return;
+                }
+                if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
+            }
+
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (entries) {
+                    visible = entries[entries.length - 1].isIntersecting;
+                    if (visible) start();
+                }).observe(canvas);
+            } else {
+                visible = true; start();
+            }
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden && visible) start();
+            });
+            window.addEventListener('resize', function () {
+                if (visible && reduce) { if (resize()) draw(2.5); }
+            });
+
+            if (reduce) return;   // sin interacción si se pidió reducir movimiento
+
+            // --- Interacción ---
+            var card = host.closest('.auth-modal-card') || host;
+            var overlay = host.closest('.auth-modal-overlay') || card;
+
+            overlay.addEventListener('pointermove', function (e) {
+                if (st.dragging) return;
+                var r = card.getBoundingClientRect();
+                var nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2 + 80)));
+                var ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2 + 80)));
+                st.tyaw = nx * 0.55;
+                st.tpitch = BASE_PITCH - ny * 0.30;
+            });
+
+            canvas.addEventListener('pointerdown', function (e) {
+                st.dragging = true; st.lx = e.clientX; st.ly = e.clientY;
+                try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+                canvas.classList.add('grabbing');
+            });
+            canvas.addEventListener('pointermove', function (e) {
+                if (!st.dragging) return;
+                st.dragYaw -= (e.clientX - st.lx) * 0.010;
+                st.dragPitch = Math.max(-0.5, Math.min(1.1, st.dragPitch + (e.clientY - st.ly) * 0.008));
+                st.lx = e.clientX; st.ly = e.clientY;
+            });
+            function endDrag() { st.dragging = false; canvas.classList.remove('grabbing'); }
+            canvas.addEventListener('pointerup', endDrag);
+            canvas.addEventListener('pointercancel', endDrag);
+
+            // Escribir o enfocar un campo aviva el disco
+            card.addEventListener('focusin', function () { st.energy = Math.max(st.energy, 0.7); });
+            card.addEventListener('input', function () { st.energy = Math.min(1, st.energy + 0.25); }, true);
+        }
+
+        function initAll() {
+            var list = document.querySelectorAll('canvas.auth-bh-canvas');
+            for (var i = 0; i < list.length; i++) initBlackHole(list[i]);
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
+        else initAll();
+    })();
+    </script>
 </body>
 </html>
