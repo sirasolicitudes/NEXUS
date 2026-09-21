@@ -548,15 +548,19 @@
                 width: fit-content;
                 flex: 0 0 auto;
                 z-index: 5;
-                --soc-size: 44px;
-                --soc-iso: 8px;
+                max-width: calc(100% - 24px);
+                /* Se adapta al ancho: 7 iconos siempre en una sola línea */
+                --soc-size: clamp(30px, 9vw, 38px);
+                --soc-iso: 6px;
             }
+            .hsb-card { border-radius: 14px; }
             .hsb-list {
                 flex-direction: row;
-                padding: 0.75rem 1rem;
-                gap: 1rem;
+                flex-wrap: nowrap;
+                padding: 0.6rem 0.8rem;
+                gap: clamp(6px, 2vw, 12px);
             }
-            .hsb-icon { font-size: 1.1rem; }
+            .hsb-icon { font-size: calc(var(--soc-size) * 0.42); }
             .hsb-text { display: none; }
         }
 
@@ -4465,33 +4469,65 @@
                 font-size: 13px !important;
             }
 
-            /* Cards de Formularios */
+            /* Cards de Formularios: 3 columnas en móvil.
+               Los 3 favoritos (máximo) siempre quedan en la primera fila. */
             .cards-grid {
                 display: grid !important;
-                grid-template-columns: 1fr !important;
-                gap: 16px !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 8px !important;
                 width: 100% !important;
             }
+
+            .formularios-container { padding: 16px 10px !important; }
 
             .item {
                 width: 100% !important;
-                max-width: 360px !important;
+                max-width: none !important;
                 height: auto !important;
-                margin: 0 auto !important;
+                aspect-ratio: 332 / 378;
+                margin: 0 !important;
+                border-radius: 12px !important;
+                -webkit-tap-highlight-color: transparent;
             }
+            .item:hover { transform: none !important; }
+            .item:active { transform: scale(0.97) !important; }
 
             .item-image-wrapper {
                 width: 100% !important;
-                height: auto !important;
-                max-height: 380px !important;
+                height: 100% !important;
+                max-height: none !important;
             }
 
             .item-image-wrapper img {
                 width: 100% !important;
-                height: auto !important;
+                height: 100% !important;
                 max-width: 100% !important;
+                object-fit: cover !important;
+                object-position: top center !important;
                 display: block !important;
             }
+
+            .item-overlay {
+                top: 25% !important;
+                padding: 6px 4px 8px !important;
+                gap: 6px !important;
+            }
+            .item_title_main {
+                font-size: clamp(9px, 2.9vw, 12px) !important;
+                line-height: 1.2 !important;
+                text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) !important;
+            }
+            .item_subtitle { display: none !important; }
+            /* Toda la tarjeta abre el formulario, así que el botón "Acceder" sobra */
+            .item_button { display: none !important; }
+            .button-container { gap: 0 !important; }
+            .favorite-btn {
+                width: 26px !important;
+                height: 26px !important;
+                border-width: 1.5px !important;
+            }
+            .favorite-btn i { font-size: 12px !important; }
+            .favorite-tooltip { display: none !important; }
 
             .photo-grid {
                 grid-template-columns: repeat(3, 1fr) !important;
@@ -4846,13 +4882,34 @@
             margin-bottom: 24px;
         }
         .auth-modal-logo .auth-nexus-title {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: 4px;
+            font-family: 'Audiowide', cursive;
+            font-size: 34px;
+            font-weight: 400;
+            letter-spacing: 3px;
+            line-height: 1.2;
             color: #fff;
         }
         .auth-modal-logo .auth-nexus-title span {
-            color: var(--color-primary);
+            color: inherit;
+        }
+        /* Misma animación del título del hero: la S empuja a la U, que
+           reaparece y parpadea en azul */
+        .auth-modal-logo .auth-nexus-title .nexus-letter-u,
+        .auth-modal-logo .auth-nexus-title .nexus-letter-s {
+            display: inline-block;
+        }
+        .auth-modal-logo .auth-nexus-title .nexus-letter-u {
+            animation: nexusLetterUPush 6s ease-in-out infinite;
+            transform-origin: center;
+        }
+        .auth-modal-logo .auth-nexus-title .nexus-letter-s {
+            animation: nexusAuthLetterSPush 6s ease-in-out infinite;
+        }
+        /* -3px = letter-spacing del título del modal */
+        @keyframes nexusAuthLetterSPush {
+            0%, 18%   { transform: translateX(0); }
+            28%, 55%  { transform: translateX(calc(-0.95em - 3px)); }
+            65%, 100% { transform: translateX(0); }
         }
         .auth-modal-logo .auth-modal-subtitle {
             font-size: 13px;
@@ -13890,6 +13947,11 @@
                 }
             }
 
+            // Favoritos: si no están en memoria todavía, se leen una vez por sesión
+            if (sectionId === 'formularios') {
+                nexusAsegurarFavoritos();
+            }
+
             // Reportes es exclusivo para Administradores
             if (sectionId === 'reportes') {
                 const esAdminVal = (typeof nexusEsAdmin === 'function') ? nexusEsAdmin() : (NexusSession.role === 'ADMIN' || NexusSession.role === 'Admin Principal');
@@ -14016,15 +14078,253 @@
         // SISTEMA DE FAVORITOS
         // ============================================================
 
-        // Cargar favoritos desde localStorage
-        function loadFavorites() {
-            const favorites = localStorage.getItem('nexus_favorites');
-            return favorites ? JSON.parse(favorites) : [];
+        // Móvil: toda la tarjeta abre el formulario (no solo el botón "Acceder").
+        // La estrella de favoritos conserva su propio comportamiento.
+        document.addEventListener('click', function (e) {
+            if (!window.matchMedia('(max-width: 860px)').matches) return;
+            const item = e.target.closest('.cards-grid .item');
+            if (!item) return;
+            if (e.target.closest('.favorite-btn') || e.target.closest('.item_button')) return;
+            const btn = item.querySelector('.item_button');
+            if (btn) btn.click();
+        });
+
+        // ------------------------------------------------------------
+        // FAVORITOS: se guardan en Firestore, campo `favoritos` (array de hasta
+        // 3 ids de formulario) del documento del propio usuario:
+        //   - usuarios normales      → usuarios/{uid}
+        //   - admin / diseñador      → roles_sistema/{uid} (sus cuentas no están en usuarios)
+        // Se mantienen en memoria (NexusSession.favoritos) mientras la sesión esté abierta.
+        //  - Lectura: 0 lecturas extra; ese documento ya se lee al iniciar sesión.
+        //  - Cada cambio de favorito = 1 escritura.
+        //  - Al completar los 3 se guarda `favoritosFecha` y quedan bloqueados 7 días.
+        // ------------------------------------------------------------
+        const NEXUS_FAV_MAX = 3;
+        let _nexusFavCargando = null;
+
+        // Deja solo ids válidos, sin repetir, máximo 3
+        function nexusSanitizarFavoritos(arr) {
+            if (!Array.isArray(arr)) return [];
+            const validos = Array.from(document.querySelectorAll('.cards-grid .item[data-form]'))
+                .map(c => c.getAttribute('data-form'));
+            return arr
+                .filter((id, i) => typeof id === 'string' && validos.includes(id) && arr.indexOf(id) === i)
+                .slice(0, NEXUS_FAV_MAX);
         }
 
-        // Guardar favoritos en localStorage
+        // Lectura síncrona desde la memoria de la sesión (no toca Firestore)
+        function loadFavorites() {
+            return Array.isArray(NexusSession.favoritos) ? NexusSession.favoritos.slice() : [];
+        }
+
+        // Actualiza memoria y guarda en Firestore en segundo plano.
+        // Al completar los 3 favoritos se guarda `favoritosFecha` (hora del servidor):
+        // desde ahí corre el bloqueo de 7 días. Devuelve una promesa con true/false.
         function saveFavorites(favorites) {
-            localStorage.setItem('nexus_favorites', JSON.stringify(favorites));
+            const anterior = loadFavorites();
+            const fechaAnterior = NexusSession.favoritosFecha;
+            const completos = favorites.length >= NEXUS_FAV_MAX;
+
+            NexusSession.favoritos = favorites.slice();
+            NexusSession.favoritosFecha = completos ? new Date() : null;   // estimado local
+
+            const uid = NexusSession.user && NexusSession.user.uid;
+            if (!uid || !window.db || !window.fbStore) return Promise.resolve(false);
+
+            const coleccion = NexusSession.favColeccion || 'usuarios';
+            return window.fbStore.setDoc(
+                window.fbStore.doc(window.db, coleccion, uid),
+                {
+                    favoritos: favorites,
+                    favoritosFecha: completos ? window.fbStore.serverTimestamp() : null
+                },
+                { merge: true }
+            ).then(function () {
+                return true;
+            }).catch(function (err) {
+                console.warn('[NEXUS] No se pudieron guardar los favoritos:', err);
+                NexusSession.favoritos = anterior;   // revertir
+                NexusSession.favoritosFecha = fechaAnterior;
+                nexusAplicarFavoritosUI();
+                showToast({
+                    type: 'error',
+                    title: 'No se guardó el favorito',
+                    message: 'No se pudo guardar en tu cuenta. Intenta de nuevo.',
+                    duration: 4000
+                });
+                return false;
+            });
+        }
+
+        // Pinta estrellas activas, tooltips y orden de tarjetas según la memoria
+        function nexusAplicarFavoritosUI() {
+            const favorites = loadFavorites();
+            document.querySelectorAll('.cards-grid .item[data-form] .favorite-btn').forEach(btn => {
+                const id = btn.closest('.item').getAttribute('data-form');
+                btn.classList.toggle('active', favorites.includes(id));
+            });
+            updateAllTooltips();
+            reorderCards();
+        }
+
+        // ------------------------------------------------------------
+        // BLOQUEO SEMANAL: al completar los 3 favoritos solo se pueden
+        // volver a modificar pasados 7 días (el servidor también lo exige).
+        // ------------------------------------------------------------
+        const NEXUS_FAV_BLOQUEO_DIAS = 7;
+
+        function nexusFavFechaADate(v) {
+            if (!v) return null;
+            if (typeof v.toDate === 'function') return v.toDate();   // Timestamp de Firestore
+            if (v instanceof Date) return v;
+            return null;
+        }
+
+        // Devuelve la Date hasta la que están bloqueados, o null si se pueden modificar
+        function nexusFavBloqueoHasta() {
+            const favs = NexusSession.favoritos;
+            const desde = NexusSession.favoritosFecha;
+            if (!Array.isArray(favs) || favs.length < NEXUS_FAV_MAX || !(desde instanceof Date)) return null;
+            const hasta = new Date(desde.getTime() + NEXUS_FAV_BLOQUEO_DIAS * 24 * 60 * 60 * 1000);
+            return hasta.getTime() > Date.now() ? hasta : null;
+        }
+
+        function nexusFormatearFechaFav(d) {
+            let s;
+            try {
+                s = new Intl.DateTimeFormat('es-VE', {
+                    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+                    hour: 'numeric', minute: '2-digit', hour12: true,
+                    timeZone: 'America/Caracas'
+                }).format(d);
+            } catch (e) {
+                s = d.toLocaleString();
+            }
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        function nexusTiempoRestanteFav(hasta) {
+            let ms = hasta.getTime() - Date.now();
+            if (ms <= 0) return 'unos instantes';
+            const dias = Math.floor(ms / 86400000); ms -= dias * 86400000;
+            const horas = Math.floor(ms / 3600000); ms -= horas * 3600000;
+            const min = Math.max(Math.floor(ms / 60000), 1);
+            const partes = [];
+            if (dias) partes.push(dias + (dias === 1 ? ' día' : ' días'));
+            if (horas) partes.push(horas + (horas === 1 ? ' hora' : ' horas'));
+            if (!dias && !horas) partes.push(min + (min === 1 ? ' minuto' : ' minutos'));
+            return partes.join(' y ');
+        }
+
+        function nexusCerrarModalFavoritos() {
+            const ov = document.getElementById('nxModalFavoritos');
+            if (ov) ov.style.display = 'none';
+        }
+
+        // tipo: 'completado' (recién establecidos) | 'bloqueado' (intento de modificar)
+        function nexusMostrarModalFavoritos(tipo, hasta) {
+            if (!(hasta instanceof Date)) return;
+
+            let ov = document.getElementById('nxModalFavoritos');
+            if (!ov) {
+                ov = document.createElement('div');
+                ov.id = 'nxModalFavoritos';
+                ov.className = 'nexus-modal-overlay';
+                ov.style.zIndex = '20060';
+                ov.innerHTML =
+                    '<div class="nexus-modal-content" style="max-width: 480px;">' +
+                        '<div class="nexus-modal-header" id="nxFavHeader">' +
+                            '<div class="icon"><i id="nxFavIcono" class="fas fa-star"></i></div>' +
+                            '<div class="nexus-modal-header-text">' +
+                                '<div class="nexus-modal-header-eyebrow" id="nxFavEyebrow"></div>' +
+                                '<h2 id="nxFavTitulo"></h2>' +
+                            '</div>' +
+                            '<button type="button" class="nexus-modal-close" title="Cerrar" onclick="nexusCerrarModalFavoritos()">×</button>' +
+                        '</div>' +
+                        '<div class="nexus-modal-body" style="padding: 22px 24px;">' +
+                            '<p id="nxFavMensaje" style="font-size: 0.95rem; line-height: 1.5; color: #333; margin: 0 0 14px;"></p>' +
+                            '<ul id="nxFavLista" style="list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 6px;"></ul>' +
+                            '<div style="background: #f1f5ff; border: 1px solid rgba(5,84,242,0.25); border-radius: 12px; padding: 14px 16px; text-align: center;">' +
+                                '<div style="font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: #5b6b8c; font-weight: 600;">Podrás modificarlos a partir del</div>' +
+                                '<div id="nxFavFecha" style="font-size: 1.05rem; font-weight: 700; color: var(--color-primary); margin-top: 4px;"></div>' +
+                                '<div id="nxFavRestante" style="font-size: 0.85rem; color: #5b6b8c; margin-top: 4px;"></div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="nexus-modal-footer">' +
+                            '<button type="button" class="nexus-modal-btn nexus-modal-btn-confirm" onclick="nexusCerrarModalFavoritos()">Entendido</button>' +
+                        '</div>' +
+                    '</div>';
+                ov.addEventListener('click', function (e) { if (e.target === ov) nexusCerrarModalFavoritos(); });
+                document.body.appendChild(ov);
+            }
+
+            const completado = tipo === 'completado';
+            const header = document.getElementById('nxFavHeader');
+            header.style.background = completado
+                ? ''   // degradado azul por defecto
+                : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            document.getElementById('nxFavIcono').className = completado ? 'fas fa-star' : 'fas fa-lock';
+            document.getElementById('nxFavEyebrow').textContent = completado ? 'Favoritos establecidos' : 'Favoritos bloqueados';
+            document.getElementById('nxFavTitulo').textContent = completado
+                ? '¡Seleccionaste tus 3 favoritos!'
+                : 'Aún no puedes modificar tus favoritos';
+            document.getElementById('nxFavMensaje').textContent = completado
+                ? 'Quedaron guardados en tu cuenta y siempre aparecerán primero. Los favoritos solo se pueden modificar una vez por semana, así que deberás esperar hasta la siguiente fecha para cambiarlos.'
+                : 'Los favoritos solo se pueden modificar una vez por semana. Tus tres favoritos actuales son:';
+
+            // Lista de los 3 formularios elegidos (texto seguro con textContent)
+            const lista = document.getElementById('nxFavLista');
+            lista.innerHTML = '';
+            loadFavorites().forEach(function (formId) {
+                const card = document.querySelector('.cards-grid .item[data-form="' + formId + '"] .item_title_main');
+                const li = document.createElement('li');
+                li.style.cssText = 'display:flex;align-items:center;gap:10px;font-size:0.9rem;font-weight:600;color:#1f2a44;background:#fafbff;border:1px solid #e6ebf5;border-radius:10px;padding:8px 12px;';
+                const star = document.createElement('i');
+                star.className = 'fas fa-star';
+                star.style.color = '#f5b301';
+                const span = document.createElement('span');
+                span.textContent = card ? card.textContent.trim() : formId;
+                li.appendChild(star);
+                li.appendChild(span);
+                lista.appendChild(li);
+            });
+
+            document.getElementById('nxFavFecha').textContent = nexusFormatearFechaFav(hasta);
+            document.getElementById('nxFavRestante').textContent = 'Faltan ' + nexusTiempoRestanteFav(hasta);
+            ov.style.display = 'flex';
+        }
+
+        // Respaldo: si el inicio de sesión no trajo los favoritos (p. ej. falló la
+        // lectura), se leen una vez al abrir Formularios y quedan en memoria.
+        function nexusAsegurarFavoritos() {
+            const user = NexusSession.user;
+            if (!user || !user.uid) return Promise.resolve();
+            if (Array.isArray(NexusSession.favoritos)) return Promise.resolve();   // ya en memoria
+            if (_nexusFavCargando) return _nexusFavCargando;
+            if (!window.db || !window.fbStore) return Promise.resolve();
+
+            const uid = user.uid;
+            const S = window.fbStore;
+            _nexusFavCargando = (async function () {
+                try {
+                    let col = 'roles_sistema';
+                    let snap = await S.getDoc(S.doc(window.db, col, uid));
+                    if (!snap.exists()) {
+                        col = 'usuarios';
+                        snap = await S.getDoc(S.doc(window.db, col, uid));
+                    }
+                    if (!NexusSession.user || NexusSession.user.uid !== uid) return;   // la sesión cambió
+                    NexusSession.favColeccion = col;
+                    NexusSession.favoritos = nexusSanitizarFavoritos(snap.exists() ? snap.data().favoritos : []);
+                    NexusSession.favoritosFecha = snap.exists() ? nexusFavFechaADate(snap.data().favoritosFecha) : null;
+                } catch (err) {
+                    console.warn('[NEXUS] No se pudieron leer los favoritos:', err);   // se reintenta al reabrir
+                } finally {
+                    _nexusFavCargando = null;
+                    nexusAplicarFavoritosUI();
+                }
+            })();
+            return _nexusFavCargando;
         }
 
         // Alternar estado de favorito
@@ -14032,9 +14332,27 @@
             event.preventDefault();
             event.stopPropagation();
 
+            if (!Array.isArray(NexusSession.favoritos)) {
+                nexusAsegurarFavoritos();
+                showToast({
+                    type: 'warning',
+                    title: 'Cargando favoritos',
+                    message: 'Un momento, se están cargando tus favoritos. Intenta de nuevo.',
+                    duration: 3000
+                });
+                return;
+            }
+
+            // Bloqueo semanal: con los 3 favoritos establecidos no se puede modificar nada
+            const bloqueoHasta = nexusFavBloqueoHasta();
+            if (bloqueoHasta) {
+                nexusMostrarModalFavoritos('bloqueado', bloqueoHasta);
+                return;
+            }
+
             const favorites = loadFavorites();
             const index = favorites.indexOf(formId);
-            const maxFavorites = 3;
+            const maxFavorites = NEXUS_FAV_MAX;
 
             if (index > -1) {
                 // Remover de favoritos
@@ -14051,7 +14369,12 @@
                 button.classList.add('active');
             }
 
-            saveFavorites(favorites);
+            saveFavorites(favorites).then(function (ok) {
+                // Al confirmarse el guardado de los 3 favoritos, avisar el bloqueo semanal
+                if (ok && favorites.length >= NEXUS_FAV_MAX) {
+                    nexusMostrarModalFavoritos('completado', nexusFavBloqueoHasta());
+                }
+            });
             updateAllTooltips();
             reorderCards();
         }
@@ -14168,24 +14491,8 @@
 
         // Inicializar: cargar favoritos y actualizar estado de botones
         function initializeFavorites() {
-            const favorites = loadFavorites();
-
-            // Actualizar estado visual de los botones
-            favorites.forEach(formId => {
-                const card = document.querySelector(`[data-form="${formId}"]`);
-                if (card) {
-                    const button = card.querySelector('.favorite-btn');
-                    if (button) {
-                        button.classList.add('active');
-                    }
-                }
-            });
-
-            // Actualizar tooltips con contadores
-            updateAllTooltips();
-
-            // Reordenar tarjetas
-            reorderCards();
+            // Sin sesión no hay favoritos; se aplican al iniciar sesión / abrir Formularios
+            nexusAplicarFavoritosUI();
         }
 
         // Ejecutar cuando el DOM esté cargado
@@ -16630,6 +16937,9 @@
             nombre: null,
             sexo: null,
             unidad: null,
+            favoritos: null,   // null = aún no cargados; array = cache de la sesión
+            favColeccion: null, // 'usuarios' (usuarios normales) o 'roles_sistema' (admin/diseñador)
+            favoritosFecha: null, // Date en que se completaron los 3 favoritos (null si no están completos)
             token: null,
             _firebaseReady: true,
 
@@ -16648,6 +16958,9 @@
                 this.nombre = null;
                 this.sexo = null;
                 this.unidad = null;
+                this.favoritos = null;
+                this.favColeccion = null;
+                this.favoritosFecha = null;
                 this.token = null;
                 try { localStorage.removeItem('nexus_session_state'); } catch (e) {}
                 try { sessionStorage.removeItem('nexus_session_state'); } catch (e) {}
@@ -17053,6 +17366,7 @@
                 var nombreUsuario = email.split('@')[0];
                 var sexoUsuario = 'Masculino';
                 var unidadUsuario = '';
+                var favRaw = null, favLeidos = false, favCol = null, favFechaRaw = null;
 
                 if (window.db && window.fbStore) {
                     try {
@@ -17069,6 +17383,7 @@
                             if (rData.nombre) nombreUsuario = rData.nombre;
                             if (rData.sexo) sexoUsuario = rData.sexo;
                             if (rData.unidad) unidadUsuario = rData.unidad;
+                            favRaw = rData.favoritos; favFechaRaw = rData.favoritosFecha; favLeidos = true; favCol = 'roles_sistema';
                         } else {
                             var userDoc = await window.fbStore.getDoc(window.fbStore.doc(window.db, "usuarios", uid));
                             if (userDoc && userDoc.exists()) {
@@ -17077,6 +17392,7 @@
                                 nombreUsuario = (uData.nombre + ' ' + (uData.apellido || '')).trim();
                                 if (uData.sexo) sexoUsuario = uData.sexo;
                                 if (uData.unidad) unidadUsuario = uData.unidad;
+                                favRaw = uData.favoritos; favFechaRaw = uData.favoritosFecha; favLeidos = true; favCol = 'usuarios';
                             }
                         }
                     } catch (dbErr) {
@@ -17089,7 +17405,11 @@
                 NexusSession.nombre = nombreUsuario;
                 NexusSession.sexo = sexoUsuario;
                 NexusSession.unidad = unidadUsuario;
+                NexusSession.favColeccion = favLeidos ? favCol : null;
+                NexusSession.favoritosFecha = favLeidos ? nexusFavFechaADate(favFechaRaw) : null;
+                NexusSession.favoritos = favLeidos ? nexusSanitizarFavoritos(favRaw) : null;
                 NexusSession.save();
+                nexusAplicarFavoritosUI();
 
                 closeNexusLoginModal();
                 showToast({
@@ -17329,6 +17649,7 @@
                 await nexusDetenerPresenciaRTDB();
                 nexusDetenerSolKpiListener(); // Detener listener de contadores KPI de Solicitudes
                 NexusSession.clear();
+                nexusAplicarFavoritosUI();   // quita estrellas y restaura el orden original
                 nexusActualizarUIAuth();
                 return;
             }
@@ -17343,6 +17664,7 @@
             var nombre = user.email ? user.email.split('@')[0] : 'Usuario';
             var sexo = 'Masculino';
             var unidad = '';
+            var favRaw = null, favLeidos = false, favCol = null, favFechaRaw = null;
 
             try {
                 if (window.db && window.fbStore) {
@@ -17359,6 +17681,7 @@
                         if (rData.nombre) nombre = rData.nombre;
                         if (rData.sexo) sexo = rData.sexo;
                         if (rData.unidad) unidad = rData.unidad;
+                        favRaw = rData.favoritos; favFechaRaw = rData.favoritosFecha; favLeidos = true; favCol = 'roles_sistema';
                     } else {
                         var userDoc = await window.fbStore.getDoc(window.fbStore.doc(window.db, "usuarios", user.uid));
                         if (userDoc && userDoc.exists()) {
@@ -17367,6 +17690,7 @@
                             nombre = (uData.nombre + ' ' + (uData.apellido || '')).trim();
                             if (uData.sexo) sexo = uData.sexo;
                             if (uData.unidad) unidad = uData.unidad;
+                            favRaw = uData.favoritos; favFechaRaw = uData.favoritosFecha; favLeidos = true; favCol = 'usuarios';
                         }
                     }
                 }
@@ -17379,7 +17703,11 @@
             NexusSession.nombre = nombre;
             NexusSession.sexo = sexo;
             NexusSession.unidad = unidad;
+            NexusSession.favColeccion = favLeidos ? favCol : null;
+            NexusSession.favoritosFecha = favLeidos ? nexusFavFechaADate(favFechaRaw) : null;
+            NexusSession.favoritos = favLeidos ? nexusSanitizarFavoritos(favRaw) : null;
             NexusSession.save();
+            nexusAplicarFavoritosUI();
             nexusActualizarUIAuth();
             nexusIniciarPresenciaRTDB();
         };
@@ -20092,7 +20420,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusLoginModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
-                <div class="auth-nexus-title">NEX<span>US</span></div>
+                <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Accede a tu cuenta</div>
             </div>
 
@@ -20132,7 +20460,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusRegisterModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
-                <div class="auth-nexus-title">NEX<span>US</span></div>
+                <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Crea tu cuenta de solicitante</div>
             </div>
 
