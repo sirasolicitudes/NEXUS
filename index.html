@@ -1633,29 +1633,6 @@
             flex: 1;
         }
 
-        .nexus-panel-status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            font-family: 'Poppins', sans-serif;
-            letter-spacing: 0.4px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-            color: #fff;
-            animation: nexusPanelFieldIn 0.4s ease forwards;
-        }
-
-        .nexus-panel-status-pill .dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: #fff;
-            animation: pulse 1.6s infinite;
-        }
-
         .nexus-panel-field-grid {
             display: flex;
             flex-direction: column;
@@ -1663,7 +1640,7 @@
         }
 
         .nexus-panel-field {
-            padding: 9px 0;
+            padding: 4px 0;
             border-bottom: 1px dashed #dfe4ea;
             opacity: 0;
             animation: nexusPanelFieldIn 0.4s ease forwards;
@@ -1859,6 +1836,68 @@
         .nx-drop-text { font-size: 0.92rem; color: var(--color-light); margin: 0 0 4px; font-weight: 500; }
         .nx-drop-text b { color: var(--color-tertiary); }
         .nx-drop-hint { font-size: 0.72rem; color: rgba(242,242,242,0.45); margin: 0; }
+
+        /* Selector de tipo de corrección (botones + submenús) */
+        .nx-corr-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+        .nx-corr-btn {
+            display: flex; align-items: center; gap: 7px;
+            padding: 8px 13px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-light);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+        }
+        .nx-corr-btn i { font-size: 0.85rem; opacity: .85; }
+        .nx-corr-btn:hover { background: rgba(56,118,242,0.14); border-color: rgba(56,118,242,0.35); }
+        .nx-corr-btn:active { transform: scale(0.97); }
+        .nx-corr-btn.active {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-tertiary));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(56,118,242,0.35);
+        }
+
+        .nx-corr-sub-wrap { display: flex; flex-direction: column; gap: 10px; }
+        .nx-corr-sub {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            animation: nxSlideIn .2s ease;
+        }
+        .nx-corr-sub.show { display: block; }
+        .nx-corr-sub-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--color-tertiary);
+            margin: 0 0 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nx-corr-chip-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nx-corr-chip {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 11px;
+            font-size: 0.76rem;
+            color: rgba(242,242,242,0.75);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            cursor: pointer;
+            user-select: none;
+            transition: background .15s ease, border-color .15s ease, color .15s ease;
+        }
+        .nx-corr-chip input { display: none; }
+        .nx-corr-chip span { display: flex; align-items: center; gap: 5px; }
+        .nx-corr-chip:hover { border-color: rgba(56,118,242,0.4); }
+        .nx-corr-chip:has(input:checked) {
+            background: rgba(56,118,242,0.18);
+            border-color: rgba(56,118,242,0.55);
+            color: var(--color-light);
+        }
 
         /* Lista de archivos */
         .nx-files { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
@@ -6125,7 +6164,61 @@
         .card-adaptive-badge.badge-arte-listo i,
         .card-adaptive-badge.badge-arte-descargado i,
         .card-adaptive-badge.badge-arte-solicitada i { margin-right: 6px; }
-        .card-adaptive-badge.badge-arte-solicitada { border-style: dashed; }
+                .card-adaptive-badge.badge-arte-solicitada { border-style: dashed; }
+
+        /* Corrección solicitada: brillo magenta (distinto al amarillo de ARTE LISTO) */
+        .solicitud-card-mockup.card-correccion {
+            opacity: 1;
+            border-color: rgba(255, 94, 168, 0.95);
+            animation: correccionGlow 1.8s ease-in-out infinite;
+        }
+        @keyframes correccionGlow {
+            0%, 100% { box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,94,168,0.85), 0 0 14px rgba(255,94,168,0.35); }
+            50%      { box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,94,168,1),    0 0 30px rgba(255,94,168,0.8); }
+        }
+        .card-adaptive-badge.badge-correccion {
+            background: #ff5ea8;
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.7);
+            text-shadow: none;
+            box-shadow: 0 2px 10px rgba(255, 94, 168, 0.55);
+        }
+        .card-adaptive-badge.badge-correccion i { margin-right: 6px; }
+        .nexus-panel-correccion {
+            border: 1px solid rgba(255, 94, 168, 0.75);
+            background: rgba(255, 94, 168, 0.10);
+            border-radius: 10px;
+            /* Se combinan ambas animaciones: la de entrada (nexusPanelFieldIn, heredada
+               de .nexus-panel-field) y el brillo (correccionGlowSoft). Antes esta regla
+               sustituía por completo la animación de entrada, así que el campo se quedaba
+               congelado en opacity:0 (invisible pero ocupando su espacio), lo que dejaba
+               un hueco vacío enorme en el panel cuando había una corrección solicitada. */
+            animation: nexusPanelFieldIn 0.4s ease forwards, correccionGlowSoft 1.8s ease-in-out infinite;
+        }
+        .nexus-panel-correccion .nexus-panel-field-icon { color: #ff5ea8; }
+        .nexus-panel-correccion .nexus-panel-field-value { white-space: normal; overflow-wrap: anywhere; font-weight: 600; }
+        .nexus-extract-correccion {
+            margin: 6px 0; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(255, 94, 168, 0.8);
+            background: rgba(255, 94, 168, 0.12);
+            animation: correccionGlowSoft 1.8s ease-in-out infinite;
+        }
+        .nexus-extract-correccion b { display: block; margin-bottom: 6px; color: #ff5ea8; font-size: 0.82rem; }
+        .nexus-extract-correccion div { font-size: 0.88rem; line-height: 1.5; overflow-wrap: anywhere; }
+        @keyframes correccionGlowSoft {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,94,168,0.0), 0 0 8px rgba(255,94,168,0.25); }
+            50%      { box-shadow: 0 0 0 1px rgba(255,94,168,0.7), 0 0 20px rgba(255,94,168,0.6); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .solicitud-card-mockup.card-correccion,
+            .nexus-panel-correccion,
+            .nexus-extract-correccion { animation: none; box-shadow: 0 0 0 2px rgba(255,94,168,0.9), 0 0 16px rgba(255,94,168,0.5); }
+            /* Con animation:none, .nexus-panel-correccion pierde también la animación de
+               entrada heredada de .nexus-panel-field, así que su opacity:0 inicial se
+               quedaría fija para siempre (campo invisible ocupando espacio). Se fuerza
+               opacity:1 para que sea visible de inmediato, sin animarlo. */
+            .nexus-panel-correccion { opacity: 1; transform: none; }
+        }
         @media (prefers-reduced-motion: reduce) {
             .solicitud-card-mockup.card-arte-listo {
                 animation: none;
@@ -8894,52 +8987,6 @@
                 <p class="section-subtitle">Gestión y seguimiento de solicitudes</p>
             </div>
             <div class="solicitudes-container">
-                <!-- Panel de Métricas Firestore -->
-                <div class="metrics-panel" id="solicitudes-metrics-panel">
-                    <div class="metrics-header">
-                        <h3>📊 Métricas de Firestore</h3>
-                        <span class="metrics-date" id="metrics-date">Hoy</span>
-                    </div>
-                    <div class="metrics-grid">
-                        <div class="metric-card" data-metric="lecturas">
-                            <div class="metric-icon">📖</div>
-                            <div class="metric-info">
-                                <span class="metric-label">Lecturas</span>
-                                <span class="metric-value" id="metric-lecturas">0 / 50,000</span>
-                                <span class="metric-percent" id="metric-lecturas-percent">0%</span>
-                            </div>
-                            <div class="metric-bar">
-                                <div class="metric-fill" id="metric-lecturas-bar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card" data-metric="escrituras">
-                            <div class="metric-icon">✏️</div>
-                            <div class="metric-info">
-                                <span class="metric-label">Escrituras</span>
-                                <span class="metric-value" id="metric-escrituras">0 / 20,000</span>
-                                <span class="metric-percent" id="metric-escrituras-percent">0%</span>
-                            </div>
-                            <div class="metric-bar">
-                                <div class="metric-fill" id="metric-escrituras-bar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div class="metric-card" data-metric="borrados">
-                            <div class="metric-icon">🗑️</div>
-                            <div class="metric-info">
-                                <span class="metric-label">Borrados</span>
-                                <span class="metric-value" id="metric-borrados">0 / 20,000</span>
-                                <span class="metric-percent" id="metric-borrados-percent">0%</span>
-                            </div>
-                            <div class="metric-bar">
-                                <div class="metric-fill" id="metric-borrados-bar" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="metrics-footer">
-                        <span class="metrics-timer" id="metrics-reset-timer">Calculando reinicio...</span>
-                    </div>
-                </div>
-
                 <!-- Contenedor Principal de Tarjetas Verticales de Solicitudes -->
                 <div class="solicitudes-kpi-grid" id="solicitudesKpiGrid">
                     <div class="solicitudes-kpi-card kpi-total">
@@ -9449,6 +9496,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal de Confirmación: Enviar Arte a Telegram -->
+        <div class="nexus-modal-overlay" id="nxModalEnviarTelegram" style="display: none; z-index: 20090;">
+            <div class="nexus-modal-content" style="max-width: 460px;">
+                <div class="nexus-modal-header" style="background: linear-gradient(135deg, #0799b6 0%, #023047 100%);">
+                    <div class="icon"><i class="fab fa-telegram-plane" style="color:#fff;"></i></div>
+                    <div class="nexus-modal-header-text">
+                        <div class="nexus-modal-header-eyebrow" style="color: rgba(255,255,255,0.8);">ENVIAR A TELEGRAM</div>
+                        <h2 style="color: #fff;">Enviar arte en alta calidad</h2>
+                    </div>
+                    <button class="nexus-modal-close" title="Cerrar" onclick="nexusCerrarModalTelegram()">×</button>
+                </div>
+                <div class="nexus-modal-body" style="padding: 24px;">
+                    <p style="font-size: 0.9rem; line-height: 1.5; color: #333; margin-bottom: 16px;">
+                        Se enviará el arte final a los grupos de Telegram correspondientes, en alta calidad. ¿Confirmas el envío?
+                    </p>
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 14px; font-size: 0.85rem; color: #334155; margin-bottom: 20px;">
+                        <div style="margin-bottom: 4px;"><strong>ID:</strong> <span id="nxTgId"></span></div>
+                        <div><strong>Archivo:</strong> <span id="nxTgArchivo"></span></div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="nexus-modal-btn nexus-modal-btn-cancel" onclick="nexusCerrarModalTelegram()">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="button" class="nexus-modal-btn" id="nxTgBtnConfirmar" onclick="nexusConfirmarEnvioTelegram()" style="background: #0799b6; color: #fff;">
+                            <i class="fab fa-telegram-plane"></i> Enviar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Modal de Confirmación NEXUS -->
@@ -9692,6 +9770,7 @@
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import {
             getFirestore,
+            initializeFirestore,
             doc,
             setDoc,
             getDoc,
@@ -9704,7 +9783,8 @@
             deleteDoc,
             onSnapshot,
             serverTimestamp as firestoreServerTimestamp,
-            increment as firestoreIncrement
+            increment as firestoreIncrement,
+            arrayUnion as firestoreArrayUnion
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import {
             getDatabase,
@@ -9743,7 +9823,10 @@
         // Asegurar que al cargar o recargar siempre empiece sin sesión previa activa
         signOut(auth).catch(function() {});
 
-        const db = getFirestore(app);
+        // Detecta redes (proxies/firewalls de hospitales) que bufferizan el streaming de Firestore
+        // y cambia a long-polling automáticamente. Sin esto, los listeners de los usuarios
+        // pueden recibir los cambios con retraso o no recibirlos.
+        const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
         const dbRT = getDatabase(app);
 
         // Exponer al scope global (window) para consumo transparente
@@ -9773,7 +9856,8 @@
             deleteDoc,
             onSnapshot,
             serverTimestamp: firestoreServerTimestamp,
-            increment: firestoreIncrement
+            increment: firestoreIncrement,
+            arrayUnion: firestoreArrayUnion
         };
 
         window.fbRT = {
@@ -9795,12 +9879,6 @@
             }
         });
 
-
-
-        // NOTA: NexusFirestoreMeter.init() y wrapFirestore() ya NO se llaman aquí.
-        // Se llaman únicamente en nexusActualizarUIAuth() una vez que Auth
-        // confirma la sesión y se conoce el rol (isStaff), para evitar
-        // "Permission denied" en lecturas/escrituras que ocurren antes del login.
 
         // ============================================================
         // SISTEMA DE ESTADÍSTICAS NEXUS - HELPERS
@@ -10737,6 +10815,164 @@
             throw ultimoError;
         }
 
+        // ============================================================
+        // SUBIDA BINARIA A DRIVE: timeout dinámico + detección de
+        // estancamiento + reintentos que RETOMAN la subida (protocolo
+        // resumable), en vez de reiniciar el archivo desde cero.
+        //
+        // NOTA importante: NO usamos navigator.connection.downlink para
+        // calcular el timeout. downlink mide velocidad de DESCARGA, no de
+        // subida, y puede ser muy distinto (asimetría típica de redes
+        // móviles y muchas conexiones residenciales). En su lugar:
+        //   1) Partimos de un piso conservador por tamaño de archivo.
+        //   2) Medimos el avance REAL de la subida (xhr.upload.onprogress)
+        //      y sólo cortamos por "estancamiento" (sin bytes nuevos en
+        //      NEXUS_STALL_TIMEOUT_MS), no por duración total. Una subida
+        //      lenta pero viva ya no se corta a los 90s/300s fijos.
+        // ============================================================
+        const NEXUS_STALL_TIMEOUT_MS = 30000; // sin progreso de bytes en 30s = conexión muerta
+
+        function nexusCalcularTimeoutSubida(fileSize) {
+            const KBPS_MINIMO = 37.5; // ~300kbps, piso conservador (3G/WiFi congestado)
+            const overheadMs = 15000; // negociación inicial + latencia
+            const estimadoMs = overheadMs + (fileSize / 1024 / KBPS_MINIMO) * 1000;
+            const piso = 90000;
+            const techo = 20 * 60 * 1000; // 20 min, tope absoluto de cordura
+            return Math.min(Math.max(estimadoMs, piso), techo);
+        }
+
+        function nexusParsearBytesDeRange(rangeHeader) {
+            // Cabecera "Range: bytes=0-12345" que devuelve Drive
+            if (!rangeHeader) return 0;
+            const match = /bytes=\d+-(\d+)/.exec(rangeHeader);
+            return match ? parseInt(match[1], 10) + 1 : 0;
+        }
+
+        // Le pregunta a la sesión resumable de Drive cuántos bytes recibió
+        // realmente antes de que la conexión fallara. Así, al reintentar,
+        // se retoma desde ese punto en vez de volver a subir todo el archivo.
+        function nexusConsultarBytesRecibidos(uploadUrl, fileSize) {
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', uploadUrl, true);
+                xhr.setRequestHeader('Content-Range', `bytes */${fileSize}`);
+                xhr.timeout = 15000;
+                xhr.onload = () => {
+                    if (xhr.status === 308) {
+                        resolve(nexusParsearBytesDeRange(xhr.getResponseHeader('Range')));
+                    } else if (xhr.status === 200 || xhr.status === 201) {
+                        resolve(fileSize); // Drive ya lo había recibido completo
+                    } else {
+                        resolve(null); // no se pudo determinar; se reintentará desde cero
+                    }
+                };
+                xhr.onerror = () => resolve(null);
+                xhr.ontimeout = () => resolve(null);
+                xhr.send();
+            });
+        }
+
+        // Un único intento de subida (o de reanudación, si offset > 0).
+        function nexusSubirBinarioXHR(file, uploadUrl, timeoutMs, onProgress, offset) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', uploadUrl, true);
+                xhr.timeout = timeoutMs;
+
+                let payload;
+                if (offset > 0) {
+                    // Reanudación: sólo se envía el resto del archivo, indicando
+                    // en qué rango va dentro del total (protocolo resumable de Drive).
+                    payload = file.slice(offset);
+                    xhr.setRequestHeader('Content-Range', `bytes ${offset}-${file.size - 1}/${file.size}`);
+                } else {
+                    payload = file;
+                    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+                }
+
+                let bytesConfirmados = offset;
+                let stallTimer = null;
+                const reiniciarRelojEstancamiento = () => {
+                    clearTimeout(stallTimer);
+                    stallTimer = setTimeout(() => xhr.abort(), NEXUS_STALL_TIMEOUT_MS);
+                };
+                reiniciarRelojEstancamiento();
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const totalSubido = offset + e.loaded;
+                        if (totalSubido > bytesConfirmados) {
+                            bytesConfirmados = totalSubido;
+                            reiniciarRelojEstancamiento(); // hubo avance real: no está estancada
+                        }
+                        if (typeof onProgress === 'function') {
+                            onProgress(Math.round((totalSubido / file.size) * 100));
+                        }
+                    }
+                };
+
+                xhr.onload = () => {
+                    clearTimeout(stallTimer);
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        try {
+                            resolve(JSON.parse(xhr.responseText));
+                        } catch (e) {
+                            resolve({ id: null }); // el ID se recupera después vía getLatestFileId
+                        }
+                    } else {
+                        reject(Object.assign(new Error(`Error de subida en Google Drive: HTTP ${xhr.status}`), { retryable: xhr.status >= 500 || xhr.status === 429 }));
+                    }
+                };
+                xhr.onerror = () => {
+                    clearTimeout(stallTimer);
+                    // CORS a veces reporta error de red aunque el archivo sí haya
+                    // llegado; se confirma después listando la carpeta (getLatestFileId).
+                    resolve({ id: null, ambiguo: true });
+                };
+                xhr.ontimeout = () => {
+                    clearTimeout(stallTimer);
+                    reject(Object.assign(new Error('La subida se estancó (sin avance de datos).'), { retryable: true }));
+                };
+                xhr.onabort = () => {
+                    clearTimeout(stallTimer);
+                    reject(Object.assign(new Error('La subida se estancó (sin avance de datos).'), { retryable: true }));
+                };
+
+                xhr.send(payload);
+            });
+        }
+
+        // Orquesta la subida con hasta 2 reintentos. Cada reintento consulta
+        // primero cuántos bytes ya tiene Drive y retoma desde ahí (no reinicia
+        // el archivo completo), lo cual es clave en videos grandes.
+        async function nexusSubirBinarioConReintentos(file, uploadUrl, onProgress) {
+            const timeoutMs = nexusCalcularTimeoutSubida(file.size);
+            const MAX_REINTENTOS = 2;
+            let offset = 0;
+
+            for (let intento = 0; intento <= MAX_REINTENTOS; intento++) {
+                try {
+                    return await nexusSubirBinarioXHR(file, uploadUrl, timeoutMs, onProgress, offset);
+                } catch (err) {
+                    const esUltimoIntento = intento >= MAX_REINTENTOS;
+                    if (esUltimoIntento || err.retryable === false) throw err;
+
+                    console.warn(`⚠️ Subida interrumpida (intento ${intento + 1}/${MAX_REINTENTOS + 1}): ${err.message}. Verificando bytes recibidos para retomar...`);
+                    const bytesRecibidos = await nexusConsultarBytesRecibidos(uploadUrl, file.size);
+                    if (typeof bytesRecibidos === 'number') {
+                        offset = bytesRecibidos;
+                        if (offset >= file.size) return { id: null }; // ya se había completado
+                        if (typeof onProgress === 'function') {
+                            onProgress(Math.round((offset / file.size) * 100));
+                        }
+                    } else {
+                        offset = 0; // no se pudo confirmar: se reintenta desde cero
+                    }
+                    await new Promise(r => setTimeout(r, 1500 * (intento + 1))); // backoff
+                }
+            }
+        }
+
         async function nexusSubirArchivoDrive(file, solicitudId, folderType = "SOLICITUDES", fileNumber = "1", totalFiles = 1, currentFileIndex = 0, onProgress = null, customFilename = null) {
             try {
                 // Validar que sea un archivo válido
@@ -10791,55 +11027,18 @@
 
                 // 2. Subir el archivo en BINARIO puro directamente a la URL de Google Drive
                 // Nota: La subida funciona pero Drive bloquea la respuesta por CORS
-                // Recuperaremos el fileId listando los archivos de la carpeta
-                await new Promise((resolve, reject) => {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('PUT', uploadUrl, true);
-                    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
-                    // Sin timeout, si la red se queda "muda" (no hay error ni
-                    // respuesta) esta promesa nunca se resuelve y el overlay
-                    // de subida queda colgado para siempre. Video: 5 min, resto: 90s.
-                    xhr.timeout = (file.type === 'video/mp4') ? 300000 : 90000;
-
-                    // Notificación de progreso
-                    xhr.upload.onprogress = (e) => {
-                        if (e.lengthComputable) {
-                            const fileProgress = Math.round((e.loaded / e.total) * 100);
-                            const totalProgress = Math.round(((currentFileIndex * 100) + fileProgress) / totalFiles);
-
-                            if (typeof onProgress === 'function') {
-                                onProgress(fileProgress);
-                            } else {
-                                // Actualizar loading overlay
-                                updateNexusLoadingProgress(totalProgress, `Subiendo archivo ${currentFileIndex + 1} de ${totalFiles}...`);
-                            }
-                        }
-                    };
-
-                    xhr.onload = () => {
-                        if (xhr.status === 200 || xhr.status === 201) {
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                resolve(response);
-                            } catch (e) {
-                                // Si falla por CORS pero el progreso llegó a 100%, asumir éxito
-
-                                resolve({ id: null }); // ID se recuperará después
-                            }
-                        } else {
-                            reject(new Error(`Error de subida en Google Drive: HTTP ${xhr.status}`));
-                        }
-                    };
-
-                    xhr.onerror = () => {
-                        // Si hay error de CORS pero el archivo probablemente se subió, no fallar
-
-                        resolve({ id: null }); // ID se recuperará después
-                    };
-                    xhr.ontimeout = () => reject(new Error('Tiempo de espera agotado durante la subida.'));
-
-                    // Se envía el archivo binario directo (File/Blob), SIN Base64
-                    xhr.send(file);
+                // Recuperaremos el fileId listando los archivos de la carpeta.
+                //
+                // Timeout dinámico por tamaño + detección de estancamiento (no de
+                // duración total) + reintentos que retoman la subida donde quedó
+                // (protocolo resumable de Drive). Ver nexusSubirBinarioConReintentos.
+                await nexusSubirBinarioConReintentos(file, uploadUrl, (fileProgress) => {
+                    const totalProgress = Math.round(((currentFileIndex * 100) + fileProgress) / totalFiles);
+                    if (typeof onProgress === 'function') {
+                        onProgress(fileProgress);
+                    } else {
+                        updateNexusLoadingProgress(totalProgress, `Subiendo archivo ${currentFileIndex + 1} de ${totalFiles}...`);
+                    }
                 });
 
                 // 3. Recuperar el fileId más reciente de la carpeta usando Apps Script
@@ -10935,18 +11134,38 @@
             for (let index = 0; index < fileArray.length; index++) {
                 const file = fileArray[index];
                 const fileNumber = (index + 1).toString(); // Número de archivo: 1, 2, 3, etc.
-                try {
-                    const resultado = await nexusSubirArchivoDrive(
-                        file, solicitudId, folderType, fileNumber, totalFiles, index,
-                        (pct) => reportarProgreso(index, pct)
-                    );
-                    settled.push({ status: 'fulfilled', value: resultado });
-                } catch (err) {
-                    settled.push({ status: 'rejected', reason: err });
-                    // Si un archivo falla, no tiene sentido seguir subiendo el
-                    // resto: la solicitud completa fallará de todas formas.
+
+                // nexusSubirArchivoDrive ya reintenta y retoma la subida a nivel
+                // de bytes (ver nexusSubirBinarioConReintentos). Si aun así falla
+                // -por ejemplo, porque la sesión resumable completa murió-, se
+                // reintenta el archivo UNA vez más desde cero (nueva sesión de
+                // subida) antes de recién ahí abortar el lote. Evita que un
+                // archivo puntualmente lento tumbe toda la solicitud a la primera.
+                let resultado = null;
+                let error = null;
+                for (let intentoArchivo = 0; intentoArchivo <= 1; intentoArchivo++) {
+                    try {
+                        resultado = await nexusSubirArchivoDrive(
+                            file, solicitudId, folderType, fileNumber, totalFiles, index,
+                            (pct) => reportarProgreso(index, pct)
+                        );
+                        error = null;
+                        break;
+                    } catch (err) {
+                        error = err;
+                        if (intentoArchivo === 0) {
+                            console.warn(`⚠️ Archivo ${index + 1} falló, reintentando una vez más antes de abortar el lote: ${err.message}`);
+                        }
+                    }
+                }
+
+                if (error) {
+                    settled.push({ status: 'rejected', reason: error });
+                    // Ya se agotaron los reintentos para este archivo puntual:
+                    // ahora sí, la solicitud completa falla.
                     break;
                 }
+                settled.push({ status: 'fulfilled', value: resultado });
             }
 
             const exitosos = settled
@@ -11081,16 +11300,15 @@
          * @param {string} folderType - Tipo de carpeta para determinar el campo a actualizar
          * @param {boolean} replace - Si es true, reemplaza las URLs existentes; si es false, acumula
          * @param {string|null} tipoCorreccion - Tipo de corrección ('texto', 'diseno', 'ambas') si es reemplazo
+         * @param {{detalleTexto:string[], detalleDiseno:string[]}|null} detalleCorreccion - Sub-opciones marcadas (Fecha/Dirección/Contenido, Foto/Elementos/Color)
          */
-        async function nexusActualizarUrlFirebase(solicitudId, fileUrl, folderType = "SOLICITUDES", replace = false, tipoCorreccion = null) {
+        async function nexusActualizarUrlFirebase(solicitudId, fileUrl, folderType = "SOLICITUDES", replace = false, tipoCorreccion = null, detalleCorreccion = null) {
             try {
                 // Determinar el campo a actualizar según el tipo de carpeta
                 const updateData = {};
                 const rtdbUpdateData = {};
 
                 if (folderType === "ARTES") {
-                    // Un arte nuevo o corregido vuelve a quedar disponible para que el usuario lo descargue
-                    updateData.ArteEstado = 'ARTE LISTO';
                     if (replace) {
                         // Reemplazar completamente el campo ArteFinal
                         updateData.ArteFinal = fileUrl;
@@ -11129,6 +11347,45 @@
                         if (esDiseno) {
                             updateData.correccionesDiseno = (window.fbStore && window.fbStore.increment) ? window.fbStore.increment(1) : 1;
                             rtdbUpdateData.correccionesDiseno = (window.fbRT && window.fbRT.increment) ? window.fbRT.increment(1) : 1;
+                        }
+
+                        // Guardar el detalle de las sub-opciones marcadas
+                        // (Fecha/Dirección/Contenido, Foto/Elementos/Color).
+                        // Cada opción se ACUMULA (suma) por solicitud, ya que
+                        // una misma solicitud puede tener varias correcciones
+                        // a lo largo del tiempo. Además se guarda un
+                        // historial con fecha para trazabilidad.
+                        const detalleTexto = (detalleCorreccion && detalleCorreccion.detalleTexto) || [];
+                        const detalleDiseno = (detalleCorreccion && detalleCorreccion.detalleDiseno) || [];
+                        const todasLasOpciones = [...detalleTexto, ...detalleDiseno];
+
+                        if (todasLasOpciones.length > 0) {
+                            const incFirestore = (window.fbStore && window.fbStore.increment) ? window.fbStore.increment : (n => n);
+                            const incRT = (window.fbRT && window.fbRT.increment) ? window.fbRT.increment : (n => n);
+
+                            todasLasOpciones.forEach(opcion => {
+                                // Firestore: notación de punto = update de campo anidado (suma)
+                                updateData[`detalleCorrecciones.${opcion}`] = incFirestore(1);
+                                // RTDB: notación de barra = update de ruta multi-ubicación (suma)
+                                rtdbUpdateData[`detalleCorrecciones/${opcion}`] = incRT(1);
+                            });
+
+                            const registroDetalle = {
+                                fecha: new Date().toISOString(),
+                                tipo: tipoCorreccion,
+                                detalleTexto,
+                                detalleDiseno
+                            };
+                            const arrayUnionFn = (window.fbStore && window.fbStore.arrayUnion) ? window.fbStore.arrayUnion : null;
+                            updateData.historialCorrecciones = arrayUnionFn ? arrayUnionFn(registroDetalle) : registroDetalle;
+
+                            // Actualizar en memoria en nexusSelectedRequestData si coincide
+                            if (typeof nexusSelectedRequestData !== 'undefined' && nexusSelectedRequestData) {
+                                if (!nexusSelectedRequestData.detalleCorrecciones) nexusSelectedRequestData.detalleCorrecciones = {};
+                                todasLasOpciones.forEach(opcion => {
+                                    nexusSelectedRequestData.detalleCorrecciones[opcion] = (Number(nexusSelectedRequestData.detalleCorrecciones[opcion]) || 0) + 1;
+                                });
+                            }
                         }
 
                         // Actualizar en memoria en nexusSelectedRequestData si coincide
@@ -12102,146 +12359,6 @@
         }
 
         // ============================================================
-        // SISTEMA DE MONITOREO DE OPERACIONES FIRESTORE
-        // Cuenta lecturas, escrituras y borrados automáticamente
-        // ============================================================
-
-        var NexusFirestoreMeter = {
-            limites: {
-                lecturas: 50000,
-                escrituras: 20000,
-                borrados: 20000
-            },
-            contadores: {
-                lecturas: 0,
-                escrituras: 0,
-                borrados: 0
-            },
-            
-            // Inicializar contadores desde RTDB
-            init: async function() {
-                try {
-                    if (!window.dbRT || !window.fbRT) return;
-                    
-                    var hoy = new Date();
-                    var mm = String(hoy.getMonth() + 1).padStart(2, '0');
-                    var dd = String(hoy.getDate()).padStart(2, '0');
-                    var rtdbPath = 'metricas_firestore/' + hoy.getFullYear() + '-' + mm + '-' + dd;
-                    
-                    var pathRef = window.fbRT.ref(window.dbRT, rtdbPath);
-                    var snap = await window.fbRT.get(pathRef);
-                    
-                    if (snap.exists()) {
-                        var datos = snap.val();
-                        this.contadores.lecturas = datos.lecturas || 0;
-                        this.contadores.escrituras = datos.escrituras || 0;
-                        this.contadores.borrados = datos.borrados || 0;
-                    }
-                    
-
-                } catch (error) {
-                    console.error('❌ Error inicializando métricas Firestore:', error);
-                }
-            },
-            
-            // Registrar operación y actualizar RTDB
-            registrarOperacion: async function(tipo) {
-                try {
-                    if (!window.dbRT || !window.fbRT) return;
-                    
-                    this.contadores[tipo]++;
-                    
-                    var hoy = new Date();
-                    var mm = String(hoy.getMonth() + 1).padStart(2, '0');
-                    var dd = String(hoy.getDate()).padStart(2, '0');
-                    var rtdbPath = 'metricas_firestore/' + hoy.getFullYear() + '-' + mm + '-' + dd;
-                    
-                    var pathRef = window.fbRT.ref(window.dbRT, rtdbPath);
-                    await window.fbRT.update(pathRef, {
-                        [tipo]: this.contadores[tipo]
-                    });
-                    
-
-                    
-                    // Actualizar UI si el panel está visible
-                    this.actualizarUI();
-                } catch (error) {
-                    console.error('❌ Error registrando operación:', error);
-                }
-            },
-            
-            // Actualizar UI del panel de métricas
-            actualizarUI: function() {
-                var metricTypes = ['lecturas', 'escrituras', 'borrados'];
-                metricTypes.forEach(function(tipo) {
-                    var bar = document.getElementById('metric-' + tipo + '-bar');
-                    var valueEl = document.getElementById('metric-' + tipo);
-                    var percentEl = document.getElementById('metric-' + tipo + '-percent');
-                    if (!bar || !valueEl || !percentEl) return;
-                    
-                    var val = NexusFirestoreMeter.contadores[tipo] || 0;
-                    var max = NexusFirestoreMeter.limites[tipo];
-                    var pct = Math.min(100, Math.round((val / max) * 100));
-                    
-                    bar.style.width = pct + '%';
-                    bar.className = 'metric-fill' +
-                        (pct >= 90 ? ' red' : pct >= 70 ? ' yellow' : ' green');
-                    valueEl.textContent = val.toLocaleString('es-VE') + ' / ' + max.toLocaleString('es-VE');
-                    percentEl.textContent = pct + '%';
-                });
-            },
-            
-            // Wrappers para operaciones Firestore con conteo automático
-            wrapFirestore: function() {
-                if (!window.fbStore) return;
-                
-                var self = this;
-                var originalSetDoc = window.fbStore.setDoc;
-                var originalGetDoc = window.fbStore.getDoc;
-                var originalGetDocs = window.fbStore.getDocs;
-                var originalUpdateDoc = window.fbStore.updateDoc;
-                var originalDeleteDoc = window.fbStore.deleteDoc;
-                
-                // Wrap setDoc (escritura)
-                window.fbStore.setDoc = async function(docRef, data, options) {
-                    var result = await originalSetDoc.call(this, docRef, data, options);
-                    self.registrarOperacion('escrituras');
-                    return result;
-                };
-                
-                // Wrap getDoc (lectura)
-                window.fbStore.getDoc = async function(docRef) {
-                    var result = await originalGetDoc.call(this, docRef);
-                    self.registrarOperacion('lecturas');
-                    return result;
-                };
-                
-                // Wrap getDocs (lectura múltiple)
-                window.fbStore.getDocs = async function(query) {
-                    var result = await originalGetDocs.call(this, query);
-                    self.registrarOperacion('lecturas');
-                    return result;
-                };
-                
-                // Wrap updateDoc (escritura)
-                window.fbStore.updateDoc = async function(docRef, data) {
-                    var result = await originalUpdateDoc.call(this, docRef, data);
-                    self.registrarOperacion('escrituras');
-                    return result;
-                };
-                
-                // Wrap deleteDoc (borrado)
-                window.fbStore.deleteDoc = async function(docRef) {
-                    var result = await originalDeleteDoc.call(this, docRef);
-                    self.registrarOperacion('borrados');
-                    return result;
-                };
-                
-
-            }
-        };
-
-        // ============================================================
         // FUNCIÓN PARA FORMATEAR HORA EN FORMATO a.m./p.m.
         // ============================================================
 
@@ -12270,6 +12387,7 @@
             // si las fotos ya subieron a Drive pero algo falla más adelante
             // (Firestore/RTDB), necesitamos poder borrarlas desde ahí también.
             let archivosUrls = [];
+            let archivosConMime = []; // [{ url, mime }] - para adjuntar fotos/video al notificar por Telegram
             let resumenArchivosSubidos = '';
             try {
                 // Transformar datos si es necesario
@@ -12292,6 +12410,13 @@
                         const uploadResults = await nexusSubirFotosFormulario(formId, docId);
                         // Extraer solo las URLs de los resultados
                         archivosUrls = uploadResults.map(result => result.fileUrl);
+                        // Conservar también el mimeType de cada archivo para poder
+                        // distinguir fotos de video al notificar por Telegram
+                        archivosConMime = uploadResults.map(result => ({
+                            url: result.fileUrl,
+                            mime: result.mimeType || '',
+                            isVideo: !!(result.mimeType && result.mimeType.indexOf('video/') === 0)
+                        }));
                         // Clasificar por tipo (foto, video, documento...) según mimeType real
                         resumenArchivosSubidos = nexusClasificarArchivosSubidos(uploadResults);
 
@@ -12406,6 +12531,14 @@
                         });
                     }
                 }
+
+                // Notificar por Telegram (grupo de Diseño o de Prensa según el tipo).
+                // Para Copy RRSS / Corrección Nota de Prensa se envían también las
+                // fotos o el video adjuntos, siguiendo la misma regla que SIRA.
+                // No bloquea ni hace fallar el guardado si Telegram falla.
+                nexusNotificarTelegram(solicitudData, archivosConMime).catch(err => {
+                    console.warn('[NEXUS] No se pudo notificar por Telegram:', err);
+                });
 
                 return docId;
 
@@ -14077,44 +14210,6 @@
                     top: 0,
                     behavior: 'smooth'
                 });
-
-                // Si es la sección de solicitudes, actualizar el panel de métricas
-                if (sectionId === 'solicitudes') {
-                    // Verificar si Firebase está inicializado
-                    if (!window.dbRT || !window.fbRT) return;
-                    
-                    if (typeof NexusFirestoreMeter === 'undefined') return;
-                    
-                    // Verificar autenticación
-                    if (!NexusSession.user) return;
-                    var isStaff = (NexusSession.role === 'Admin Principal' || NexusSession.role === 'ADMIN' || NexusSession.role === 'DiseÃ±ador');
-                    if (!isStaff) return;
-                    
-                    // Usar el sistema de monitoreo Firestore actualizado
-                    if (typeof NexusFirestoreMeter !== 'undefined') {
-                        NexusFirestoreMeter.actualizarUI();
-                    }
-                    
-                    var timerElPanel = document.getElementById('metrics-reset-timer');
-                    if (timerElPanel) {
-                        var ahora = new Date();
-                        var manana = new Date(ahora);
-                        manana.setDate(manana.getDate() + 1);
-                        manana.setHours(0, 0, 0, 0);
-                        var diff = manana - ahora;
-                        var hh = String(Math.floor(diff / 3600000)).padStart(2, '0');
-                        var mm2 = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-                        timerElPanel.textContent = 'Reinicio diario en: ' + hh + 'h ' + mm2 + 'm';
-                    }
-                    var dateEl = document.getElementById('metrics-date');
-                    if (dateEl) {
-                        var hoy = new Date();
-                        var dia = String(hoy.getDate()).padStart(2, '0');
-                        var mes = String(hoy.getMonth() + 1).padStart(2, '0');
-                        var anio = hoy.getFullYear();
-                        dateEl.textContent = dia + '/' + mes + '/' + anio;
-                    }
-                }
 
                 // Si es la sección de estadísticas, cargar el dashboard NEXUS
                 if (sectionId === 'estadisticas') {
@@ -17929,7 +18024,8 @@
             _nexusUnsubscribeSolicitudes = window.fbRT.onValue(vivasRef, callback);
         }
 
-        // Usuarios normales: solo escuchan las solicitudes de SU unidad en Firestore.
+        // Usuarios normales: solo escuchan las solicitudes de SU unidad en Firestore
+        // (una única fuente de verdad, cualquiera que sea el estatus).
         // Firestore solo cobra lecturas por los documentos que cumplen el "where",
         // sin importar cuántos haya en el resto de la colección.
         function nexusEscucharSolicitudesDeUnidad() {
@@ -18065,7 +18161,11 @@
             nexusActualizarContadoresSolicitudes();
 
             if (total === 0) {
-                grid.innerHTML = '<div class="solicitudes-empty-state"><i class="fas fa-inbox"></i><p>No hay solicitudes registradas para mostrar.</p></div>';
+                var rolesConAccesoPanelVacio = ['ADMIN', 'Admin Principal', 'Diseñador'];
+                var botonPanelVacio = (typeof NexusSession !== 'undefined' && NexusSession && rolesConAccesoPanelVacio.includes(NexusSession.role))
+                    ? '<button class="nexus-panel-btn" style="margin-top: 14px; background: var(--color-primary); color: white;" onclick="nexusAbrirPanelSinSolicitud()"><i class="fas fa-sliders-h"></i> Abrir Panel de Control</button>'
+                    : '';
+                grid.innerHTML = '<div class="solicitudes-empty-state"><i class="fas fa-inbox"></i><p>No hay solicitudes registradas para mostrar.</p>' + botonPanelVacio + '</div>';
                 nexusActualizarPaginacionUI(0, 0, 0, 1, 1);
                 return;
             }
@@ -18143,9 +18243,18 @@
                 }
                 if (arteFlujo === 'LISTO') themeClass += ' card-arte-listo';
 
+                // Corrección pedida por el usuario sobre un arte ya finalizado: la solicitud volvió a vivas
+                var enCorreccion = !!s.CorreccionSolicitada && estatus !== 'FINALIZADA' && estatus !== 'RECHAZADA';
+                if (enCorreccion) themeClass += ' card-correccion';
+
                 var badgeText = '';
                 var badgeClass = esPrioritaria ? 'badge-prioridad' : '';
-                if (arteFlujo === 'LISTO') {
+                if (enCorreccion) {
+                    badgeText = esUsuarioNormal
+                        ? '<i class="fas fa-hourglass-half"></i> CORRECCIÓN EN PROCESO'
+                        : '<i class="fas fa-bolt"></i> CORRECCIÓN SOLICITADA';
+                    badgeClass = 'badge-correccion';
+                } else if (arteFlujo === 'LISTO') {
                     badgeText = '<i class="fas fa-download"></i> ARTE LISTO';
                     badgeClass = 'badge-arte-listo';
                 } else if (arteFlujo === 'DESCARGADO') {
@@ -18252,24 +18361,9 @@
             var titleEl     = document.getElementById('hero-main-title');
             var heroButtons = document.querySelector('.hero-buttons');
             var mainNavUl   = document.querySelector('#mainNav ul');
-            var metricsPanel= document.getElementById('solicitudes-metrics-panel');
 
             if (NexusSession.user) {
                 var isStaff = (NexusSession.role === 'Admin Principal' || NexusSession.role === 'ADMIN' || NexusSession.role === 'DiseÃ±ador');
-
-                // Solo inicializar métricas Firestore para Staff
-                if (isStaff && typeof NexusFirestoreMeter !== 'undefined') {
-                    NexusFirestoreMeter.init();
-                    if (!window._nexusFirestoreWrapped) {
-                        NexusFirestoreMeter.wrapFirestore();
-                        window._nexusFirestoreWrapped = true;
-                    }
-                }
-
-                // Visibilidad del Panel de MÃ©tricas de Firestore (oculto para usuarios regulares)
-                if (metricsPanel) {
-                    metricsPanel.style.display = isStaff ? 'block' : 'none';
-                }
 
                 var esFem = (NexusSession.sexo && NexusSession.sexo.trim().toLowerCase() === 'femenino');
                 var saludoTitulo = esFem ? 'Bienvenida' : 'Bienvenido';
@@ -18336,7 +18430,6 @@
                 }
 
             } else {
-                if (metricsPanel) metricsPanel.style.display = 'none';
                 if (greetingEl) greetingEl.innerHTML = '';
                 if (titleEl) titleEl.innerHTML = 'Bienvenido a <span class="highlight">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></span>';
                                 if (heroButtons) {
@@ -18535,6 +18628,22 @@
                 delayIdx++;
             });
 
+            // Corrección solicitada por el usuario (brilla para que no pase desapercibida)
+            if (requestData.CorreccionSolicitada) {
+                const delayC = (delayIdx * 0.05).toFixed(2);
+                const cuando = requestData.CorreccionFecha ? new Date(requestData.CorreccionFecha) : null;
+                const cuandoTxt = (cuando && !isNaN(cuando.getTime())) ? cuando.toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' }) : '';
+                fieldsHtml += `
+                    <div class="nexus-panel-field nexus-panel-correccion" style="animation-delay: ${delayC}s;">
+                        <span class="nexus-panel-field-icon"><i class="fas fa-bolt"></i></span>
+                        <div class="nexus-panel-field-body">
+                            <span class="nexus-panel-field-label">Corrección solicitada${requestData.CorreccionPor ? ' por ' + nexusEscHtml(requestData.CorreccionPor) : ''}${cuandoTxt ? ' · ' + nexusEscHtml(cuandoTxt) : ''}</span>
+                            <div class="nexus-panel-field-value">${nexusEscHtml(requestData.CorreccionTexto || '').replace(/\n/g, '<br>')}</div>
+                        </div>
+                    </div>`;
+                delayIdx++;
+            }
+
             // Agregar Post It si existe
             const postItNota = requestData.PostIt || '';
             if (postItNota) {
@@ -18552,20 +18661,28 @@
                 delayIdx++;
             }
 
-            // Agregar Correcciones si existen
+            // Agregar Correcciones si existen (totales por tipo + desglose de subtipos)
             const cTexto = Number(requestData.correccionesTexto) || 0;
             const cDiseno = Number(requestData.correccionesDiseno) || 0;
-            if (cTexto > 0 || cDiseno > 0) {
+            const detalleCorr = requestData.detalleCorrecciones || {};
+            const detalleCorrEntries = Object.entries(detalleCorr).filter(([, n]) => Number(n) > 0);
+            if (cTexto > 0 || cDiseno > 0 || detalleCorrEntries.length > 0) {
                 const delay = (delayIdx * 0.05).toFixed(2);
                 let corrBadges = [];
-                if (cTexto > 0) corrBadges.push(`<span style="background: rgba(59,130,246,0.15); color: #2563eb; border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; padding: 2px 7px; font-size: 0.72rem; font-weight: 700;"><i class="fas fa-font"></i> Texto: ${cTexto}</span>`);
-                if (cDiseno > 0) corrBadges.push(`<span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; padding: 2px 7px; font-size: 0.72rem; font-weight: 700;"><i class="fas fa-palette"></i> Diseño: ${cDiseno}</span>`);
+                if (cTexto > 0) corrBadges.push(`<span style="background: rgba(59,130,246,0.15); color: #2563eb; border: 1px solid rgba(59,130,246,0.3); border-radius: 6px; padding: 2px 7px; font-size: 0.72rem; font-weight: 700; white-space: nowrap;"><i class="fas fa-font"></i> Texto: ${cTexto}</span>`);
+                if (cDiseno > 0) corrBadges.push(`<span style="background: rgba(168,85,247,0.15); color: #9333ea; border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; padding: 2px 7px; font-size: 0.72rem; font-weight: 700; white-space: nowrap;"><i class="fas fa-palette"></i> Diseño: ${cDiseno}</span>`);
+                // Desglose por subtipo (Fecha, Dirección, Contenido, Foto, Elementos, Color, etc.)
+                detalleCorrEntries
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([opcion, n]) => {
+                        corrBadges.push(`<span style="background: rgba(107,114,128,0.12); color: #4b5563; border: 1px solid rgba(107,114,128,0.28); border-radius: 6px; padding: 2px 7px; font-size: 0.68rem; font-weight: 600; white-space: nowrap;">${nexusEscHtml(opcion)}: ${n}</span>`);
+                    });
                 fieldsHtml += `
-                    <div class="nexus-panel-field" style="animation-delay: ${delay}s;">
+                    <div class="nexus-panel-field" style="animation-delay: ${delay}s; padding-top: 6px;">
                         <span class="nexus-panel-field-icon"><i class="fas fa-history"></i></span>
                         <div class="nexus-panel-field-body">
                             <span class="nexus-panel-field-label">Correcciones</span>
-                            <div class="nexus-panel-field-value" style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                            <div class="nexus-panel-field-value" style="display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap;">
                                 ${corrBadges.join(' ')}
                             </div>
                         </div>
@@ -18579,9 +18696,6 @@
                     <button class="nexus-btn-copy" onclick="nexusCopyRequestId('${requestId}')" title="Copiar ID">
                         <i class="fas fa-copy"></i>
                     </button>
-                </div>
-                <div class="nexus-panel-status-pill" style="background: ${temaEstatus.color};">
-                    <span class="dot"></span> <i class="fas ${temaEstatus.icon}"></i> ${estatusActual}
                 </div>
                 <div class="nexus-panel-field-grid">
                     ${fieldsHtml}
@@ -18668,7 +18782,7 @@
         // Habilitar botones de acciones
         function nexusEnableActionButtons() {
             const actionButtons = [
-                'nexusBtnAttach', 'nexusBtnAttachMultiple', 'nexusBtnTelegram', 
+                'nexusBtnAttach', 'nexusBtnAttachMultiple',
                 'nexusBtnEmail', 'nexusBtnExtract', 'nexusBtnExtractFinalized', 'nexusBtnPostIt',
                 'nexusBtnStatusPend', 'nexusBtnStatusProc', 'nexusBtnStatusFin', 'nexusBtnStatusRec',
                 'nexusBtnDelete'
@@ -18678,6 +18792,13 @@
                 const btn = document.getElementById(btnId);
                 if (btn) btn.disabled = false;
             });
+
+            // El botón de Telegram solo se habilita si ya hay un arte final
+            // adjuntado por el diseñador (mismo criterio que SIRA 3.0).
+            const btnTelegram = document.getElementById('nexusBtnTelegram');
+            if (btnTelegram) {
+                btnTelegram.disabled = !(nexusSelectedRequestData && nexusSelectedRequestData.ArteFinal && String(nexusSelectedRequestData.ArteFinal).trim() !== '');
+            }
         }
 
         // ============================================================
@@ -18722,6 +18843,29 @@
 
         // Asigna un diseñador a la solicitud seleccionada. Si ya estaba asignado
         // ese mismo diseñador, lo desasigna (toggle), igual que en SIRA.
+        // Las escrituras a Firestore del staff no se esperaban (fire-and-forget) y si fallaban
+        // (permisos, cuota agotada, red) nadie se enteraba. Ahora se avisa en pantalla y consola.
+        function nexusAvisarFalloFirestore(err) {
+            console.error('[NEXUS] Falló la escritura en Firestore:', err && err.code, err);
+            var cuota = err && (err.code === 'resource-exhausted');
+            if (typeof showToast === 'function') {
+                showToast({
+                    type: 'error',
+                    title: 'Cambio no sincronizado',
+                    message: cuota
+                        ? 'Se agotó la cuota diaria de Firestore. El cambio se guardó en vivo (RTDB) pero no en el historial.'
+                        : 'No se pudo guardar en Firestore (' + ((err && err.code) || 'error') + '). Revisa la consola.',
+                    duration: 6000
+                });
+            }
+        }
+
+        function nexusEscHtml(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, function(c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
         async function nexusAsignarDisenador(designerName) {
             if (!nexusEsAdmin() || !nexusSelectedRequestId) return;
 
@@ -18756,7 +18900,7 @@
                     window.fbStore.updateDoc(
                         window.fbStore.doc(window.db, "solicitudes", nexusSelectedRequestId),
                         updateData
-                    );
+                    ).catch(nexusAvisarFalloFirestore);
                 }
                 // RTDB
                 if (window.dbRT && window.fbRT) {
@@ -18888,7 +19032,7 @@
                     window.fbStore.updateDoc(
                         window.fbStore.doc(window.db, "solicitudes", nexusSelectedRequestId),
                         updateData
-                    );
+                    ).catch(nexusAvisarFalloFirestore);
                 }
 
                 // Actualizar en RTDB
@@ -18961,7 +19105,8 @@
                 const updateData = {
                     Estatus: 'FINALIZADA',
                     FechaFinalizacion: fechaHoraFinalizacion,
-                    fechaFinalizacionKey: hoy // Campo para estadísticas
+                    fechaFinalizacionKey: hoy, // Campo para estadísticas
+                    ...(datos.CorreccionSolicitada ? { CorreccionSolicitada: false } : {})
                 };
 
                 // Actualizar en Firestore (mantener para historial)
@@ -18969,7 +19114,7 @@
                     window.fbStore.updateDoc(
                         window.fbStore.doc(window.db, "solicitudes", nexusSelectedRequestId),
                         updateData
-                    );
+                    ).catch(nexusAvisarFalloFirestore);
                 }
 
                 // Si es Copy RRSS y hay redes seleccionadas, guardar en colección paralela
@@ -19205,7 +19350,8 @@
                     Estatus: 'RECHAZADA',
                     MotivoRechazo: motivo,
                     FechaFinalizacion: fechaHoraFinalizacion,
-                    fechaFinalizacionKey: hoy // Campo para estadísticas
+                    fechaFinalizacionKey: hoy, // Campo para estadísticas
+                    ...(datos.CorreccionSolicitada ? { CorreccionSolicitada: false } : {})
                 };
 
                 // Actualizar en Firestore (mantener para historial)
@@ -19213,7 +19359,7 @@
                     window.fbStore.updateDoc(
                         window.fbStore.doc(window.db, "solicitudes", nexusSelectedRequestId),
                         updateData
-                    );
+                    ).catch(nexusAvisarFalloFirestore);
                 }
 
                 // Archivar en RTDB y eliminar de solicitudes_vivas
@@ -19476,6 +19622,46 @@
             }
         }
 
+        // Notifica por Telegram (vía backend de Apps Script) que se creó una
+        // nueva solicitud. El backend decide el grupo destino (Diseño o
+        // Prensa) según el tipo de solicitud. No lanza error visible al
+        // usuario si falla: es una notificación secundaria, no crítica.
+        // @param {Array} fotos - [{url, mime, isVideo}] adjuntos de la solicitud
+        //   (solo se usan para Copy RRSS / Corrección Nota de Prensa, que van al
+        //   grupo de Prensa junto con sus fotos/video, igual que en SIRA).
+        async function nexusNotificarTelegram(solicitudData, fotos = []) {
+            try {
+                const response = await fetch(NEXUS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'notificarSolicitud',
+                        id: solicitudData.id,
+                        tipo: solicitudData.Solicitud,
+                        unidad: solicitudData.Unidad,
+                        usuario: solicitudData.Usuario,
+                        fecha: solicitudData.Fecha,
+                        hora: solicitudData.Hora,
+                        fechaSolicitud: solicitudData.Timestamp,
+                        soportes: solicitudData.Soportes,
+                        detalles: solicitudData.Otros,
+                        fotos: JSON.stringify(fotos || [])
+                    }),
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    }
+                });
+
+                const result = await response.json();
+                if (!result.success) {
+                    console.warn('[NEXUS] Backend reportó error al notificar por Telegram:', result.error);
+                }
+                return result;
+            } catch (error) {
+                console.warn('[NEXUS] Error de red al notificar por Telegram:', error);
+                throw error;
+            }
+        }
+
         // Extraer ID de archivo de URL de Google Drive
         function nexusExtraerFileIdDrive(url) {
             const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -19513,6 +19699,84 @@
         function nexusCopyRequestId(requestId) {
             navigator.clipboard.writeText(requestId);
         }
+
+        // Abrir el panel de control sin ninguna solicitud seleccionada.
+        // Necesario porque el panel normalmente solo se abre dando click a la
+        // tarjeta de una solicitud (nexusOpenPanelForRequest); si no hay
+        // ninguna solicitud registrada, Admin/Diseñador se quedaban sin forma
+        // de abrirlo. Deja el panel en el mismo estado "sin selección" que
+        // trae por defecto el HTML (contenido vacío, botones deshabilitados).
+        function nexusAbrirPanelSinSolicitud() {
+            const rolesConAccesoPanel = ['ADMIN', 'Admin Principal', 'Diseñador'];
+            if (!NexusSession || !rolesConAccesoPanel.includes(NexusSession.role)) return;
+
+            nexusSelectedRequestId = null;
+            nexusSelectedRequestData = null;
+
+            const content = document.getElementById('nexusSelectedRequestContent');
+            if (content) {
+                content.innerHTML = `
+                    <div class="nexus-no-selection">
+                        <div class="nexus-no-selection-icon">📭</div>
+                        <div class="nexus-no-selection-text">Selecciona una solicitud de la lista para activar las acciones</div>
+                    </div>`;
+            }
+
+            const filePreviewContainer = document.getElementById('nexusFilePreviewContainer');
+            if (filePreviewContainer) {
+                filePreviewContainer.innerHTML = `
+                    <div class="nexus-no-selection">
+                        <div class="nexus-no-selection-icon">📎</div>
+                        <div class="nexus-no-selection-text">No hay archivo adjunto</div>
+                    </div>`;
+            }
+
+            const actionButtons = [
+                'nexusBtnAttach', 'nexusBtnAttachMultiple', 'nexusBtnTelegram',
+                'nexusBtnEmail', 'nexusBtnExtract', 'nexusBtnExtractFinalized', 'nexusBtnPostIt',
+                'nexusBtnStatusPend', 'nexusBtnStatusProc', 'nexusBtnStatusFin', 'nexusBtnStatusRec',
+                'nexusBtnDelete'
+            ];
+            actionButtons.forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) btn.disabled = true;
+            });
+            document.querySelectorAll('#nexusStatusActions .nexus-panel-btn').forEach(b => b.classList.remove('nexus-status-active'));
+
+            const designerSection = document.getElementById('nexusDesignerAssignSection');
+            if (designerSection) designerSection.classList.add('hidden'); // sin solicitud seleccionada no aplica asignar diseñador
+
+            // Botones de "Acciones Especiales" que NO dependen de una solicitud
+            // puntual (gestión de links de Instagram del Home, autorizar
+            // descargas). Antes solo se mostraban dentro de
+            // nexusActualizarSeccionDisenador(), que solo se llamaba al
+            // seleccionar una solicitud, así que quedaban inaccesibles si la
+            // lista estaba vacía.
+            const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
+            const btnAutorizar = document.getElementById('nexusBtnAutorizarDescarga');
+            if (nexusEsAdmin()) {
+                if (btnInstagram) btnInstagram.classList.remove('hidden');
+                if (btnAutorizar) {
+                    btnAutorizar.classList.remove('hidden');
+                    if (typeof window.nexusActualizarBadgeAutorizar === 'function') window.nexusActualizarBadgeAutorizar();
+                }
+            } else {
+                if (btnInstagram) btnInstagram.classList.add('hidden');
+                if (btnAutorizar) btnAutorizar.classList.add('hidden');
+            }
+
+            const header = document.getElementById('nexusPanelHeader');
+            const headerIcon = document.getElementById('nexusPanelIcon');
+            const headerEyebrow = document.getElementById('nexusPanelEyebrow');
+            const headerTitle = document.getElementById('nexusPanelTitle');
+            if (header) header.style.background = '';
+            if (headerIcon) headerIcon.textContent = '⚙️';
+            if (headerEyebrow) headerEyebrow.textContent = 'Panel de Control';
+            if (headerTitle) headerTitle.textContent = 'Selecciona una solicitud';
+
+            nexusOpenSidePanel();
+        }
+        window.nexusAbrirPanelSinSolicitud = nexusAbrirPanelSinSolicitud;
 
         // Abrir panel desde tarjeta
         function nexusOpenPanelForRequest(requestId) {
@@ -19825,6 +20089,16 @@
                     </div>`;
             }
 
+            if (data.CorreccionSolicitada) {
+                const cuando = data.CorreccionFecha ? new Date(data.CorreccionFecha) : null;
+                const cuandoTxt = (cuando && !isNaN(cuando.getTime())) ? cuando.toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' }) : '';
+                bodyHtml += `
+                    <div class="nexus-extract-correccion">
+                        <b><i class="fas fa-bolt"></i> Corrección solicitada${data.CorreccionPor ? ' por ' + nexusEscHtml(data.CorreccionPor) : ''}${cuandoTxt ? ' · ' + nexusEscHtml(cuandoTxt) : ''}</b>
+                        <div>${nexusEscHtml(data.CorreccionTexto || '').replace(/\n/g, '<br>')}</div>
+                    </div>`;
+            }
+
             bodyHtml += nexusExtractArchivosHTML(data.ArchivosDrive);
 
             const body = document.getElementById('nexusExtractBody');
@@ -20060,7 +20334,74 @@
         window.nexusPanelAdjuntarVarios = function() {
             nexusAbrirModalAdjuntar(true);
         };
-        window.nexusPanelTelegram = function() {};
+        // Envía el/los arte(s) final(es) adjuntado(s) por el diseñador al
+        // canal de Telegram que corresponde (Diseño o Prensa según el tipo
+        // de solicitud), igual que el botón "Telegram" del panel de Admin
+        // en SIRA 3.0.
+        function nexusPanelTelegram() {
+            if (!nexusSelectedRequestId || !nexusSelectedRequestData || !nexusSelectedRequestData.ArteFinal) return;
+
+            const archivoNombre = (nexusSelectedRequestData.ArteFinal.split(',')[0] || '').split('/').pop() || 'Arte final';
+            const idEl = document.getElementById('nxTgId');
+            const archivoEl = document.getElementById('nxTgArchivo');
+            if (idEl) idEl.textContent = nexusSelectedRequestId;
+            if (archivoEl) archivoEl.textContent = archivoNombre;
+
+            const modal = document.getElementById('nxModalEnviarTelegram');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function nexusCerrarModalTelegram() {
+            const modal = document.getElementById('nxModalEnviarTelegram');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function nexusConfirmarEnvioTelegram() {
+            nexusCerrarModalTelegram();
+
+            const btn = document.getElementById('nexusBtnTelegram');
+            if (btn) btn.disabled = true;
+
+            try {
+                const response = await fetch(NEXUS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'sendTelegramArte',
+                        id: nexusSelectedRequestId,
+                        tipo: nexusSelectedRequestData.Solicitud,
+                        unidad: nexusSelectedRequestData.Unidad,
+                        solicitante: nexusSelectedRequestData.Usuario || nexusSelectedRequestData.Unidad,
+                        arteUrls: nexusSelectedRequestData.ArteFinal
+                    }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast({
+                        type: 'success',
+                        title: '¡Enviado a Telegram!',
+                        message: 'El arte fue transmitido en alta calidad exitosamente.',
+                        duration: 3000
+                    });
+                } else {
+                    throw new Error(result.error || 'No se pudo enviar el arte a Telegram');
+                }
+            } catch (e) {
+                console.error('[NEXUS] Error al enviar arte a Telegram:', e);
+                showToast({
+                    type: 'error',
+                    title: 'Error al enviar',
+                    message: e.message || 'Verifica la conexión con Telegram.',
+                    duration: 4000
+                });
+            } finally {
+                if (btn) btn.disabled = !(nexusSelectedRequestData && nexusSelectedRequestData.ArteFinal);
+            }
+        }
+        window.nexusPanelTelegram = nexusPanelTelegram;
+        window.nexusCerrarModalTelegram = nexusCerrarModalTelegram;
+        window.nexusConfirmarEnvioTelegram = nexusConfirmarEnvioTelegram;
         window.nexusPanelCorreo = function() {};
         window.nexusPanelExtraerFinalizada = function() {};
 
@@ -20072,6 +20413,7 @@
         let nxOverlay, nxDrop, nxInput, nxFilesEl, nxCount, nxSubmit;
         let nxQueue = [];
         let nxMultipleMode = false;
+        let nxUploading = false; // true mientras hay una subida activa en curso
 
         function nxInitModalElements() {
             nxOverlay = document.getElementById('nxOverlay');
@@ -20160,8 +20502,7 @@
                 const tieneArtePrevio = !!(nexusSelectedRequestData && nexusSelectedRequestData.ArteFinal && String(nexusSelectedRequestData.ArteFinal).trim() !== '');
                 if (tieneArtePrevio) {
                     corrBox.style.display = 'block';
-                    const radioTexto = document.querySelector('input[name="nxTipoCorreccion"][value="texto"]');
-                    if (radioTexto) radioTexto.checked = true;
+                    nxSeleccionarTipoCorreccion('texto');
                 } else {
                     corrBox.style.display = 'none';
                 }
@@ -20169,8 +20510,45 @@
 
             nxInput.multiple = multiple;
             nxQueue = [];
+            nxUploading = false;
             nxRender();
             nxOpen();
+        }
+
+        /**
+         * Selecciona el tipo de corrección (texto / diseño / ambas) y muestra
+         * los sub-menús correspondientes. "ambas" muestra las 6 opciones.
+         */
+        function nxSeleccionarTipoCorreccion(tipo) {
+            const hidden = document.getElementById('nxTipoCorreccionValue');
+            if (hidden) hidden.value = tipo;
+
+            document.querySelectorAll('.nx-corr-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tipo === tipo);
+            });
+
+            const subTexto = document.getElementById('nxCorrSubTexto');
+            const subDiseno = document.getElementById('nxCorrSubDiseno');
+            const mostrarTexto = (tipo === 'texto' || tipo === 'ambas');
+            const mostrarDiseno = (tipo === 'diseno' || tipo === 'ambas');
+
+            if (subTexto) subTexto.classList.toggle('show', mostrarTexto);
+            if (subDiseno) subDiseno.classList.toggle('show', mostrarDiseno);
+
+            // Desmarcar checkboxes de la sección que se oculta, para no
+            // arrastrar detalles de un tipo de corrección que ya no aplica.
+            if (!mostrarTexto) {
+                document.querySelectorAll('input[name="nxDetalleTexto"]').forEach(cb => cb.checked = false);
+            }
+            if (!mostrarDiseno) {
+                document.querySelectorAll('input[name="nxDetalleDiseno"]').forEach(cb => cb.checked = false);
+            }
+        }
+
+        function nxObtenerDetalleCorreccion() {
+            const detalleTexto = Array.from(document.querySelectorAll('input[name="nxDetalleTexto"]:checked')).map(cb => cb.value);
+            const detalleDiseno = Array.from(document.querySelectorAll('input[name="nxDetalleDiseno"]:checked')).map(cb => cb.value);
+            return { detalleTexto, detalleDiseno };
         }
 
         function nxSetupEventListeners() {
@@ -20212,6 +20590,35 @@
             return (bytes/(1024*1024)).toFixed(1) + ' MB';
         }
 
+        function nxFileNodeHtml(f) {
+            const [color, label] = ICONS[f.ext] || ['#666', f.ext.slice(0,3).toUpperCase()];
+            const statusText = f.status === 'done' ? 'Subido ✓' : f.status === 'error' ? 'Error' : f.status === 'uploading' ? f.progress + '%' : nxFmtSize(f.file.size);
+            return `
+                <div class="nx-file-icon" style="background:${color}">${label}</div>
+                <div class="nx-file-info">
+                    <p class="nx-file-name">${f.file.name}</p>
+                    <div class="nx-file-meta">
+                        <span class="nx-file-status">${statusText}</span>
+                    </div>
+                    <div class="nx-progress-track"><div class="nx-progress-fill" style="width:${f.progress}%"></div></div>
+                </div>
+                <button class="nx-file-remove" onclick="nxRemove('${f.id}')">✕</button>`;
+        }
+
+        // Actualiza únicamente el estado/progreso de una fila existente, sin
+        // recrear el nodo del DOM: evita el parpadeo (la animación de
+        // entrada se re-disparaba en cada tick de progreso) y es más rápido.
+        function nxUpdateFileNode(f) {
+            const node = document.getElementById(f.id);
+            if (!node) { nxRender(); return; }
+            if (node.className !== `nx-file ${f.status}`) node.className = `nx-file ${f.status}`;
+            const statusEl = node.querySelector('.nx-file-status');
+            const fillEl = node.querySelector('.nx-progress-fill');
+            const statusText = f.status === 'done' ? 'Subido ✓' : f.status === 'error' ? 'Error' : f.status === 'uploading' ? f.progress + '%' : nxFmtSize(f.file.size);
+            if (statusEl) statusEl.textContent = statusText;
+            if (fillEl) fillEl.style.width = f.progress + '%';
+        }
+
         function nxRender() {
             if (!nxFilesEl || !nxCount || !nxSubmit) return;
 
@@ -20224,28 +20631,39 @@
                 }
             }
 
-            nxFilesEl.innerHTML = nxQueue.map(f => {
-                const [color, label] = ICONS[f.ext] || ['#666', f.ext.slice(0,3).toUpperCase()];
-                const statusText = f.status === 'done' ? 'Subido ✓' : f.status === 'error' ? 'Error' : f.status === 'uploading' ? f.progress + '%' : nxFmtSize(f.file.size);
-                return `
-                    <div class="nx-file ${f.status}" id="${f.id}">
-                        <div class="nx-file-icon" style="background:${color}">${label}</div>
-                        <div class="nx-file-info">
-                            <p class="nx-file-name">${f.file.name}</p>
-                            <div class="nx-file-meta">
-                                <span class="nx-file-status">${statusText}</span>
-                            </div>
-                            <div class="nx-progress-track"><div class="nx-progress-fill" style="width:${f.progress}%"></div></div>
-                        </div>
-                        <button class="nx-file-remove" onclick="nxRemove('${f.id}')">✕</button>
-                    </div>`;
-            }).join('');
+            const idsQueue = new Set(nxQueue.map(f => f.id));
+
+            // Quitar del DOM las filas que ya no están en la cola
+            Array.from(nxFilesEl.children).forEach(child => {
+                if (!idsQueue.has(child.id)) child.remove();
+            });
+
+            // Crear/actualizar cada fila sin recrear las que ya existen
+            nxQueue.forEach(f => {
+                let node = document.getElementById(f.id);
+                if (!node) {
+                    node = document.createElement('div');
+                    node.id = f.id;
+                    node.className = `nx-file ${f.status}`;
+                    node.innerHTML = nxFileNodeHtml(f);
+                    nxFilesEl.appendChild(node);
+                } else {
+                    nxUpdateFileNode(f);
+                }
+            });
+
             nxCount.textContent = nxQueue.length + (nxQueue.length === 1 ? ' archivo seleccionado' : ' archivos seleccionados');
-            nxSubmit.disabled = nxQueue.length === 0;
+            // El botón permanece deshabilitado mientras haya una subida activa,
+            // sin importar cuántas veces se vuelva a llamar nxRender().
+            nxSubmit.disabled = nxUploading || nxQueue.length === 0;
         }
 
         async function nxSubirCola() {
-            if (nxQueue.length === 0) return;
+            // Evita reentradas: si ya hay una subida en curso (por ejemplo si
+            // el botón se llegó a reactivar o el usuario logra hacer doble
+            // clic), no se vuelve a poner en cola/re-subir nada.
+            if (nxUploading || nxQueue.length === 0) return;
+            nxUploading = true;
             nxSubmit.disabled = true;
 
             const total = nxQueue.length;
@@ -20315,23 +20733,28 @@
                 try {
                     const urlsCombinadas = urlsExitosas.join(', ');
                     let tipoCorreccion = null;
+                    let detalleCorreccion = null;
                     const corrBox = document.getElementById('nxCorreccionBox');
                     const tieneArtePrevio = !!(nexusSelectedRequestData && nexusSelectedRequestData.ArteFinal && String(nexusSelectedRequestData.ArteFinal).trim() !== '');
                     if (corrBox && corrBox.style.display !== 'none' && tieneArtePrevio) {
-                        const checkedRadio = document.querySelector('input[name="nxTipoCorreccion"]:checked');
-                        tipoCorreccion = checkedRadio ? checkedRadio.value : 'texto';
+                        const hidden = document.getElementById('nxTipoCorreccionValue');
+                        tipoCorreccion = hidden ? hidden.value : 'texto';
+                        detalleCorreccion = nxObtenerDetalleCorreccion();
                     }
                     await window.nexusActualizarUrlFirebase(
                         nexusSelectedRequestId,
                         urlsCombinadas,
                         NX_FOLDER_TYPE,
                         true, // replace = true para reemplazar completamente el campo
-                        tipoCorreccion
+                        tipoCorreccion,
+                        detalleCorreccion
                     );
                 } catch (err) {
                     console.error('Error al actualizar URLs en Firebase:', err);
                 }
             }
+
+            nxUploading = false;
 
             const fallidos = nxQueue.filter(f => f.status === 'error').length;
             if (fallidos === 0) {
@@ -20342,6 +20765,9 @@
                 }
             } else {
                 showToast({ type: 'warning', title: 'Error en subida', message: `${fallidos} de ${total} archivo(s) fallaron. Revisa el modal.`, duration: 5000 });
+                // Solo reactivar el botón para los archivos fallidos: se
+                // vuelve a habilitar para permitir reintentar, pero ya no
+                // hay una subida "en curso" real.
                 nxSubmit.disabled = false;
             }
         }
@@ -20643,116 +21069,6 @@
     <!-- CSS del panel de métricas en sección Solicitudes -->
     <style>
         /* Panel de Métricas en sección Solicitudes */
-        .metrics-panel {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 1px solid rgba(99,179,237,0.3);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-        .metrics-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid rgba(99,179,237,0.2);
-        }
-        .metrics-header h3 {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #e2e8f0;
-            font-weight: 600;
-        }
-        .metrics-date {
-            font-size: 0.7rem;
-            color: #a0aec0;
-            background: rgba(99,179,237,0.1);
-            padding: 3px 8px;
-            border-radius: 10px;
-        }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        .metric-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(99,179,237,0.15);
-            border-radius: 6px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .metric-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 12px rgba(99,179,237,0.2);
-        }
-        .metric-icon {
-            font-size: 1.2rem;
-            margin-bottom: 0;
-        }
-        .metric-info {
-            display: flex;
-            flex-direction: column;
-            gap: 1px;
-        }
-        .metric-label {
-            font-size: 0.65rem;
-            color: #a0aec0;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
-        }
-        .metric-value {
-            font-size: 0.85rem;
-            color: #e2e8f0;
-            font-weight: 600;
-        }
-        .metric-percent {
-            font-size: 0.7rem;
-            color: #63b3ed;
-            font-weight: 500;
-        }
-        .metric-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .metric-fill {
-            height: 100%;
-            border-radius: 2px;
-            transition: width 0.4s ease, background-color 0.4s ease;
-        }
-        .metric-fill.green {
-            background: linear-gradient(90deg, #48bb78, #68d391);
-        }
-        .metric-fill.yellow {
-            background: linear-gradient(90deg, #ed8936, #f6ad55);
-        }
-        .metric-fill.red {
-            background: linear-gradient(90deg, #f56565, #fc8181);
-        }
-        .metrics-footer {
-            padding-top: 6px;
-            border-top: 1px solid rgba(99,179,237,0.2);
-            text-align: center;
-        }
-        .metrics-timer {
-            font-size: 0.65rem;
-            color: #718096;
-        }
-        @media (max-width: 768px) {
-            .metrics-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 
     <!-- ============================================================
@@ -21113,7 +21429,7 @@
                     <button id="nexusBtnAttachMultiple" class="nexus-panel-btn" onclick="nexusPanelAdjuntarVarios()" disabled style="background: var(--color-secondary); color: white;">
                         <i class="fas fa-folder"></i> Adjuntar Varios
                     </button>
-                    <button id="nexusBtnTelegram" class="nexus-panel-btn nexus-panel-btn-soon" onclick="nexusPanelTelegram()" disabled style="background: var(--color-light); color: var(--color-dark);">
+                    <button id="nexusBtnTelegram" class="nexus-panel-btn" onclick="nexusPanelTelegram()" disabled style="background: #0799b6; color: white;">
                         <i class="fas fa-paper-plane"></i> Telegram
                     </button>
                     <button id="nexusBtnEmail" class="nexus-panel-btn nexus-panel-btn-soon" onclick="nexusPanelCorreo()" disabled style="background: var(--color-light); color: var(--color-dark);">
@@ -21408,19 +21724,56 @@
         <p style="font-size:0.78rem; color:var(--color-tertiary); margin-bottom:10px; line-height:1.4;">
           Esta solicitud ya cuenta con un Arte Final. Selecciona el tipo de corrección para la auditoría y reporte mensual de diseño:
         </p>
-        <div style="display:flex; gap:14px; flex-wrap:wrap;">
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.82rem; cursor:pointer; color:var(--color-light);">
-            <input type="radio" name="nxTipoCorreccion" value="texto" checked style="accent-color:#3876f2;">
-            Corrección de Texto
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.82rem; cursor:pointer; color:var(--color-light);">
-            <input type="radio" name="nxTipoCorreccion" value="diseno" style="accent-color:#3876f2;">
-            Corrección de Diseño
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.82rem; cursor:pointer; color:var(--color-light);">
-            <input type="radio" name="nxTipoCorreccion" value="ambas" style="accent-color:#3876f2;">
-            Ambas (Texto y Diseño)
-          </label>
+
+        <input type="hidden" id="nxTipoCorreccionValue" value="texto">
+
+        <div class="nx-corr-btns">
+          <button type="button" class="nx-corr-btn active" data-tipo="texto" onclick="nxSeleccionarTipoCorreccion('texto')">
+            <i class="fas fa-font"></i> Corrección de Texto
+          </button>
+          <button type="button" class="nx-corr-btn" data-tipo="diseno" onclick="nxSeleccionarTipoCorreccion('diseno')">
+            <i class="fas fa-palette"></i> Corrección de Diseño
+          </button>
+          <button type="button" class="nx-corr-btn" data-tipo="ambas" onclick="nxSeleccionarTipoCorreccion('ambas')">
+            <i class="fas fa-layer-group"></i> Ambas (Texto y Diseño)
+          </button>
+        </div>
+
+        <div class="nx-corr-sub-wrap">
+          <div class="nx-corr-sub" id="nxCorrSubTexto">
+            <p class="nx-corr-sub-title"><i class="fas fa-font"></i> Detalle de la corrección de texto</p>
+            <div class="nx-corr-chip-group">
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleTexto" value="fecha">
+                <span><i class="fas fa-calendar-alt"></i> Fecha</span>
+              </label>
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleTexto" value="direccion">
+                <span><i class="fas fa-map-marker-alt"></i> Dirección</span>
+              </label>
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleTexto" value="contenido">
+                <span><i class="fas fa-align-left"></i> Contenido</span>
+              </label>
+            </div>
+          </div>
+          <div class="nx-corr-sub" id="nxCorrSubDiseno">
+            <p class="nx-corr-sub-title"><i class="fas fa-palette"></i> Detalle de la corrección de diseño</p>
+            <div class="nx-corr-chip-group">
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleDiseno" value="foto">
+                <span><i class="fas fa-image"></i> Foto</span>
+              </label>
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleDiseno" value="elementos">
+                <span><i class="fas fa-shapes"></i> Elementos</span>
+              </label>
+              <label class="nx-corr-chip">
+                <input type="checkbox" name="nxDetalleDiseno" value="color">
+                <span><i class="fas fa-fill-drip"></i> Color</span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -21723,6 +22076,13 @@
         .nx-aut-meta { margin-top: 2px; font-size: 0.75rem; color: rgba(242, 242, 242, 0.55); }
         .nx-aut-motivo { margin-top: 6px; font-size: 0.78rem; font-style: italic; color: var(--color-tertiary); overflow-wrap: anywhere; }
         .nx-aut-empty { text-align: center; padding: 28px 10px; font-size: 0.88rem; color: rgba(242, 242, 242, 0.55); }
+        .nx-arte-previews { display: flex; flex-direction: column; gap: 12px; max-height: 46vh; overflow-y: auto; margin-bottom: 4px; }
+        .nx-arte-preview { border: 1px solid var(--border); border-radius: 12px; background: var(--panel-2); padding: 8px; text-align: center; }
+        .nx-arte-preview-img { position: relative; min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--color-tertiary); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.04); }
+        .nx-arte-preview-img img { position: relative; z-index: 1; display: block; max-width: 100%; max-height: 38vh; object-fit: contain; }
+        .nx-arte-preview small { display: block; margin-top: 6px; font-size: 0.72rem; color: rgba(242, 242, 242, 0.55); }
+        .nx-btn.nx-btn-corr { background: rgba(255, 94, 168, 0.14); border: 1px solid rgba(255, 94, 168, 0.65); color: #ff8cc0; }
+        .nx-btn.nx-btn-corr:hover { background: rgba(255, 94, 168, 0.26); }
     </style>
 
     <!-- Modal del usuario: descargar el arte / solicitar descarga nuevamente -->
@@ -21734,6 +22094,30 @@
                 <h2 class="nx-title" id="nxArteTitle"></h2>
             </div>
             <div class="nx-body" id="nxArteBody" style="text-align: left;"></div>
+        </div>
+    </div>
+
+    <!-- Modal del usuario: escribir la corrección que necesita -->
+    <div class="nx-overlay" id="nxCorreccionOverlay" style="z-index: 20001;">
+        <div class="nx-modal" style="max-width: 520px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarModalCorreccion(true)" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · CORRECCIÓN</p>
+                <h2 class="nx-title"><i class="fas fa-edit"></i> Solicitar corrección</h2>
+                <p class="nx-sub">Cuéntanos con detalle qué debe cambiar en el arte.</p>
+            </div>
+            <div class="nx-body" style="text-align: left;">
+                <div id="nxCorreccionChip"></div>
+                <textarea class="nx-arte-motivo" id="nxCorreccionTexto" rows="5" maxlength="500" oninput="nexusCorreccionContar()" placeholder="Ej: Cambiar la fecha a 15/10, corregir el nombre del doctor y usar el logo actualizado..."></textarea>
+                <p class="nx-arte-note">Al enviarla, la solicitud vuelve al equipo de diseño (estado PROCESANDO) y quedará bloqueada hasta que la finalicen de nuevo.</p>
+                <div class="nx-foot">
+                    <span class="nx-count" id="nxCorreccionCount">0 / 500</span>
+                    <div class="nx-actions">
+                        <button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalCorreccion(true)">Volver</button>
+                        <button class="nx-btn nx-btn-primary" id="nxCorreccionEnviarBtn" onclick="nexusEnviarCorreccion()" disabled><i class="fas fa-paper-plane"></i> Enviar corrección</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -21829,54 +22213,260 @@
 
                 var chip = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(id) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
 
-                if (estado === 'LISTO') {
-                    eyebrow.textContent = 'NEXUS · ARTE FINAL';
-                    title.innerHTML = '<i class="fas fa-download"></i> Tu arte está listo';
+                var esListo = (estado === 'LISTO');
+                eyebrow.textContent = esListo ? 'NEXUS · ARTE FINAL' : 'NEXUS · ARTE DESCARGADO';
+                title.innerHTML = '<i class="fas fa-eye"></i> Revisa tu arte';
 
-                    var filas = urls.map(function (u, i) {
-                        var fid = idDrive(u);
-                        var dl = fid ? 'https://drive.google.com/uc?export=download&id=' + fid : u;
-                        var th = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w104" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '';
-                        return '<div class="nx-arte-file" id="nxArteFile' + i + '">' +
-                                   '<div class="nx-arte-thumb"><i class="fas fa-file-image"></i>' + th + '</div>' +
-                                   '<div class="nx-arte-file-name">Archivo ' + (i + 1) + '<small id="nxArteFileEst' + i + '">Pendiente de descargar</small></div>' +
-                                   '<a class="nx-btn nx-btn-ghost" href="' + esc(dl) + '" target="_blank" rel="noopener" onclick="nexusArteMarcarClick(' + i + ')"><i class="fas fa-download"></i> Descargar</a>' +
-                               '</div>';
-                    }).join('');
+                var vistas = urls.map(function (u, i) {
+                    var fid = idDrive(u);
+                    var img = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w1000" alt="Vista previa del archivo ' + (i + 1) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+                    return '<div class="nx-arte-preview"><div class="nx-arte-preview-img"><i class="fas fa-file-image"></i>' + img + '</div>' +
+                           '<small>Archivo ' + (i + 1) + ' de ' + urls.length + '</small></div>';
+                }).join('');
 
-                    body.innerHTML = chip +
-                        '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
-                        filas +
-                        '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>' +
-                        '<div class="nx-foot">' +
-                            '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
-                            '<div class="nx-actions">' +
-                                '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cancelar</button>' +
-                                '<button class="nx-btn nx-btn-primary" id="nxArteConfirmBtn" onclick="nexusArteConfirmarDescarga()" disabled><i class="fas fa-check"></i> Ya descargué mi arte</button>' +
-                            '</div>' +
-                        '</div>';
-                } else {
-                    eyebrow.textContent = 'NEXUS · ARTE DESCARGADO';
-                    title.innerHTML = '<i class="fas fa-redo"></i> ¿Falló la descarga?';
-                    body.innerHTML = chip +
-                        '<p class="nx-arte-texto">Este arte ya figura como descargado. Si el archivo no se guardó bien, solicita al administrador que habilite la descarga nuevamente.</p>' +
-                        '<textarea class="nx-arte-motivo" id="nxArteMotivo" rows="3" maxlength="200" placeholder="Cuéntanos qué pasó (opcional)"></textarea>' +
-                        '<div class="nx-foot">' +
-                            '<span class="nx-count"></span>' +
-                            '<div class="nx-actions">' +
-                                '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cancelar</button>' +
-                                '<button class="nx-btn nx-btn-primary" id="nxArteSolicitarBtn" onclick="nexusArteSolicitarRedescarga()"><i class="fas fa-paper-plane"></i> Solicitar descarga nuevamente</button>' +
-                            '</div>' +
-                        '</div>';
-                }
+                var botonPrincipal = esListo
+                    ? '<button class="nx-btn nx-btn-primary" onclick="nexusArteIrADescarga()"><i class="fas fa-download"></i> Descargar</button>'
+                    : '<button class="nx-btn nx-btn-primary" onclick="nexusArteIrARedescarga()"><i class="fas fa-redo"></i> Solicitar descarga nuevamente</button>';
 
+                body.innerHTML = chip +
+                    '<p class="nx-arte-texto">Verifica que el arte esté correcto. Si todo está bien, ' +
+                        (esListo ? 'descárgalo' : 'puedes pedir que se habilite la descarga de nuevo') +
+                        '; si algo debe cambiar, solicita una corrección.</p>' +
+                    '<div class="nx-arte-previews">' + vistas + '</div>' +
+                    '<div class="nx-foot">' +
+                        '<span class="nx-count"></span>' +
+                        '<div class="nx-actions">' +
+                            '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cerrar</button>' +
+                            '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>' +
+                            botonPrincipal +
+                        '</div>' +
+                    '</div>';
+
+                var corrOv = document.getElementById('nxCorreccionOverlay');
+                if (corrOv) corrOv.classList.remove('active');
                 var overlay = document.getElementById('nxArteModalOverlay');
                 if (overlay) overlay.classList.add('active');
             };
 
+            // Paso "Descargar": enlaces + confirmación (antes era el contenido directo del modal)
+            window.nexusArteIrADescarga = function () {
+                var sol = buscar(_solId);
+                if (!sol || estadoArte(sol) !== 'LISTO') { window.nexusCerrarModalArte(); return; }
+                var urls = urlsDe(sol);
+                var eyebrow = document.getElementById('nxArteEyebrow');
+                var title = document.getElementById('nxArteTitle');
+                var body = document.getElementById('nxArteBody');
+                if (!eyebrow || !title || !body) return;
+                _clicks = {};
+
+                eyebrow.textContent = 'NEXUS · ARTE FINAL';
+                title.innerHTML = '<i class="fas fa-download"></i> Descarga tu arte';
+                var chip = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(_solId) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
+
+                var filas = urls.map(function (u, i) {
+                    var fid = idDrive(u);
+                    var dl = fid ? 'https://drive.google.com/uc?export=download&id=' + fid : u;
+                    var th = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w104" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '';
+                    return '<div class="nx-arte-file" id="nxArteFile' + i + '">' +
+                               '<div class="nx-arte-thumb"><i class="fas fa-file-image"></i>' + th + '</div>' +
+                               '<div class="nx-arte-file-name">Archivo ' + (i + 1) + '<small id="nxArteFileEst' + i + '">Pendiente de descargar</small></div>' +
+                               '<a class="nx-btn nx-btn-ghost" href="' + esc(dl) + '" target="_blank" rel="noopener" onclick="nexusArteMarcarClick(' + i + ')"><i class="fas fa-download"></i> Descargar</a>' +
+                           '</div>';
+                }).join('');
+
+                body.innerHTML = chip +
+                    '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
+                    filas +
+                    '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>' +
+                    '<div class="nx-foot">' +
+                        '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
+                        '<div class="nx-actions">' +
+                            '<button class="nx-btn nx-btn-ghost" onclick="nexusArteVolver()">Volver</button>' +
+                            '<button class="nx-btn nx-btn-primary" id="nxArteConfirmBtn" onclick="nexusArteConfirmarDescarga()" disabled><i class="fas fa-check"></i> Ya descargué mi arte</button>' +
+                        '</div>' +
+                    '</div>';
+            };
+
+            // Paso "¿Falló la descarga?": pedir al admin que habilite de nuevo
+            window.nexusArteIrARedescarga = function () {
+                var sol = buscar(_solId);
+                if (!sol || estadoArte(sol) !== 'DESCARGADO') { window.nexusCerrarModalArte(); return; }
+                var eyebrow = document.getElementById('nxArteEyebrow');
+                var title = document.getElementById('nxArteTitle');
+                var body = document.getElementById('nxArteBody');
+                if (!eyebrow || !title || !body) return;
+
+                eyebrow.textContent = 'NEXUS · ARTE DESCARGADO';
+                title.innerHTML = '<i class="fas fa-redo"></i> ¿Falló la descarga?';
+                var chip = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(_solId) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
+                body.innerHTML = chip +
+                    '<p class="nx-arte-texto">Este arte ya figura como descargado. Si el archivo no se guardó bien, solicita al administrador que habilite la descarga nuevamente.</p>' +
+                    '<textarea class="nx-arte-motivo" id="nxArteMotivo" rows="3" maxlength="200" placeholder="Cuéntanos qué pasó (opcional)"></textarea>' +
+                    '<div class="nx-foot">' +
+                        '<span class="nx-count"></span>' +
+                        '<div class="nx-actions">' +
+                            '<button class="nx-btn nx-btn-ghost" onclick="nexusArteVolver()">Volver</button>' +
+                            '<button class="nx-btn nx-btn-primary" id="nxArteSolicitarBtn" onclick="nexusArteSolicitarRedescarga()"><i class="fas fa-paper-plane"></i> Solicitar descarga nuevamente</button>' +
+                        '</div>' +
+                    '</div>';
+            };
+
+            window.nexusArteVolver = function () {
+                var id = _solId;
+                if (id) window.nexusAbrirModalArte(id);
+            };
+
+            // ─────────────────────────────────────────────
+            //  USUARIO: solicitar corrección de un arte finalizado
+            //  La solicitud vuelve a solicitudes_vivas (RTDB) en PROCESANDO, sale de
+            //  finalizadas y queda marcada para que el staff la vea resaltada.
+            // ─────────────────────────────────────────────
+            var _corrId = null;
+            var _corrOcupado = false;
+
+            window.nexusCorreccionContar = function () {
+                var ta = document.getElementById('nxCorreccionTexto');
+                var cnt = document.getElementById('nxCorreccionCount');
+                var btn = document.getElementById('nxCorreccionEnviarBtn');
+                var n = ta ? ta.value.trim().length : 0;
+                if (cnt) cnt.textContent = (ta ? ta.value.length : 0) + ' / 500';
+                if (btn) btn.disabled = _corrOcupado || n < 10;
+            };
+
+            window.nexusAbrirModalCorreccion = function () {
+                if (!_solId) return;
+                var sol = buscar(_solId);
+                if (!sol || String(sol.Estatus || '').toUpperCase() !== 'FINALIZADA' || estadoArte(sol) === 'SOLICITADA') {
+                    window.nexusCerrarModalArte();
+                    return;
+                }
+                _corrId = _solId; _corrOcupado = false;
+                var chip = document.getElementById('nxCorreccionChip');
+                if (chip) chip.innerHTML = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(_corrId) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
+                var ta = document.getElementById('nxCorreccionTexto');
+                if (ta) ta.value = '';
+                var btn = document.getElementById('nxCorreccionEnviarBtn');
+                if (btn) btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar corrección';
+                window.nexusCorreccionContar();
+
+                var arteOv = document.getElementById('nxArteModalOverlay');
+                if (arteOv) arteOv.classList.remove('active');      // se oculta sin perder _solId
+                var corrOv = document.getElementById('nxCorreccionOverlay');
+                if (corrOv) corrOv.classList.add('active');
+                if (ta) setTimeout(function () { ta.focus(); }, 50);
+            };
+
+            // volver = true -> regresa al modal de revisión del arte
+            window.nexusCerrarModalCorreccion = function (volver) {
+                var corrOv = document.getElementById('nxCorreccionOverlay');
+                if (corrOv) corrOv.classList.remove('active');
+                _corrId = null; _corrOcupado = false;
+                if (volver && _solId) {
+                    var arteOv = document.getElementById('nxArteModalOverlay');
+                    if (arteOv) arteOv.classList.add('active');
+                }
+            };
+
+            function claveMesDe(key) {   // 'YYYY-MM-DD' -> 'YYYY-MM'
+                var m = String(key || '').match(/^(\d{4}-\d{2})/);
+                return m ? m[1] : null;
+            }
+
+            window.nexusEnviarCorreccion = async function () {
+                if (_corrOcupado || !_corrId) return;
+                var id = _corrId;
+                var sol = buscar(id);
+                var ta = document.getElementById('nxCorreccionTexto');
+                var texto = ta ? ta.value.trim().slice(0, 500) : '';
+                if (!sol || texto.length < 10) return;
+                if (String(sol.Estatus || '').toUpperCase() !== 'FINALIZADA' || estadoArte(sol) === 'SOLICITADA') {
+                    window.nexusCerrarModalCorreccion(false);
+                    window.nexusCerrarModalArte();
+                    return;
+                }
+                if (!window.fbRT || !window.dbRT || !window.fbStore || !window.db) {
+                    toast('error', 'Sin conexión con el servidor', 'Inténtalo de nuevo en unos segundos.', 4500);
+                    return;
+                }
+
+                var btn = document.getElementById('nxCorreccionEnviarBtn');
+                _corrOcupado = true;
+                if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...'; }
+
+                var refViva = window.fbRT.ref(window.dbRT, 'solicitudes_vivas/' + id);
+                var mesHallado = null;
+                var ahoraIso = new Date().toISOString();
+                var nombre = (typeof NexusSession !== 'undefined' && NexusSession.nombre) ? NexusSession.nombre : '';
+
+                try {
+                    // 1) Recupera el registro archivado en RTDB (conserva Post It, historial, etc.).
+                    //    Si no está, se reconstruye con los datos de Firestore.
+                    var meses = [];
+                    [claveMesDe(sol.fechaFinalizacionKey), (typeof nexusObtenerClaveMes === 'function' ? nexusObtenerClaveMes() : null)].forEach(function (m) {
+                        if (m && meses.indexOf(m) === -1) meses.push(m);
+                    });
+                    var base = null;
+                    for (var i = 0; i < meses.length && !base; i++) {
+                        var snap = await window.fbRT.get(window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + meses[i] + '/' + id));
+                        if (snap.exists()) { base = snap.val(); mesHallado = meses[i]; }
+                    }
+                    if (!base) base = Object.assign({}, sol);
+                    base.id = id;
+
+                    var cambios = {
+                        Estatus: 'PROCESANDO',
+                        FechaFinalizacion: '',
+                        fechaFinalizacionKey: '',
+                        ArteEstado: 'ARTE LISTO',          // al re-finalizar, el usuario podrá bajar la versión corregida
+                        CorreccionSolicitada: true,
+                        CorreccionTexto: texto,
+                        CorreccionFecha: ahoraIso,
+                        CorreccionPor: nombre
+                    };
+                    var nuevaViva = Object.assign({}, base, cambios, {
+                        CorreccionNumero: (Number(sol.CorreccionNumero) || 0) + 1
+                    });
+                    Object.keys(nuevaViva).forEach(function (k) { if (nuevaViva[k] === undefined) delete nuevaViva[k]; });
+
+                    // 2) Primero RTDB (así el staff la ve al instante); si Firestore falla se deshace
+                    await window.fbRT.set(refViva, nuevaViva);
+                    try {
+                        await window.fbStore.updateDoc(window.fbStore.doc(window.db, 'solicitudes', id),
+                            Object.assign({}, cambios, { CorreccionNumero: window.fbStore.increment(1) }));
+                    } catch (eFs) {
+                        try { await window.fbRT.remove(refViva); } catch (eRm) { /* sin acción */ }
+                        throw eFs;
+                    }
+
+                    // 3) Sale de finalizadas (no crítico) y se recalculan las estadísticas
+                    if (mesHallado) {
+                        try { await window.fbRT.remove(window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + mesHallado + '/' + id)); }
+                        catch (eFin) { console.warn('[NEXUS Artes] La corrección se envió, pero no se pudo retirar de finalizadas:', eFin); }
+                    }
+                    if (typeof nexusRecalcularYGuardarEstadisticas === 'function') {
+                        nexusRecalcularYGuardarEstadisticas(mesHallado || undefined).catch(function (e) {
+                            console.warn('[NEXUS Artes] No se pudo actualizar est_actuales tras la corrección:', e);
+                        });
+                    }
+
+                    toast('success', 'Corrección enviada', 'La solicitud ' + id + ' volvió al equipo de diseño.');
+                    window.nexusCerrarModalCorreccion(false);
+                    window.nexusCerrarModalArte();
+                } catch (e) {
+                    console.error('[NEXUS Artes] No se pudo enviar la corrección:', e);
+                    toast('error', 'No se pudo enviar la corrección', 'Inténtalo de nuevo en unos segundos.', 4500);
+                    _corrOcupado = false;
+                    if (btn) btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar corrección';
+                    window.nexusCorreccionContar();
+                }
+            };
+
+
             window.nexusCerrarModalArte = function () {
                 var overlay = document.getElementById('nxArteModalOverlay');
                 if (overlay) overlay.classList.remove('active');
+                var corrOv = document.getElementById('nxCorreccionOverlay');
+                if (corrOv) corrOv.classList.remove('active');
                 _solId = null; _clicks = {}; _ocupado = false;
             };
 
