@@ -9084,6 +9084,55 @@
             </div>
         </section>
 
+        <!-- Artes Finales Section (usuarios normales): tarjetas de artes listos para descargar,
+             separadas de la pestaña Solicitudes para no mezclar el flujo de descarga/corrección
+             con las solicitudes activas. -->
+        <section id="artes-finales" class="section hidden">
+            <div class="section-header">
+                <h2 class="section-title">Artes Finales</h2>
+                <p class="section-subtitle">Descarga o solicita corrección de tus artes ya finalizados</p>
+            </div>
+            <div class="solicitudes-container">
+                <style>
+                    .artes-finales-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                        gap: 14px;
+                    }
+                    .arte-final-card {
+                        background: var(--card-bg, #fff);
+                        border: 1px solid rgba(0,0,0,0.08);
+                        border-radius: 14px;
+                        padding: 16px 18px;
+                        cursor: pointer;
+                        transition: transform .15s ease, box-shadow .15s ease;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                    }
+                    .arte-final-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+                    .arte-final-card .afc-id { font-size: 12px; font-weight: 700; opacity: .6; margin-bottom: 6px; }
+                    .arte-final-card .afc-tipo { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
+                    .arte-final-card .afc-row { font-size: 13px; opacity: .8; margin-bottom: 4px; }
+                    .arte-final-card .afc-badge {
+                        display: inline-block; margin-top: 10px; padding: 4px 10px;
+                        border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+                    }
+                    .afc-badge.afc-listo { background: #d1fae5; color: #065f46; }
+                    .afc-badge.afc-descargado { background: #e5e7eb; color: #374151; }
+                    .afc-badge.afc-solicitada { background: #fef3c7; color: #92400e; }
+                    .artes-finales-empty {
+                        text-align: center; padding: 50px 20px; opacity: .6;
+                    }
+                    .artes-finales-empty i { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+                </style>
+                <div class="artes-finales-grid" id="artesFinalesGrid">
+                    <div class="artes-finales-empty" id="artesFinalesEmptyState">
+                        <i class="fas fa-images"></i>
+                        <p>No tienes artes finales pendientes de descarga por ahora.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Estadisticas Section -->
         <section id="estadisticas" class="section hidden">
             <div class="section-header">
@@ -14435,7 +14484,7 @@
         // Función para mostrar secciones
         function showSection(sectionId) {
             // Verificar autenticación para secciones protegidas
-            const seccionesProtegidas = ['formularios', 'solicitudes', 'estadisticas', 'reportes'];
+            const seccionesProtegidas = ['formularios', 'solicitudes', 'artes-finales', 'estadisticas', 'reportes'];
             if (seccionesProtegidas.includes(sectionId)) {
                 if (!NexusSession.user || !NexusSession.user.uid) {
                     showToast({
@@ -14520,6 +14569,14 @@
                         nexusInicializarModuloReportes();
                     }
                 }
+            }
+
+            // Listener de "Artes Finales": solo activo mientras el usuario está en esa pestaña
+            // (mismo patrón que el KPI de Staff en Estadísticas).
+            if (sectionId === 'artes-finales') {
+                if (typeof nexusEscucharArtesFinales === 'function') nexusEscucharArtesFinales();
+            } else {
+                if (typeof nexusDetenerArtesFinalesListener === 'function') nexusDetenerArtesFinalesListener();
             }
         }
 
@@ -18340,9 +18397,12 @@
             }
 
             var solicitudesRef = window.fbStore.collection(window.db, "solicitudes");
+            // Solo lo activo: en cuanto algo se finaliza o rechaza, sale de esta pestaña
+            // (lo finalizado con arte vive aparte en "Artes Finales" / artes_finales).
             var q = window.fbStore.query(
                 solicitudesRef,
-                window.fbStore.where("Unidad", "==", NexusSession.unidad)
+                window.fbStore.where("Unidad", "==", NexusSession.unidad),
+                window.fbStore.where("Estatus", "in", ["PENDIENTE", "PROCESANDO"])
             );
 
             _nexusUnsubscribeSolicitudes = window.fbStore.onSnapshot(q, function(snap) {
@@ -18379,6 +18439,138 @@
             console.log('[NEXUS] Renderizando tarjetas con', list.length, 'solicitudes');
             nexusRenderizarTarjetasPaginadas();
         }
+
+        // ============================================================
+        // PESTAÑA "ARTES FINALES" (usuarios normales)
+        // Índice liviano (colección artes_finales) de solicitudes finalizadas
+        // que sí tienen un arte descargable. Separa por completo la lógica de
+        // descarga/corrección de la pestaña Solicitudes (que solo muestra lo
+        // activo: PENDIENTE/PROCESANDO).
+        // ============================================================
+        var _nexusArtesFinalesData = [];
+        var _nexusUnsubArtes = null;
+        // Cache temporal de documentos completos de `solicitudes` traídos con
+        // getDoc al abrir una tarjeta, para que el modal ya existente
+        // (nexusAbrirModalArte, que busca en _nexusSolicitudesData) los encuentre
+        // aunque ya no vivan en esa lista (esta ahora solo trae PENDIENTE/PROCESANDO).
+        window._nexusArtesFinalesCache = {};
+
+        // "dd/mm/yyyy" (campo Fecha del evento) -> "yyyy-mm-dd", para comparar con nexusHoy()
+        function nexusFechaEventoADiaKey(fechaStr) {
+            if (!fechaStr) return null;
+            var partes = String(fechaStr).split('/');
+            if (partes.length !== 3) return null;
+            var d = partes[0].padStart(2, '0'), m = partes[1].padStart(2, '0'), y = partes[2];
+            if (!d || !m || !y) return null;
+            return y + '-' + m + '-' + d;
+        }
+
+        function nexusEscucharArtesFinales() {
+            if (_nexusUnsubArtes || !window.db || !window.fbStore) return;
+            if (!NexusSession.unidad) return;
+
+            var q = window.fbStore.query(
+                window.fbStore.collection(window.db, "artes_finales"),
+                window.fbStore.where("Unidad", "==", NexusSession.unidad)
+            );
+
+            _nexusUnsubArtes = window.fbStore.onSnapshot(q, function (snap) {
+                var hoy = nexusHoy();
+                var lista = [];
+                snap.forEach(function (docSnap) {
+                    var data = docSnap.data();
+                    data.id = docSnap.id;
+
+                    // Sin política TTL: en cuanto se detecta que ya pasó el día del evento,
+                    // se borra aquí mismo (1 escritura, sin lecturas extra: el doc ya vino
+                    // incluido en este snapshot). La tarjeta desaparece al instante.
+                    var diaEvento = nexusFechaEventoADiaKey(data.Fecha);
+                    if (diaEvento && diaEvento < hoy) {
+                        window.fbStore.deleteDoc(window.fbStore.doc(window.db, "artes_finales", data.id))
+                            .catch(function (err) { console.warn('[NEXUS] No se pudo purgar arte vencido:', data.id, err); });
+                        return; // no se agrega a la lista: ya venció
+                    }
+
+                    lista.push(data);
+                });
+
+                lista.sort(function (a, b) {
+                    var ma = String(a.id).match(/NEXUS-(\d+)/), mb = String(b.id).match(/NEXUS-(\d+)/);
+                    return (mb ? parseInt(mb[1], 10) : 0) - (ma ? parseInt(ma[1], 10) : 0);
+                });
+
+                _nexusArtesFinalesData = lista;
+                nexusRenderizarArtesFinales(lista);
+            }, function (error) {
+                console.error('[NEXUS] Error escuchando artes_finales:', error);
+            });
+        }
+
+        function nexusDetenerArtesFinalesListener() {
+            if (typeof _nexusUnsubArtes === 'function') _nexusUnsubArtes();
+            _nexusUnsubArtes = null;
+        }
+
+        function nexusRenderizarArtesFinales(lista) {
+            var grid = document.getElementById('artesFinalesGrid');
+            if (!grid) return;
+
+            if (!lista.length) {
+                grid.innerHTML = '<div class="artes-finales-empty" id="artesFinalesEmptyState">' +
+                    '<i class="fas fa-images"></i><p>No tienes artes finales pendientes de descarga por ahora.</p></div>';
+                return;
+            }
+
+            function esc(t) {
+                return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+                });
+            }
+
+            var badgeMap = {
+                'LISTO': { cls: 'afc-listo', label: '<i class="fas fa-download"></i> Listo para descargar' },
+                'DESCARGADO': { cls: 'afc-descargado', label: '<i class="fas fa-check"></i> Descargado' },
+                'DESCARGA SOLICITADA': { cls: 'afc-solicitada', label: '<i class="fas fa-clock"></i> Esperando autorización' }
+            };
+
+            var html = lista.map(function (a) {
+                var estado = badgeMap[String(a.ArteEstado || 'LISTO').toUpperCase()] || badgeMap['LISTO'];
+                return '<div class="arte-final-card" onclick="nexusAbrirArteFinalCard(\'' + esc(a.id) + '\')" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'){this.click();}">' +
+                    '<div class="afc-id">' + esc(a.id) + '</div>' +
+                    '<div class="afc-tipo">' + esc(a.Solicitud || 'Solicitud') + '</div>' +
+                    '<div class="afc-row"><i class="fas fa-user"></i> ' + esc(a.Usuario || 'Usuario') + '</div>' +
+                    '<div class="afc-row"><i class="fas fa-calendar-check"></i> Finalizado: ' + esc(a.FechaFinalizacion || '-') + '</div>' +
+                    '<span class="afc-badge ' + estado.cls + '">' + estado.label + '</span>' +
+                    '</div>';
+            }).join('');
+
+            grid.innerHTML = html;
+        }
+
+        // Clic en una tarjeta: 1 lectura directa a solicitudes/{id} (esa lista ya no
+        // trae las finalizadas), se cachea para que el modal existente la encuentre,
+        // y se abre el mismo modal de descarga/corrección de siempre.
+        window.nexusAbrirArteFinalCard = async function (id) {
+            if (!id || !window.db || !window.fbStore) return;
+            try {
+                var docSnap = await window.fbStore.getDoc(window.fbStore.doc(window.db, "solicitudes", id));
+                if (!docSnap.exists()) {
+                    if (typeof showToast === 'function') {
+                        showToast({ type: 'error', title: 'No encontrada', message: 'Esa solicitud ya no existe.', duration: 3500 });
+                    }
+                    return;
+                }
+                var data = docSnap.data();
+                data.id = id;
+                window._nexusArtesFinalesCache[id] = data;
+                window.nexusAbrirModalArte(id);
+            } catch (e) {
+                console.error('[NEXUS] No se pudo abrir el arte final:', id, e);
+                if (typeof showToast === 'function') {
+                    showToast({ type: 'error', title: 'Error', message: 'No se pudo cargar la solicitud.', duration: 3500 });
+                }
+            }
+        };
 
         // Helper: aplica los 5 valores a los elementos KPI de Solicitudes
         function _nexusSetSolKpis(total, pend, proc, fin, rech) {
@@ -18708,10 +18900,11 @@
                             menuHtml += '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'reportes\')">Reportes</a></li>';
                         }
                     } else {
-                        // Menú restringido para Usuarios Regulares (2 pestañas)
+                        // Menú restringido para Usuarios Regulares (3 pestañas)
                         menuHtml = 
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'formularios\')">Formularios</a></li>' +
-                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>';
+                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>' +
+                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'artes-finales\')">Artes Finales</a></li>';
                     }
                     menuHtml += 
                         '<li id="nav-user-item" class="nav-user-item">' +
@@ -19420,6 +19613,24 @@
                     ).catch(nexusAvisarFalloFirestore);
                 }
 
+                // Espejo liviano para la pestaña "Artes Finales" (solo si hay arte que
+                // descargar: Copy RRSS y Corrección de Nota de Prensa nunca traen
+                // ArteFinal, así que jamás generan documento aquí).
+                if (window.db && window.fbStore && datos.ArteFinal && String(datos.ArteFinal).trim() !== '') {
+                    window.fbStore.setDoc(
+                        window.fbStore.doc(window.db, "artes_finales", nexusSelectedRequestId),
+                        {
+                            id: nexusSelectedRequestId,
+                            Solicitud: datos.Solicitud || '',
+                            Usuario: datos.Usuario || '',
+                            Unidad: datos.Unidad || '',
+                            Fecha: datos.Fecha || '',
+                            FechaFinalizacion: fechaHoraFinalizacion,
+                            ArteEstado: 'LISTO'
+                        }
+                    ).catch(function (err) { console.warn('[NEXUS] No se pudo crear artes_finales:', err); });
+                }
+
                 // Si es Copy RRSS y hay redes seleccionadas, guardar en colección paralela
                 if (redesSeleccionadas && redesSeleccionadas.length > 0) {
                     try {
@@ -19961,6 +20172,37 @@
                 return result;
             } catch (error) {
                 console.warn('[NEXUS] Error de red al notificar por Telegram:', error);
+                throw error;
+            }
+        }
+
+        // Notifica por Telegram (backend de Apps Script, grupo de Diseño) un evento
+        // del ciclo de vida de un arte final ya entregado: descarga confirmada,
+        // solicitud de re-descarga, o corrección pedida. No crítica: si falla,
+        // solo se registra en consola.
+        // @param {Object} solicitudData - objeto de la solicitud (id, Solicitud, Unidad, Usuario)
+        // @param {'DESCARGA_OK'|'REDESCARGA_SOLICITADA'|'CORRECCION_SOLICITADA'} tipoEvento
+        // @param {string} detalle - motivo/texto opcional (redescarga o corrección)
+        async function nexusNotificarTelegramArte(solicitudData, tipoEvento, detalle = '') {
+            try {
+                const response = await fetch(NEXUS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'notificarArte',
+                        tipoEvento: tipoEvento,
+                        id: solicitudData.id,
+                        tipo: solicitudData.Solicitud,
+                        unidad: solicitudData.Unidad,
+                        usuario: (typeof NexusSession !== 'undefined' && NexusSession.nombre) ? NexusSession.nombre : (solicitudData.Usuario || ''),
+                        detalle: detalle
+                    }),
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                });
+                const result = await response.json();
+                if (!result.success) console.warn('[NEXUS] Backend reportó error al notificar arte:', result.error);
+                return result;
+            } catch (error) {
+                console.warn('[NEXUS] Error de red al notificar arte:', error);
                 throw error;
             }
         }
@@ -22481,6 +22723,11 @@
             function buscar(id) {
                 var lista = (typeof _nexusSolicitudesData !== 'undefined' && _nexusSolicitudesData) ? _nexusSolicitudesData : [];
                 for (var i = 0; i < lista.length; i++) { if (lista[i].id === id) return lista[i]; }
+                // No está entre las activas (PENDIENTE/PROCESANDO): puede venir de la
+                // pestaña "Artes Finales", que la cachea aquí tras un getDoc puntual.
+                if (window._nexusArtesFinalesCache && window._nexusArtesFinalesCache[id]) {
+                    return window._nexusArtesFinalesCache[id];
+                }
                 return null;
             }
 
@@ -22767,6 +23014,15 @@
                         });
                     }
 
+                    window.fbStore.deleteDoc(window.fbStore.doc(window.db, 'artes_finales', id))
+                        .catch(function (err) { console.warn('[NEXUS] No se pudo borrar de artes_finales:', err); });
+                    if (typeof nexusNotificarTelegramArte === 'function') {
+                        nexusNotificarTelegramArte(sol, 'CORRECCION_SOLICITADA', texto).catch(function (err) {
+                            console.warn('[NEXUS] No se pudo notificar corrección:', err);
+                        });
+                    }
+                    delete window._nexusArtesFinalesCache[id];
+
                     toast('success', 'Corrección enviada', 'La solicitud ' + id + ' volvió al equipo de diseño.');
                     window.nexusCerrarModalCorreccion(false);
                     window.nexusCerrarModalArte();
@@ -22824,6 +23080,15 @@
                         ArteDescargadoFecha: new Date().toISOString(),
                         ArteDescargas: window.fbStore.increment(1)
                     });
+
+                    window.fbStore.updateDoc(window.fbStore.doc(window.db, 'artes_finales', id), { ArteEstado: 'DESCARGADO' })
+                        .catch(function (err) { console.warn('[NEXUS] No se pudo actualizar artes_finales:', err); });
+                    if (typeof nexusNotificarTelegramArte === 'function') {
+                        nexusNotificarTelegramArte(sol, 'DESCARGA_OK').catch(function (err) {
+                            console.warn('[NEXUS] No se pudo notificar descarga:', err);
+                        });
+                    }
+
                     toast('success', 'Descarga registrada', 'La solicitud ' + id + ' quedó como descargada.');
                     window.nexusCerrarModalArte();
                 } catch (e) {
@@ -22870,6 +23135,15 @@
                         try { await window.fbRT.remove(refPeticion); } catch (eRm) { /* sin acción */ }
                         throw eFs;
                     }
+
+                    window.fbStore.updateDoc(window.fbStore.doc(window.db, 'artes_finales', id), { ArteEstado: 'DESCARGA SOLICITADA' })
+                        .catch(function (err) { console.warn('[NEXUS] No se pudo actualizar artes_finales:', err); });
+                    if (typeof nexusNotificarTelegramArte === 'function') {
+                        nexusNotificarTelegramArte(sol, 'REDESCARGA_SOLICITADA', motivo).catch(function (err) {
+                            console.warn('[NEXUS] No se pudo notificar re-descarga:', err);
+                        });
+                    }
+
                     toast('success', 'Solicitud enviada', 'El administrador revisará tu petición de descarga.');
                     window.nexusCerrarModalArte();
                 } catch (e) {
@@ -22970,6 +23244,8 @@
                 var refPeticion = window.fbRT.ref(window.dbRT, NODO_REDESCARGA + '/' + id);
                 try {
                     await window.fbStore.updateDoc(window.fbStore.doc(window.db, 'solicitudes', id), { ArteEstado: 'ARTE LISTO' });
+                    window.fbStore.updateDoc(window.fbStore.doc(window.db, 'artes_finales', id), { ArteEstado: 'LISTO' })
+                        .catch(function (err) { console.warn('[NEXUS] No se pudo actualizar artes_finales tras autorizar:', err); });
                 } catch (e) {
                     if (e && e.code === 'not-found') {   // la solicitud fue purgada: se limpia el registro sobrante
                         await window.fbRT.remove(refPeticion);
