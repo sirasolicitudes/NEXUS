@@ -2616,6 +2616,76 @@
             border-color: #16213e;
         }
 
+        /* Estilo específico para Cumpleaños */
+        .cumpleanos-item .item-overlay {
+            background: linear-gradient(to top, #d600d6 0%, rgba(214, 0, 214, 0.8) 40%, rgba(214, 0, 214, 0.3) 70%, rgba(214, 0, 214, 0) 100%);
+        }
+
+        /* Estilos específicos para el formulario de Cumpleaños */
+        #cumpleanos-form .btn-primary {
+            background: #d600d6;
+            box-shadow: 0 4px 15px rgba(214, 0, 214, 0.3);
+        }
+
+        #cumpleanos-form .btn-primary:hover {
+            background: #af00af;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 0, 214, 0.4);
+        }
+
+        #cumpleanos-form .form-input:focus {
+            border-color: #d600d6;
+            box-shadow: 0 0 0 3px rgba(214, 0, 214, 0.1);
+        }
+
+        #cumpleanos-form .form-input.field-error {
+            border-color: #fb8500;
+            box-shadow: 0 0 0 3px rgba(251, 133, 0, 0.1);
+        }
+
+        .cumple-genero-grid {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cumple-genero-btn {
+            flex: 1;
+            min-width: 160px;
+            padding: 18px 20px;
+            background: var(--color-light);
+            border: 2px solid rgba(214, 0, 214, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-dark);
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .cumple-genero-btn:hover {
+            background: rgba(214, 0, 214, 0.15);
+            border-color: #d600d6;
+        }
+
+        .cumple-genero-btn.selected[data-genero="Masculino"] {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            border-color: #1976d2;
+        }
+
+        .cumple-genero-btn.selected[data-genero="Femenino"] {
+            background: linear-gradient(135deg, #ff4fd8 0%, #d600d6 100%);
+            color: white;
+            border-color: #d600d6;
+        }
+
         /* Estilo específico para Certificado o Reconocimiento */
         .certificado-item .item-overlay {
             background: linear-gradient(to top, #4a6eb0 0%, rgba(74, 110, 176, 0.8) 40%, rgba(74, 110, 176, 0.3) 70%, rgba(74, 110, 176, 0) 100%);
@@ -3234,46 +3304,6 @@
 
         .obituario-nombre-input::placeholder {
             color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Estilo específico para Vacunación */
-        .vacunacion-item .item-overlay {
-            background: linear-gradient(to top, #f1c40f 0%, rgba(241, 196, 15, 0.8) 40%, rgba(241, 196, 15, 0.3) 70%, rgba(241, 196, 15, 0) 100%);
-        }
-
-        /* Estilo específico para Efemérides */
-        .efemerides-item .item-overlay {
-            background: linear-gradient(to top, #f1c40f 0%, rgba(241, 196, 15, 0.8) 40%, rgba(241, 196, 15, 0.3) 70%, rgba(241, 196, 15, 0) 100%);
-        }
-
-        /* Estilo específico para Obituario */
-        .obituario-item .item-overlay {
-            background: linear-gradient(to top, #16213e 0%, rgba(22, 33, 62, 0.8) 40%, rgba(22, 33, 62, 0.3) 70%, rgba(22, 33, 62, 0) 100%);
-        }
-
-        /* Estilo específico para Certificado o Reconocimiento */
-        .certificado-item .item-overlay {
-            background: linear-gradient(to top, #4a6eb0 0%, rgba(74, 110, 176, 0.8) 40%, rgba(74, 110, 176, 0.3) 70%, rgba(74, 110, 176, 0) 100%);
-        }
-
-        /* Estilo específico para Actividades de Aprendizaje */
-        .aprendizaje-item .item-overlay {
-            background: linear-gradient(to top, #ec7063 0%, rgba(236, 112, 99, 0.8) 40%, rgba(236, 112, 99, 0.3) 70%, rgba(236, 112, 99, 0) 100%);
-        }
-
-        /* Estilo específico para Actividades Deportivas */
-        .deportivas-item .item-overlay {
-            background: linear-gradient(to top, #0a9396 0%, rgba(10, 147, 150, 0.8) 40%, rgba(10, 147, 150, 0.3) 70%, rgba(10, 147, 150, 0) 100%);
-        }
-
-        /* Estilo específico para Textiles */
-        .textiles-item .item-overlay {
-            background: linear-gradient(to top, #CD853F 0%, rgba(205, 133, 63, 0.8) 40%, rgba(205, 133, 63, 0.3) 70%, rgba(205, 133, 63, 0) 100%);
-        }
-
-        /* Estilo específico para Pendón */
-        .pendon-item .item-overlay {
-            background: linear-gradient(to top, #9B7BFF 0%, rgba(155, 123, 255, 0.8) 40%, rgba(155, 123, 255, 0.3) 70%, rgba(155, 123, 255, 0) 100%);
         }
 
         /* Estilo específico para Corrección de Nota de Prensa */
@@ -6065,10 +6095,10 @@
             background: linear-gradient(135deg, #2d6a4f 0%, #40916c 50%, #52b788 100%) !important;
             border-color: #2d6a4f !important;
         }
-        /* Copy RRSS: Celeste a azul profundo */
+        /* Copy RRSS: Degradado con los colores clásicos de Instagram */
         .theme-copy-rrss {
-            background: linear-gradient(135deg, #4a6eb0 0%, #114c5f 100%) !important;
-            border-color: #9cd2d3 !important;
+            background: linear-gradient(45deg, #405de6 0%, #5851db 15%, #833ab4 35%, #c13584 55%, #e1306c 70%, #fd1d1d 85%, #f77737 100%) !important;
+            border-color: #c13584 !important;
         }
         /* Aprendizaje (Charlas): Rojo carmesÃ­ */
         .theme-charlas {
@@ -6110,10 +6140,10 @@
             background: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #f1c40f 100%) !important;
             border-color: #d35400 !important;
         }
-        /* Copy RRSS - Gradiente celeste y azul como en SIRA */
+        /* Copy RRSS - Degradado con los colores clásicos de Instagram */
         .theme-copy-rrss {
-            background: linear-gradient(135deg, #87CEEB 0%, #0799b6 100%) !important;
-            border-color: #87CEEB !important;
+            background: linear-gradient(45deg, #405de6 0%, #5851db 15%, #833ab4 35%, #c13584 55%, #e1306c 70%, #fd1d1d 85%, #f77737 100%) !important;
+            border-color: #c13584 !important;
         }
         /* Pendón - Gradiente púrpura como en SIRA */
         .theme-pendon {
@@ -6139,6 +6169,26 @@
         .theme-deportivas {
             background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important;
             border-color: #2ecc71 !important;
+        }
+        /* Jornadas (Vida Saludable con Ipasme, Jornada de Atención Médica Integral, Jornada Conjunta): azul institucional vivo */
+        .theme-jornadas {
+            background: linear-gradient(135deg, #0554f2 0%, #2f80ed 50%, #56ccf2 100%) !important;
+            border-color: #0554f2 !important;
+        }
+        /* Captación Quirúrgica (General, Pediátrica, Oftalmológica): verde quirófano */
+        .theme-captacion {
+            background: linear-gradient(135deg, #003d33 0%, #006472 50%, #00b4a6 100%) !important;
+            border-color: #006472 !important;
+        }
+        /* Jornada de Vacunación: ámbar a amarillo brillante */
+        .theme-vacunacion {
+            background: linear-gradient(135deg, #f9a825 0%, #f1c40f 50%, #fff176 100%) !important;
+            border-color: #f9a825 !important;
+        }
+        /* Cumpleaños: magenta festivo */
+        .theme-cumpleanos {
+            background: linear-gradient(135deg, #ad00ad 0%, #d600d6 50%, #ff6ec7 100%) !important;
+            border-color: #ad00ad !important;
         }
         /* Estado finalizado/rechazado atenÃºa sutilmente la tarjeta */
         .theme-finalizada { opacity: 0.88; }
@@ -6675,6 +6725,23 @@
                 <h2 class="section-title">Formularios</h2>
                 <p class="section-subtitle">Selecciona el tipo de formulario que necesitas</p>
             </div>
+            <!-- Anuncio (se llena desde Apps Script; se oculta si no hay anuncio vigente) -->
+            <div id="nxAnuncioBanner" class="nx-anuncio-overlay" style="display:none;">
+                <div class="nx-anuncio-card">
+                    <button type="button" class="nx-anuncio-x" onclick="nexusCerrarAnuncioFormularios()" aria-label="Cerrar anuncio" title="Cerrar">✕</button>
+                    <div class="nx-anuncio-head">
+                        <div class="nx-anuncio-head-title">ANUNCIOS <span>NEXUS</span></div>
+                        <div class="nx-anuncio-orb">
+                            <canvas class="auth-bh-canvas" data-tint="0.35,0.55,1"></canvas>
+                        </div>
+                    </div>
+                    <div class="nx-anuncio-body">
+                        <h3 id="nxAnuncioTituloTxt" class="nx-anuncio-titulo"></h3>
+                        <p id="nxAnuncioCuerpoTxt" class="nx-anuncio-cuerpo"></p>
+                        <img id="nxAnuncioImgTxt" class="nx-anuncio-img" alt="Anuncio" style="display:none;">
+                    </div>
+                </div>
+            </div>
             <div class="formularios-container">
                 <div class="cards-grid">
                     <!-- Tarjeta: Vida Saludable -->
@@ -6825,6 +6892,23 @@
                                         <span class="favorite-tooltip">Marcar como favorito</span>
                                     </button>
                                     <a href="#" onclick="showObituarioForm()" class="item_button">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta: Cumpleaños -->
+                    <div class="item cumpleanos-item" data-form="cumpleanos">
+                        <div class="item-image-wrapper">
+                            <img src="assets/images/cumple.png" alt="Cumpleaños" width="332" height="378">
+                            <div class="item-overlay cumpleanos-overlay">
+                                <div class="item_title_main">Cumpleaños</div>
+                                <div class="button-container">
+                                    <button class="favorite-btn" onclick="toggleFavorite(this, 'cumpleanos')">
+                                        <i class="fas fa-star"></i>
+                                        <span class="favorite-tooltip">Marcar como favorito</span>
+                                    </button>
+                                    <a href="#" onclick="showCumpleanosForm()" class="item_button">Acceder</a>
                                 </div>
                             </div>
                         </div>
@@ -7858,6 +7942,103 @@
                             <div>
                                 <label class="form-label">Correo Electrónico *</label>
                                 <input type="email" id="obituario-correo" class="form-input" placeholder="Para envío de arte final">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="showSection('formularios')">Volver</button>
+                        <button type="submit" class="btn-primary">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Cumpleaños Form Section -->
+        <section id="cumpleanos-form" class="section hidden">
+            <div class="form-background">
+                <div class="animated-gradient">
+                    <div class="particles"></div>
+                    <div class="subtle-glow"></div>
+                </div>
+            </div>
+            <div class="section-header">
+                <h2 class="section-title">🎂 Solicitud de Cumpleaños</h2>
+                <p class="section-subtitle">Solicita la tarjeta de cumpleaños para el homenajeado</p>
+            </div>
+            <div class="formularios-container">
+                <form id="cumpleanos-formulario" class="medical-form">
+                    <!-- Campo oculto para guardar el tipo de formulario -->
+                    <input type="hidden" id="cumpleanos-form-type" name="form-type" value="Cumpleaños">
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🏥 Región *</h3>
+                        <div class="region-grid" id="cumpleanos-region-grid">
+                            <!-- Las regiones se generan dinámicamente -->
+                        </div>
+                    </div>
+
+                    <div class="form-section hidden" id="cumpleanos-unidad-section">
+                        <h3 class="form-section-title">🏥 Unidad *</h3>
+                        <div class="unidad-grid" id="cumpleanos-unidad-grid">
+                            <!-- Las unidades se generan dinámicamente según la región -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🚻 Sexo del Homenajeado *</h3>
+                        <div class="cumple-genero-grid" id="cumpleanos-genero-grid">
+                            <div class="cumple-genero-btn" id="cumpleanos-btn-masculino" data-genero="Masculino" onclick="selectCumpleanosGenero('Masculino', this)">
+                                <span style="font-size: 1.3rem;">👨</span>
+                                <span>Hombre</span>
+                            </div>
+                            <div class="cumple-genero-btn" id="cumpleanos-btn-femenino" data-genero="Femenino" onclick="selectCumpleanosGenero('Femenino', this)">
+                                <span style="font-size: 1.3rem;">👩</span>
+                                <span>Mujer</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🎉 Nombre del Homenajeado *</h3>
+                        <input type="text" id="cumpleanos-nombre" class="form-input" placeholder="Nombre y apellido del homenajeado">
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📅 Fecha del Cumpleaños *</h3>
+                        <input type="date" id="cumpleanos-fecha" class="form-input">
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">✏️ Observaciones</h3>
+                        <textarea id="cumpleanos-observaciones" class="form-input" rows="3" placeholder="Si deseas, deja un mensaje o cualquier información adicional para la tarjeta"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📱✉️ Datos de Contacto</h3>
+                        <div class="contacto-grid">
+                            <div>
+                                <label class="form-label">Número de Teléfono</label>
+                                <input type="tel" id="cumpleanos-telefono" class="form-input" placeholder="04xx 1234567">
+                            </div>
+                            <div>
+                                <label class="form-label">Correo Electrónico *</label>
+                                <input type="email" id="cumpleanos-correo" class="form-input" placeholder="Para envío de arte final">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📸 Foto del Homenajeado</h3>
+                        <div class="info-box">
+                            ⚠️ Si el registro fotográfico enviado no cumple con las condiciones de calidad para la solicitud, será sustituido por material de archivo.
+                        </div>
+                        <div class="photo-grid">
+                            <div class="upload-box">
+                                <label for="cumpleanos-foto1" class="upload-label">✚ SUBIR FOTO</label>
+                                <input type="file" id="cumpleanos-foto1" class="hidden" accept="image/*" onchange="handleFile(this, 'cumpleanos-preview1', 'cumpleanos-remove1')">
+                                <img id="cumpleanos-preview1" class="preview">
+                                <button type="button" id="cumpleanos-remove1" class="remove-btn" onclick="clearFile('cumpleanos-foto1', 'cumpleanos-preview1', 'cumpleanos-remove1')">×</button>
                             </div>
                         </div>
                     </div>
@@ -9060,6 +9241,377 @@
                     .solicitudes-kpi-card.kpi-rech { background: linear-gradient(135deg, #c1121f, #780000); }
                 </style>
 
+                <style>
+                    /* ===== Buscador de Solicitudes (por Unidad / Código) + Filtro por Tipo ===== */
+                    .solbusc-toolbar {
+                        display: block;
+                        width: 100%;
+                        margin-bottom: 20px;
+                        position: relative;
+                    }
+                    #solBuscadorPoda {
+                        position: relative;
+                        display: block;
+                        width: 100%;
+                    }
+                    .solbusc-white,
+                    .solbusc-border,
+                    .solbusc-darkBorderBg,
+                    .solbusc-glow {
+                        position: absolute;
+                        overflow: hidden;
+                        z-index: 0;
+                        border-radius: 12px;
+                        filter: blur(3px);
+                    }
+                    .solbusc-input {
+                        background-color: #010201;
+                        border: none;
+                        width: 100%;
+                        display: block;
+                        box-sizing: border-box;
+                        height: 56px;
+                        border-radius: 10px;
+                        color: white;
+                        padding-inline: 52px;
+                        font-size: 15px;
+                        position: relative;
+                        z-index: 1;
+                    }
+                    .solbusc-input::placeholder { color: #c0b9c0; }
+                    .solbusc-input:focus { outline: none; }
+
+                    #solBuscadorMain:focus-within > #solBuscadorInputMask { display: none; }
+
+                    #solBuscadorInputMask {
+                        pointer-events: none;
+                        width: 100px;
+                        height: 20px;
+                        position: absolute;
+                        background: linear-gradient(90deg, transparent, black);
+                        top: 18px;
+                        left: 63px;
+                        z-index: 1;
+                    }
+                    #solBuscadorPinkMask {
+                        pointer-events: none;
+                        width: 30px;
+                        height: 20px;
+                        position: absolute;
+                        background: #cf30aa;
+                        top: 10px;
+                        left: 5px;
+                        filter: blur(20px);
+                        opacity: 0.8;
+                        transition: all 2s;
+                        z-index: 1;
+                    }
+                    #solBuscadorMain:hover > #solBuscadorPinkMask { opacity: 0; }
+
+                    .solbusc-white {
+                        inset: -3px;
+                        border-radius: 10px;
+                        filter: blur(2px);
+                    }
+                    .solbusc-white::before {
+                        content: "";
+                        z-index: -2;
+                        text-align: center;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) rotate(83deg);
+                        position: absolute;
+                        width: 600px;
+                        height: 600px;
+                        background-repeat: no-repeat;
+                        background-position: 0 0;
+                        filter: brightness(1.4);
+                        background-image: conic-gradient(
+                            rgba(0, 0, 0, 0) 0%,
+                            #a099d8,
+                            rgba(0, 0, 0, 0) 8%,
+                            rgba(0, 0, 0, 0) 50%,
+                            #dfa2da,
+                            rgba(0, 0, 0, 0) 58%
+                        );
+                        transition: all 2s;
+                    }
+                    .solbusc-border {
+                        inset: -1px;
+                        border-radius: 11px;
+                        filter: blur(0.5px);
+                    }
+                    .solbusc-border::before {
+                        content: "";
+                        z-index: -2;
+                        text-align: center;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) rotate(70deg);
+                        position: absolute;
+                        width: 600px;
+                        height: 600px;
+                        filter: brightness(1.3);
+                        background-repeat: no-repeat;
+                        background-position: 0 0;
+                        background-image: conic-gradient(
+                            #1c191c,
+                            #402fb5 5%,
+                            #1c191c 14%,
+                            #1c191c 50%,
+                            #cf30aa 60%,
+                            #1c191c 64%
+                        );
+                        transition: all 2s;
+                    }
+                    .solbusc-darkBorderBg {
+                        inset: -4px;
+                        border-radius: 14px;
+                    }
+                    .solbusc-darkBorderBg::before {
+                        content: "";
+                        z-index: -2;
+                        text-align: center;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) rotate(82deg);
+                        position: absolute;
+                        width: 600px;
+                        height: 600px;
+                        background-repeat: no-repeat;
+                        background-position: 0 0;
+                        background-image: conic-gradient(
+                            rgba(0, 0, 0, 0),
+                            #18116a,
+                            rgba(0, 0, 0, 0) 10%,
+                            rgba(0, 0, 0, 0) 50%,
+                            #6e1b60,
+                            rgba(0, 0, 0, 0) 60%
+                        );
+                        transition: all 2s;
+                    }
+
+                    /* Nota: aquí solo se define UNA vez el ángulo final de cada capa al hover/focus.
+                       (el snippet original traía cada regla duplicada con dos ángulos distintos
+                       seguidos; la segunda siempre gana por cascada y la primera queda muerta —
+                       el mismo patrón de bug de CSS duplicado que ya limpiamos en las tarjetas,
+                       así que se dejó directamente sin duplicar). */
+                    #solBuscadorPoda:hover > .solbusc-darkBorderBg::before { transform: translate(-50%, -50%) rotate(-98deg); }
+                    #solBuscadorPoda:hover > .solbusc-glow::before { transform: translate(-50%, -50%) rotate(-120deg); }
+                    #solBuscadorPoda:hover > .solbusc-white::before { transform: translate(-50%, -50%) rotate(-97deg); }
+                    #solBuscadorPoda:hover > .solbusc-border::before { transform: translate(-50%, -50%) rotate(-110deg); }
+
+                    #solBuscadorPoda:focus-within > .solbusc-darkBorderBg::before { transform: translate(-50%, -50%) rotate(442deg); transition: all 4s; }
+                    #solBuscadorPoda:focus-within > .solbusc-glow::before { transform: translate(-50%, -50%) rotate(420deg); transition: all 4s; }
+                    #solBuscadorPoda:focus-within > .solbusc-white::before { transform: translate(-50%, -50%) rotate(443deg); transition: all 4s; }
+                    #solBuscadorPoda:focus-within > .solbusc-border::before { transform: translate(-50%, -50%) rotate(430deg); transition: all 4s; }
+
+                    .solbusc-glow {
+                        overflow: hidden;
+                        filter: blur(30px);
+                        opacity: 0.4;
+                        inset: -22px;
+                        border-radius: 20px;
+                    }
+                    .solbusc-glow::before {
+                        content: "";
+                        z-index: -2;
+                        text-align: center;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) rotate(60deg);
+                        position: absolute;
+                        width: 999px;
+                        height: 999px;
+                        background-repeat: no-repeat;
+                        background-position: 0 0;
+                        background-image: conic-gradient(
+                            #000,
+                            #402fb5 5%,
+                            #000 38%,
+                            #000 50%,
+                            #cf30aa 60%,
+                            #000 87%
+                        );
+                        transition: all 2s;
+                    }
+
+                    #solBuscadorMain { position: relative; width: 100%; display: block; }
+                    #solBuscadorSearchIcon { position: absolute; left: 18px; top: 16px; z-index: 1; pointer-events: none; }
+
+                    #solBuscadorFilterIcon {
+                        position: absolute;
+                        top: 8px;
+                        right: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 2;
+                        height: 40px;
+                        width: 38px;
+                        isolation: isolate;
+                        overflow: hidden;
+                        border-radius: 10px;
+                        background: linear-gradient(180deg, #161329, black, #1d1b4b);
+                        border: 1px solid transparent;
+                        cursor: pointer;
+                        padding: 0;
+                    }
+                    #solBuscadorFilterIcon.solbusc-filtro-activo { border-color: #f1c40f; }
+                    .solbusc-filterBorder {
+                        height: 42px;
+                        width: 40px;
+                        position: absolute;
+                        overflow: hidden;
+                        top: 7px;
+                        right: 7px;
+                        border-radius: 10px;
+                        z-index: 1;
+                        pointer-events: none;
+                    }
+                    .solbusc-filterBorder::before {
+                        content: "";
+                        text-align: center;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) rotate(90deg);
+                        position: absolute;
+                        width: 600px;
+                        height: 600px;
+                        background-repeat: no-repeat;
+                        background-position: 0 0;
+                        filter: brightness(1.35);
+                        background-image: conic-gradient(
+                            rgba(0, 0, 0, 0),
+                            #3d3a4f,
+                            rgba(0, 0, 0, 0) 50%,
+                            rgba(0, 0, 0, 0) 50%,
+                            #3d3a4f,
+                            rgba(0, 0, 0, 0) 100%
+                        );
+                        animation: solbuscRotate 4s linear infinite;
+                    }
+                    @keyframes solbuscRotate { 100% { transform: translate(-50%, -50%) rotate(450deg); } }
+
+                    .solbusc-filter-dot {
+                        position: absolute;
+                        top: 4px;
+                        right: 4px;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background: #f1c40f;
+                        box-shadow: 0 0 6px #f1c40f;
+                    }
+
+                    /* Menú desplegable de tipos */
+                    .solbusc-tipo-dropdown {
+                        display: none;
+                        position: absolute;
+                        top: 64px;
+                        right: 0;
+                        z-index: 50;
+                        background: #14121f;
+                        border: 1px solid #3d3a4f;
+                        border-radius: 12px;
+                        padding: 8px;
+                        width: 260px;
+                        max-width: calc(100vw - 32px);
+                        max-height: 340px;
+                        overflow-y: auto;
+                        box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+                    }
+                    .solbusc-tipo-dropdown.abierto { display: block; }
+                    .solbusc-tipo-item {
+                        display: block;
+                        width: 100%;
+                        text-align: left;
+                        background: transparent;
+                        border: none;
+                        color: #e6e1e8;
+                        padding: 9px 12px;
+                        border-radius: 8px;
+                        font-size: 13px;
+                        cursor: pointer;
+                        font-family: inherit;
+                    }
+                    .solbusc-tipo-item:hover { background: rgba(255,255,255,0.08); }
+                    .solbusc-tipo-item.activo { background: linear-gradient(135deg, #402fb5, #cf30aa); color: #fff; font-weight: 600; }
+                    .solbusc-tipo-item.solbusc-tipo-todos { border-bottom: 1px solid #3d3a4f; margin-bottom: 4px; padding-bottom: 10px; font-weight: 700; }
+
+                    /* Celular: se reduce (altura, tipografía, íconos) en vez de desbordar */
+                    @media (max-width: 480px) {
+                        .solbusc-input { height: 48px; font-size: 14px; padding-inline: 44px; }
+                        #solBuscadorInputMask { top: 14px; left: 54px; }
+                        #solBuscadorFilterIcon { height: 34px; width: 32px; }
+                        .solbusc-filterBorder { height: 36px; width: 34px; }
+                        #solBuscadorSearchIcon { left: 14px; top: 12px; }
+                        #solBuscadorSearchIcon svg { width: 20px; height: 20px; }
+                        .solbusc-glow { inset: -12px; }
+                        .solbusc-tipo-dropdown { top: 56px; }
+                    }
+                </style>
+
+                <div class="solbusc-toolbar">
+                    <div id="solBuscadorPoda">
+                        <div class="solbusc-glow"></div>
+                        <div class="solbusc-darkBorderBg"></div>
+                        <div class="solbusc-darkBorderBg"></div>
+                        <div class="solbusc-darkBorderBg"></div>
+                        <div class="solbusc-white"></div>
+                        <div class="solbusc-border"></div>
+                        <div id="solBuscadorMain">
+                            <input id="solBuscadorInput" placeholder="Buscar por unidad o código..." type="text" name="text" class="solbusc-input" autocomplete="off" oninput="nexusBuscarSolicitudes(this.value)" />
+                            <div id="solBuscadorInputMask"></div>
+                            <div id="solBuscadorPinkMask"></div>
+                            <div class="solbusc-filterBorder"></div>
+                            <button type="button" id="solBuscadorFilterIcon" title="Filtrar por tipo de solicitud" onclick="nexusToggleFiltroTipo(event)">
+                                <svg preserveAspectRatio="none" height="27" width="27" viewBox="4.8 4.56 14.832 15.408" fill="none">
+                                    <path d="M8.16 6.65002H15.83C16.47 6.65002 16.99 7.17002 16.99 7.81002V9.09002C16.99 9.56002 16.7 10.14 16.41 10.43L13.91 12.64C13.56 12.93 13.33 13.51 13.33 13.98V16.48C13.33 16.83 13.1 17.29 12.81 17.47L12 17.98C11.24 18.45 10.2 17.92 10.2 16.99V13.91C10.2 13.5 9.97 12.98 9.73 12.69L7.52 10.36C7.23 10.08 7 9.55002 7 9.20002V7.87002C7 7.17002 7.52 6.65002 8.16 6.65002Z" stroke="#d6d6e6" stroke-width="1" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                                <span class="solbusc-filter-dot" id="solBuscadorFiltroDot" style="display:none;"></span>
+                            </button>
+                            <div id="solBuscadorSearchIcon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" height="24" fill="none">
+                                    <circle stroke="url(#solBuscSearchGrad)" r="8" cy="11" cx="11"></circle>
+                                    <line stroke="url(#solBuscSearchGradLine)" y2="16.65" y1="22" x2="16.65" x1="22"></line>
+                                    <defs>
+                                        <linearGradient gradientTransform="rotate(50)" id="solBuscSearchGrad">
+                                            <stop stop-color="#f8e7f8" offset="0%"></stop>
+                                            <stop stop-color="#b6a9b7" offset="50%"></stop>
+                                        </linearGradient>
+                                        <linearGradient id="solBuscSearchGradLine">
+                                            <stop stop-color="#b6a9b7" offset="0%"></stop>
+                                            <stop stop-color="#837484" offset="50%"></stop>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="solbusc-tipo-dropdown" id="solBuscadorTipoDropdown">
+                            <button type="button" class="solbusc-tipo-item solbusc-tipo-todos" onclick="nexusFiltrarPorTipo('')">Todos los tipos</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Actividades de Aprendizaje" onclick="nexusFiltrarPorTipo('Actividades de Aprendizaje')">Actividades de Aprendizaje</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Actividades Deportivas" onclick="nexusFiltrarPorTipo('Actividades Deportivas')">Actividades Deportivas</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Captación Quirúrgica" onclick="nexusFiltrarPorTipo('Captación Quirúrgica')">Captación Quirúrgica</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Captación Quirúrgica Oftalmológica" onclick="nexusFiltrarPorTipo('Captación Quirúrgica Oftalmológica')">Captación Quirúrgica Oftalmológica</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Captación Quirúrgica Pediátrica" onclick="nexusFiltrarPorTipo('Captación Quirúrgica Pediátrica')">Captación Quirúrgica Pediátrica</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Certificado o Reconocimiento" onclick="nexusFiltrarPorTipo('Certificado o Reconocimiento')">Certificado o Reconocimiento</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Copy RRSS" onclick="nexusFiltrarPorTipo('Copy RRSS')">Copy RRSS</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Corrección Nota de Prensa" onclick="nexusFiltrarPorTipo('Corrección Nota de Prensa')">Corrección Nota de Prensa</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Cumpleaños" onclick="nexusFiltrarPorTipo('Cumpleaños')">Cumpleaños</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Diseño de Pendón" onclick="nexusFiltrarPorTipo('Diseño de Pendón')">Diseño de Pendón</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Diseño de Textiles" onclick="nexusFiltrarPorTipo('Diseño de Textiles')">Diseño de Textiles</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Efemérides" onclick="nexusFiltrarPorTipo('Efemérides')">Efemérides</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Jornada de Atención Médica Integral" onclick="nexusFiltrarPorTipo('Jornada de Atención Médica Integral')">Jornada de Atención Médica Integral</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Jornada Conjunta" onclick="nexusFiltrarPorTipo('Jornada Conjunta')">Jornada Conjunta</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Jornada de Vacunación" onclick="nexusFiltrarPorTipo('Jornada de Vacunación')">Jornada de Vacunación</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Obituario" onclick="nexusFiltrarPorTipo('Obituario')">Obituario</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Otros" onclick="nexusFiltrarPorTipo('Otros')">Otros</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Vida Saludable con Ipasme" onclick="nexusFiltrarPorTipo('Vida Saludable con Ipasme')">Vida Saludable con Ipasme</button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Grid de Tarjetas (5 columnas por fila) -->
                 <div class="solicitudes-cards-grid" id="solicitudesCardsGrid">
                     <div class="solicitudes-empty-state" id="solicitudesEmptyState">
@@ -9086,7 +9638,8 @@
 
         <!-- Artes Finales Section (usuarios normales): tarjetas de artes listos para descargar,
              separadas de la pestaña Solicitudes para no mezclar el flujo de descarga/corrección
-             con las solicitudes activas. -->
+             con las solicitudes activas. Reutiliza el mismo diseño de tarjeta (degradados por
+             tipo de solicitud) que la pestaña Solicitudes. -->
         <section id="artes-finales" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Artes Finales</h2>
@@ -9094,37 +9647,23 @@
             </div>
             <div class="solicitudes-container">
                 <style>
-                    .artes-finales-grid {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-                        gap: 14px;
+                    .afc-badge-listo {
+                        background: #ffd666 !important; color: #3b2a00 !important;
+                        border-color: rgba(255,255,255,0.7) !important; text-shadow: none !important;
+                        box-shadow: 0 2px 10px rgba(255,214,102,0.55) !important;
                     }
-                    .arte-final-card {
-                        background: var(--card-bg, #fff);
-                        border: 1px solid rgba(0,0,0,0.08);
-                        border-radius: 14px;
-                        padding: 16px 18px;
-                        cursor: pointer;
-                        transition: transform .15s ease, box-shadow .15s ease;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                    .afc-badge-descargado {
+                        background: rgba(255,255,255,0.22) !important;
                     }
-                    .arte-final-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
-                    .arte-final-card .afc-id { font-size: 12px; font-weight: 700; opacity: .6; margin-bottom: 6px; }
-                    .arte-final-card .afc-tipo { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
-                    .arte-final-card .afc-row { font-size: 13px; opacity: .8; margin-bottom: 4px; }
-                    .arte-final-card .afc-badge {
-                        display: inline-block; margin-top: 10px; padding: 4px 10px;
-                        border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+                    .afc-badge-solicitada {
+                        background: rgba(255,255,255,0.22) !important; border-style: dashed !important;
                     }
-                    .afc-badge.afc-listo { background: #d1fae5; color: #065f46; }
-                    .afc-badge.afc-descargado { background: #e5e7eb; color: #374151; }
-                    .afc-badge.afc-solicitada { background: #fef3c7; color: #92400e; }
                     .artes-finales-empty {
-                        text-align: center; padding: 50px 20px; opacity: .6;
+                        text-align: center; padding: 50px 20px; opacity: .6; grid-column: 1 / -1;
                     }
                     .artes-finales-empty i { font-size: 2.2rem; margin-bottom: 12px; display: block; }
                 </style>
-                <div class="artes-finales-grid" id="artesFinalesGrid">
+                <div class="solicitudes-cards-grid" id="artesFinalesGrid">
                     <div class="artes-finales-empty" id="artesFinalesEmptyState">
                         <i class="fas fa-images"></i>
                         <p>No tienes artes finales pendientes de descarga por ahora.</p>
@@ -12481,6 +13020,8 @@
                 nombreFallecido: '',
                 parentesco: '',
                 nombreFamiliar: '',
+                nombreHomenajeado: '',
+                sexoHomenajeado: '',
                 servicioJurisdiccion: '',
                 tipoSolicitud: '',
                 descripcionRequerimiento: '',
@@ -12539,6 +13080,10 @@
                         plainData.parentesco = item.value;
                     } else if (item.label.includes('Nombre del familiar')) {
                         plainData.nombreFamiliar = item.value;
+                    } else if (item.label.includes('Nombre del Homenajeado')) {
+                        plainData.nombreHomenajeado = item.value;
+                    } else if (item.label.includes('Sexo del Homenajeado')) {
+                        plainData.sexoHomenajeado = item.value;
                     } else if (item.label.includes('Servicio o Jurisdicción')) {
                         plainData.servicioJurisdiccion = item.value;
                     } else if (item.label.includes('Vacunas')) {
@@ -12650,7 +13195,7 @@
             // En SIRA: para tipos especiales, "Otros" se guarda en columna E
             // Para solicitudes normales, "Otros" se convierte a bullets para especialidades
             const tipoLower = (plainData.tipo || '').toLowerCase();
-            const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|copy rrss|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|otros/);
+            const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|copy rrss|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
             
             if (esTipoEspecial) {
                 // Para tipos especiales, mantener "otros" como está (como en SIRA columna E)
@@ -12783,7 +13328,7 @@
                 // Para formularios especiales, combinar datos específicos en el campo Otros
                 let otrosValor = plainData.otros || '';
                 const tipoLower = (plainData.tipo || '').toLowerCase();
-                const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|copy rrss|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|otros/);
+                const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|copy rrss|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
                 
                 if (esTipoEspecial) {
                     // ✅ Formato con bullets (•), igual que SIRA (datosObituario, datosCertificado, etc. en index.html)
@@ -12791,6 +13336,8 @@
                     if (plainData.nombreFallecido) otrosDatos.push(`• Nombre del Fallecido: ${plainData.nombreFallecido}`);
                     if (plainData.parentesco) otrosDatos.push(`• Parentesco: ${plainData.parentesco}`);
                     if (plainData.nombreFamiliar) otrosDatos.push(`• Nombre del Familiar: ${plainData.nombreFamiliar}`);
+                    if (plainData.nombreHomenajeado) otrosDatos.push(`• Nombre del Homenajeado: ${plainData.nombreHomenajeado}`);
+                    if (plainData.sexoHomenajeado) otrosDatos.push(`• Sexo: ${plainData.sexoHomenajeado}`);
                     if (plainData.servicioJurisdiccion) otrosDatos.push(`• Servicio o Jurisdicción: ${plainData.servicioJurisdiccion}`);
                     if (plainData.descripcionRequerimiento) otrosDatos.push(`• Descripción: ${plainData.descripcionRequerimiento}`);
                     if (plainData.descripcion) otrosDatos.push(`• Descripción: ${plainData.descripcion}`);
@@ -12833,6 +13380,7 @@
                     Disenador: 'Sin Asignar',
                     ArteFinal: '',
                     Usuario: NexusSession.nombre || 'Usuario', // Solo nombre, no ID sensible
+                    UsuarioUid: (NexusSession.user && NexusSession.user.uid) ? NexusSession.user.uid : '', // Para avisos de rechazo; nunca se muestra en pantalla
                     fechaCreacionKey: nexusHoy(), // Campo para estadísticas: "YYYY-MM-DD"
                     Dispositivo: nexusDetectarDispositivo(), // PC, Telefono o Tablet
                     DocumentoCorreccion: plainData.documentoCorreccion || null,
@@ -13372,6 +13920,35 @@
             }
         }
 
+        // Función para mostrar el formulario de Cumpleaños
+        let selectedCumpleanosGenero = "";
+        function showCumpleanosForm() {
+            selectedCumpleanosGenero = "";
+            selectedCumpleanosRegion = "";
+            selectedCumpleanosUnidad = "";
+
+            const form = document.getElementById('cumpleanos-formulario');
+            if (form) {
+                form.reset();
+            }
+
+            document.querySelectorAll('.cumple-genero-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('#cumpleanos-formulario .field-error').forEach(el => el.classList.remove('field-error'));
+            if (document.getElementById('cumpleanos-foto1')) {
+                clearFile('cumpleanos-foto1', 'cumpleanos-preview1', 'cumpleanos-remove1');
+            }
+
+            showSection('cumpleanos-form');
+            generateCumpleanosRegionButtons();
+        }
+
+        // Selecciona el sexo del homenajeado en el formulario de Cumpleaños
+        function selectCumpleanosGenero(genero, btnElement) {
+            selectedCumpleanosGenero = genero;
+            document.querySelectorAll('.cumple-genero-btn').forEach(b => b.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
         // Función para mostrar el formulario de Certificado o Reconocimiento
         function showCertificadoForm() {
             showSection('certificado-form');
@@ -13571,6 +14148,10 @@
         // Variables para selección de Obituario
         let selectedObituarioRegion = "";
         let selectedObituarioUnidad = "";
+
+        // Variables para selección de Cumpleaños
+        let selectedCumpleanosRegion = "";
+        let selectedCumpleanosUnidad = "";
 
         // Variables para selección de Certificado o Reconocimiento
         let selectedCertificadoRegion = "";
@@ -13891,6 +14472,70 @@
             document.querySelectorAll('#efemerides-unidad-grid .unidad-btn').forEach(btn => btn.classList.remove('selected'));
             btnElement.classList.add('selected');
             selectedEfemeridesUnidad = unidad;
+        }
+
+        // Función para generar botones de región para Cumpleaños
+        function generateCumpleanosRegionButtons() {
+            const _lockInfo_generateCumpleanosRegionButtons = nexusUnidadEsFija();
+            if (_lockInfo_generateCumpleanosRegionButtons.fija) {
+                nexusRenderUnidadBloqueada('cumpleanos-region-grid', 'cumpleanos-unidad-section', 'cumpleanos-unidad-grid', _lockInfo_generateCumpleanosRegionButtons.region, _lockInfo_generateCumpleanosRegionButtons.unidad,
+                    function(r) { selectedCumpleanosRegion = r; }, function(u) { selectedCumpleanosUnidad = u; });
+                return;
+            }
+            const container = document.getElementById('cumpleanos-region-grid');
+            if (!container) return;
+
+            container.innerHTML = ORDEN_REGIONES.map(regionKey => `
+                <div class="region-btn" onclick="selectCumpleanosRegion('${regionKey}', this)">
+                    ${getNombreRegionLimpio(regionKey)}
+                </div>
+            `).join('');
+        }
+
+        // Función para seleccionar región en Cumpleaños
+        function selectCumpleanosRegion(regionKey, btnElement) {
+            // Deseleccionar si ya está seleccionado
+            if (selectedCumpleanosRegion === regionKey) {
+                document.querySelectorAll('#cumpleanos-region-grid .region-btn').forEach(btn => btn.classList.remove('selected'));
+                selectedCumpleanosRegion = "";
+                selectedCumpleanosUnidad = "";
+                document.getElementById('cumpleanos-unidad-section').classList.add('hidden');
+                document.getElementById('cumpleanos-unidad-grid').innerHTML = "";
+                return;
+            }
+
+            // Seleccionar nueva región
+            document.querySelectorAll('#cumpleanos-region-grid .region-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedCumpleanosRegion = regionKey;
+            selectedCumpleanosUnidad = "";
+
+            // Mostrar unidades de la región seleccionada
+            const unidadContainer = document.getElementById('cumpleanos-unidad-grid');
+            const unidades = UNIDADES_IPASME_RAW[regionKey] || [];
+
+            unidadContainer.innerHTML = unidades.map(unidad => `
+                <div class="unidad-btn" onclick="selectCumpleanosUnidad('${unidad}', this)">
+                    ${unidad}
+                </div>
+            `).join('');
+
+            document.getElementById('cumpleanos-unidad-section').classList.remove('hidden');
+        }
+
+        // Función para seleccionar unidad en Cumpleaños
+        function selectCumpleanosUnidad(unidad, btnElement) {
+            // Deseleccionar si ya está seleccionado
+            if (selectedCumpleanosUnidad === unidad) {
+                document.querySelectorAll('#cumpleanos-unidad-grid .unidad-btn').forEach(btn => btn.classList.remove('selected'));
+                selectedCumpleanosUnidad = "";
+                return;
+            }
+
+            // Seleccionar nueva unidad
+            document.querySelectorAll('#cumpleanos-unidad-grid .unidad-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedCumpleanosUnidad = unidad;
         }
 
         // Función para generar botones de región para Obituario
@@ -14501,6 +15146,7 @@
             // Favoritos: si no están en memoria todavía, se leen una vez por sesión
             if (sectionId === 'formularios') {
                 nexusAsegurarFavoritos();
+                if (typeof nexusCargarAnuncioFormularios === 'function') nexusCargarAnuncioFormularios();
             }
 
             // Reportes es exclusivo para Administradores
@@ -14571,12 +15217,11 @@
                 }
             }
 
-            // Listener de "Artes Finales": solo activo mientras el usuario está en esa pestaña
-            // (mismo patrón que el KPI de Staff en Estadísticas).
+            // Listener de "Artes Finales": se mantiene activo durante toda la sesión
+            // del usuario normal (no solo en esa pestaña), para poder avisarle con
+            // el contador de notificaciones aunque esté en otra pestaña.
             if (sectionId === 'artes-finales') {
                 if (typeof nexusEscucharArtesFinales === 'function') nexusEscucharArtesFinales();
-            } else {
-                if (typeof nexusDetenerArtesFinalesListener === 'function') nexusDetenerArtesFinalesListener();
             }
         }
 
@@ -14935,7 +15580,7 @@
             // Definir orden original de los formularios
             const originalOrder = [
                 'vida-saludable', 'integral', 'conjunta', 'captacion', 'captacion-pediatrica',
-                'captacion-oftalmologica', 'vacunacion', 'efemerides', 'obituario', 'certificado',
+                'captacion-oftalmologica', 'vacunacion', 'efemerides', 'obituario', 'cumpleanos', 'certificado',
                 'aprendizaje', 'deportivas', 'textiles', 'pendon', 'correccion-nota-prensa',
                 'copy-rrss', 'otros'
             ];
@@ -15181,6 +15826,12 @@
             }
             if (plainData.nombreFamiliar) {
                 generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Nombre del Familiar</span><span class="nexus-preview-value">${plainData.nombreFamiliar}</span></div>`;
+            }
+            if (plainData.nombreHomenajeado) {
+                generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Nombre del Homenajeado</span><span class="nexus-preview-value">${plainData.nombreHomenajeado}</span></div>`;
+            }
+            if (plainData.sexoHomenajeado) {
+                generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Sexo del Homenajeado</span><span class="nexus-preview-value">${plainData.sexoHomenajeado}</span></div>`;
             }
             if (plainData.servicioJurisdiccion) {
                 generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Servicio o Jurisdicción</span><span class="nexus-preview-value">${plainData.servicioJurisdiccion}</span></div>`;
@@ -16018,6 +16669,68 @@
             const telefono = document.getElementById('obituario-telefono')?.value;
             const correo = document.getElementById('obituario-correo')?.value;
 
+            if (telefono && telefono.trim()) {
+                formData.contact.push({ label: 'Teléfono', value: telefono });
+            }
+            if (correo && correo.trim()) {
+                formData.contact.push({ label: 'Correo Electrónico', value: correo });
+            }
+
+            return formData;
+        }
+
+        // Función para recopilar datos del formulario de Cumpleaños
+        function collectCumpleanosFormData() {
+            const formData = {
+                general: [],
+                location: [],
+                contact: [],
+                additional: [],
+                media: []
+            };
+
+            // Tipo de formulario
+            const formType = document.getElementById('cumpleanos-form-type')?.value || 'Cumpleaños';
+            formData.general.push({ label: 'Tipo de Formulario', value: formType });
+
+            // Región y Unidad
+            const regionSelect = document.querySelector('#cumpleanos-region-grid .region-btn.selected');
+            const unidadSelect = document.querySelector('#cumpleanos-unidad-grid .unidad-btn.selected');
+
+            if (regionSelect) {
+                formData.location.push({ label: 'Región', value: regionSelect.textContent });
+            }
+            if (unidadSelect) {
+                formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
+            }
+
+            // Sexo del homenajeado
+            if (selectedCumpleanosGenero) {
+                formData.general.push({ label: 'Sexo del Homenajeado', value: selectedCumpleanosGenero === 'Masculino' ? 'Hombre' : 'Mujer' });
+            }
+
+            // Nombre del homenajeado
+            const nombreHomenajeado = document.getElementById('cumpleanos-nombre')?.value;
+            if (nombreHomenajeado && nombreHomenajeado.trim()) {
+                formData.general.push({ label: 'Nombre del Homenajeado', value: nombreHomenajeado });
+            }
+
+            // Fecha del cumpleaños
+            const fechaCumpleanos = document.getElementById('cumpleanos-fecha')?.value;
+            if (fechaCumpleanos) {
+                const [year, month, day] = fechaCumpleanos.split('-');
+                formData.location.push({ label: 'Fecha del Cumpleaños', value: `${day}/${month}/${year}` });
+            }
+
+            // Observaciones
+            const observaciones = document.getElementById('cumpleanos-observaciones')?.value;
+            if (observaciones && observaciones.trim()) {
+                formData.additional.push({ label: 'Observaciones', value: observaciones });
+            }
+
+            // Datos de contacto
+            const telefono = document.getElementById('cumpleanos-telefono')?.value;
+            const correo = document.getElementById('cumpleanos-correo')?.value;
             if (telefono && telefono.trim()) {
                 formData.contact.push({ label: 'Teléfono', value: telefono });
             }
@@ -16977,6 +17690,49 @@
 
                     // Recopilar datos del formulario
                     const formData = collectObituarioFormData();
+
+                    // Mostrar modal de confirmación
+                    showNexusConfirmationModal(formData);
+                });
+            }
+
+            // Agregar evento al formulario de Cumpleaños
+            const cumpleanosForm = document.getElementById('cumpleanos-formulario');
+            if (cumpleanosForm) {
+                cumpleanosForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Validar sexo del homenajeado
+                    if (!selectedCumpleanosGenero) {
+                        showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe seleccionar si el homenajeado es hombre o mujer' });
+                        document.getElementById('cumpleanos-genero-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    // Validar campos obligatorios
+                    const validation = validateForm('cumpleanos-formulario', {
+                        textFields: [
+                            { id: 'cumpleanos-nombre', label: 'Nombre del Homenajeado', message: 'El nombre del homenajeado es obligatorio' },
+                            { id: 'cumpleanos-fecha', label: 'Fecha del Cumpleaños', message: 'La fecha del cumpleaños es obligatoria' },
+                            { id: 'cumpleanos-correo', label: 'Correo Electrónico', message: 'El correo electrónico es obligatorio' }
+                        ],
+                        regionSelection: {
+                            containerId: 'cumpleanos-region-grid',
+                            unidadContainerId: 'cumpleanos-unidad-grid',
+                            requireUnidad: true
+                        }
+                    });
+
+                    if (!validation.valid) {
+                        showToast({ type: 'error', title: 'Campos obligatorios requeridos', message: 'Por favor complete los siguientes campos para continuar:', list: validation.errors, duration: 6500 });
+                        return;
+                    }
+
+                    // Reproducir sonido de envío
+                    playSubmitSound();
+
+                    // Recopilar datos del formulario
+                    const formData = collectCumpleanosFormData();
 
                     // Mostrar modal de confirmación
                     showNexusConfirmationModal(formData);
@@ -18139,6 +18895,8 @@
             }
             NexusSession.clear();
             nexusDetenerSolKpiListener(); // Detener listener de contadores KPI de Solicitudes
+            nexusDetenerArtesFinalesListener();
+            nexusDetenerNotificaciones();
             // Volver al hero (inicio) de inmediato, sin depender únicamente del
             // recargo de página: así, aunque la navegación esté restringida
             // (iframes, vistas previas, etc.), el usuario nunca queda "atrapado"
@@ -18170,6 +18928,8 @@
                 await nexusDetenerPresenciaRTDB();
                 nexusDetenerSolKpiListener(); // Detener listener de contadores KPI de Solicitudes
                 nexusDetenerErrorLogsListener();
+                nexusDetenerArtesFinalesListener();
+                nexusDetenerNotificaciones();
                 NexusSession.clear();
                 nexusAplicarFavoritosUI();   // quita estrellas y restaura el orden original
                 nexusActualizarUIAuth();
@@ -18232,6 +18992,12 @@
             nexusAplicarFavoritosUI();
             nexusActualizarUIAuth();
             nexusIniciarPresenciaRTDB();
+
+            // Revisión puntual (una sola lectura, sin listener) de rechazos
+            // pendientes por confirmar. Bloquea la interfaz si hay alguno.
+            if (typeof nexusRevisarAvisosRechazo === 'function') {
+                nexusRevisarAvisosRechazo();
+            }
         };
 
         // ─── Actualizar la interfaz según la sesión activa ─────────────
@@ -18313,6 +19079,10 @@
             if (s.includes('copy rrss') || s.includes('copy')) return 'theme-copy-rrss';
             if (s.includes('charla') || s.includes('aprendizaje') || s.includes('sesiones educativas') || s.includes('actividades aprendizaje')) return 'theme-charlas';
             if (s.includes('deportiva') || s.includes('deportivas') || s.includes('actividades deportivas')) return 'theme-deportivas';
+            if (s.includes('cumpleaños') || s.includes('cumpleanos')) return 'theme-cumpleanos';
+            if (s.includes('vacunación') || s.includes('vacunacion')) return 'theme-vacunacion';
+            if (s.includes('captación') || s.includes('captacion')) return 'theme-captacion';
+            if (s.includes('vida saludable') || s.includes('atención médica integral') || s.includes('atencion medica integral') || s.includes('jornada conjunta') || s.includes('jornada')) return 'theme-jornadas';
             if (s.includes('otro')) return 'theme-otros';
             return 'theme-general';
         }
@@ -18397,12 +19167,15 @@
             }
 
             var solicitudesRef = window.fbStore.collection(window.db, "solicitudes");
-            // Solo lo activo: en cuanto algo se finaliza o rechaza, sale de esta pestaña
-            // (lo finalizado con arte vive aparte en "Artes Finales" / artes_finales).
+            // Activo (PENDIENTE/PROCESANDO) + RECHAZADA: las rechazadas se incluyen
+            // aquí también (aunque ya no estén "vivas") para que el usuario pueda
+            // verlas y ser notificado; se purgan más adelante junto con las
+            // finalizadas desde el panel de Admin. Lo finalizado CON arte vive
+            // aparte en "Artes Finales" / artes_finales.
             var q = window.fbStore.query(
                 solicitudesRef,
                 window.fbStore.where("Unidad", "==", NexusSession.unidad),
-                window.fbStore.where("Estatus", "in", ["PENDIENTE", "PROCESANDO"])
+                window.fbStore.where("Estatus", "in", ["PENDIENTE", "PROCESANDO", "RECHAZADA"])
             );
 
             _nexusUnsubscribeSolicitudes = window.fbStore.onSnapshot(q, function(snap) {
@@ -18438,6 +19211,7 @@
             _nexusPagCurrent = 1;
             console.log('[NEXUS] Renderizando tarjetas con', list.length, 'solicitudes');
             nexusRenderizarTarjetasPaginadas();
+            if (typeof nexusActualizarBadgeNotificaciones === 'function') nexusActualizarBadgeNotificaciones();
         }
 
         // ============================================================
@@ -18501,6 +19275,7 @@
 
                 _nexusArtesFinalesData = lista;
                 nexusRenderizarArtesFinales(lista);
+                if (typeof nexusActualizarBadgeNotificaciones === 'function') nexusActualizarBadgeNotificaciones();
             }, function (error) {
                 console.error('[NEXUS] Error escuchando artes_finales:', error);
             });
@@ -18528,19 +19303,35 @@
             }
 
             var badgeMap = {
-                'LISTO': { cls: 'afc-listo', label: '<i class="fas fa-download"></i> Listo para descargar' },
-                'DESCARGADO': { cls: 'afc-descargado', label: '<i class="fas fa-check"></i> Descargado' },
-                'DESCARGA SOLICITADA': { cls: 'afc-solicitada', label: '<i class="fas fa-clock"></i> Esperando autorización' }
+                'LISTO': { cls: 'afc-badge-listo', label: '<i class="fas fa-download"></i> ARTE LISTO' },
+                'DESCARGADO': { cls: 'afc-badge-descargado', label: '<i class="fas fa-check"></i> DESCARGADO' },
+                'DESCARGA SOLICITADA': { cls: 'afc-badge-solicitada', label: '<i class="fas fa-clock"></i> DESCARGA SOLICITADA' }
             };
 
             var html = lista.map(function (a) {
+                var themeClass = (typeof nexusDeterminarTema === 'function') ? nexusDeterminarTema(a.Solicitud) : 'theme-general';
                 var estado = badgeMap[String(a.ArteEstado || 'LISTO').toUpperCase()] || badgeMap['LISTO'];
-                return '<div class="arte-final-card" onclick="nexusAbrirArteFinalCard(\'' + esc(a.id) + '\')" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'){this.click();}">' +
-                    '<div class="afc-id">' + esc(a.id) + '</div>' +
-                    '<div class="afc-tipo">' + esc(a.Solicitud || 'Solicitud') + '</div>' +
-                    '<div class="afc-row"><i class="fas fa-user"></i> ' + esc(a.Usuario || 'Usuario') + '</div>' +
-                    '<div class="afc-row"><i class="fas fa-calendar-check"></i> Finalizado: ' + esc(a.FechaFinalizacion || '-') + '</div>' +
-                    '<span class="afc-badge ' + estado.cls + '">' + estado.label + '</span>' +
+                var arteFlujoClass = (String(a.ArteEstado || 'LISTO').toUpperCase() === 'LISTO') ? ' card-arte-listo' : '';
+
+                // Fecha del evento (la que el usuario puso en el formulario), NO la de finalización
+                var horaFormateada = (a.Hora || '').replace('AM', 'a.m.').replace('PM', 'p.m.');
+                var fechaEvento = (a.Fecha || 'N/A') + (horaFormateada ? ' | ' + horaFormateada : '');
+
+                return '<div class="solicitud-card-mockup ' + themeClass + arteFlujoClass + '" onclick="nexusAbrirArteFinalCard(\'' + esc(a.id) + '\')" onkeydown="if(event.key===\'Enter\'){this.click();}" role="button" tabindex="0" style="cursor:pointer;">' +
+                    '<div class="card-adaptive-badge ' + estado.cls + '">' + estado.label + '</div>' +
+                    '<div class="card-req-id">' + esc(a.id) + '</div>' +
+                    '<div class="card-info-group">' +
+                        '<div class="card-info-title">Tipo de Solicitud</div>' +
+                        '<div class="card-info-value bold-highlight">' + esc(a.Solicitud || 'Solicitud') + '</div>' +
+                    '</div>' +
+                    '<div class="card-info-group">' +
+                        '<div class="card-info-title">Solicitante</div>' +
+                        '<div class="card-info-value">' + esc(a.Usuario || 'Usuario') + '</div>' +
+                    '</div>' +
+                    '<div class="card-info-group">' +
+                        '<div class="card-info-title">Fecha del Evento</div>' +
+                        '<div class="card-info-value">' + esc(fechaEvento) + '</div>' +
+                    '</div>' +
                     '</div>';
             }).join('');
 
@@ -18640,21 +19431,111 @@
             _nexusSolKpiUnsubscribe = null;
         }
 
+        // ===== Buscador de Solicitudes (por Unidad / Código) + Filtro por Tipo =====
+        var _nexusSolBusqueda = '';
+        var _nexusSolFiltroTipo = '';
+
+        function nexusBuscarSolicitudes(valor) {
+            _nexusSolBusqueda = valor || '';
+            _nexusPagCurrent = 1;
+            nexusRenderizarTarjetasPaginadas();
+        }
+
+        function nexusFiltrarPorTipo(tipo) {
+            _nexusSolFiltroTipo = tipo || '';
+            _nexusPagCurrent = 1;
+            nexusActualizarUIFiltroTipo();
+            nexusToggleFiltroTipo(null, false);
+            nexusRenderizarTarjetasPaginadas();
+        }
+
+        function nexusToggleFiltroTipo(event, forzarEstado) {
+            if (event) event.stopPropagation();
+            var dropdown = document.getElementById('solBuscadorTipoDropdown');
+            if (!dropdown) return;
+            var abrir = (typeof forzarEstado === 'boolean') ? forzarEstado : !dropdown.classList.contains('abierto');
+            dropdown.classList.toggle('abierto', abrir);
+        }
+
+        function nexusActualizarUIFiltroTipo() {
+            var dropdown = document.getElementById('solBuscadorTipoDropdown');
+            var dot = document.getElementById('solBuscadorFiltroDot');
+            var boton = document.getElementById('solBuscadorFilterIcon');
+            if (dropdown) {
+                dropdown.querySelectorAll('.solbusc-tipo-item').forEach(function(btn) {
+                    var esTodos = btn.classList.contains('solbusc-tipo-todos');
+                    var valor = esTodos ? '' : (btn.getAttribute('data-tipo') || '');
+                    btn.classList.toggle('activo', valor === _nexusSolFiltroTipo);
+                });
+            }
+            if (dot) dot.style.display = _nexusSolFiltroTipo ? 'block' : 'none';
+            if (boton) boton.classList.toggle('solbusc-filtro-activo', !!_nexusSolFiltroTipo);
+        }
+
+        function nexusLimpiarFiltrosSolicitudes() {
+            _nexusSolBusqueda = '';
+            _nexusSolFiltroTipo = '';
+            var input = document.getElementById('solBuscadorInput');
+            if (input) input.value = '';
+            _nexusPagCurrent = 1;
+            nexusActualizarUIFiltroTipo();
+            nexusRenderizarTarjetasPaginadas();
+        }
+
+        // Cierra el desplegable de tipos al hacer clic fuera de él
+        document.addEventListener('click', function(e) {
+            var dropdown = document.getElementById('solBuscadorTipoDropdown');
+            var poda = document.getElementById('solBuscadorPoda');
+            if (dropdown && dropdown.classList.contains('abierto') && poda && !poda.contains(e.target)) {
+                dropdown.classList.remove('abierto');
+            }
+        });
+
+        // Aplica búsqueda (Unidad / código de solicitud) y filtro de tipo sobre los datos en vivo
+        function nexusObtenerSolicitudesFiltradas() {
+            var lista = _nexusSolicitudesData;
+            if (_nexusSolFiltroTipo) {
+                lista = lista.filter(function(s) { return (s.Solicitud || '') === _nexusSolFiltroTipo; });
+            }
+            var q = (_nexusSolBusqueda || '').trim().toLowerCase();
+            if (q) {
+                lista = lista.filter(function(s) {
+                    var unidad = (s.Unidad || '').toLowerCase();
+                    var codigo = String(s.id || '').toLowerCase();
+                    return unidad.includes(q) || codigo.includes(q);
+                });
+            }
+            return lista;
+        }
+
         function nexusRenderizarTarjetasPaginadas() {
             var grid = document.getElementById('solicitudesCardsGrid');
             if (!grid) return;
 
-            var total = _nexusSolicitudesData.length;
-            var totalCountEl = document.getElementById('solicitudesTotalCount');
-            if (totalCountEl) totalCountEl.textContent = total + (total === 1 ? ' solicitud' : ' solicitudes');
             nexusActualizarContadoresSolicitudes();
 
-            if (total === 0) {
+            var totalReal = _nexusSolicitudesData.length;
+            var datosFiltrados = nexusObtenerSolicitudesFiltradas();
+            var total = datosFiltrados.length;
+            var totalCountEl = document.getElementById('solicitudesTotalCount');
+            if (totalCountEl) totalCountEl.textContent = total + (total === 1 ? ' solicitud' : ' solicitudes');
+
+            if (totalReal === 0) {
                 var rolesConAccesoPanelVacio = ['ADMIN', 'Admin Principal', 'Diseñador'];
                 var botonPanelVacio = (typeof NexusSession !== 'undefined' && NexusSession && rolesConAccesoPanelVacio.includes(NexusSession.role))
                     ? '<button class="nexus-panel-btn" style="margin-top: 14px; background: var(--color-primary); color: white;" onclick="nexusAbrirPanelSinSolicitud()"><i class="fas fa-sliders-h"></i> Abrir Panel de Control</button>'
                     : '';
                 grid.innerHTML = '<div class="solicitudes-empty-state"><i class="fas fa-inbox"></i><p>No hay solicitudes registradas para mostrar.</p>' + botonPanelVacio + '</div>';
+                nexusActualizarPaginacionUI(0, 0, 0, 1, 1);
+                return;
+            }
+
+            if (total === 0) {
+                var partes = [];
+                if (_nexusSolFiltroTipo) partes.push('el tipo "' + nexusEscHtml(_nexusSolFiltroTipo) + '"');
+                if (_nexusSolBusqueda) partes.push('el texto "' + nexusEscHtml(_nexusSolBusqueda) + '"');
+                grid.innerHTML = '<div class="solicitudes-empty-state"><i class="fas fa-search"></i><p>Ninguna solicitud coincide con ' + partes.join(' y ') + '.</p>' +
+                    '<button class="nexus-panel-btn" style="margin-top: 14px;" onclick="nexusLimpiarFiltrosSolicitudes()"><i class="fas fa-times"></i> Quitar filtros</button></div>';
                 nexusActualizarPaginacionUI(0, 0, 0, 1, 1);
                 return;
             }
@@ -18665,7 +19546,7 @@
 
             var startIdx = (_nexusPagCurrent - 1) * _nexusPagLimit;
             var endIdx = Math.min(startIdx + _nexusPagLimit, total);
-            var pageItems = _nexusSolicitudesData.slice(startIdx, endIdx);
+            var pageItems = datosFiltrados.slice(startIdx, endIdx);
 
             var html = '';
             pageItems.forEach(function(s) {
@@ -18680,6 +19561,15 @@
                 var themeClass = nexusDeterminarTema(s.Solicitud);
                 if (estatus === 'FINALIZADA') themeClass += ' theme-finalizada';
                 if (estatus === 'RECHAZADA')  themeClass += ' theme-rechazada';
+
+                // Motivo del rechazo (visible solo para el usuario, en su propia tarjeta)
+                var motivoHtml = '';
+                if (estatus === 'RECHAZADA' && s.MotivoRechazo) {
+                    motivoHtml = '<div class="card-info-group">' +
+                        '<div class="card-info-title"><i class="fas fa-ban"></i> Motivo del rechazo</div>' +
+                        '<div class="card-info-value" style="color:#e63946;">' + s.MotivoRechazo + '</div>' +
+                    '</div>';
+                }
 
                 // Círculo del Diseñador (no aplica para Nota de Prensa ni Copy RRSS)
                 var esSinDisenador = (s.Solicitud && (s.Solicitud.toLowerCase().includes('copy') || s.Solicitud.toLowerCase().includes('nota de prensa') || s.Solicitud.toLowerCase().includes('corrección') || s.Solicitud.toLowerCase().includes('correccion')));
@@ -18808,6 +19698,7 @@
                             '<div class="card-info-title">Fecha de Publicación</div>' +
                             '<div class="card-info-value">' + fechaPublicacion + '</div>' +
                         '</div>' +
+                        motivoHtml +
                     '</div>';
             });
 
@@ -18904,7 +19795,13 @@
                         menuHtml = 
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'formularios\')">Formularios</a></li>' +
                             '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'solicitudes\')">Solicitudes</a></li>' +
-                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'artes-finales\')">Artes Finales</a></li>';
+                            '<li><a href="javascript:void(0)" onclick="event.preventDefault(); showSection(\'artes-finales\')">Artes Finales</a></li>' +
+                            '<li class="nx-notif-item">' +
+                                '<button type="button" class="nx-notif-bell" onclick="nexusAbrirNotificaciones()" title="Notificaciones" aria-label="Notificaciones">' +
+                                    '<i class="fas fa-bell"></i>' +
+                                    '<span id="nxNotifBadge" class="nx-notif-badge" style="display:none;">0</span>' +
+                                '</button>' +
+                            '</li>';
                     }
                     menuHtml += 
                         '<li id="nav-user-item" class="nav-user-item">' +
@@ -18912,11 +19809,20 @@
                             '<button type="button" class="nav-logout-btn" onclick="nexusLogout()" title="Cerrar sesi&#243;n"><i class="fas fa-power-off"></i></button>' +
                         '</li>';
                     mainNavUl.innerHTML = menuHtml;
+                    if (!isStaff && typeof nexusActualizarBadgeNotificaciones === 'function') {
+                        nexusActualizarBadgeNotificaciones();
+                    }
                 }
 
                 // Cargar solicitudes vivas en tiempo real al tener sesiÃ³n
                 if (typeof nexusCargarSolicitudesVivas === 'function') {
                     nexusCargarSolicitudesVivas();
+                }
+
+                // Usuarios normales: escuchar Artes Finales desde el login (no solo al
+                // entrar a esa pestaña) para poder mostrar el contador de notificaciones.
+                if (!isStaff && typeof nexusEscucharArtesFinales === 'function') {
+                    nexusEscucharArtesFinales();
                 }
 
             } else {
@@ -19443,11 +20349,13 @@
             const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
             const btnAutorizar = document.getElementById('nexusBtnAutorizarDescarga');
             const btnLogsErrores = document.getElementById('nexusBtnLogsErrores');
+            const btnAnuncios = document.getElementById('nexusBtnAnuncios');
 
             if (!nexusEsAdmin()) {
                 if (btnInstagram) btnInstagram.classList.add('hidden');
                 if (btnAutorizar) btnAutorizar.classList.add('hidden');
                 if (btnLogsErrores) btnLogsErrores.classList.add('hidden');
+                if (btnAnuncios) btnAnuncios.classList.add('hidden');
                 if (!seccion) return;
                 seccion.classList.add('hidden');
                 return;
@@ -19462,6 +20370,7 @@
                 btnLogsErrores.classList.remove('hidden');
                 nexusIniciarErrorLogsListener();
             }
+            if (btnAnuncios) btnAnuncios.classList.remove('hidden');
 
             if (!seccion) return;
             seccion.classList.remove('hidden');
@@ -19625,6 +20534,7 @@
                             Usuario: datos.Usuario || '',
                             Unidad: datos.Unidad || '',
                             Fecha: datos.Fecha || '',
+                            Hora: datos.Hora || '',
                             FechaFinalizacion: fechaHoraFinalizacion,
                             ArteEstado: 'LISTO'
                         }
@@ -19883,6 +20793,16 @@
                     await window.fbRT.set(finRef, finalDocData);
                     const rtdbRef = window.fbRT.ref(window.dbRT, 'solicitudes_vivas/' + nexusSelectedRequestId);
                     window.fbRT.remove(rtdbRef);
+
+                    // Puntero liviano para el aviso bloqueante de rechazo (avisos_rechazo).
+                    // Solo guarda la clave del mes; el detalle (motivo/tipo) vive en
+                    // solicitudes_finalizadas_mes y no se duplica aquí.
+                    if (datos.UsuarioUid) {
+                        const avisoRef = window.fbRT.ref(window.dbRT, `avisos_rechazo/${datos.UsuarioUid}/${nexusSelectedRequestId}`);
+                        window.fbRT.set(avisoRef, claveMes).catch(err => {
+                            console.warn('[NEXUS] No se pudo crear el aviso de rechazo para el usuario:', err);
+                        });
+                    }
 
                     // Actualizar nodo persistente est_actuales en RTDB
                     if (typeof nexusRecalcularYGuardarEstadisticas === 'function') {
@@ -20300,6 +21220,7 @@
             const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
             const btnAutorizar = document.getElementById('nexusBtnAutorizarDescarga');
             const btnLogsErrores = document.getElementById('nexusBtnLogsErrores');
+            const btnAnuncios = document.getElementById('nexusBtnAnuncios');
             if (nexusEsAdmin()) {
                 if (btnInstagram) btnInstagram.classList.remove('hidden');
                 if (btnAutorizar) {
@@ -20310,10 +21231,12 @@
                     btnLogsErrores.classList.remove('hidden');
                     nexusIniciarErrorLogsListener();
                 }
+                if (btnAnuncios) btnAnuncios.classList.remove('hidden');
             } else {
                 if (btnInstagram) btnInstagram.classList.add('hidden');
                 if (btnAutorizar) btnAutorizar.classList.add('hidden');
                 if (btnLogsErrores) btnLogsErrores.classList.add('hidden');
+                if (btnAnuncios) btnAnuncios.classList.add('hidden');
             }
 
             const header = document.getElementById('nexusPanelHeader');
@@ -22037,18 +22960,11 @@
                     <i class="fas fa-triangle-exclamation"></i> Logs de errores
                     <span id="nexusErrorLogsBadge" style="display:none; margin-left:8px; padding:1px 9px; border-radius:999px; background:#ffd666; color:#3b2a00; font-weight:800; font-size:0.75rem;">0</span>
                 </button>
+                <button id="nexusBtnAnuncios" class="nexus-panel-btn hidden" onclick="nexusAbrirModalAnuncios()" style="background: linear-gradient(135deg, #0554f2, #3876f2); color: white;">
+                    <i class="fas fa-bullhorn"></i> Anuncios
+                </button>
             </div>
 
-            <!-- Acciones Especiales (Solo Admin) -->
-            <div class="nexus-panel-actions hidden" id="nexusAdminActions">
-                <div class="nexus-panel-section-header">⚠️ Acciones Especiales</div>
-                <button id="nexusBtnResend" class="nexus-panel-btn nexus-panel-btn-primary" onclick="nexusPanelReenviar()">
-                    <i class="fas fa-redo"></i> Re-enviar a Telegram
-                </button>
-                <button id="nexusBtnRecreate" class="nexus-panel-btn nexus-panel-btn-warning" onclick="nexusPanelRecrear()">
-                    <i class="fas fa-sync"></i> Recrear Solicitud
-                </button>
-            </div>
         </div>
     </div>
 
@@ -25970,9 +26886,946 @@ function nexusInicializarReporteDiseno(contenedor) {
             var list = document.querySelectorAll('canvas.auth-bh-canvas');
             for (var i = 0; i < list.length; i++) initBlackHole(list[i]);
         }
+        window.nexusInitBlackHole = initBlackHole;
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
         else initAll();
     })();
     </script>
+
+    <!-- ============================================================
+         MODAL DE NOTIFICACIONES (usuarios normales) - NEXUS
+         Avisa sobre solicitudes rechazadas y artes listos para descargar
+         ============================================================ -->
+    <div class="nx-overlay" id="nxNotifOverlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 480px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarNotificaciones()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS</p>
+                <h2 class="nx-title"><i class="fas fa-bell"></i> Notificaciones</h2>
+            </div>
+            <div class="nx-body">
+                <div id="nxNotifLista"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .nx-notif-item { display:flex; align-items:center; }
+        .nx-notif-bell {
+            position: relative;
+            background: none;
+            border: none;
+            color: var(--color-light);
+            font-size: 1.05rem;
+            cursor: pointer;
+            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nx-notif-bell:hover { color: var(--color-primary); }
+        .nx-notif-badge {
+            position: absolute;
+            top: -2px;
+            right: 2px;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            border-radius: 999px;
+            background: #e63946;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 16px;
+            text-align: center;
+            box-shadow: 0 0 0 2px var(--panel, #0f1724);
+        }
+        .nx-notif-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--panel-2);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s ease;
+        }
+        .nx-notif-row:hover { border-color: rgba(5,84,242,0.5); }
+        .nx-notif-row-rechazo .nx-notif-icon { color: #e63946; }
+        .nx-notif-row-arte .nx-notif-icon { color: #2d9d5f; }
+        .nx-notif-icon { font-size: 1.2rem; margin-top: 2px; }
+        .nx-notif-titulo { font-weight: 700; color: var(--color-light); font-size: 0.9rem; }
+        .nx-notif-detalle { color: var(--color-tertiary); font-size: 0.8rem; margin-top: 2px; }
+        .nx-notif-motivo { color: #e63946; font-size: 0.78rem; margin-top: 6px; font-style: italic; }
+    </style>
+
+    <script>
+        var _nexusNotifIdsConocidos = null;
+
+        function nexusNotifLeidasKey() {
+            return 'nexus_notif_leidas_' + (NexusSession.unidad || 'general');
+        }
+
+        function nexusObtenerLeidas() {
+            try { return JSON.parse(localStorage.getItem(nexusNotifLeidasKey()) || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function nexusMarcarLeidas(ids) {
+            var leidas = nexusObtenerLeidas();
+            ids.forEach(function (id) {
+                if (leidas.indexOf(id) === -1) leidas.push(id);
+            });
+            if (leidas.length > 300) leidas = leidas.slice(-300); // evita crecimiento infinito
+            localStorage.setItem(nexusNotifLeidasKey(), JSON.stringify(leidas));
+        }
+
+        // Junta rechazos y artes listos para descargar en una sola lista de notificaciones.
+        function nexusObtenerNotificacionesPendientes() {
+            var leidas = nexusObtenerLeidas();
+            var items = [];
+
+            (_nexusSolicitudesData || []).forEach(function (s) {
+                if ((s.Estatus || '').toUpperCase() !== 'RECHAZADA') return;
+                var id = 'RECH-' + s.id;
+                items.push({
+                    id: id,
+                    tipo: 'rechazo',
+                    icono: 'fa-ban',
+                    titulo: 'Solicitud rechazada',
+                    detalle: (s.Solicitud || 'Solicitud') + ' · ' + s.id,
+                    motivo: s.MotivoRechazo || '',
+                    seccion: 'solicitudes',
+                    leida: leidas.indexOf(id) !== -1
+                });
+            });
+
+            (_nexusArtesFinalesData || []).forEach(function (a) {
+                if (String(a.ArteEstado || 'LISTO').toUpperCase() !== 'LISTO') return;
+                var id = 'ARTE-' + a.id;
+                items.push({
+                    id: id,
+                    tipo: 'arte',
+                    icono: 'fa-download',
+                    titulo: 'Arte listo para descargar',
+                    detalle: (a.Solicitud || 'Solicitud') + ' · ' + a.id,
+                    motivo: '',
+                    seccion: 'artes-finales',
+                    leida: leidas.indexOf(id) !== -1
+                });
+            });
+
+            return items;
+        }
+
+        function nexusActualizarBadgeNotificaciones() {
+            var badge = document.getElementById('nxNotifBadge');
+            var items = nexusObtenerNotificacionesPendientes();
+
+            if (badge) {
+                var noVistas = items.filter(function (n) { return !n.leida; }).length;
+                badge.textContent = noVistas > 99 ? '99+' : String(noVistas);
+                badge.style.display = noVistas > 0 ? 'inline-flex' : 'none';
+            }
+
+            nexusAvisarNuevasNotificaciones(items);
+
+            var overlay = document.getElementById('nxNotifOverlay');
+            if (overlay && overlay.classList.contains('active')) nexusRenderizarNotificaciones(items);
+        }
+
+        // Muestra un toast cuando aparece una notificación que no existía en la carga anterior
+        // (nuevo rechazo o nuevo arte listo mientras el usuario tiene la app abierta).
+        function nexusAvisarNuevasNotificaciones(items) {
+            var actuales = items.map(function (n) { return n.id; });
+
+            if (_nexusNotifIdsConocidos === null) {
+                // Primera carga tras iniciar sesión: no mostrar avisos retroactivos.
+                _nexusNotifIdsConocidos = actuales;
+                return;
+            }
+
+            items.forEach(function (n) {
+                if (_nexusNotifIdsConocidos.indexOf(n.id) === -1 && typeof showToast === 'function') {
+                    showToast({
+                        type: n.tipo === 'rechazo' ? 'error' : 'success',
+                        title: n.titulo,
+                        message: n.detalle,
+                        duration: 5000
+                    });
+                }
+            });
+
+            _nexusNotifIdsConocidos = actuales;
+        }
+
+        function nexusEscHtmlNotif(t) {
+            return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        function nexusRenderizarNotificaciones(items) {
+            var cont = document.getElementById('nxNotifLista');
+            if (!cont) return;
+            items = items || nexusObtenerNotificacionesPendientes();
+
+            if (!items.length) {
+                cont.innerHTML = '<div style="text-align:center; padding: 30px 10px; color: var(--color-tertiary);">' +
+                    '<i class="fas fa-bell-slash" style="font-size:1.8rem; display:block; margin-bottom:10px;"></i>' +
+                    'No tienes notificaciones nuevas.</div>';
+                return;
+            }
+
+            cont.innerHTML = items.map(function (n) {
+                var rowClass = n.tipo === 'rechazo' ? 'nx-notif-row-rechazo' : 'nx-notif-row-arte';
+                return '<div class="nx-notif-row ' + rowClass + '" onclick="nexusCerrarNotificaciones(); showSection(\'' + n.seccion + '\');">' +
+                    '<div class="nx-notif-icon"><i class="fas ' + n.icono + '"></i></div>' +
+                    '<div class="nx-notif-texto">' +
+                        '<div class="nx-notif-titulo">' + nexusEscHtmlNotif(n.titulo) + '</div>' +
+                        '<div class="nx-notif-detalle">' + nexusEscHtmlNotif(n.detalle) + '</div>' +
+                        (n.motivo ? '<div class="nx-notif-motivo">"' + nexusEscHtmlNotif(n.motivo) + '"</div>' : '') +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function nexusAbrirNotificaciones() {
+            var overlay = document.getElementById('nxNotifOverlay');
+            if (!overlay) return;
+            var items = nexusObtenerNotificacionesPendientes();
+            overlay.classList.add('active');
+            nexusRenderizarNotificaciones(items);
+            // Al abrir el panel se consideran vistas (apaga el contador).
+            nexusMarcarLeidas(items.map(function (n) { return n.id; }));
+            nexusActualizarBadgeNotificaciones();
+        }
+
+        function nexusCerrarNotificaciones() {
+            var overlay = document.getElementById('nxNotifOverlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+
+        function nexusDetenerNotificaciones() {
+            _nexusNotifIdsConocidos = null;
+            var badge = document.getElementById('nxNotifBadge');
+            if (badge) badge.style.display = 'none';
+        }
+    </script>
+
+    <!-- ============================================================
+         MODAL DE ANUNCIOS (solo Admin) - NEXUS
+         ============================================================ -->
+    <div class="nx-overlay" id="nxAnunciosOverlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 540px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarModalAnuncios()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">PANEL ADMIN · ANUNCIOS</p>
+                <h2 class="nx-title"><i class="fas fa-bullhorn"></i> Nuevo anuncio</h2>
+            </div>
+            <div class="nx-body">
+                <div id="nxAnunciosPaso1">
+                    <p style="color: var(--color-tertiary); margin: 0 0 16px;">Elige el tipo de anuncio. Cada anuncio reemplaza al anterior.</p>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button type="button" class="nx-btn nx-btn-primary" style="flex:1; min-width:180px;" onclick="nxAnuncioSetTipo('texto')"><i class="fas fa-font"></i> Anuncio de texto</button>
+                        <button type="button" class="nx-btn nx-btn-primary" style="flex:1; min-width:180px;" onclick="nxAnuncioSetTipo('imagen')"><i class="fas fa-image"></i> Anuncio con imagen</button>
+                    </div>
+                </div>
+
+                <div id="nxAnunciosFormTexto" style="display:none;">
+                    <label class="nx-anuncio-label">Título</label>
+                    <input id="nxAnuncioTitulo" type="text" maxlength="120" class="nx-anuncio-input" placeholder="Ej. Cierre de oficina">
+                    <label class="nx-anuncio-label">Cuerpo del anuncio</label>
+                    <textarea id="nxAnuncioCuerpo" rows="5" maxlength="1000" class="nx-anuncio-input" placeholder="Escribe el mensaje..."></textarea>
+                </div>
+
+                <div id="nxAnunciosFormImagen" style="display:none;">
+                    <label class="nx-anuncio-label">Imagen (JPG, PNG o GIF, máximo 15 MB)</label>
+                    <input id="nxAnuncioArchivo" type="file" accept="image/jpeg,image/png,image/gif" class="nx-anuncio-input">
+                    <p style="margin: -6px 0 12px; font-size: 0.78rem; color: var(--color-tertiary);">
+                        <i class="fas fa-circle-info"></i> Medida recomendada: <strong>1080 × 1080 px</strong> (cuadrada). También funciona bien en formato retrato (1080 × 1350 px), pero evita imágenes muy altas: la tarjeta hace scroll si no cabe en la pantalla.
+                    </p>
+                </div>
+
+                <div id="nxAnunciosFechas" style="display:none; margin-top: 14px;">
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:180px;">
+                            <label class="nx-anuncio-label">Fecha de inicio</label>
+                            <input id="nxAnuncioInicio" type="date" class="nx-anuncio-input">
+                        </div>
+                        <div style="flex:1; min-width:180px;">
+                            <label class="nx-anuncio-label">Fecha de finalización</label>
+                            <input id="nxAnuncioFin" type="date" class="nx-anuncio-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nxAnuncioProgresoWrap" style="display:none; margin-top: 14px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color: var(--color-tertiary); margin-bottom:6px;">
+                        <span id="nxAnuncioProgresoTexto">Subiendo imagen del anuncio...</span>
+                        <span id="nxAnuncioProgresoPct">0%</span>
+                    </div>
+                    <div class="nx-anuncio-progress-track">
+                        <div id="nxAnuncioProgresoBar" class="nx-anuncio-progress-bar" style="width:0%;"></div>
+                    </div>
+                </div>
+
+                <p id="nxAnuncioStatus" style="margin: 14px 0 0; font-size: 0.85rem; color: var(--err); display:none;"></p>
+            </div>
+            <div class="nx-foot" id="nxAnunciosFoot" style="display:none;">
+                <button type="button" class="nx-btn nx-btn-ghost" id="nxAnuncioVolverBtn" onclick="nxAnuncioSetTipo(null)">Volver</button>
+                <button type="button" class="nx-btn nx-btn-primary" id="nxAnuncioGuardar" onclick="nexusGuardarAnuncio()">Guardar anuncio</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .nx-anuncio-label { display:block; font-size:0.85rem; color: var(--color-tertiary); margin: 0 0 6px; }
+        .nx-anuncio-input { width:100%; box-sizing:border-box; padding:11px 14px; border-radius:10px; border:1px solid var(--border); background: var(--panel-2); color: var(--color-light); font-family:'Poppins', sans-serif; font-size:0.9rem; margin-bottom:12px; }
+        .nx-anuncio-progress-track { width:100%; height:8px; border-radius:999px; background: var(--panel-2); border:1px solid var(--border); overflow:hidden; }
+        .nx-anuncio-progress-bar { height:100%; width:0%; border-radius:999px; background: linear-gradient(90deg, #0554f2, #3876f2); transition: width 0.2s ease; }
+    </style>
+
+    <script>
+        let nxAnuncioTipo = null;
+        const NX_ANUNCIO_MAX_MB = 15;
+        const NX_ANUNCIO_MIMES = ['image/jpeg', 'image/png', 'image/gif'];
+
+        function nexusAbrirModalAnuncios() {
+            if (!nexusEsAdmin()) return;
+            nxAnuncioSetTipo(null);
+            document.getElementById('nxAnunciosOverlay').classList.add('active');
+        }
+
+        function nexusCerrarModalAnuncios() {
+            document.getElementById('nxAnunciosOverlay').classList.remove('active');
+            nxAnuncioResetForm();
+        }
+
+        function nxAnuncioMostrarError(msg) {
+            const el = document.getElementById('nxAnuncioStatus');
+            el.textContent = msg || '';
+            el.style.display = msg ? 'block' : 'none';
+        }
+
+        function nxAnuncioMostrarProgreso(pct, texto) {
+            const wrap = document.getElementById('nxAnuncioProgresoWrap');
+            const bar = document.getElementById('nxAnuncioProgresoBar');
+            const pctEl = document.getElementById('nxAnuncioProgresoPct');
+            const txtEl = document.getElementById('nxAnuncioProgresoTexto');
+            wrap.style.display = 'block';
+            const clamped = Math.max(0, Math.min(100, Math.round(pct || 0)));
+            bar.style.width = clamped + '%';
+            pctEl.textContent = clamped + '%';
+            if (texto) txtEl.textContent = texto;
+        }
+
+        function nxAnuncioOcultarProgreso() {
+            document.getElementById('nxAnuncioProgresoWrap').style.display = 'none';
+            document.getElementById('nxAnuncioProgresoBar').style.width = '0%';
+            document.getElementById('nxAnuncioProgresoPct').textContent = '0%';
+        }
+
+        function nxAnuncioResetForm() {
+            document.getElementById('nxAnuncioTitulo').value = '';
+            document.getElementById('nxAnuncioCuerpo').value = '';
+            document.getElementById('nxAnuncioArchivo').value = '';
+            document.getElementById('nxAnuncioInicio').value = '';
+            document.getElementById('nxAnuncioFin').value = '';
+            nxAnuncioOcultarProgreso();
+            nxAnuncioMostrarError('');
+            nxAnuncioSetTipo(null);
+        }
+
+        function nxAnuncioSetTipo(tipo) {
+            nxAnuncioTipo = tipo;
+            const elija = tipo === null;
+            document.getElementById('nxAnunciosPaso1').style.display = elija ? '' : 'none';
+            document.getElementById('nxAnunciosFormTexto').style.display = tipo === 'texto' ? '' : 'none';
+            document.getElementById('nxAnunciosFormImagen').style.display = tipo === 'imagen' ? '' : 'none';
+            document.getElementById('nxAnunciosFechas').style.display = elija ? 'none' : '';
+            document.getElementById('nxAnunciosFoot').style.display = elija ? 'none' : 'flex';
+            document.getElementById('nxAnuncioGuardar').disabled = false;
+            document.getElementById('nxAnuncioVolverBtn').disabled = false;
+            nxAnuncioOcultarProgreso();
+            nxAnuncioMostrarError('');
+        }
+
+        function nxAnuncioValidar(fechaInicio, fechaFin) {
+            if (!fechaInicio || !fechaFin) return 'Debes indicar fecha de inicio y de finalización.';
+            if (fechaFin < fechaInicio) return 'La fecha de finalización no puede ser anterior a la de inicio.';
+            if (nxAnuncioTipo === 'texto') {
+                if (!document.getElementById('nxAnuncioTitulo').value.trim()) return 'El título es obligatorio.';
+                if (!document.getElementById('nxAnuncioCuerpo').value.trim()) return 'El cuerpo del anuncio es obligatorio.';
+            }
+            if (nxAnuncioTipo === 'imagen') {
+                const file = document.getElementById('nxAnuncioArchivo').files[0];
+                if (!file) return 'Selecciona una imagen.';
+                if (!NX_ANUNCIO_MIMES.includes(file.type)) return 'Formato no permitido. Usa JPG, PNG o GIF.';
+                if (file.size > NX_ANUNCIO_MAX_MB * 1024 * 1024) return 'La imagen supera ' + NX_ANUNCIO_MAX_MB + ' MB.';
+            }
+            return null;
+        }
+
+        async function nexusGuardarAnuncio() {
+            if (!nexusEsAdmin() || !nxAnuncioTipo) return;
+
+            const fechaInicio = document.getElementById('nxAnuncioInicio').value;
+            const fechaFin = document.getElementById('nxAnuncioFin').value;
+            const error = nxAnuncioValidar(fechaInicio, fechaFin);
+            if (error) { nxAnuncioMostrarError(error); return; }
+
+            const btn = document.getElementById('nxAnuncioGuardar');
+            const volverBtn = document.getElementById('nxAnuncioVolverBtn');
+            btn.disabled = true;
+            volverBtn.disabled = true;
+            nxAnuncioMostrarError('');
+
+            try {
+                const payload = {
+                    action: 'guardarAnuncio',
+                    tipo: nxAnuncioTipo,
+                    titulo: nxAnuncioTipo === 'texto' ? document.getElementById('nxAnuncioTitulo').value.trim() : '',
+                    cuerpo: nxAnuncioTipo === 'texto' ? document.getElementById('nxAnuncioCuerpo').value.trim() : '',
+                    imagen_url: '',
+                    fecha_inicio: fechaInicio,
+                    fecha_fin: fechaFin
+                };
+
+                if (nxAnuncioTipo === 'imagen') {
+                    const file = document.getElementById('nxAnuncioArchivo').files[0];
+                    nxAnuncioMostrarProgreso(0, 'Subiendo imagen del anuncio...');
+                    const subida = await window.nexusSubirArchivoDrive(
+                        file, 'ANUNCIO_' + Date.now(), 'ARTES', '1', 1, 0,
+                        (pct) => nxAnuncioMostrarProgreso(pct, 'Subiendo imagen del anuncio...')
+                    );
+                    payload.imagen_url = 'https://lh3.googleusercontent.com/d/' + subida.fileId + '=w1600';
+                    nxAnuncioMostrarProgreso(100, '¡Listo!');
+                }
+
+                const res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res || !res.success) throw new Error((res && res.error) || 'No se pudo guardar el anuncio.');
+
+                showToast({ type: 'success', title: 'Anuncio guardado', message: 'El anuncio quedó activo.', duration: 3000 });
+                nxAnuncioResetForm();
+                nexusCerrarModalAnuncios();
+                nxAnuncioCache = null;
+                nxAnuncioMostrarPreview(payload);
+            } catch (err) {
+                console.error('Error guardando anuncio:', err);
+                nxAnuncioMostrarError(err.message || 'Error al guardar el anuncio.');
+                nxAnuncioOcultarProgreso();
+                btn.disabled = false;
+                volverBtn.disabled = false;
+            }
+        }
+    </script>
+
+    <style>
+        /* Overlay a pantalla completa, mismo patrón visual que el modal de login */
+        .nx-anuncio-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 21000;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .nx-anuncio-card {
+            position: relative;
+            background: linear-gradient(135deg, #0f1724 0%, #121d2e 100%);
+            border: 1px solid rgba(5, 84, 242, 0.35);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            max-height: 92vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(5, 84, 242, 0.1);
+            animation: authModalIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @media (min-width: 768px) {
+            .nx-anuncio-card { max-width: 640px; }
+        }
+        @media (min-width: 1200px) {
+            .nx-anuncio-card { max-width: 760px; }
+        }
+        .nx-anuncio-card::-webkit-scrollbar { width: 6px; }
+        .nx-anuncio-card::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+        .nx-anuncio-card::-webkit-scrollbar-thumb { background: rgba(5,84,242,0.4); border-radius: 3px; }
+
+        /* Cabecera compacta en fila: título a la izquierda, agujero negro a la derecha */
+        .nx-anuncio-head {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 64px 18px 22px;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(135deg, rgba(5,84,242,0.14) 0%, rgba(10,15,24,0.02) 70%);
+            border-bottom: 1px solid var(--border);
+        }
+        .nx-anuncio-head-title {
+            font-family: 'Audiowide', cursive;
+            font-size: 18px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            line-height: 1.25;
+            color: #fff;
+            text-align: left;
+        }
+        .nx-anuncio-head-title span { color: #5a82ff; }
+        .nx-anuncio-orb {
+            position: relative;
+            flex-shrink: 0;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.55), 0 0 0 2px rgba(56,118,242,0.35);
+        }
+        .nx-anuncio-orb canvas { width: 100%; height: 100%; display: block; }
+
+        .nx-anuncio-body { padding: 20px 24px 24px; }
+        .nx-anuncio-titulo {
+            font-family: 'Audiowide', cursive;
+            font-size: 1.1rem;
+            margin: 0 0 10px;
+            color: var(--color-light);
+        }
+        .nx-anuncio-cuerpo {
+            margin: 0;
+            color: var(--color-tertiary);
+            line-height: 1.55;
+            white-space: pre-line;
+        }
+        .nx-anuncio-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+        .nx-anuncio-x {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 22px;
+            cursor: pointer;
+            line-height: 1;
+            z-index: 5;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+        }
+        .nx-anuncio-x:hover { color: #fff; }
+        @media (max-width: 600px) {
+            .nx-anuncio-head { padding: 14px 54px 14px 16px; }
+            .nx-anuncio-head-title { font-size: 15px; }
+            .nx-anuncio-orb { width: 46px; height: 46px; }
+        }
+    </style>
+
+    <script>
+        let nxAnuncioCache = null;
+        let nxAnuncioCacheT = 0;
+        let nxAnuncioOrbIniciado = false;
+        const NX_ANUNCIO_TTL_MS = 30 * 60 * 1000;
+
+        // Asigna la imagen con una alternativa de respaldo (thumbnail de Drive)
+        // por si el CDN de mayor calidad no carga en algún navegador.
+        function nxAnuncioSetImgConFallback(imgEl, url) {
+            if (!imgEl || !url) return;
+            imgEl.onerror = function () {
+                imgEl.onerror = null;
+                var m = url.match(/\/d\/([^=/]+)/);
+                if (m) imgEl.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600';
+            };
+            imgEl.src = url;
+        }
+
+        // Ajusta el ancho de la tarjeta según la proporción real de la imagen
+        // (horizontal, vertical o cuadrada) para que no se vea siempre forzada
+        // al mismo tamaño de card sin importar las medidas de la imagen subida.
+        function nxAnuncioAjustarCardAImagen(card, imgEl) {
+            if (!card || !imgEl) return;
+            const aplicar = () => {
+                const w = imgEl.naturalWidth, h = imgEl.naturalHeight;
+                if (!w || !h) return;
+                const ratio = w / h;
+                let maxW;
+                if (ratio >= 1.35) maxW = 640;       // imagen horizontal
+                else if (ratio <= 0.8) maxW = 420;   // imagen vertical
+                else maxW = 480;                     // cercana al cuadrado
+                card.style.maxWidth = Math.min(maxW, window.innerWidth - 32) + 'px';
+            };
+            if (imgEl.complete && imgEl.naturalWidth) {
+                aplicar();
+            } else {
+                imgEl.onload = aplicar;
+            }
+        }
+
+        async function nexusCargarAnuncioFormularios() {
+            const banner = document.getElementById('nxAnuncioBanner');
+            if (!banner) return;
+
+            let anuncio = null;
+            if (nxAnuncioCache !== null && Date.now() - nxAnuncioCacheT < NX_ANUNCIO_TTL_MS) {
+                anuncio = nxAnuncioCache.data;
+            } else {
+                try {
+                    const res = await nexusFetchJSON(NEXUS_SCRIPT_URL + '?action=obtenerAnuncio', {}, 15000, 1);
+                    anuncio = (res && res.success && res.data) ? res.data : null;
+                } catch (err) {
+                    console.warn('No se pudo cargar el anuncio', err);
+                }
+                nxAnuncioCache = { data: anuncio };
+                nxAnuncioCacheT = Date.now();
+            }
+
+            const cerrado = anuncio && localStorage.getItem('nexus_anuncio_visto') === String(anuncio.id);
+            if (!anuncio || cerrado) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            const esImagen = anuncio.tipo === 'imagen' && anuncio.imagen_url;
+            const titulo = document.getElementById('nxAnuncioTituloTxt');
+            const cuerpo = document.getElementById('nxAnuncioCuerpoTxt');
+            const img = document.getElementById('nxAnuncioImgTxt');
+            const card = banner.querySelector('.nx-anuncio-card');
+
+            titulo.style.display = esImagen ? 'none' : '';
+            cuerpo.style.display = esImagen ? 'none' : '';
+            titulo.textContent = anuncio.titulo || '';
+            cuerpo.textContent = anuncio.cuerpo || '';
+            if (esImagen) {
+                nxAnuncioSetImgConFallback(img, anuncio.imagen_url);
+                img.style.display = 'block';
+                nxAnuncioAjustarCardAImagen(card, img);
+            } else {
+                img.removeAttribute('src');
+                img.style.display = 'none';
+                if (card) card.style.maxWidth = '';
+            }
+
+            banner.dataset.anuncioId = String(anuncio.id);
+            banner.style.display = 'flex';
+
+            if (!nxAnuncioOrbIniciado && typeof window.nexusInitBlackHole === 'function') {
+                const canvas = banner.querySelector('canvas.auth-bh-canvas');
+                if (canvas) window.nexusInitBlackHole(canvas);
+                nxAnuncioOrbIniciado = true;
+            }
+        }
+
+        function nexusCerrarAnuncioFormularios() {
+            const banner = document.getElementById('nxAnuncioBanner');
+            if (!banner) return;
+            if (banner.dataset.anuncioId) {
+                localStorage.setItem('nexus_anuncio_visto', banner.dataset.anuncioId);
+            }
+            banner.style.display = 'none';
+        }
+    </script>
+
+    <script>
+        function nxAnuncioCerrarPreview() {
+            const ov = document.getElementById('nxAnuncioPreviewOverlay');
+            if (ov) ov.style.display = 'none';
+        }
+
+        function nxAnuncioMostrarPreview(a) {
+            let ov = document.getElementById('nxAnuncioPreviewOverlay');
+            if (!ov) {
+                ov = document.createElement('div');
+                ov.id = 'nxAnuncioPreviewOverlay';
+                ov.className = 'nx-anuncio-overlay';
+                ov.style.zIndex = '21500';
+                ov.addEventListener('click', function (e) { if (e.target === ov) nxAnuncioCerrarPreview(); });
+                document.body.appendChild(ov);
+            }
+            ov.innerHTML = '';
+            ov.style.display = 'flex';
+
+            const card = document.createElement('div');
+            card.className = 'nx-anuncio-card';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.className = 'nx-anuncio-x';
+            closeBtn.setAttribute('aria-label', 'Cerrar');
+            closeBtn.title = 'Cerrar';
+            closeBtn.textContent = '✕';
+            closeBtn.addEventListener('click', nxAnuncioCerrarPreview);
+            card.appendChild(closeBtn);
+
+            const head = document.createElement('div');
+            head.className = 'nx-anuncio-head';
+            const headTitle = document.createElement('div');
+            headTitle.className = 'nx-anuncio-head-title';
+            headTitle.innerHTML = 'ANUNCIOS <span>NEXUS</span>';
+            const orb = document.createElement('div');
+            orb.className = 'nx-anuncio-orb';
+            const canvas = document.createElement('canvas');
+            canvas.className = 'auth-bh-canvas';
+            canvas.setAttribute('data-tint', '0.35,0.55,1');
+            orb.appendChild(canvas);
+            head.appendChild(headTitle);
+            head.appendChild(orb);
+            card.appendChild(head);
+
+            const body = document.createElement('div');
+            body.className = 'nx-anuncio-body';
+
+            const eyebrow = document.createElement('p');
+            eyebrow.style.cssText = 'margin:0 0 10px; font-size:0.72rem; letter-spacing:0.5px; color: #5a82ff; text-transform:uppercase; font-weight:700;';
+            eyebrow.innerHTML = '<i class="fas fa-eye"></i> Vista previa · así lo verán los usuarios';
+            body.appendChild(eyebrow);
+
+            if (a.tipo === 'imagen' && a.imagen_url) {
+                const img = document.createElement('img');
+                img.className = 'nx-anuncio-img';
+                img.alt = 'Anuncio';
+                body.appendChild(img);
+                nxAnuncioSetImgConFallback(img, a.imagen_url);
+                nxAnuncioAjustarCardAImagen(card, img);
+            } else {
+                const t = document.createElement('h3');
+                t.className = 'nx-anuncio-titulo';
+                t.textContent = a.titulo || '';
+                const c = document.createElement('p');
+                c.className = 'nx-anuncio-cuerpo';
+                c.textContent = a.cuerpo || '';
+                body.appendChild(t);
+                body.appendChild(c);
+            }
+
+            const fechas = document.createElement('p');
+            fechas.style.cssText = 'margin: 14px 0 0; font-size: 0.8rem; color: var(--color-tertiary);';
+            fechas.textContent = 'Vigente del ' + a.fecha_inicio + ' al ' + a.fecha_fin;
+            body.appendChild(fechas);
+
+            card.appendChild(body);
+            ov.appendChild(card);
+
+            if (typeof window.nexusInitBlackHole === 'function') window.nexusInitBlackHole(canvas);
+        }
+    </script>
+
+    <!-- ============================================================
+         AVISO BLOQUEANTE DE SOLICITUDES RECHAZADAS - NEXUS
+         El usuario no puede usar la app hasta ver el motivo de cada
+         rechazo pendiente. Sin listeners: solo lecturas/escrituras
+         puntuales sobre avisos_rechazo/{uid}.
+         ============================================================ -->
+    <div class="nx-rechazo-overlay" id="nxRechazoOverlay" style="display:none;">
+        <div class="nx-rechazo-card">
+            <div class="nx-rechazo-icon"><i class="fas fa-circle-exclamation"></i></div>
+            <p class="nx-rechazo-eyebrow" id="nxRechazoContador">Solicitud rechazada</p>
+            <h2 class="nx-rechazo-titulo">Tu solicitud fue rechazada</h2>
+            <div class="nx-rechazo-datos">
+                <div><span>ID</span><strong id="nxRechazoId">—</strong></div>
+                <div><span>Tipo</span><strong id="nxRechazoTipo">—</strong></div>
+            </div>
+            <p class="nx-rechazo-motivo-label">Motivo</p>
+            <p class="nx-rechazo-motivo" id="nxRechazoMotivo">—</p>
+            <button type="button" class="nx-btn nx-btn-primary nx-rechazo-btn" id="nxRechazoBtn" onclick="nxRechazoConfirmar()">Entendido</button>
+        </div>
+    </div>
+
+    <style>
+        .nx-rechazo-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 8, 18, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30000;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .nx-rechazo-card {
+            width: 100%;
+            max-width: 440px;
+            background: linear-gradient(135deg, #14101a 0%, #1c1420 100%);
+            border: 1px solid rgba(230, 57, 70, 0.4);
+            border-radius: 20px;
+            padding: 28px 26px 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(230,57,70,0.12);
+            text-align: center;
+            animation: authModalIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .nx-rechazo-icon {
+            width: 56px; height: 56px; margin: 0 auto 14px;
+            border-radius: 50%;
+            background: rgba(230, 57, 70, 0.15);
+            color: #ff5c6c;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        .nx-rechazo-eyebrow {
+            margin: 0 0 6px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff8b96;
+            font-weight: 600;
+        }
+        .nx-rechazo-titulo {
+            font-family: 'Audiowide', cursive;
+            font-size: 1.15rem;
+            margin: 0 0 18px;
+            color: #fff;
+        }
+        .nx-rechazo-datos {
+            display: flex; gap: 10px; margin-bottom: 16px;
+        }
+        .nx-rechazo-datos > div {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .nx-rechazo-datos span {
+            display: block; font-size: 0.7rem; color: var(--color-tertiary); margin-bottom: 2px;
+        }
+        .nx-rechazo-datos strong {
+            display: block; font-size: 0.82rem; color: var(--color-light); word-break: break-word;
+        }
+        .nx-rechazo-motivo-label {
+            margin: 0 0 6px; font-size: 0.78rem; color: var(--color-tertiary); text-align: left;
+        }
+        .nx-rechazo-motivo {
+            margin: 0 0 22px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--color-light);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            text-align: left;
+            white-space: pre-line;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .nx-rechazo-btn { width: 100%; }
+    </style>
+
+    <script>
+        // Cola en memoria de rechazos pendientes por confirmar en esta sesión.
+        // Cada elemento: { id: solicitudId, claveMes: 'YYYY-MM' }
+        let nxRechazoQueue = [];
+        let nxRechazoUidActual = null;
+        let nxRechazoBusy = false;
+        let nxRechazoTotalOriginal = 0;
+
+        // Se llama una sola vez por sesión (tras resolver el login), nunca en un listener.
+        async function nexusRevisarAvisosRechazo() {
+            try {
+                if (!window.dbRT || !window.fbRT) return;
+                const uid = NexusSession.user && NexusSession.user.uid;
+                if (!uid) return;
+                nxRechazoUidActual = uid;
+
+                const snap = await window.fbRT.get(window.fbRT.ref(window.dbRT, 'avisos_rechazo/' + uid));
+                if (!snap.exists()) return;
+
+                const val = snap.val() || {};
+                nxRechazoQueue = Object.keys(val).map(function (id) {
+                    return { id: id, claveMes: val[id] };
+                });
+                if (!nxRechazoQueue.length) return;
+
+                nxRechazoTotalOriginal = nxRechazoQueue.length;
+                document.getElementById('nxRechazoOverlay').style.display = 'flex';
+                await nxRechazoMostrarSiguiente();
+            } catch (e) {
+                console.warn('[NEXUS] No se pudo revisar avisos de rechazo:', e);
+            }
+        }
+
+        async function nxRechazoMostrarSiguiente() {
+            if (!nxRechazoQueue.length) {
+                document.getElementById('nxRechazoOverlay').style.display = 'none';
+                return;
+            }
+
+            const actual = nxRechazoQueue[0];
+            const total = nxRechazoTotalOriginal;
+            const posicion = total - nxRechazoQueue.length + 1;
+            let detalle = null;
+
+            try {
+                const ref = window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + actual.claveMes + '/' + actual.id);
+                const snap = await window.fbRT.get(ref);
+                if (snap.exists()) detalle = snap.val();
+            } catch (e) {
+                console.warn('[NEXUS] No se pudo leer el detalle del rechazo:', e);
+            }
+
+            if (!detalle) {
+                // La solicitud ya no está (purga, borrado manual, etc.): se descarta
+                // el puntero huérfano y se pasa a la siguiente sin bloquear al usuario.
+                try {
+                    await window.fbRT.remove(window.fbRT.ref(window.dbRT, 'avisos_rechazo/' + nxRechazoUidActual + '/' + actual.id));
+                } catch (e) { /* sin acción */ }
+                nxRechazoQueue.shift();
+                return nxRechazoMostrarSiguiente();
+            }
+
+            document.getElementById('nxRechazoContador').textContent =
+                total > 1 ? ('Solicitud rechazada (' + posicion + ' de ' + total + ')') : 'Solicitud rechazada';
+            document.getElementById('nxRechazoId').textContent = actual.id;
+            document.getElementById('nxRechazoTipo').textContent = detalle.Solicitud || '—';
+            document.getElementById('nxRechazoMotivo').textContent = detalle.MotivoRechazo || 'Sin motivo especificado.';
+        }
+
+        async function nxRechazoConfirmar() {
+            if (nxRechazoBusy || !nxRechazoQueue.length) return;
+            nxRechazoBusy = true;
+
+            const btn = document.getElementById('nxRechazoBtn');
+            const htmlBtn = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmando...';
+
+            const actual = nxRechazoQueue[0];
+            try {
+                await window.fbRT.remove(window.fbRT.ref(window.dbRT, 'avisos_rechazo/' + nxRechazoUidActual + '/' + actual.id));
+                nxRechazoQueue.shift();
+                await nxRechazoMostrarSiguiente();
+            } catch (e) {
+                console.warn('[NEXUS] No se pudo confirmar el aviso de rechazo, se reintentará luego:', e);
+                if (typeof showToast === 'function') {
+                    showToast({ type: 'error', title: 'Sin conexión', message: 'No se pudo confirmar. Intenta de nuevo.', duration: 3500 });
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = htmlBtn;
+                nxRechazoBusy = false;
+            }
+        }
+    </script>
+
 </body>
 </html>
