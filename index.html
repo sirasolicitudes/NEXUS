@@ -10944,46 +10944,6 @@
         .nexus-loading-tips {
             animation: nexusPulse 3s ease-in-out infinite;
         }
-
-        /* ===== FIX MÓVIL 1: bloquear el scroll de la página mientras hay un modal/overlay abierto ===== */
-        html:has(.nexus-modal-overlay[style*="display: flex"]),
-        html:has(.nx-overlay.active),
-        html:has(.auth-modal-overlay.active),
-        html:has(.nexus-extract-overlay.active),
-        html:has(.nx-lightbox.active),
-        html:has(#nexusLoadingOverlay[style*="display: flex"]) {
-            overflow: hidden !important;
-            overscroll-behavior: none;
-        }
-        /* El scroll interno de cada modal no se "encadena" con la página de abajo */
-        .nexus-modal-overlay, .nx-overlay, .auth-modal-overlay, .nexus-extract-overlay, #nexusLoadingOverlay {
-            overscroll-behavior: contain;
-        }
-        .nexus-modal-content, .nexus-modal-body, .nx-modal, .auth-modal-card, .nexus-extract-modal {
-            overscroll-behavior: contain;
-        }
-        /* El fondo del overlay no debe arrastrar la página: solo se desplaza el contenido del modal */
-        .nexus-modal-overlay, .nx-overlay, .auth-modal-overlay, .nexus-extract-overlay { touch-action: none; }
-        .nexus-modal-content, .nexus-modal-body, .nx-modal, .auth-modal-card, .nexus-extract-modal { touch-action: pan-y; }
-
-        /* ===== FIX MÓVIL 2: overlay de carga estable ===== */
-        #nexusLoadingOverlay { touch-action: none; }
-        @supports (height: 100dvh) {
-            #nexusLoadingOverlay { height: 100dvh !important; }
-            .nexus-modal-overlay { height: 100dvh; }
-            .nexus-modal-content, .nx-modal { max-height: 88dvh; }
-        }
-        @media (max-width: 768px) {
-            /* Textos y logo no desaparecen: se quitan las capas pesadas que Chrome móvil no compone bien */
-            #nexusLoadingOverlay .nexus-loading-title { font-size: 40px !important; text-shadow: none !important; white-space: nowrap; }
-            #nexusLoadingOverlay .nexus-loading-text,
-            #nexusLoadingOverlay .nexus-loading-subtext { text-shadow: none !important; }
-            #nexusLoadingOverlay .nexus-loading-tips { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; animation: none !important; background: rgba(255,255,255,0.1) !important; }
-            #nexusLoadingOverlay .nexus-light-beam { width: 140% !important; height: 140% !important; top: -20% !important; left: -20% !important; }
-            #nexusLoadingOverlay .nexus-center-glow { width: 320px !important; height: 320px !important; }
-            #nexusLoadingOverlay .nexus-particles { display: none; }
-            #nexusLoadingOverlay > div:last-child { transform: translateZ(0); width: 100%; max-width: 100%; padding: 0 4px; }
-        }
     </style>
 
     <!-- ============================================================
