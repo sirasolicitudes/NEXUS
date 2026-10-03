@@ -10944,6 +10944,46 @@
         .nexus-loading-tips {
             animation: nexusPulse 3s ease-in-out infinite;
         }
+
+        /* ===== FIX MÓVIL 1: bloquear el scroll de la página mientras hay un modal/overlay abierto ===== */
+        html:has(.nexus-modal-overlay[style*="display: flex"]),
+        html:has(.nx-overlay.active),
+        html:has(.auth-modal-overlay.active),
+        html:has(.nexus-extract-overlay.active),
+        html:has(.nx-lightbox.active),
+        html:has(#nexusLoadingOverlay[style*="display: flex"]) {
+            overflow: hidden !important;
+            overscroll-behavior: none;
+        }
+        /* El scroll interno de cada modal no se "encadena" con la página de abajo */
+        .nexus-modal-overlay, .nx-overlay, .auth-modal-overlay, .nexus-extract-overlay, #nexusLoadingOverlay {
+            overscroll-behavior: contain;
+        }
+        .nexus-modal-content, .nexus-modal-body, .nx-modal, .auth-modal-card, .nexus-extract-modal {
+            overscroll-behavior: contain;
+        }
+        /* El fondo del overlay no debe arrastrar la página: solo se desplaza el contenido del modal */
+        .nexus-modal-overlay, .nx-overlay, .auth-modal-overlay, .nexus-extract-overlay { touch-action: none; }
+        .nexus-modal-content, .nexus-modal-body, .nx-modal, .auth-modal-card, .nexus-extract-modal { touch-action: pan-y; }
+
+        /* ===== FIX MÓVIL 2: overlay de carga estable ===== */
+        #nexusLoadingOverlay { touch-action: none; }
+        @supports (height: 100dvh) {
+            #nexusLoadingOverlay { height: 100dvh !important; }
+            .nexus-modal-overlay { height: 100dvh; }
+            .nexus-modal-content, .nx-modal { max-height: 88dvh; }
+        }
+        @media (max-width: 768px) {
+            /* Textos y logo no desaparecen: se quitan las capas pesadas que Chrome móvil no compone bien */
+            #nexusLoadingOverlay .nexus-loading-title { font-size: 40px !important; text-shadow: none !important; white-space: nowrap; }
+            #nexusLoadingOverlay .nexus-loading-text,
+            #nexusLoadingOverlay .nexus-loading-subtext { text-shadow: none !important; }
+            #nexusLoadingOverlay .nexus-loading-tips { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; animation: none !important; background: rgba(255,255,255,0.1) !important; }
+            #nexusLoadingOverlay .nexus-light-beam { width: 140% !important; height: 140% !important; top: -20% !important; left: -20% !important; }
+            #nexusLoadingOverlay .nexus-center-glow { width: 320px !important; height: 320px !important; }
+            #nexusLoadingOverlay .nexus-particles { display: none; }
+            #nexusLoadingOverlay > div:last-child { transform: translateZ(0); width: 100%; max-width: 100%; padding: 0 4px; }
+        }
     </style>
 
     <!-- ============================================================
@@ -12194,6 +12234,7 @@
                 }
 
                 let bytesConfirmados = offset;
+                const tXhr0 = Date.now();
                 let stallTimer = null;
                 const reiniciarRelojEstancamiento = () => {
                     clearTimeout(stallTimer);
@@ -12230,7 +12271,9 @@
                     clearTimeout(stallTimer);
                     // CORS a veces reporta error de red aunque el archivo sí haya
                     // llegado; se confirma después listando la carpeta (getLatestFileId).
-                    resolve({ id: null, ambiguo: true });
+                    // Se adjunta cuánto tardó y cuántos bytes salieron: distingue un fallo
+                    // inmediato (archivo ilegible / bloqueo) de uno al terminar de subir (CORS).
+                    resolve({ id: null, ambiguo: true, xhr: { ms: Date.now() - tXhr0, bytes_enviados: Math.max(0, bytesConfirmados - offset), total_bytes: file.size, ready_state: xhr.readyState, status: xhr.status } });
                 };
                 xhr.ontimeout = () => {
                     clearTimeout(stallTimer);
@@ -12421,6 +12464,12 @@
                     en_linea_al_fallar: (typeof diag.en_linea_al_fallar === 'boolean') ? diag.en_linea_al_fallar : navigator.onLine,
                     binario_ambiguo: diag.binario_ambiguo,
                     bytes_confirmados: diag.bytes_confirmados,
+                    xhr_ms: diag.xhr_ms,
+                    xhr_bytes_enviados: diag.xhr_bytes_enviados,
+                    xhr_ready_state: diag.xhr_ready_state,
+                    xhr_status: diag.xhr_status,
+                    consultas_fileid: diag.consultas_fileid,
+                    reintentos_sesion: diag.reintentos_sesion,
                     archivo_nombre: diag.archivo_nombre,
                     archivo_kb: diag.archivo_kb,
                     archivo_mime: diag.archivo_mime,
@@ -12719,7 +12768,28 @@
             }
         }
 
+        // Envoltorio con reintento automático: si la subida binaria termina con "error de red"
+        // (ambigua) y el archivo NO aparece en Drive ni tras varias consultas con pausa, se pide
+        // una sesión nueva y se vuelve a subir (hasta 2 veces más).
         async function nexusSubirArchivoDrive(file, solicitudId, folderType = "SOLICITUDES", fileNumber = "1", totalFiles = 1, currentFileIndex = 0, onProgress = null, customFilename = null) {
+            const MAX_REINTENTOS_SESION = 2;
+            for (let n = 0; ; n++) {
+                try {
+                    return await nexusSubirArchivoDriveIntento(file, solicitudId, folderType, fileNumber, totalFiles, currentFileIndex, onProgress, customFilename);
+                } catch (err) {
+                    const d = err && err.nexusDiag;
+                    const reintentable = d && d.categoria === 'FILEID_NO_ENCONTRADO' && d.binario_ambiguo === true;
+                    if (!reintentable || n >= MAX_REINTENTOS_SESION || (typeof navigator !== 'undefined' && navigator.onLine === false)) {
+                        if (d) d.reintentos_sesion = n;
+                        throw err;
+                    }
+                    console.warn('⚠️ La subida no llegó a Drive; reintentando con una sesión nueva (' + (n + 1) + '/' + MAX_REINTENTOS_SESION + ')...');
+                    await new Promise(r => setTimeout(r, 1500 * (n + 1)));
+                }
+            }
+        }
+
+        async function nexusSubirArchivoDriveIntento(file, solicitudId, folderType = "SOLICITUDES", fileNumber = "1", totalFiles = 1, currentFileIndex = 0, onProgress = null, customFilename = null) {
             // Traza del archivo: se va llenando paso a paso y, si algo falla, viaja
             // pegada al error (err.nexusDiag) para que el log diga EXACTAMENTE dónde cayó.
             const traza = {
@@ -12780,6 +12850,18 @@
                     throw new Error(`Archivo excede ${maxFileSizeMB}MB`);
                 }
 
+                // 0. Comprobar que el archivo sigue siendo legible. En Android, un archivo elegido
+                // desde la galería puede volverse ilegible si cambió o se movió tras seleccionarlo;
+                // en ese caso la subida falla al instante y no sirve de nada reintentar.
+                traza.paso = 'lectura_archivo';
+                try {
+                    await file.slice(0, 4096).arrayBuffer();
+                } catch (readErr) {
+                    const e = new Error('No se pudo leer el archivo desde el dispositivo (' + ((readErr && readErr.name) || 'error') + '). Vuelve a seleccionarlo.');
+                    e.nexusDiag = { categoria: 'ARCHIVO_ILEGIBLE', accion: 'lectura_archivo' };
+                    throw e;
+                }
+
                 // 1. Obtener URL de subida autorizada desde Apps Script
                 traza.paso = 'getUploadUrl';
                 const filenameToUse = customFilename || file.name;
@@ -12822,6 +12904,12 @@
                     }
                 });
                 traza.binario_ambiguo = !!(binario && binario.ambiguo);
+                if (binario && binario.xhr) {
+                    traza.xhr_ms = binario.xhr.ms;
+                    traza.xhr_bytes_enviados = binario.xhr.bytes_enviados;
+                    traza.xhr_ready_state = binario.xhr.ready_state;
+                    traza.xhr_status = binario.xhr.status;
+                }
                 if (!traza.binario_ambiguo) {
                     const seg = (Date.now() - tBin) / 1000;
                     if (seg > 0.5) {
@@ -12845,7 +12933,17 @@
                     fileSize: file.size
                 });
 
-                const fileIdData = await nexusFetchJSON(`${NEXUS_SCRIPT_URL}?${fileIdParams.toString()}`, {}, 20000, 2);
+                let fileIdData = await nexusFetchJSON(`${NEXUS_SCRIPT_URL}?${fileIdParams.toString()}`, {}, 20000, 2);
+                // Subida "ambigua" (error CORS: el archivo suele llegar, pero Drive puede tardar unos
+                // segundos en mostrarlo). Antes de darlo por perdido se vuelve a consultar con pausas.
+                if (traza.binario_ambiguo && !(fileIdData && fileIdData.success && fileIdData.data && fileIdData.data.fileId)) {
+                    for (let k = 1; k <= 2; k++) {
+                        await new Promise(r => setTimeout(r, 2000 * k));   // 2s, 4s
+                        traza.consultas_fileid = k + 1;
+                        fileIdData = await nexusFetchJSON(`${NEXUS_SCRIPT_URL}?${fileIdParams.toString()}`, {}, 20000, 1);
+                        if (fileIdData && fileIdData.success && fileIdData.data && fileIdData.data.fileId) break;
+                    }
+                }
 
                 let fileId;
                 if (fileIdData.success && fileIdData.data.fileId) {
@@ -25333,6 +25431,21 @@
         .nx-arte-preview small { display: block; margin-top: 6px; font-size: 0.72rem; color: rgba(242, 242, 242, 0.55); }
         .nx-btn.nx-btn-corr { background: rgba(255, 94, 168, 0.14); border: 1px solid rgba(255, 94, 168, 0.65); color: #ff8cc0; }
         .nx-btn.nx-btn-corr:hover { background: rgba(255, 94, 168, 0.26); }
+        /* ===== FIX MÓVIL: el pie del modal de arte no debe desbordar horizontalmente ===== */
+        #nxArteModalOverlay .nx-modal { overflow-x: hidden; overscroll-behavior: contain; }
+        #nxArteModalOverlay .nx-body { min-width: 0; }
+        #nxArteModalOverlay .nx-foot { flex-wrap: wrap; min-width: 0; }
+        #nxArteModalOverlay .nx-actions { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+        #nxArteModalOverlay .nx-actions .nx-btn { min-width: 0; }
+        @media (max-width: 560px) {
+            #nxArteModalOverlay .nx-body { padding: 18px 16px 20px; }
+            #nxArteModalOverlay .nx-foot { flex-direction: column; align-items: stretch; gap: 8px; }
+            #nxArteModalOverlay .nx-count:empty { display: none; }
+            #nxArteModalOverlay .nx-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+            #nxArteModalOverlay .nx-actions .nx-btn { width: 100%; padding: 12px 10px; }
+            /* El botón principal (Descargar / Solicitar descarga) ocupa todo el ancho */
+            #nxArteModalOverlay .nx-actions .nx-btn-primary { grid-column: 1 / -1; order: -1; }
+        }
     </style>
 
     <!-- Modal del usuario: descargar el arte / solicitar descarga nuevamente -->
