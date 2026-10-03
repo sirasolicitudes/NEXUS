@@ -107,6 +107,7 @@
 
         nav ul {
             display: flex;
+            align-items: center; /* centra verticalmente los menús con la píldora del usuario y el botón de salir */
             list-style: none;
             gap: 30px;
         }
@@ -158,6 +159,89 @@
             background: rgba(255, 255, 255, 0.1);
             color: var(--color-tertiary);
             border-color: var(--color-tertiary);
+        }
+
+        /* ===== Aviso de ARTE LISTO (solo móvil/tablet, donde existe la hamburguesa) ===== */
+        .menu-toggle { position: relative; }
+        .menu-toggle .menu-toggle-dl {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: #ffd666;
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* Pestaña "Artes Finales" (PC y móvil): aviso de ARTE LISTO */
+        nav a.nav-arte-listo {
+            color: #ffd666;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background-color: rgba(255, 214, 102, 0.12);
+            animation: nxNavArtePulse 2s ease-in-out infinite;
+        }
+        nav a.nav-arte-listo:hover { color: #fff; background-color: rgba(255, 214, 102, 0.25); }
+        nav a.nav-arte-listo .nav-arte-dl {
+            animation: nxNavArteBounce 1.4s ease-in-out infinite;
+        }
+
+        @media (max-width: 860px) {
+            /* Hamburguesa: alterna entre las 3 líneas y el icono de descarga del badge ARTE LISTO */
+            .menu-toggle.has-arte-listo:not([aria-expanded="true"]) {
+                border-color: rgba(255, 214, 102, 0.9);
+                animation: nxToggleGlow 2.2s ease-in-out infinite;
+            }
+            .menu-toggle.has-arte-listo:not([aria-expanded="true"]) > i:not(.menu-toggle-dl) {
+                animation: nxToggleBarsSwap 3s ease-in-out infinite;
+            }
+            .menu-toggle.has-arte-listo:not([aria-expanded="true"]) .menu-toggle-dl {
+                display: flex;
+                animation: nxToggleDlSwap 3s ease-in-out infinite;
+            }
+            /* Pestaña "Artes Finales" dentro del menú desplegable */
+            nav a.nav-arte-listo {
+                color: #ffd666 !important;
+                background-color: rgba(255, 214, 102, 0.12);
+                animation: nxNavArtePulse 2s ease-in-out infinite;
+            }
+            nav a.nav-arte-listo .nav-arte-dl {
+                margin-right: 8px;
+                animation: nxNavArteBounce 1.4s ease-in-out infinite;
+            }
+        }
+        @keyframes nxToggleGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(255, 214, 102, 0); }
+            50%      { box-shadow: 0 0 14px rgba(255, 214, 102, 0.65); }
+        }
+        @keyframes nxToggleBarsSwap {
+            0%, 35%   { opacity: 1; transform: scale(1) rotate(0deg); }
+            45%, 85%  { opacity: 0; transform: scale(0.4) rotate(-90deg); }
+            95%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes nxToggleDlSwap {
+            0%, 35%   { opacity: 0; transform: scale(0.4) translateY(-6px); }
+            45%       { opacity: 1; transform: scale(1.15) translateY(0); }
+            52%       { transform: scale(1) translateY(0); }
+            62%       { transform: scale(1) translateY(3px); }
+            72%       { transform: scale(1) translateY(0); }
+            85%       { opacity: 1; transform: scale(1) translateY(0); }
+            95%, 100% { opacity: 0; transform: scale(0.4) translateY(-6px); }
+        }
+        @keyframes nxNavArtePulse {
+            0%, 100% { box-shadow: inset 0 0 0 1px rgba(255, 214, 102, 0.35), 0 0 0 rgba(255, 214, 102, 0); }
+            50%      { box-shadow: inset 0 0 0 1px rgba(255, 214, 102, 0.95), 0 0 14px rgba(255, 214, 102, 0.45); }
+        }
+        @keyframes nxNavArteBounce {
+            0%, 100% { transform: translateY(-2px); }
+            50%      { transform: translateY(3px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .menu-toggle.has-arte-listo > i:not(.menu-toggle-dl),
+            .menu-toggle.has-arte-listo .menu-toggle-dl,
+            nav a.nav-arte-listo,
+            nav a.nav-arte-listo .nav-arte-dl { animation: none !important; }
+            .menu-toggle.has-arte-listo:not([aria-expanded="true"]) .menu-toggle-dl { display: none; }
         }
 
         /* Hero Section */
@@ -6904,6 +6988,7 @@
         <div class="logo" onclick="event.preventDefault(); showSection('inicio')">NEXUS</div>
         <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" onclick="toggleMenu()">
             <i class="fas fa-bars"></i>
+            <i class="fas fa-download menu-toggle-dl" aria-hidden="true"></i>
         </button>
         <nav id="mainNav">
             <ul>
@@ -16240,6 +16325,9 @@
                 if (typeof nexusActivarListenersSolicitudes === 'function') nexusActivarListenersSolicitudes();
             }
 
+            // Al cambiar de pestaña se apaga/enciende el aviso de ARTE LISTO
+            if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
+
             // Cambiar de sección cuenta como actividad del usuario
             if (typeof _nxPresenciaGesto === 'function') _nxPresenciaGesto();
         }
@@ -20656,10 +20744,41 @@
                 _nexusArtesFinalesData = lista;
                 window._nexusArtesFinalesCache = cache;
                 nexusRenderizarArtesFinales(lista);
+                nexusActualizarAvisoArtesFinales();
             }, function (err) {
                 console.error('[NEXUS] No se pudo escuchar artes_finales:', err);
             });
             return null;
+        }
+
+        // Aviso de ARTE LISTO: la hamburguesa (móvil) y la pestaña "Artes Finales" se animan
+        // mientras haya algún arte por descargar y el usuario no esté ya en esa pestaña.
+        function nexusActualizarAvisoArtesFinales() {
+            var toggle = document.getElementById('menuToggle');
+            var link = document.querySelector('#mainNav a[onclick*="artes-finales"]');
+            var hayListo = (typeof _nexusArtesFinalesData !== 'undefined' && _nexusArtesFinalesData || []).some(function (a) {
+                return String(a.ArteEstado || 'LISTO').toUpperCase() === 'LISTO';
+            });
+            var sec = document.getElementById('artes-finales');
+            var enSeccion = !!(sec && sec.classList.contains('active'));
+            var avisar = hayListo && !enSeccion;
+
+            if (toggle) {
+                toggle.classList.toggle('has-arte-listo', avisar);
+                toggle.setAttribute('aria-label', avisar ? 'Abrir menú (tienes artes listos para descargar)' : 'Abrir menú');
+            }
+            if (link) {
+                link.classList.toggle('nav-arte-listo', avisar);
+                var ic = link.querySelector('.nav-arte-dl');
+                if (avisar && !ic) {
+                    ic = document.createElement('i');
+                    ic.className = 'fas fa-download nav-arte-dl';
+                    ic.setAttribute('aria-hidden', 'true');
+                    link.insertBefore(ic, link.firstChild);
+                } else if (!avisar && ic) {
+                    ic.remove();
+                }
+            }
         }
 
         function nexusDetenerArtesFinalesListener() {
@@ -20668,6 +20787,7 @@
             _nexusArtesUnidadEscuchada = null;
             _nexusArtesFinalesData = [];
             window._nexusArtesFinalesCache = {};
+            nexusActualizarAvisoArtesFinales();
         }
 
         function nexusRenderizarArtesFinales(lista) {
@@ -21223,6 +21343,7 @@
                             '<button type="button" class="nav-logout-btn" onclick="nexusLogout()" title="Cerrar sesi&#243;n"><i class="fas fa-power-off"></i></button>' +
                         '</li>';
                     mainNavUl.innerHTML = menuHtml;
+                    if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
                 }
 
                 // Cargar solicitudes vivas en tiempo real al tener sesiÃ³n
@@ -24011,7 +24132,7 @@
          El sistema detecta el rol post-autenticación en Firestore.
          Nunca se muestra ningún indicador de "Admin" en la UI.
          ============================================================ -->
-    <div id="nexus-login-modal" class="auth-modal-overlay" onclick="if(event.target === this) closeNexusLoginModal()" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+    <div id="nexus-login-modal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusLoginModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
@@ -24052,7 +24173,7 @@
          Límite: Máximo 2 por unidad (Sede Administrativa: 20).
          El staff (Diseñadores / ADMIN) es creado por Admin Principal.
          ============================================================ -->
-    <div id="nexus-register-modal" class="auth-modal-overlay" onclick="if(event.target === this) closeNexusRegisterModal()" role="dialog" aria-modal="true" aria-labelledby="register-modal-title">
+    <div id="nexus-register-modal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="register-modal-title">
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusRegisterModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
@@ -25144,6 +25265,34 @@
         .nx-arte-file.done .nx-arte-file-name small { color: var(--ok); }
         .nx-arte-file a.nx-btn { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
         .nx-arte-texto { font-size: 0.86rem; line-height: 1.55; color: rgba(242, 242, 242, 0.75); margin: 0 0 16px; }
+        .nx-arte-file.done a.nx-btn { border-color: rgba(61, 220, 151, 0.5); color: var(--ok); }
+        /* Aviso: el archivo ya se descargó -> falta confirmar */
+        .nx-arte-hint {
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 14px 0 0;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(61, 220, 151, 0.55);
+            background: rgba(61, 220, 151, 0.12);
+            color: #d7fbea;
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+        .nx-arte-hint.show { display: flex; animation: nxHintIn .45s cubic-bezier(.16,1,.3,1), nxHintGlow 1.8s ease-in-out .45s 3; }
+        .nx-arte-hint i { color: var(--ok); font-size: 1.1rem; margin-top: 1px; }
+        .nx-count.ok { color: var(--ok); font-weight: 600; }
+        .nx-btn-primary.nx-attn:not(:disabled) { animation: nxConfirmPulse 1.6s ease-in-out infinite; }
+        @keyframes nxHintIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+        @keyframes nxHintGlow { 0%,100% { box-shadow: 0 0 0 rgba(61,220,151,0); } 50% { box-shadow: 0 0 18px rgba(61,220,151,.45); } }
+        @keyframes nxConfirmPulse {
+            0%, 100% { box-shadow: 0 10px 24px rgba(5,84,242,0.3), 0 0 0 0 rgba(61,220,151,0.55); }
+            50%      { box-shadow: 0 10px 24px rgba(5,84,242,0.3), 0 0 0 8px rgba(61,220,151,0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .nx-arte-hint.show, .nx-btn-primary.nx-attn:not(:disabled) { animation: none; }
+        }
         .nx-arte-note { font-size: 0.76rem; line-height: 1.5; color: rgba(242, 242, 242, 0.55); margin: 14px 0 0; }
         .nx-arte-motivo {
             width: 100%; padding: 12px 14px; border-radius: 10px;
@@ -25163,7 +25312,23 @@
         .nx-aut-empty { text-align: center; padding: 28px 10px; font-size: 0.88rem; color: rgba(242, 242, 242, 0.55); }
         .nx-arte-previews { display: flex; flex-direction: column; gap: 12px; max-height: 46vh; overflow-y: auto; margin-bottom: 4px; }
         .nx-arte-preview { border: 1px solid var(--border); border-radius: 12px; background: var(--panel-2); padding: 8px; text-align: center; }
-        .nx-arte-preview-img { position: relative; min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--color-tertiary); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.04); }
+        .nx-arte-preview-img { position: relative; min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--color-tertiary); border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.04); cursor: zoom-in; }
+        /* El icono es solo un placeholder: va centrado DETRÁS de la imagen y se oculta al cargar */
+        .nx-arte-preview-img > i { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.6rem; opacity: 0.6; pointer-events: none; }
+        .nx-arte-preview-img.loaded > i { display: none; }
+        .nx-arte-zoom-hint { position: absolute; right: 8px; bottom: 8px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(8, 12, 26, 0.72); color: #fff; font-size: 0.85rem; pointer-events: none; border: 1px solid rgba(255,255,255,0.18); }
+        .nx-arte-preview-img:not(.loaded) .nx-arte-zoom-hint { display: none; }
+        /* Visor a pantalla completa con zoom (pellizco, doble toque, rueda, arrastre) */
+        .nx-lightbox { position: fixed; inset: 0; z-index: 30000; background: rgba(2, 4, 12, 0.96); display: none; flex-direction: column; touch-action: none; }
+        .nx-lightbox.active { display: flex; }
+        .nx-lb-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; padding-top: max(12px, env(safe-area-inset-top)); color: #fff; font-size: 0.85rem; position: relative; z-index: 2; }
+        .nx-lb-bar .nx-lb-tools { display: flex; gap: 8px; }
+        .nx-lb-btn { width: 42px; height: 42px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .nx-lb-btn:active { background: rgba(255,255,255,0.2); }
+        .nx-lb-stage { flex: 1; position: relative; overflow: hidden; cursor: grab; touch-action: none; }
+        .nx-lb-stage.grabbing { cursor: grabbing; }
+        .nx-lb-stage img { position: absolute; top: 0; left: 0; max-width: none; max-height: none; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; will-change: transform; }
+        .nx-lb-help { text-align: center; font-size: 0.72rem; color: rgba(255,255,255,0.55); padding: 8px 10px calc(10px + env(safe-area-inset-bottom)); }
         .nx-arte-preview-img img { position: relative; z-index: 1; display: block; max-width: 100%; max-height: 38vh; object-fit: contain; }
         .nx-arte-preview small { display: block; margin-top: 6px; font-size: 0.72rem; color: rgba(242, 242, 242, 0.55); }
         .nx-btn.nx-btn-corr { background: rgba(255, 94, 168, 0.14); border: 1px solid rgba(255, 94, 168, 0.65); color: #ff8cc0; }
@@ -25308,9 +25473,9 @@
 
                 var vistas = urls.map(function (u, i) {
                     var fid = idDrive(u);
-                    var img = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w1000" alt="Vista previa del archivo ' + (i + 1) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '';
-                    return '<div class="nx-arte-preview"><div class="nx-arte-preview-img"><i class="fas fa-file-image"></i>' + img + '</div>' +
-                           '<small>Archivo ' + (i + 1) + ' de ' + urls.length + '</small></div>';
+                    var img = fid ? '<img src="https://drive.google.com/thumbnail?id=' + fid + '&sz=w1000" alt="Vista previa del archivo ' + (i + 1) + '" loading="lazy" onload="this.parentNode.classList.add(\'loaded\')" onerror="this.style.display=\'none\'">' : '';
+                    return '<div class="nx-arte-preview"><div class="nx-arte-preview-img" role="button" tabindex="0" aria-label="Ampliar archivo ' + (i + 1) + '" onclick="nexusArteAmpliar(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();nexusArteAmpliar(' + i + ');}"><i class="fas fa-file-image"></i>' + img + (fid ? '<span class="nx-arte-zoom-hint"><i class="fas fa-search-plus"></i></span>' : '') + '</div>' +
+                           '<small>Archivo ' + (i + 1) + ' de ' + urls.length + (fid ? ' · toca la imagen para ampliarla' : '') + '</small></div>';
                 }).join('');
 
                 var botonPrincipal = esListo
@@ -25359,13 +25524,14 @@
                     return '<div class="nx-arte-file" id="nxArteFile' + i + '">' +
                                '<div class="nx-arte-thumb"><i class="fas fa-file-image"></i>' + th + '</div>' +
                                '<div class="nx-arte-file-name">Archivo ' + (i + 1) + '<small id="nxArteFileEst' + i + '">Pendiente de descargar</small></div>' +
-                               '<a class="nx-btn nx-btn-ghost" href="' + esc(dl) + '" target="_blank" rel="noopener" onclick="nexusArteMarcarClick(' + i + ')"><i class="fas fa-download"></i> Descargar</a>' +
+                               '<a class="nx-btn nx-btn-ghost" href="' + esc(dl) + '" onclick="return nexusArteDescargarArchivo(' + i + ', this.href)"><i class="fas fa-download"></i> Descargar</a>' +
                            '</div>';
                 }).join('');
 
                 body.innerHTML = chip +
                     '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
                     filas +
+                    '<div class="nx-arte-hint" id="nxArteHint" role="status" aria-live="polite"><i class="fas fa-circle-check"></i><span><b>¡Tu descarga ya inició!</b> Cuando el archivo termine de bajar, presiona <b>«Ya descargué mi arte»</b> para confirmar.</span></div>' +
                     '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>' +
                     '<div class="nx-foot">' +
                         '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
@@ -25554,7 +25720,200 @@
             };
 
 
+
+            // ─────────────────────────────────────────────
+            //  Descarga dentro del sistema (sin abrir otra pestaña)
+            //  Drive responde con "attachment", así que cargarlo en un iframe oculto
+            //  inicia la descarga sin sacar al usuario de NEXUS.
+            // ─────────────────────────────────────────────
+            window.nexusArteDescargarArchivo = function (i, url) {
+                try {
+                    var fr = document.createElement('iframe');
+                    fr.style.cssText = 'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;';
+                    fr.setAttribute('aria-hidden', 'true');
+                    fr.tabIndex = -1;
+                    fr.src = url;
+                    document.body.appendChild(fr);
+                    setTimeout(function () { if (fr.parentNode) fr.parentNode.removeChild(fr); }, 120000);
+                } catch (e) {
+                    console.warn('[NEXUS] Descarga por iframe falló:', e);
+                    window.location.href = url;   // último recurso: misma pestaña
+                }
+                window.nexusArteMarcarClick(i);
+                return false;   // evita que el enlace navegue / abra pestaña
+            };
+
+            // ─────────────────────────────────────────────
+            //  Visor ampliado de la vista previa (móvil primero)
+            // ─────────────────────────────────────────────
+            var _lb = { scale: 1, min: 1, max: 6, x: 0, y: 0, nw: 0, nh: 0, ptrs: {}, pinch0: 0, scale0: 1, lastTap: 0, drag: null };
+
+            function lbEls() {
+                return { root: document.getElementById('nxLightbox'), stage: document.getElementById('nxLbStage'), img: document.getElementById('nxLbImg'), title: document.getElementById('nxLbTitle') };
+            }
+
+            function lbCrear() {
+                if (document.getElementById('nxLightbox')) return;
+                var d = document.createElement('div');
+                d.className = 'nx-lightbox';
+                d.id = 'nxLightbox';
+                d.setAttribute('role', 'dialog');
+                d.setAttribute('aria-modal', 'true');
+                d.innerHTML =
+                    '<div class="nx-lb-bar"><span id="nxLbTitle"></span>' +
+                    '<div class="nx-lb-tools">' +
+                    '<button type="button" class="nx-lb-btn" id="nxLbOut" aria-label="Alejar"><i class="fas fa-search-minus"></i></button>' +
+                    '<button type="button" class="nx-lb-btn" id="nxLbIn" aria-label="Acercar"><i class="fas fa-search-plus"></i></button>' +
+                    '<button type="button" class="nx-lb-btn" id="nxLbClose" aria-label="Cerrar visor">✕</button>' +
+                    '</div></div>' +
+                    '<div class="nx-lb-stage" id="nxLbStage"><img id="nxLbImg" alt="Arte ampliado" draggable="false"></div>' +
+                    '<div class="nx-lb-help">Pellizca o toca dos veces para acercar · arrastra para moverte</div>';
+                document.body.appendChild(d);
+
+                var st = document.getElementById('nxLbStage');
+                document.getElementById('nxLbClose').onclick = window.nexusArteCerrarVisor;
+                document.getElementById('nxLbIn').onclick = function () { lbZoomEn(1.5, lbCentro()); };
+                document.getElementById('nxLbOut').onclick = function () { lbZoomEn(1 / 1.5, lbCentro()); };
+
+                st.addEventListener('pointerdown', function (e) {
+                    st.setPointerCapture && st.setPointerCapture(e.pointerId);
+                    _lb.ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+                    var ids = Object.keys(_lb.ptrs);
+                    if (ids.length === 2) {
+                        _lb.pinch0 = lbDist(); _lb.scale0 = _lb.scale; _lb.drag = null;
+                    } else if (ids.length === 1) {
+                        _lb.drag = { sx: e.clientX, sy: e.clientY, ox: _lb.x, oy: _lb.y, moved: false };
+                        st.classList.add('grabbing');
+                    }
+                });
+                st.addEventListener('pointermove', function (e) {
+                    if (!_lb.ptrs[e.pointerId]) return;
+                    _lb.ptrs[e.pointerId] = { x: e.clientX, y: e.clientY };
+                    var ids = Object.keys(_lb.ptrs);
+                    if (ids.length >= 2 && _lb.pinch0) {
+                        var r = st.getBoundingClientRect();
+                        var a = _lb.ptrs[ids[0]], b = _lb.ptrs[ids[1]];
+                        var c = { x: (a.x + b.x) / 2 - r.left, y: (a.y + b.y) / 2 - r.top };
+                        lbFijarEscala(_lb.scale0 * (lbDist() / _lb.pinch0), c);
+                    } else if (_lb.drag) {
+                        var dx = e.clientX - _lb.drag.sx, dy = e.clientY - _lb.drag.sy;
+                        if (Math.abs(dx) + Math.abs(dy) > 4) _lb.drag.moved = true;
+                        _lb.x = _lb.drag.ox + dx; _lb.y = _lb.drag.oy + dy;
+                        lbAplicar();
+                    }
+                });
+                function fin(e) {
+                    if (!_lb.ptrs[e.pointerId]) return;
+                    var eraUno = Object.keys(_lb.ptrs).length === 1;
+                    var movido = _lb.drag && _lb.drag.moved;
+                    delete _lb.ptrs[e.pointerId];
+                    _lb.pinch0 = 0;
+                    st.classList.remove('grabbing');
+                    var quedan = Object.keys(_lb.ptrs);
+                    if (quedan.length === 1) {
+                        var p = _lb.ptrs[quedan[0]];
+                        _lb.drag = { sx: p.x, sy: p.y, ox: _lb.x, oy: _lb.y, moved: true };
+                    } else { _lb.drag = null; }
+                    // Doble toque / doble clic: alterna entre ajustar y 2.5x
+                    if (eraUno && !movido && e.type === 'pointerup') {
+                        var now = Date.now();
+                        if (now - _lb.lastTap < 300) {
+                            var r = st.getBoundingClientRect();
+                            var pt = { x: e.clientX - r.left, y: e.clientY - r.top };
+                            lbFijarEscala(_lb.scale > _lb.min * 1.2 ? _lb.min : Math.min(_lb.max, _lb.min * 2.5), pt);
+                            _lb.lastTap = 0;
+                        } else { _lb.lastTap = now; }
+                    }
+                }
+                st.addEventListener('pointerup', fin);
+                st.addEventListener('pointercancel', fin);
+                st.addEventListener('wheel', function (e) {
+                    e.preventDefault();
+                    var r = st.getBoundingClientRect();
+                    lbZoomEn(e.deltaY < 0 ? 1.2 : 1 / 1.2, { x: e.clientX - r.left, y: e.clientY - r.top });
+                }, { passive: false });
+                window.addEventListener('resize', function () {
+                    var el = lbEls();
+                    if (el.root && el.root.classList.contains('active')) lbAjustar();
+                });
+                document.addEventListener('keydown', function (e) {
+                    var el = lbEls();
+                    if (!el.root || !el.root.classList.contains('active')) return;
+                    if (e.key === 'Escape') { e.stopPropagation(); window.nexusArteCerrarVisor(); }
+                    else if (e.key === '+' || e.key === '=') lbZoomEn(1.3, lbCentro());
+                    else if (e.key === '-') lbZoomEn(1 / 1.3, lbCentro());
+                }, true);
+            }
+
+            function lbDist() {
+                var ids = Object.keys(_lb.ptrs);
+                if (ids.length < 2) return 0;
+                var a = _lb.ptrs[ids[0]], b = _lb.ptrs[ids[1]];
+                return Math.hypot(a.x - b.x, a.y - b.y) || 1;
+            }
+            function lbCentro() {
+                var st = document.getElementById('nxLbStage');
+                return { x: st.clientWidth / 2, y: st.clientHeight / 2 };
+            }
+            function lbLimitar() {
+                var st = document.getElementById('nxLbStage');
+                var w = _lb.nw * _lb.scale, h = _lb.nh * _lb.scale;
+                var sw = st.clientWidth, sh = st.clientHeight;
+                _lb.x = w <= sw ? (sw - w) / 2 : Math.min(0, Math.max(sw - w, _lb.x));
+                _lb.y = h <= sh ? (sh - h) / 2 : Math.min(0, Math.max(sh - h, _lb.y));
+            }
+            function lbAplicar() {
+                lbLimitar();
+                var img = document.getElementById('nxLbImg');
+                if (img) img.style.transform = 'translate(' + _lb.x + 'px,' + _lb.y + 'px) scale(' + _lb.scale + ')';
+            }
+            function lbFijarEscala(ns, c) {
+                ns = Math.max(_lb.min, Math.min(_lb.max, ns));
+                var k = ns / _lb.scale;
+                _lb.x = c.x - (c.x - _lb.x) * k;
+                _lb.y = c.y - (c.y - _lb.y) * k;
+                _lb.scale = ns;
+                lbAplicar();
+            }
+            function lbZoomEn(f, c) { lbFijarEscala(_lb.scale * f, c); }
+            function lbAjustar() {
+                var st = document.getElementById('nxLbStage');
+                var img = document.getElementById('nxLbImg');
+                if (!st || !img || !img.naturalWidth) return;
+                _lb.nw = img.naturalWidth; _lb.nh = img.naturalHeight;
+                img.style.width = _lb.nw + 'px'; img.style.height = _lb.nh + 'px';
+                var fit = Math.min(st.clientWidth / _lb.nw, st.clientHeight / _lb.nh);
+                _lb.min = fit; _lb.max = Math.max(fit * 6, 3);
+                _lb.scale = fit; _lb.x = 0; _lb.y = 0;
+                lbAplicar();
+            }
+
+            window.nexusArteAmpliar = function (i) {
+                var sol = buscar(_solId);
+                if (!sol) return;
+                var url = urlsDe(sol)[i];
+                var fid = url ? idDrive(url) : null;
+                if (!fid) return;
+                lbCrear();
+                var el = lbEls();
+                _lb.ptrs = {}; _lb.drag = null; _lb.pinch0 = 0; _lb.lastTap = 0;
+                el.title.textContent = 'Archivo ' + (i + 1) + ' de ' + urlsDe(sol).length;
+                el.img.style.transform = 'none';
+                el.img.style.visibility = 'hidden';
+                el.img.onload = function () { el.img.style.visibility = 'visible'; lbAjustar(); };
+                // Resolución alta para poder leer el texto del arte
+                el.img.src = 'https://drive.google.com/thumbnail?id=' + fid + '&sz=w2400';
+                el.root.classList.add('active');
+            };
+
+            window.nexusArteCerrarVisor = function () {
+                var el = lbEls();
+                if (el.root) el.root.classList.remove('active');
+                if (el.img) { el.img.onload = null; el.img.removeAttribute('src'); }
+            };
+
             window.nexusCerrarModalArte = function () {
+                if (window.nexusArteCerrarVisor) window.nexusArteCerrarVisor();
                 var overlay = document.getElementById('nxArteModalOverlay');
                 if (overlay) overlay.classList.remove('active');
                 var corrOv = document.getElementById('nxCorreccionOverlay');
@@ -25568,7 +25927,7 @@
                 var fila = document.getElementById('nxArteFile' + i);
                 if (fila) fila.classList.add('done');
                 var est = document.getElementById('nxArteFileEst' + i);
-                if (est) est.textContent = 'Descarga iniciada';
+                if (est) est.innerHTML = '<i class="fas fa-check"></i> Descarga iniciada';
 
                 var sol = buscar(_solId);
                 var total = sol ? urlsDe(sol).length : 0;
@@ -25576,7 +25935,23 @@
                 var cnt = document.getElementById('nxArteCount');
                 if (cnt) cnt.textContent = hechos + ' de ' + total + ' descargados';
                 var btn = document.getElementById('nxArteConfirmBtn');
-                if (btn && total > 0 && hechos >= total) btn.disabled = false;
+                if (btn && total > 0 && hechos >= total) {
+                    var yaAvisado = !btn.disabled;
+                    btn.disabled = false;
+                    if (cnt) cnt.classList.add('ok');
+                    if (!yaAvisado) {
+                        // Avisar al usuario: todo descargado, ahora falta confirmar
+                        btn.classList.add('nx-attn');
+                        var hint = document.getElementById('nxArteHint');
+                        if (hint) {
+                            hint.classList.remove('show');
+                            void hint.offsetWidth;
+                            hint.classList.add('show');
+                        }
+                        toast('success', total > 1 ? 'Descargas iniciadas' : 'Descarga iniciada', 'Cuando termine, presiona "Ya descargué mi arte" para confirmar.', 5000);
+                        try { btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+                    }
+                }
             };
 
             function nombreUsuario() {
