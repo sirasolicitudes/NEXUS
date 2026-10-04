@@ -10876,75 +10876,26 @@
         </div>
     </div>
 
-    <!-- Loading Overlay NEXUS con Animaciones del Hero -->
-    <div id="nexusLoadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--color-dark); flex-direction: column; align-items: center; justify-content: center; z-index: 30000; color: white; text-align: center; padding: 20px; overflow: hidden;">
-        
-        <!-- Background animado tipo Hero -->
-        <div class="nexus-loading-background" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;">
-            <div class="nexus-animated-gradient" style="width: 100%; height: 100%; position: relative; overflow: hidden;">
-                <!-- Light beams -->
-                <div class="nexus-light-beam" style="position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(5, 84, 242, 0.1) 45%, rgba(56, 118, 242, 0.3) 50%, rgba(172, 195, 242, 0.2) 55%, transparent 60%, transparent 100%); animation: nexusBeamMove 12s ease-in-out infinite;"></div>
-                <div class="nexus-light-beam" style="position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; animation-delay: -6s; background: linear-gradient(135deg, transparent 0%, transparent 42%, rgba(5, 84, 242, 0.15) 47%, rgba(56, 118, 242, 0.4) 52%, rgba(172, 195, 242, 0.25) 57%, transparent 62%, transparent 100%);"></div>
-                
-                <!-- Glow center -->
-                <div class="nexus-center-glow" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(ellipse at center, rgba(5, 84, 242, 0.15) 0%, rgba(56, 118, 242, 0.1) 30%, transparent 70%); animation: nexusGlowPulse 4s ease-in-out infinite;"></div>
-                
-                <!-- Particles -->
-                <div class="nexus-particles" style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(rgba(172, 195, 242, 0.3) 1px, transparent 1px), radial-gradient(rgba(56, 118, 242, 0.2) 1px, transparent 1px); background-size: 50px 50px, 30px 30px; background-position: 0 0, 25px 25px; animation: nexusParticleFloat 20s linear infinite;"></div>
-            </div>
-        </div>
-        
-        <!-- Contenido principal -->
-        <div style="position: relative; z-index: 1; text-align: center;">
-            <!-- Título estilo Hero -->
-            <div class="nexus-loading-title hero-title" style="font-family: 'Audiowide', cursive; font-size: 48px; color: white; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);">
-                <span class="highlight" style="color: #ffffff;">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></span>
-            </div>
-            
-            <!-- Texto principal -->
-            <div class="nexus-loading-text" id="nexusLoadMainTxt" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">Procesando...</div>
-            
-            <!-- Texto secundario -->
-            <div class="nexus-loading-subtext" id="nexusLoadSubTxt" style="font-size: 1rem; opacity: 0.9; margin-bottom: 20px; max-width: 400px;"></div>
-            
-            <!-- Barra de progreso -->
-            <div class="nexus-loading-progress-container" id="nexusLoadingProgressContainer" style="width: 100%; max-width: 400px; margin-top: 20px; text-align: center;">
-                <div class="nexus-loading-progress-bar" style="width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; position: relative;">
+    <!-- Loading Overlay NEXUS: solo desenfoque del fondo + progreso (sin capas ni animaciones) -->
+    <div id="nexusLoadingOverlay" style="display: none; position: fixed; inset: 0; z-index: 30000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #fff; background: rgba(6, 9, 13, 0.62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
+        <div style="width: 100%; max-width: 400px;">
+            <div class="nexus-loading-text" id="nexusLoadMainTxt" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">Procesando...</div>
+            <div class="nexus-loading-subtext" id="nexusLoadSubTxt" style="font-size: 0.95rem; opacity: 0.9; margin-bottom: 16px;"></div>
+
+            <div class="nexus-loading-progress-container" id="nexusLoadingProgressContainer" style="width: 100%; margin-top: 12px; text-align: center;">
+                <div class="nexus-loading-progress-bar" style="width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden;">
                     <div class="nexus-loading-progress-fill" id="nexusLoadingProgressFill" style="height: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); width: 0%; transition: width 0.3s ease; border-radius: 4px;"></div>
                 </div>
-                <div class="nexus-loading-progress-text" id="nexusLoadingProgressText" style="margin-top: 10px; font-weight: 800; font-size: 1.2rem;">0%</div>
+                <div class="nexus-loading-progress-text" id="nexusLoadingProgressText" style="margin-top: 8px; font-weight: 800; font-size: 1.1rem;">0%</div>
             </div>
-            
-            <!-- Tips informativos -->
-            <div class="nexus-loading-tips" id="nexusLoadingTips" style="margin-top: 30px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; max-width: 400px; backdrop-filter: blur(5px);">
-                <div style="font-size: 0.9rem; line-height: 1.5;">
-                    <span style="font-weight: 800;">💡 Tip:</span> <span id="nexusTipText">Los archivos se suben directamente a Google Drive para mayor seguridad.</span>
-                </div>
+
+            <!-- Consejo en texto plano (el script rota el texto cada 5 s) -->
+            <div class="nexus-loading-tips" id="nexusLoadingTips" style="margin-top: 22px; font-size: 0.85rem; line-height: 1.5; opacity: 0.8;">
+                <span style="font-weight: 800;">Tip:</span> <span id="nexusTipText">Los archivos se suben directamente a Google Drive para mayor seguridad.</span>
             </div>
         </div>
     </div>
 
-    <style>
-        @keyframes nexusBeamMove {
-            0%, 100% { transform: translateX(-10%) translateY(-10%) rotate(0deg); }
-            50% { transform: translateX(10%) translateY(10%) rotate(180deg); }
-        }
-        @keyframes nexusGlowPulse {
-            0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.1); }
-        }
-        @keyframes nexusParticleFloat {
-            0% { background-position: 0 0, 25px 25px; }
-            100% { background-position: 50px 50px, 75px 75px; }
-        }
-        @keyframes nexusPulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
-        .nexus-loading-tips {
-            animation: nexusPulse 3s ease-in-out infinite;
-        }
-    </style>
 
     <!-- ============================================================
          FIREBASE SDK v10 (Modular via CDN) — NEXUS Backend
@@ -12965,8 +12916,44 @@
          * @param {string} folderType - Tipo de carpeta: "ARTES" o "SOLICITUDES"
          * @returns {Promise<Array>} Array con las URLs de los archivos subidos
          */
+        // Copia los archivos a memoria ANTES de subir. En Android, una foto elegida de la galería
+        // depende de un permiso temporal: si la subida tarda minutos (datos móviles), la 2.ª foto
+        // puede volverse ilegible (NotReadableError) mientras la 1.ª aún sube. Una vez en memoria
+        // ya no depende del teléfono. Los archivos grandes (videos) se dejan tal cual para no
+        // agotar la RAM; solo se comprueba que se puedan leer.
+        async function nexusCongelarArchivos(fileArray) {
+            const LIMITE_ARCHIVO = 40 * 1024 * 1024;     // por archivo
+            const LIMITE_TOTAL = 120 * 1024 * 1024;      // suma de todas las copias en RAM
+            let enMemoria = 0;
+            const salida = [];
+            let malo = null;
+            for (let i = 0; i < fileArray.length; i++) {
+                const f = fileArray[i];
+                try {
+                    if (f.size <= LIMITE_ARCHIVO && (enMemoria + f.size) <= LIMITE_TOTAL) {
+                        const buf = await f.arrayBuffer();
+                        enMemoria += f.size;
+                        salida.push(new File([buf], f.name, { type: f.type, lastModified: f.lastModified }));
+                    } else {
+                        await f.slice(0, 4096).arrayBuffer();   // solo verificar que se puede leer
+                        salida.push(f);
+                    }
+                } catch (readErr) {
+                    salida.push(f);
+                    if (!malo) {
+                        const e = new Error('No se pudo leer el archivo desde el dispositivo (' + ((readErr && readErr.name) || 'error') + '). Vuelve a seleccionarlo.');
+                        e.nexusDiag = { categoria: 'ARCHIVO_ILEGIBLE', accion: 'lectura_archivo', paso: 'lectura_archivo', archivo_nombre: f.name, archivo_kb: Math.round((f.size || 0) / 1024), archivo_mime: f.type || null, archivo_indice: (i + 1) + '/' + fileArray.length, en_linea_al_fallar: navigator.onLine };
+                        malo = { index: i, error: e };
+                    }
+                }
+            }
+            return { files: salida, malo: malo };
+        }
+
         async function nexusSubirMultiplesArchivos(files, solicitudId, folderType = "SOLICITUDES", contexto = {}) {
-            const fileArray = Array.from(files);
+            const originales = Array.from(files);
+            const congelados = await nexusCongelarArchivos(originales);
+            const fileArray = congelados.files;
             const totalFiles = fileArray.length;
 
             // Progreso individual por archivo (0-100).
@@ -12988,7 +12975,12 @@
             // simultáneas). Subir en serie es un poco más lento pero es fiable.
             const settled = [];
             let falloInfo = null;
-            for (let index = 0; index < fileArray.length; index++) {
+            // Si alguna foto ya no se puede leer, se avisa AHORA (sin subir las demás para nada).
+            if (congelados.malo) {
+                settled.push({ status: 'rejected', reason: congelados.malo.error });
+                falloInfo = { file: fileArray[congelados.malo.index], index: congelados.malo.index, error: congelados.malo.error, pendientes: [] };
+            }
+            for (let index = 0; index < fileArray.length && !falloInfo; index++) {
                 const file = fileArray[index];
                 const fileNumber = (index + 1).toString(); // Número de archivo: 1, 2, 3, etc.
 
