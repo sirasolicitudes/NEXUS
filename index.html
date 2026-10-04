@@ -24,9 +24,13 @@
     <!-- Elementos de audio para notificaciones por sexo -->
     <audio id="soundFem" preload="auto">
         <source src="assets/audio/enviar_gracux_fem.wav" type="audio/wav">
+        <source src="sonidos/Enviar gracux fem.wav" type="audio/wav">
+        <source src="sonidos/enviar_gracux_fem.wav" type="audio/wav">
     </audio>
     <audio id="soundMasc" preload="auto">
         <source src="assets/audio/enviar_algenid_masc.wav" type="audio/wav">
+        <source src="sonidos/Enviar algenid masc.wav" type="audio/wav">
+        <source src="sonidos/enviar_algenid_masc.wav" type="audio/wav">
     </audio>
     <!-- Pista musical exclusiva del modal de Cumpleaños (1:29 min) -->
     <audio id="nx-cumple-audio" preload="auto">
@@ -943,11 +947,16 @@
             height: 100%;
             background: rgba(6, 9, 13, 0.8);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 20000;
             animation: fadeIn 0.3s ease;
+            padding: 16px 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overscroll-behavior: contain;
         }
 
         @keyframes fadeIn {
@@ -1805,12 +1814,17 @@
         .nx-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(3, 5, 9, 0.72);
-            backdrop-filter: blur(6px);
+            background: rgba(3, 5, 9, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 999;
+            z-index: 25000;
+            padding: 16px 12px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overscroll-behavior: contain;
             opacity: 0;
             pointer-events: none;
             transition: opacity .25s ease;
@@ -1818,9 +1832,12 @@
         .nx-overlay.active { opacity: 1; pointer-events: auto; }
 
         .nx-modal {
-            width: min(560px, 92vw);
-            max-height: 88vh;
-            overflow-y: auto;
+            width: min(560px, 94vw);
+            max-height: min(88vh, 88dvh);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: auto;
             background: linear-gradient(180deg, var(--panel) 0%, #0a0f18 100%);
             border: 1px solid var(--border);
             border-radius: 18px;
@@ -1877,7 +1894,7 @@
         .nx-close:hover { background: rgba(255,92,108,0.12); color: var(--err); transform: rotate(90deg); }
 
         /* Body */
-        .nx-body { padding: 22px 26px 26px; }
+        .nx-body { padding: 20px 24px 22px; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; min-height: 0; }
 
         .nx-request-chip {
             display: flex;
@@ -2299,18 +2316,27 @@
         /* Responsive */
         @media (max-width: 768px) {
             .nexus-side-panel {
-                width: 100%;
-                max-width: 100%;
-                border-left: none;
-                border-top: 4px solid var(--color-primary);
-                max-height: 85dvh;
-                border-radius: 20px 20px 0 0;
-                box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.2);
+                top: 0 !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 100% !important;
+                height: 100dvh !important;
+                max-height: 100% !important;
+                max-height: 100dvh !important;
+                border-left: none !important;
+                border-top: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                z-index: 10000;
             }
 
             .nexus-panel-header {
-                padding: 16px 20px;
-                border-radius: 20px 20px 0 0;
+                padding: 16px 20px !important;
+                border-radius: 0 !important;
+                flex-shrink: 0 !important;
             }
 
             .nexus-panel-title {
@@ -2318,8 +2344,12 @@
             }
 
             .nexus-panel-content {
-                padding: 20px;
-                gap: 16px;
+                flex: 1 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                overscroll-behavior: contain !important;
+                padding: 18px 16px calc(24px + env(safe-area-inset-bottom, 16px)) 16px !important;
+                gap: 16px !important;
             }
 
             .nexus-panel-section {
@@ -2329,8 +2359,9 @@
 
         @media (max-width: 380px) {
             .nexus-side-panel {
-                height: 90%;
-                max-height: 90dvh;
+                height: 100% !important;
+                height: 100dvh !important;
+                max-height: 100dvh !important;
             }
 
             .nexus-panel-content {
@@ -4924,6 +4955,116 @@
                 padding: 12px 14px !important;
                 font-size: 14px !important;
                 min-width: 0 !important;
+            }
+
+            /* ===== REGLAS RESPONSIVAS MAESTRAS PARA TODOS LOS MODALES ===== */
+            /* 1. Modal genérico NEXUS (.nx-modal) */
+            .nx-modal {
+                width: 96% !important;
+                max-width: calc(100vw - 16px) !important;
+                max-height: calc(100dvh - 24px) !important;
+                border-radius: 16px !important;
+                margin: auto !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: hidden !important;
+            }
+            .nx-head {
+                padding: 14px 16px 12px !important;
+                flex-shrink: 0 !important;
+            }
+            .nx-title {
+                font-size: 1.05rem !important;
+                line-height: 1.3 !important;
+            }
+            .nx-body {
+                padding: 14px 16px !important;
+                flex: 1 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                overscroll-behavior: contain !important;
+                min-height: 0 !important;
+            }
+            .nx-foot {
+                padding: 12px 16px !important;
+                margin-top: 10px !important;
+                flex-shrink: 0 !important;
+            }
+            .nx-actions {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                margin: 0 !important;
+            }
+            .nx-actions .nx-btn {
+                width: 100% !important;
+                text-align: center !important;
+                justify-content: center !important;
+                padding: 12px !important;
+                font-size: 0.9rem !important;
+                box-sizing: border-box !important;
+            }
+            /* 2. Modal de Extracción / Edición (.nexus-extract-modal) */
+            .nexus-extract-modal {
+                width: 96% !important;
+                max-width: calc(100vw - 16px) !important;
+                max-height: calc(100dvh - 20px) !important;
+                margin: auto !important;
+                border-radius: 16px !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: hidden !important;
+            }
+            .nexus-extract-header {
+                padding: 14px 16px !important;
+                flex-shrink: 0 !important;
+            }
+            .nexus-extract-header-title {
+                font-size: 15px !important;
+            }
+            .nexus-extract-body {
+                padding: 14px 16px !important;
+                flex: 1 !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .nexus-extract-footer {
+                padding: 12px 14px !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                flex-shrink: 0 !important;
+            }
+            .nexus-extract-btn {
+                width: 100% !important;
+                justify-content: center !important;
+                text-align: center !important;
+                padding: 12px !important;
+                box-sizing: border-box !important;
+            }
+            .nexus-edit-row {
+                flex-direction: column !important;
+                gap: 0 !important;
+            }
+            /* 3. Modal de autenticación (.auth-modal-card) */
+            .auth-modal-card {
+                width: 94% !important;
+                max-width: calc(100vw - 20px) !important;
+                max-height: calc(100dvh - 30px) !important;
+                padding: 24px 18px !important;
+                margin: auto !important;
+                border-radius: 16px !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            /* 4. Botones de cerrar fáciles de tocar en táctil */
+            .nx-close, .nexus-modal-close, .nexus-extract-close, .auth-modal-close {
+                min-width: 38px !important;
+                min-height: 38px !important;
+                font-size: 1.1rem !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
         }
 
@@ -10879,6 +11020,7 @@
     <!-- Loading Overlay NEXUS: solo desenfoque del fondo + progreso (sin capas ni animaciones) -->
     <div id="nexusLoadingOverlay" style="display: none; position: fixed; inset: 0; z-index: 30000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #fff; background: rgba(6, 9, 13, 0.62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
         <div style="width: 100%; max-width: 400px;">
+            <div class="nexus-loading-logo" style="font-family: 'Audiowide', cursive; font-size: 3rem; font-weight: 900; letter-spacing: 4px; color: #ffffff; margin-bottom: 16px; text-shadow: 0 4px 20px rgba(5, 84, 242, 0.65); user-select: none;">NEX<span style="color: var(--color-tertiary, #ACC3F2);">US</span></div>
             <div class="nexus-loading-text" id="nexusLoadMainTxt" style="font-size: 1.4rem; font-weight: 800; margin-bottom: 8px;">Procesando...</div>
             <div class="nexus-loading-subtext" id="nexusLoadSubTxt" style="font-size: 0.95rem; opacity: 0.9; margin-bottom: 16px;"></div>
 
@@ -10891,7 +11033,7 @@
 
             <!-- Consejo en texto plano (el script rota el texto cada 5 s) -->
             <div class="nexus-loading-tips" id="nexusLoadingTips" style="margin-top: 22px; font-size: 0.85rem; line-height: 1.5; opacity: 0.8;">
-                <span style="font-weight: 800;">Tip:</span> <span id="nexusTipText">Los archivos se suben directamente a Google Drive para mayor seguridad.</span>
+                <span style="font-weight: 800;">Tip:</span> <span id="nexusTipText">&#128190; Guardando en sistema principal...</span>
             </div>
         </div>
     </div>
@@ -13255,13 +13397,12 @@
     <!-- Funciones de Loading Overlay (Fuera del módulo para acceso global) -->
     <script>
         const nexusTips = [
-            "Los archivos se suben directamente a Google Drive para mayor seguridad.",
-            "El sistema verifica automáticamente que cada archivo se haya subido correctamente.",
-            "Los archivos se nombran con el formato: NEXUS-ID_número para fácil identificación.",
-            "Puedes subir hasta 10 archivos por solicitud con un máximo de 24MB en total (sin límite para admin/diseñadores).",
-            "Si la conexión falla, el sistema intentará recuperar el archivo automáticamente.",
-            "Las URLs de los archivos se guardan en Firebase para acceso rápido.",
-            "El sistema está optimizado para conexiones móviles y Wi-Fi."
+            "\uD83D\uDCBE Guardando en sistema principal...",
+            "\u26A1 Sincronizaci\u00F3n en tiempo real activa",
+            "\uD83D\uDCE4 No salga ni cierre esta ventana hasta que cargue la solicitud",
+            "\uD83D\uDCF1 Si env\u00EDas desde tu celular mant\u00E9n buena se\u00F1al o wifi",
+            "\uD83D\uDD04 Procesando datos en servidor seguro",
+            "\u2728 Optimizando transmisi\u00F3n de informaci\u00F3n"
         ];
 
         let nexusCurrentTipIndex = 0;
