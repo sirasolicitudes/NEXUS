@@ -7021,10 +7021,11 @@
             display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
         }
         .nxd-kpi-card .kpi-content {
-            display: flex; flex-direction: column; gap: 2px; text-align: left;
+            display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px;
+            flex: 1; min-width: 0; text-align: left;
         }
-        .nxd-kpi-card .kpi-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .04em; opacity: .9; font-weight: 600; }
-        .nxd-kpi-card .kpi-value { font-family: 'Audiowide', cursive; font-size: 1.6rem; line-height: 1; }
+        .nxd-kpi-card .kpi-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: .04em; opacity: .95; font-weight: 700; line-height: 1.2; }
+        .nxd-kpi-card .kpi-value { font-family: 'Audiowide', cursive; font-size: 1.6rem; line-height: 1; margin-left: auto; flex-shrink: 0; }
         .nxd-kpi-total  { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
         .nxd-kpi-pend   { background: linear-gradient(135deg, #0077b6 0%, #023047 100%); }
         .nxd-kpi-proc   { background: linear-gradient(135deg, #fb8500 0%, #c96200 100%); }
@@ -7169,7 +7170,8 @@
         @keyframes nxdShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         @media (max-width: 768px) {
-            .nxd-kpi-card .kpi-value { font-size: 1.5rem; }
+            .nxd-kpi-card .kpi-value { font-size: 1.8rem; }
+            .nxd-kpi-card .kpi-label { font-size: 0.9rem; }
             .nxd-comp-side .val { font-size: 1.3rem; }
         }
     </style>
@@ -9998,18 +10000,24 @@
                 <style>
                     .solicitudes-kpi-grid {
                         display: grid;
-                        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                        grid-template-columns: repeat(5, minmax(0, 1fr));
                         gap: 14px;
                         margin-bottom: 20px;
+                    }
+                    @media (max-width: 1100px) {
+                        .solicitudes-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+                    }
+                    @media (max-width: 768px) {
+                        .solicitudes-kpi-grid { grid-template-columns: 1fr; }
                     }
                     .solicitudes-kpi-card {
                         display: flex;
                         align-items: center;
                         gap: 12px;
                         padding: 16px 18px;
-                        border-radius: 14px;
+                        border-radius: 20px;
                         color: #fff;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+                        box-shadow: 0 10px 26px rgba(0,0,0,0.18);
                     }
                     .solicitudes-kpi-card .icon-badge {
                         width: 40px; height: 40px;
@@ -10019,14 +10027,15 @@
                         font-size: 16px;
                         flex-shrink: 0;
                     }
-                    .solicitudes-kpi-card .kpi-content { display: flex; flex-direction: column; }
-                    .solicitudes-kpi-card .kpi-label { font-size: 12px; font-weight: 700; text-transform: uppercase; opacity: 0.9; }
-                    .solicitudes-kpi-card .kpi-value { font-size: 24px; font-weight: 800; }
-                    .solicitudes-kpi-card.kpi-total { background: linear-gradient(135deg, #4361ee, #3a56d4); }
-                    .solicitudes-kpi-card.kpi-pend { background: linear-gradient(135deg, #219ebc, #023047); }
-                    .solicitudes-kpi-card.kpi-proc { background: linear-gradient(135deg, #fb8500, #c9660a); }
-                    .solicitudes-kpi-card.kpi-fin { background: linear-gradient(135deg, #2d6a4f, #1b4332); }
-                    .solicitudes-kpi-card.kpi-rech { background: linear-gradient(135deg, #c1121f, #780000); }
+                    .solicitudes-kpi-card .kpi-content { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; flex: 1; min-width: 0; }
+                    .solicitudes-kpi-card .kpi-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; opacity: 0.95; line-height: 1.2; }
+                    .solicitudes-kpi-card .kpi-value { font-family: 'Audiowide', cursive; font-size: 1.8rem; font-weight: 400; line-height: 1; margin-left: auto; flex-shrink: 0; }
+                    @media (max-width: 768px) { .solicitudes-kpi-card .kpi-label { font-size: 0.9rem; } }
+                    .solicitudes-kpi-card.kpi-total { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
+                    .solicitudes-kpi-card.kpi-pend { background: linear-gradient(135deg, #0077b6 0%, #023047 100%); }
+                    .solicitudes-kpi-card.kpi-proc { background: linear-gradient(135deg, #fb8500 0%, #c96200 100%); }
+                    .solicitudes-kpi-card.kpi-fin { background: linear-gradient(135deg, #2d9d5f 0%, #1a531a 100%); }
+                    .solicitudes-kpi-card.kpi-rech { background: linear-gradient(135deg, #e63946 0%, #8b0000 100%); }
                 </style>
 
                 <style>
@@ -21102,6 +21111,7 @@
 
             _nexusSolicitudesCargando = (_nexusSolicitudesData.length === 0);
             _nexusUnsubscribeSolicitudes = window.fbRT.onValue(vivasRef, callback, _nexusSolicitudesListenerError);
+            nexusEscucharContadoresSolicitudes();
             if (_nexusSolicitudesCargando) nexusRenderizarTarjetasPaginadas();
         }
 
@@ -21155,6 +21165,7 @@
                 _nexusUnsubscribeSolicitudes = null;
                 console.log('[NEXUS] Listeners de solicitudes desconectados');
             }
+            if (typeof nexusDetenerSolKpiListener === 'function') nexusDetenerSolKpiListener();
         }
 
         // Ordena (más recientes primero) y dispara el render de tarjetas paginadas.
@@ -21375,6 +21386,59 @@
 
         // Referencia a la función de desuscripción del listener de KPIs (solo Staff)
         var _nexusSolKpiUnsubscribe = null;
+        var _nexusSolContFin = 0;
+        var _nexusSolContRech = 0;
+
+        // Escucha en vivo contadores_solicitudes/{mes} = { finalizadas, rechazadas } (nodo diminuto).
+        function nexusEscucharContadoresSolicitudes() {
+            if (typeof _nexusSolKpiUnsubscribe === 'function') return;
+            if (!window.dbRT || !window.fbRT) return;
+            var mes = NexusData.mesKey();
+            _nexusSolKpiUnsubscribe = window.fbRT.onValue(
+                window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes),
+                function (snap) {
+                    var v = snap.exists() ? (snap.val() || {}) : {};
+                    _nexusSolContFin = Number(v.finalizadas) || 0;
+                    _nexusSolContRech = Number(v.rechazadas) || 0;
+                    nexusActualizarContadoresSolicitudes();
+                },
+                function (err) {
+                    console.warn('[NEXUS] Contadores de solicitudes no disponibles:', err && err.message);
+                    _nexusSolKpiUnsubscribe = null;
+                }
+            );
+        }
+
+        // Suma/resta 1 en el contador del mes. Va en una escritura aparte y sin bloquear:
+        // si falla (reglas, red) el cierre/corrección ya quedó guardado y solo se atrasa el KPI.
+        function nexusAjustarContadorSolicitudes(mes, campo, delta) {
+            try {
+                var up = {};
+                up[campo] = window.fbRT.increment(delta);
+                return window.fbRT.update(window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes), up)
+                    .catch(function (e) { console.warn('[NEXUS] No se pudo ajustar contadores_solicitudes/' + mes + ':', e && e.message); });
+            } catch (e) { console.warn('[NEXUS] Contador de solicitudes:', e); }
+        }
+
+        // Recalcula contadores_solicitudes/{mes} desde solicitudes_finalizadas_mes/{mes} (una lectura).
+        // Úsala UNA vez al estrenar el nodo, o para corregir diferencias. Solo Admin. Desde la consola:
+        //   nexusSembrarContadoresSolicitudes()
+        window.nexusSembrarContadoresSolicitudes = async function (mesOpcional) {
+            var mes = mesOpcional || NexusData.mesKey();
+            var snap = await window.fbRT.get(window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + mes));
+            var fin = 0, rech = 0;
+            if (snap.exists()) {
+                var val = snap.val();
+                Object.keys(val).forEach(function (k) {
+                    var est = String((val[k] && val[k].Estatus) || '').toUpperCase();
+                    if (est === 'RECHAZADA' || est === 'RECHAZADO') rech++;
+                    else if (est === 'FINALIZADA' || est === 'FINALIZADO') fin++;
+                });
+            }
+            await window.fbRT.set(window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes), { finalizadas: fin, rechazadas: rech });
+            console.log('[NEXUS] contadores_solicitudes/' + mes + ' =', { finalizadas: fin, rechazadas: rech });
+            return { finalizadas: fin, rechazadas: rech };
+        };
 
         function nexusActualizarContadoresSolicitudes() {
             var isStaff = (NexusSession.role === 'Admin Principal' || NexusSession.role === 'ADMIN' || NexusSession.role === 'Diseñador');
@@ -21383,19 +21447,18 @@
                 // Staff (Admin / Diseñador): los contadores se actualizan contando
                 // directamente sobre las solicitudes vivas en memoria y las finalizadas
                 if (typeof _nexusSolicitudesData !== 'undefined' && Array.isArray(_nexusSolicitudesData)) {
-                    var total = _nexusSolicitudesData.length;
+                    // Pendientes y En proceso: en vivo desde solicitudes_vivas (ya en memoria).
+                    // Finalizadas y Rechazadas: del nodo contadores_solicitudes/{mes} (RTDB, en vivo).
                     var pend = 0;
                     var proc = 0;
-                    var fin = 0;
-                    var rech = 0;
                     for (var i = 0; i < _nexusSolicitudesData.length; i++) {
                         var est = (_nexusSolicitudesData[i].Estatus || '').toUpperCase();
                         if (est === 'PENDIENTE') pend++;
                         else if (est === 'PROCESANDO' || est === 'EN PROCESO') proc++;
-                        else if (est === 'FINALIZADA' || est === 'FINALIZADO') fin++;
-                        else if (est === 'RECHAZADA' || est === 'RECHAZADO') rech++;
                     }
-                    _nexusSetSolKpis(total, pend, proc, fin, rech);
+                    var fin = Math.max(0, Number(_nexusSolContFin) || 0);
+                    var rech = Math.max(0, Number(_nexusSolContRech) || 0);
+                    _nexusSetSolKpis(pend + proc + fin + rech, pend, proc, fin, rech);
                 }
             } else {
                 // Usuario básico: los KPIs los actualiza el listener de unidad
@@ -21421,7 +21484,9 @@
         }
 
         function nexusFiltrarPorTipo(tipo) {
-            _nexusSolFiltroTipo = tipo || '';
+            tipo = tipo || '';
+            // Clic en el tipo ya seleccionado = deseleccionar (volver a "Todos")
+            _nexusSolFiltroTipo = (tipo && tipo === _nexusSolFiltroTipo) ? '' : tipo;
             _nexusPagCurrent = 1;
             nexusActualizarUIFiltroTipo();
             nexusToggleFiltroTipo(null, false);
@@ -22705,6 +22770,7 @@
                 duration: 4000
             });
             nexusCloseSidePanel();
+            nexusAjustarContadorSolicitudes(mes, esRechazo ? 'rechazadas' : 'finalizadas', 1);
 
             // ---- Segundo plano ----
             // Sheet: GAS reescribe la fila completa, por eso va el registro entero (sin el uid).
@@ -26285,6 +26351,7 @@
                     up['solicitudes_finalizadas_mes/' + mes + '/' + id] = null;
                     up['solicitudes_vivas/' + NexusData.unidadKey(reg.Unidad) + '/' + id] = vivo;
                     await RT.update(RT.ref(dbRT), up);
+                    nexusAjustarContadorSolicitudes(mes, String(reg.Estatus || '').toUpperCase().indexOf('RECHAZ') === 0 ? 'rechazadas' : 'finalizadas', -1);
 
                     toast('success', 'Corrección enviada', 'Tu solicitud volvió al equipo de diseño.', 4000);
                     window.nexusCerrarModalCorreccion(false);
@@ -31480,3 +31547,4 @@ function nexusInicializarReporteDiseno(contenedor) {
 
 </body>
 </html>
+
