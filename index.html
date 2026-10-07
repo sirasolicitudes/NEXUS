@@ -15,9 +15,6 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.js"></script>
     <!-- Canvas Confetti para explosión de globos reventables -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <!-- Vanta.js y Three.js para animación de niebla -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanta/0.5.24/vanta.fog.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="console.warn('[NEXUS] cdnjs falló, cargando Chart.js desde jsDelivr...'); document.write('<scr'+'ipt src=\'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js\'></scr'+'ipt>')"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -248,6 +245,35 @@
             .menu-toggle.has-arte-listo:not([aria-expanded="true"]) .menu-toggle-dl { display: none; }
         }
 
+        /* Pestaña "Estadisticas" (solo admin y diseñadores): aviso de datos recién actualizados */
+        nav a.nav-stats-nuevo {
+            color: #7ee0ff;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background-color: rgba(126, 224, 255, 0.12);
+            animation: nxNavStatsPulse 2.4s ease-in-out infinite;
+        }
+        nav a.nav-stats-nuevo:hover { color: #fff; background-color: rgba(126, 224, 255, 0.25); }
+        nav a.nav-stats-nuevo .nav-stats-ic { margin-right: 6px; animation: nxNavArteBounce 1.4s ease-in-out infinite; }
+        @keyframes nxNavStatsPulse {
+            0%, 100% { box-shadow: inset 0 0 0 1px rgba(126, 224, 255, 0.35), 0 0 0 rgba(126, 224, 255, 0); }
+            50%      { box-shadow: inset 0 0 0 1px rgba(126, 224, 255, 0.95), 0 0 14px rgba(126, 224, 255, 0.45); }
+        }
+        @keyframes nxToggleStatsGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(126, 224, 255, 0); }
+            50%      { box-shadow: 0 0 14px rgba(126, 224, 255, 0.65); }
+        }
+        @media (max-width: 860px) {
+            .menu-toggle.has-stats-nuevo:not([aria-expanded="true"]) {
+                border-color: rgba(126, 224, 255, 0.9);
+                animation: nxToggleStatsGlow 2.2s ease-in-out infinite;
+            }
+            nav a.nav-stats-nuevo { color: #7ee0ff !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .menu-toggle.has-stats-nuevo, nav a.nav-stats-nuevo, nav a.nav-stats-nuevo .nav-stats-ic { animation: none !important; }
+        }
+
         /* Hero Section */
         .hero {
             position: relative;
@@ -267,12 +293,32 @@
             z-index: 0;
         }
 
-        #vanta-fog-bg {
+        #hero-video-bg {
             width: 100%;
             height: 100%;
-            background: var(--color-dark);
+            background: var(--color-dark) center / cover no-repeat;   /* el póster se pone por JS */
             position: relative;
             overflow: hidden;
+        }
+        #hero-video-bg video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            object-position: 50% 50%;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        #hero-video-bg video.is-playing { opacity: 1; }
+        /* Oscurece un poco el centro para que el título y los botones se lean sobre el video */
+        #hero-video-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 100%);
         }
 
         .hero-content {
@@ -5310,7 +5356,7 @@
         .auth-modal-close:hover { color: #fff; }
 
         /* Logo/Título dentro del modal */
-        /* Cabecera con agujero negro animado (canvas WebGL) */
+        /* Cabecera con agujero negro animado (video corto, ver script al final) */
         .auth-modal-logo {
             position: relative;
             isolation: isolate;
@@ -5336,17 +5382,19 @@
             pointer-events: none;
             z-index: 1;
         }
-        .auth-bh-canvas {
+        .auth-bh-video {
             position: absolute;
             inset: 0;
             width: 100%;
             height: 100%;
             display: block;
             z-index: 0;
-            cursor: grab;
-            touch-action: none;
+            object-fit: cover;
+            object-position: 50% 42%;
+            pointer-events: none;
+            transform: scale(1.06);          /* margen para el leve desplazamiento con el mouse */
+            transition: transform 0.25s ease-out;
         }
-        .auth-bh-canvas.grabbing { cursor: grabbing; }
         .auth-modal-logo .auth-nexus-title,
         .auth-modal-logo .auth-modal-subtitle {
             position: relative;
@@ -5356,14 +5404,6 @@
         .auth-modal-logo .auth-nexus-title {
             text-shadow: 0 0 14px rgba(0, 0, 0, 0.85), 0 2px 6px rgba(0, 0, 0, 0.9);
         }
-        /* Sin WebGL: un anillo luminoso de CSS */
-        .auth-modal-logo.bh-fallback {
-            background:
-                radial-gradient(circle at 50% 40%, #000 0 20%, transparent 21%),
-                radial-gradient(ellipse 45% 14% at 50% 42%, rgba(90, 130, 255, 0.55), transparent 70%),
-                #04060d;
-        }
-        .auth-modal-logo.bh-fallback .auth-bh-canvas { display: none; }
         .auth-modal-logo .auth-nexus-title {
             font-family: 'Audiowide', cursive;
             font-size: 34px;
@@ -6950,6 +6990,21 @@
         .nxd-refresh-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(5,84,242,0.4); }
         .nxd-refresh-btn.loading i { animation: nxdSpin 0.8s linear infinite; }
         @keyframes nxdSpin { to { transform: rotate(360deg); } }
+        /* Hora de los datos + cuenta regresiva a la próxima actualización (reemplaza el botón de recarga) */
+        .nxd-sync {
+            display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
+            background: rgba(5,84,242,0.07); color: var(--color-dark);
+            border-radius: 999px; padding: 8px 14px;
+            font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 500;
+        }
+        .nxd-sync i { color: var(--color-primary); }
+        .nxd-sync-cuenta { font-weight: 600; color: var(--color-primary); font-variant-numeric: tabular-nums; }
+        .nxd-sync-sep { opacity: 0.4; }
+        .nxd-sync.nxd-sync-retraso .nxd-sync-cuenta, .nxd-sync.nxd-sync-retraso i { color: #e67e22; }
+        @media (max-width: 600px) {
+            .nxd-sync { width: 100%; justify-content: center; font-size: 0.75rem; }
+            .nxd-sync-sep { display: none; }
+        }
 
         /* KPI cards */
         .nxd-kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
@@ -7148,7 +7203,7 @@
         <section id="inicio" class="section active">
             <div class="hero">
                 <div class="hero-background">
-                    <div id="vanta-fog-bg"></div>
+                    <div id="hero-video-bg"><video id="hero-video" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video></div>
                 </div>
                 <div class="hero-social-bar" role="navigation" aria-label="Redes sociales">
                     <div class="hsb-card">
@@ -7285,11 +7340,10 @@
             <div id="nxAnuncioBanner" class="nx-anuncio-overlay" style="display:none;">
                 <div class="nx-anuncio-card">
                     <button type="button" class="nx-anuncio-x" onclick="nexusCerrarAnuncioFormularios()" aria-label="Cerrar anuncio" title="Cerrar">✕</button>
-                    <div class="nx-anuncio-head">
-                        <div class="nx-anuncio-head-title">ANUNCIOS <span>NEXUS</span></div>
-                        <div class="nx-anuncio-orb">
-                            <canvas class="auth-bh-canvas" data-tint="0.35,0.55,1"></canvas>
-                        </div>
+                    <div class="nx-anuncio-head auth-modal-logo">
+                        <video class="auth-bh-video" data-src="assets/video/bh_modal.mp4" poster="assets/images/bh_modal-poster.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
+                        <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
+                        <div class="auth-modal-subtitle">Anuncios</div>
                     </div>
                     <div class="nx-anuncio-body">
                         <h3 id="nxAnuncioTituloTxt" class="nx-anuncio-titulo"></h3>
@@ -10377,9 +10431,12 @@
                                 <i class="fas fa-tools"></i>
                                 <span id="nxd-btn-maint-label">🛠️ Mantenimiento <span id="nxd-maint-status" style="color:#e63946; font-weight:700;">● OFF</span></span>
                             </button>
-                            <button class="nxd-refresh-btn" id="nxdRefreshBtn" onclick="nexusCargarDashboardEstadisticas(true)">
-                                <i class="fas fa-sync-alt"></i> Actualizar Datos
-                            </button>
+                            <div class="nxd-sync" id="nxdSync" role="status" aria-live="off" title="Las estadísticas se actualizan solas cada hora">
+                                <i class="fas fa-clock"></i>
+                                <span class="nxd-sync-hora" id="nxdSyncHora">Actualizado: —</span>
+                                <span class="nxd-sync-sep">·</span>
+                                <span class="nxd-sync-cuenta" id="nxdSyncCuenta"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -10608,13 +10665,13 @@
                     </div>
 
                     <div class="nx-rep-toolbar-right">
-                        <button class="nx-rep-btn nx-rep-btn-preview" id="nxBtnVistaPrevia" onclick="nexusCargarReportesMes(document.getElementById('nxReporteMesSelector').value)" title="Si el mes ya está cerrado, muestra su respaldo oficial. Si no, genera una vista previa en vivo desde Firestore que no se guarda.">
+                        <button class="nx-rep-btn nx-rep-btn-preview" id="nxBtnVistaPrevia" onclick="nexusCargarReportesMes(document.getElementById('nxReporteMesSelector').value)" title="Si el mes ya está cerrado, muestra su respaldo oficial. Si no, genera una vista previa con los datos de la hoja Solicitudes que no se guarda.">
                             <i class="fas fa-eye"></i> Vista Previa
                         </button>
                         <button class="nx-rep-btn nx-rep-btn-print" onclick="nexusImprimirReporteActual()" title="Imprimir o exportar PDF del reporte seleccionado en pantalla">
                             <i class="fas fa-print"></i> Imprimir / PDF
                         </button>
-                        <button class="nx-rep-btn nx-rep-btn-all" onclick="nexusDescargarTresReportes()" title="Imprimir los 3 reportes completos en un solo documento">
+                        <button class="nx-rep-btn nx-rep-btn-all" onclick="nexusDescargarTresReportes()" title="Imprimir los reportes General, Diseño y Prensa en un solo documento">
                             <i class="fas fa-file-pdf"></i> Los 3 Reportes
                         </button>
                         <button class="nx-rep-btn nx-rep-btn-purge" id="nxBtnCierreMensual" onclick="nexusAbrirModalCierre()" title="Cierre definitivo y purga oficial del mes (solo disponible el 1° del mes en curso)">
@@ -10675,7 +10732,7 @@
                             </div>
                             <h3 style="font-size: 1.25rem; font-weight: 700; color: #1e293b; margin-bottom: 8px;">Reporte de Prensa y RRSS</h3>
                             <p style="font-size: 0.95rem; color: #64748b; max-width: 480px; margin: 0 auto; line-height: 1.5;">
-                                Usa el botón <strong>Vista Previa</strong> de la barra superior para compilar las coberturas periodísticas y copys de redes sociales.
+                                Usa el botón <strong>Vista Previa</strong> de la barra superior para ver el dashboard de Copy RRSS y notas de prensa.
                             </p>
                         </div>
                     </div>
@@ -10700,11 +10757,11 @@
                     </p>
                     <div style="background: #fff3f3; border: 1px solid #ffccd5; border-radius: 8px; padding: 14px; margin-bottom: 20px; font-size: 0.85rem; color: #590000; line-height: 1.4;">
                         <ul style="margin: 0; padding-left: 20px;">
-                            <li><strong>Respaldo histórico:</strong> Se guardará una copia consolidada en Firestore (<code>reportes_historicos</code>) y Google Sheets (<code>Estadísticas MES AÑO</code>).</li>
-                            <li><strong>Descarga obligatoria:</strong> Se emitirán los 3 PDFs definitivos.</li>
-                            <li><strong>Purga Google Drive:</strong> Se eliminarán por lotes los archivos y artes finales asociados a solicitudes cerradas de este mes.</li>
-                            <li><strong>Artes sin descargar:</strong> Los artes finales que los usuarios aún no hayan descargado se eliminarán con la purga.</li>
-                            <li><strong>Purga Bases de Datos:</strong> Se eliminarán las solicitudes finalizadas/rechazadas en Firestore y RTDB, preservando vivas las activas.</li>
+                            <li><strong>Respaldo histórico:</strong> Se guardarán los reportes del mes en Firestore (<code>reportes_historicos</code> y los reportes por unidad) y se congelará la hoja de estadísticas del mes en Google Sheets.</li>
+                            <li><strong>Descarga:</strong> podrás descargar los reportes General, Diseño y Prensa del mes.</li>
+                            <li><strong>Purga Google Drive:</strong> Se eliminarán por lotes los archivos de las solicitudes cerradas de este mes. No se tocan los de solicitudes vivas ni los de artes que aún estén disponibles para descarga.</li>
+                            <li><strong>Artes sin descargar:</strong> Los artes con fecha de evento vigente se conservan hasta que se autopurguen al pasar el evento.</li>
+                            <li><strong>Purga Bases de Datos:</strong> Se eliminarán las solicitudes finalizadas/rechazadas del mes en RTDB y las filas cerradas del Sheet, preservando las solicitudes vivas.</li>
                         </ul>
                     </div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 8px;">
@@ -11512,12 +11569,31 @@
         }
 
         /**
-         * Obtiene las estadísticas agregadas directamente calculadas desde Google Sheets
-         * (vía Apps Script) o calcula en memoria en tiempo real, sin escribir en RTDB.
+         * Devuelve las estadísticas que Apps Script publica cada hora en Firestore (estadisticas/actual):
+         * mes en curso o mes anterior. No recalcula ni escribe nada.
          * @param {string} [claveMes] — formato "YYYY-MM" (por defecto mes en curso)
          * @returns {Promise<Object>} data consolidada normalizada
          */
-        async function nexusRecalcularYGuardarEstadisticas(claveMes, soloLectura) { console.warn('[NEXUS·STUB] nexusRecalcularYGuardarEstadisticas: pendiente de reescribir'); return null; }
+        async function nexusRecalcularYGuardarEstadisticas(claveMes) {
+            // Ya no recalcula ni escribe: devuelve las estadísticas que GAS dejó en estadisticas/actual
+            // (mes en curso o mes anterior). Para cualquier otro mes devuelve null.
+            try {
+                let d = _nexusEstDoc;
+                if (!d) {
+                    const S = window.fbStore;
+                    if (!S || !window.db) return null;
+                    const snap = await S.getDoc(S.doc(window.db, 'estadisticas', 'actual'));
+                    d = snap.exists() ? nexusEstNormalizarDoc(snap.data()) : null;
+                }
+                if (!d) return null;
+                if (!claveMes || claveMes === d.claveMes) return d.actual;
+                if (claveMes === d.claveMesAnterior) return d.anterior;
+                return null;
+            } catch (e) {
+                console.error('[NEXUS] No se pudieron leer las estadísticas:', e);
+                return null;
+            }
+        }
         window.nexusLimpiarParaRTDB = nexusLimpiarParaRTDB;
         window.nexusNormalizarEstadisticas = nexusNormalizarEstadisticas;
         window.nexusRecalcularYGuardarEstadisticas = nexusRecalcularYGuardarEstadisticas;
@@ -11576,8 +11652,233 @@
 
         let _nexusEstActualesListenerActivo = false;
 
-        async function nexusCargarDashboardEstadisticas(forceRefresh) { console.warn('[NEXUS·STUB] nexusCargarDashboardEstadisticas: pendiente de reescribir'); return null; }
+        // ============================================================
+        // DASHBOARD DE ESTADÍSTICAS · lee Firestore (Fase 7)
+        // Apps Script calcula las estadísticas cada hora y las guarda en UN documento
+        // (estadisticas/actual, con el mes en curso y el anterior). El panel solo lo lee:
+        // admin y diseñadores, sin pasar por Apps Script. No hay botón de recarga: se
+        // muestra la hora de los datos y cuánto falta para la próxima actualización.
+        // Un listener sobre ese único documento avisa en la pestaña cuando llegan datos nuevos.
+        // ============================================================
+        const NEXUS_EST_TOLERANCIA_MS = 15 * 60 * 1000; // los triggers por horas de Apps Script no corren a la hora exacta
+        const NEXUS_EST_ESPERA_MAX_MS = 10000;
+        let _nexusEstDoc = null;            // último documento recibido, ya normalizado
+        let _nexusEstUnsub = null;          // listener de estadisticas/actual
+        let _nexusEstListo = null;          // promesa: primera respuesta del listener
+        let _nexusEstGeneradoVisto = null;  // generadoEn del último documento (para detectar cambios)
+        let _nexusEstTimer = null;          // intervalo del contador (solo corre con la pestaña abierta)
+        let _nexusEstAviso = false;         // hay datos nuevos que el usuario aún no ha visto
+        let _nexusEstCargando = false;
+
+        function nexusEstEsStaff() {
+            return typeof nexusEsDisenador === 'function' && !!nexusEsDisenador(); // incluye admin
+        }
+
+        function nexusEstEnSeccion() {
+            const sec = document.getElementById('estadisticas');
+            return !!(sec && sec.classList.contains('active'));
+        }
+
+        function nexusEstNormalizarDoc(raw) {
+            if (!raw || !raw.actual) return null;
+            const clave = raw.claveMes || nexusObtenerClaveMes();
+            const ms = Date.parse(raw.generadoEn || '');
+            return {
+                claveMes: clave,
+                claveMesAnterior: raw.claveMesAnterior || nexusClaveMesAnterior(clave),
+                actual: nexusNormalizarEstadisticas(raw.actual),
+                anterior: nexusNormalizarEstadisticas(raw.anterior),
+                generadoEn: raw.generadoEn || '',
+                generadoMs: isNaN(ms) ? 0 : ms,
+                intervaloMs: Math.max(1, Number(raw.intervaloMin) || 60) * 60000
+            };
+        }
+
+        function nexusEstMostrarEstado(msg) {
+            const h = document.getElementById('nxdSyncHora');
+            const c = document.getElementById('nxdSyncCuenta');
+            if (h) h.textContent = msg;
+            if (c) c.textContent = '';
+        }
+
+        function nexusEstRenderizar(d) {
+            const nombreActual = nexusNombreMes(d.claveMes);
+            const nombreAnterior = nexusNombreMes(d.claveMesAnterior);
+            const poner = function (id, t) { const el = document.getElementById(id); if (el) el.textContent = t; };
+            poner('nxdMesActualLabel', nombreActual);
+            poner('nxdMesActualComp', nombreActual);
+            poner('nxdMesAnteriorComp', nombreAnterior);
+            const a = d.actual;
+            // Cada bloque va aparte: si uno falla, los demás se siguen dibujando.
+            [
+                ['KPIs', function () { nxdRenderKpis(a); }],
+                ['Recibidas', function () { nxdRenderChartRecibidas(a); }],
+                ['Finalizadas vs recibidas', function () { nxdRenderChartFinVsRec(a); }],
+                ['Diseñadores', function () { nxdRenderDisenadores(a); }],
+                ['Eficiencia', function () { nxdRenderEfficiencyRanking(a); }],
+                ['Semana', function () { nxdRenderSemanal(a); }],
+                ['Métricas', function () { nxdRenderMetricasAvanzadas(a); }],
+                ['Top unidades', function () { nxdTopList('nxdTopUnidades', a.porUnidad); }],
+                ['Top solicitudes', function () { nxdTopList('nxdTopSolicitudes', a.porSolicitud); }],
+                ['Top especialidades', function () { nxdTopList('nxdTopEspecialidades', a.porEspecialidad); }],
+                ['Top servicios', function () { nxdTopList('nxdTopServicios', a.porServicio); }],
+                ['Comparativa', function () { nxdRenderComparativa(a, d.anterior); }]
+            ].forEach(function (p) {
+                try { p[1](); } catch (e) { console.error('[NEXUS] Estadísticas · ' + p[0] + ':', e); }
+            });
+        }
+
+        // ---- Hora de los datos y cuenta regresiva ----
+        function nexusEstFormatoHora(ms) {
+            const f = function (opts) { return new Date(ms).toLocaleString('es-VE', Object.assign({ timeZone: 'America/Caracas' }, opts)); };
+            const hora = f({ hour: 'numeric', minute: '2-digit', hour12: true });
+            const hoy = f({ day: '2-digit', month: '2-digit' }) === new Date().toLocaleString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' });
+            return hoy ? hora : (f({ day: '2-digit', month: '2-digit' }) + ', ' + hora);
+        }
+
+        function nexusEstPintarContador() {
+            const d = _nexusEstDoc;
+            const horaEl = document.getElementById('nxdSyncHora');
+            const cuentaEl = document.getElementById('nxdSyncCuenta');
+            const pill = document.getElementById('nxdSync');
+            if (!horaEl || !cuentaEl) return;
+            if (!d || !d.generadoMs) { horaEl.textContent = 'Actualizado: —'; cuentaEl.textContent = ''; return; }
+            horaEl.textContent = 'Actualizado: ' + nexusEstFormatoHora(d.generadoMs);
+            const resta = d.generadoMs + d.intervaloMs - Date.now();
+            let retraso = false;
+            if (resta > 0) {
+                const s = Math.ceil(resta / 1000);
+                cuentaEl.textContent = 'Próxima actualización en ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+            } else if (-resta <= NEXUS_EST_TOLERANCIA_MS) {
+                cuentaEl.textContent = 'Actualizando…';
+            } else {
+                cuentaEl.textContent = 'Actualización retrasada';
+                retraso = true;
+            }
+            if (pill) pill.classList.toggle('nxd-sync-retraso', retraso);
+        }
+
+        function nexusEstDetenerContador() {
+            if (_nexusEstTimer) clearInterval(_nexusEstTimer);
+            _nexusEstTimer = null;
+        }
+
+        function nexusEstIniciarContador() {
+            nexusEstPintarContador();
+            if (_nexusEstTimer) return;
+            _nexusEstTimer = setInterval(function () {
+                if (!nexusEstEnSeccion()) { nexusEstDetenerContador(); return; } // fuera de la pestaña no se pinta nada
+                if (document.hidden) return;
+                nexusEstPintarContador();
+            }, 1000);
+        }
+
+        // ---- Aviso en la pestaña (y en la hamburguesa, en móvil) ----
+        function nexusEstActualizarAviso() {
+            const toggle = document.getElementById('menuToggle');
+            const link = document.querySelector('#mainNav a[onclick*="estadisticas"]');
+            const avisar = _nexusEstAviso && nexusEstEsStaff() && !nexusEstEnSeccion();
+            if (toggle) {
+                toggle.classList.toggle('has-stats-nuevo', avisar);
+                if (avisar) toggle.setAttribute('aria-label', 'Abrir menú (estadísticas actualizadas)');
+            }
+            if (link) {
+                link.classList.toggle('nav-stats-nuevo', avisar);
+                let ic = link.querySelector('.nav-stats-ic');
+                if (avisar && !ic) {
+                    ic = document.createElement('i');
+                    ic.className = 'fas fa-chart-line nav-stats-ic';
+                    ic.setAttribute('aria-hidden', 'true');
+                    link.insertBefore(ic, link.firstChild);
+                } else if (!avisar && ic) {
+                    ic.remove();
+                }
+            }
+        }
+
+        // ---- Listener de estadisticas/actual (1 documento; 1 lectura por cada actualización de GAS) ----
+        function nexusEscucharEstadisticas() {
+            if (_nexusEstUnsub || !nexusEstEsStaff()) return _nexusEstListo;
+            const S = window.fbStore;
+            if (!S || !window.db) return null;
+            let resolver = null;
+            _nexusEstListo = new Promise(function (res) { resolver = res; });
+            const liberar = function () { if (resolver) { resolver(); resolver = null; } };
+
+            _nexusEstUnsub = S.onSnapshot(S.doc(window.db, 'estadisticas', 'actual'), function (snap) {
+                if (!snap.exists()) { _nexusEstDoc = null; liberar(); return; }
+                const d = nexusEstNormalizarDoc(snap.data());
+                if (!d) { liberar(); return; }
+                // El primer documento tras iniciar sesión es el estado actual, no una novedad.
+                const cambio = _nexusEstGeneradoVisto !== null && d.generadoEn !== _nexusEstGeneradoVisto;
+                _nexusEstGeneradoVisto = d.generadoEn;
+                _nexusEstDoc = d;
+                if (!_nexusEstCargando) {
+                    if (nexusEstEnSeccion()) { nexusEstRenderizar(d); nexusEstIniciarContador(); }
+                    else if (cambio) { _nexusEstAviso = true; }
+                }
+                nexusEstActualizarAviso();
+                liberar();
+            }, function (err) {
+                console.error('[NEXUS] No se pudo escuchar estadisticas/actual:', err);
+                _nexusEstUnsub = null;
+                liberar();
+            });
+            return _nexusEstListo;
+        }
+
+        function nexusDetenerEstadisticasListener() {
+            if (typeof _nexusEstUnsub === 'function') _nexusEstUnsub();
+            _nexusEstUnsub = null;
+            _nexusEstListo = null;
+            _nexusEstDoc = null;
+            _nexusEstGeneradoVisto = null;
+            _nexusEstAviso = false;
+            nexusEstDetenerContador();
+            nexusEstActualizarAviso();
+        }
+
+        // Se llama al entrar a la pestaña Estadísticas. El parámetro de recarga ya no existe:
+        // los datos solo cambian cuando Apps Script publica uno nuevo (cada hora).
+        async function nexusCargarDashboardEstadisticas() {
+            if (!document.getElementById('nxdRoot') || !nexusEstEsStaff()) return null;
+
+            // Mantenimiento: botón solo para el administrador
+            const btnMaint = document.getElementById('nxd-btn-maint');
+            if (btnMaint) btnMaint.style.display = (typeof nexusEsAdmin === 'function' && nexusEsAdmin()) ? '' : 'none';
+
+            _nexusEstAviso = false;
+            nexusEstActualizarAviso();
+
+            _nexusEstCargando = true;
+            try {
+                if (!_nexusEstDoc) {
+                    nexusEstMostrarEstado('Cargando estadísticas…');
+                    const listo = nexusEscucharEstadisticas();
+                    if (listo) {
+                        await Promise.race([listo, new Promise(function (r) { setTimeout(r, NEXUS_EST_ESPERA_MAX_MS); })]);
+                    }
+                }
+                if (!_nexusEstDoc) {
+                    nexusEstMostrarEstado(_nexusEstUnsub ? 'Las estadísticas aún no se han generado' : 'No se pudieron cargar las estadísticas');
+                    return null;
+                }
+                nexusEstRenderizar(_nexusEstDoc);
+                nexusEstIniciarContador();
+                window._nexusStatsLoaded = true;
+                return _nexusEstDoc;
+            } catch (e) {
+                console.error('[NEXUS] Dashboard de estadísticas:', e);
+                nexusEstMostrarEstado('No se pudieron cargar las estadísticas');
+                return null;
+            } finally {
+                _nexusEstCargando = false;
+            }
+        }
         window.nexusCargarDashboardEstadisticas = nexusCargarDashboardEstadisticas;
+        window.nexusEscucharEstadisticas = nexusEscucharEstadisticas;
+        window.nexusDetenerEstadisticasListener = nexusDetenerEstadisticasListener;
+        window.nexusEstActualizarAviso = nexusEstActualizarAviso;
 
         function nxdRenderKpis(data) {
             const r = data.resumen || {};
@@ -16465,11 +16766,11 @@
                 targetSection.classList.remove('hidden');
                 targetSection.classList.add('active');
 
-                // Manejar Vanta.js Fog effect para la sección inicio
+                // Video de fondo del hero: se reproduce solo en la sección inicio
                 if (sectionId === 'inicio') {
-                    initVantaFog();
+                    initHeroVideo();
                 } else {
-                    destroyVantaFog();
+                    pauseHeroVideo();
                 }
 
                 // Establecer el ID del formulario activo si es un formulario
@@ -16518,6 +16819,7 @@
 
             // Al cambiar de pestaña se apaga/enciende el aviso de ARTE LISTO
             if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
+            if (typeof nexusEstActualizarAviso === 'function') nexusEstActualizarAviso();
 
             // Cambiar de sección cuenta como actividad del usuario
             if (typeof _nxPresenciaGesto === 'function') _nxPresenciaGesto();
@@ -20207,6 +20509,7 @@
             nexusDetenerListeners();
             nexusDetenerSolKpiListener();
             nexusDetenerArtesFinalesListener();
+            if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
             if (typeof showSection === 'function') showSection('inicio');
             if (typeof nexusActualizarUIAuth === 'function') nexusActualizarUIAuth();
             if (typeof nexusResetActiveForm === 'function') nexusResetActiveForm();
@@ -20492,6 +20795,7 @@
                 nexusDetenerSolKpiListener();
                 nexusDetenerErrorLogsListener();
                 nexusDetenerArtesFinalesListener();
+                if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
                 NexusSession.clear();
                 nexusAplicarFavoritosUI();
                 nexusActualizarUIAuth();
@@ -21535,6 +21839,7 @@
                         '</li>';
                     mainNavUl.innerHTML = menuHtml;
                     if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
+                    if (typeof nexusEstActualizarAviso === 'function') nexusEstActualizarAviso();
                 }
 
                 // Cargar solicitudes vivas en tiempo real al tener sesiÃ³n
@@ -21549,6 +21854,12 @@
                 // entrar a esa pestaña) para poder mostrar el contador de notificaciones.
                 if (!isStaff && typeof nexusEscucharArtesFinales === 'function') {
                     nexusEscucharArtesFinales();
+                }
+
+                // Admin y diseñadores: escuchar estadisticas/actual (un solo documento) para avisar
+                // en la pestaña "Estadisticas" cuando Apps Script publique datos nuevos.
+                if (isStaff && typeof nexusEscucharEstadisticas === 'function') {
+                    nexusEscucharEstadisticas();
                 }
 
             } else {
@@ -21595,80 +21906,79 @@
          ============================================================ -->
     <script>
         // ============================================================
-        // VANTA.JS FOG ANIMATION CON ZOOM ALEATORIO
+        // VIDEO DE FONDO DEL HERO (sección inicio)
+        // Al cargar la página se elige 1 de 3 videos al azar (assets/video/)
+        // y solo se descarga ese. Se pausa al salir de Inicio o al ocultar
+        // la pestaña. Con "reducir movimiento", ahorro de datos o conexión
+        // 2G/3G solo se muestra el póster (el video no se descarga).
         // ============================================================
-        
-        let vantaEffect = null;
-        
-        // Función para obtener zoom aleatorio y su velocidad correspondiente
-        function getRandomZoomAndSpeed() {
-            const zoomOptions = [
-                { zoom: 0.6, speed: 0.6 },
-                { zoom: 1, speed: 1.5 },
-                { zoom: 1.5, speed: 1.8 },
-                { zoom: 2, speed: 0.9 }
-            ];
-            const randomIndex = Math.floor(Math.random() * zoomOptions.length);
-            const selected = zoomOptions[randomIndex];
-            console.log('Zoom aleatorio generado:', selected.zoom, 'con speed:', selected.speed, '(índice:', randomIndex, ')');
-            return selected;
+        const NEXUS_HERO_VIDEOS = [
+            { src: 'assets/video/hero1.mp4', poster: 'assets/images/hero1-poster.jpg', pos: '55% 50%' },
+            { src: 'assets/video/hero2.mp4', poster: 'assets/images/hero2-poster.jpg', pos: '50% 50%' },
+            { src: 'assets/video/hero3.mp4', poster: 'assets/images/hero3-poster.jpg', pos: '36% 50%' }   // el agujero negro queda a la izquierda: en móvil se centra con object-position
+        ];
+        let nexusHeroVideoIdx = null;
+        let nexusHeroVideoCargado = false;
+        let nexusHeroEnInicio = false;
+
+        // true = no reproducir video (solo póster)
+        function nexusAhorroDeDatos() {
+            const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+            const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            const lenta = !!(c && (c.saveData || /^(slow-2g|2g|3g)$/.test(c.effectiveType || '')));
+            return reduce || lenta;
         }
-        
-        // Inicializar Vanta.js Fog effect
-        function initVantaFog() {
-            const fogBg = document.getElementById('vanta-fog-bg');
-            if (!fogBg) return;
-            
-            // Siempre destruir el efecto anterior antes de crear uno nuevo
-            if (vantaEffect) {
-                vantaEffect.destroy();
-                vantaEffect = null;
-            }
-            
-            // Generar nuevo zoom y speed aleatorio cada vez
-            const randomSettings = getRandomZoomAndSpeed();
-            console.log('Vanta.js Fog inicializado con zoom:', randomSettings.zoom, 'y speed:', randomSettings.speed);
-            
-            try {
-                vantaEffect = VANTA.FOG({
-                    el: fogBg,
-                    mouseControls: true,
-                    touchControls: true,
-                    gyroControls: false,
-                    minHeight: 200,
-                    minWidth: 200,
-                    highlightColor: 0x0,
-                    midtoneColor: 0x0,
-                    lowlightColor: 0x2d3a56,
-                    baseColor: 0xe5,
-                    blurFactor: 0.6,
-                    speed: randomSettings.speed,
-                    zoom: randomSettings.zoom,
-                    scale: 2,
-                    scaleMobile: 4
-                });
-            } catch (error) {
-                console.error('Error al inicializar Vanta.js:', error);
-            }
+
+        function nexusReproducir(video) {
+            const p = video.play();
+            if (p && p.catch) p.catch(function () { /* autoplay bloqueado: se queda el póster */ });
         }
-        
-        // Destruir efecto Vanta.js cuando cambie de sección
-        function destroyVantaFog() {
-            if (vantaEffect) {
-                vantaEffect.destroy();
-                vantaEffect = null;
+
+        function initHeroVideo() {
+            const wrap = document.getElementById('hero-video-bg');
+            const video = document.getElementById('hero-video');
+            if (!wrap || !video) return;
+            nexusHeroEnInicio = true;
+
+            if (nexusHeroVideoIdx === null) {
+                nexusHeroVideoIdx = Math.floor(Math.random() * NEXUS_HERO_VIDEOS.length);
             }
+            const v = NEXUS_HERO_VIDEOS[nexusHeroVideoIdx];
+            wrap.style.backgroundImage = "url('" + v.poster + "')";
+            video.poster = v.poster;
+            video.style.objectPosition = v.pos;
+
+            if (nexusAhorroDeDatos()) return;       // solo póster
+
+            if (!nexusHeroVideoCargado) {
+                nexusHeroVideoCargado = true;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.preload = 'auto';
+                video.addEventListener('playing', function () { video.classList.add('is-playing'); }, { once: true });
+                video.addEventListener('error', function () { console.warn('[NEXUS] No se pudo cargar el video del hero; se mantiene el póster.'); });
+                video.src = v.src;
+            }
+            nexusReproducir(video);
         }
-        
-        // NOTA: La inicialización en la carga inicial ya la dispara
+
+        function pauseHeroVideo() {
+            nexusHeroEnInicio = false;
+            const video = document.getElementById('hero-video');
+            if (video && !video.paused) video.pause();
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            const video = document.getElementById('hero-video');
+            if (!video || !video.getAttribute('src')) return;
+            if (document.hidden) { if (!video.paused) video.pause(); }
+            else if (nexusHeroEnInicio) nexusReproducir(video);
+        });
+
+        // NOTA: la inicialización en la carga inicial ya la dispara
         // showSection('inicio'), llamado una sola vez en el listener
-        // DOMContentLoaded principal (más arriba en el archivo). Antes
-        // había además dos listeners aquí (DOMContentLoaded y load) que
-        // también llamaban a initVantaFog(): eso hacía que la animación
-        // se inicializara 3 veces seguidas al entrar (una por cada
-        // listener), reiniciándose con un zoom aleatorio distinto cada
-        // vez y retrasando que se viera la definitiva. Se eliminaron
-        // para que solo se inicialice una vez al cargar.
+        // DOMContentLoaded principal (más arriba en el archivo).
         
         // Variables globales básicas
         let nexusSelectedRequestId = null;
@@ -21851,10 +22161,12 @@
                     // Fotos para el visor con navegación (compartido con Extraer Información)
                     const fotosArteFinal = urls.map((url, idx) => {
                         const fid = nexusExtractFileIdFromUrl(url);
+                        const isVideo = nexusEsVideoArchivo(`Archivo ${idx + 1}`, url);
                         return {
                             url: fid ? `https://drive.google.com/thumbnail?id=${fid}&sz=w1600` : url,
                             downloadUrl: fid ? `https://drive.google.com/uc?export=download&id=${fid}` : url,
-                            nombre: `Archivo ${idx + 1}`
+                            nombre: `Archivo ${idx + 1}`,
+                            isVideo: isVideo
                         };
                     });
                     window._nexusArteFinalActual = fotosArteFinal;
@@ -21862,26 +22174,41 @@
                     if (urls.length === 1) {
                         // Solo un archivo - mostrarlo centrado
                         const fileId = nexusExtractFileIdFromUrl(urls[0]);
+                        const isVideo = nexusEsVideoArchivo('Archivo 1', urls[0]);
                         if (fileId) {
-                            filePreviewContainer.innerHTML = `
-                                <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400"
-                                     alt="Archivo adjunto"
-                                     style="max-width: 100%; max-height: 100%; object-fit: contain; cursor: pointer;"
-                                     onclick="nexusOpenImageViewer(window._nexusArteFinalActual, 0)">
-                            `;
+                            if (isVideo) {
+                                filePreviewContainer.innerHTML = `
+                                    <div style="position: relative; max-width: 100%; max-height: 100%; cursor: pointer;"
+                                         onclick="nexusOpenImageViewer(window._nexusArteFinalActual, 0)">
+                                        <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400"
+                                             alt="Archivo adjunto"
+                                             style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 24px;">▶</div>
+                                    </div>
+                                `;
+                            } else {
+                                filePreviewContainer.innerHTML = `
+                                    <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w400"
+                                         alt="Archivo adjunto"
+                                         style="max-width: 100%; max-height: 100%; object-fit: contain; cursor: pointer;"
+                                         onclick="nexusOpenImageViewer(window._nexusArteFinalActual, 0)">
+                                `;
+                            }
                         }
                     } else {
                         // Múltiples archivos - mostrar galería
                         let galleryHtml = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; width: 100%; padding: 10px; overflow-y: auto; max-height: 180px;">';
                         urls.forEach((url, index) => {
                             const fileId = nexusExtractFileIdFromUrl(url);
+                            const isVideo = nexusEsVideoArchivo(`Archivo ${index + 1}`, url);
                             if (fileId) {
                                 galleryHtml += `
-                                    <div style="aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid var(--color-tertiary);"
+                                    <div style="aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid var(--color-tertiary); position: relative;"
                                          onclick="nexusOpenImageViewer(window._nexusArteFinalActual, ${index})">
                                         <img src="https://drive.google.com/thumbnail?id=${fileId}&sz=w100"
                                              alt="Archivo ${index + 1}"
                                              style="width: 100%; height: 100%; object-fit: cover;">
+                                        ${isVideo ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px;">▶</div>' : ''}
                                     </div>
                                 `;
                             }
@@ -23180,6 +23507,14 @@
         // abrir pestañas/ventanas nuevas) — portado del mismo patrón
         // que ya usan "Panel Lateral" y "Extraer Información".
         // ============================================================
+        // Función auxiliar para detectar si un archivo es video
+        function nexusEsVideoArchivo(nombre, url) {
+            const nombreLower = String(nombre || '').toLowerCase();
+            const urlLower = String(url || '').toLowerCase();
+            const extensionesVideo = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.flv', '.wmv'];
+            return extensionesVideo.some(ext => nombreLower.endsWith(ext) || urlLower.endsWith(ext));
+        }
+
         function nexusOpenImageViewer(photos, startIndex) {
             if (!photos || photos.length === 0) return;
 
@@ -23194,25 +23529,37 @@
             }
 
             let currentIndex = startIndex || 0;
+            const currentPhoto = photos[currentIndex];
+            const isVideo = currentPhoto.isVideo || nexusEsVideoArchivo(currentPhoto.nombre, currentPhoto.url);
+
+            // Generar el contenido del visor (img o video según corresponda)
+            let mediaElement;
+            if (isVideo) {
+                const fileId = nexusExtractFileIdFromUrl(currentPhoto.url);
+                const previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : currentPhoto.url;
+                mediaElement = `<iframe id="nexus-viewer-image" src="${previewUrl}" style="max-width: 100%; max-height: 100%; border: none; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);" allow="autoplay; fullscreen"></iframe>`;
+            } else {
+                mediaElement = `<img id="nexus-viewer-image" src="${currentPhoto.url}" alt="${currentPhoto.nombre}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">`;
+            }
 
             const viewerHTML = `
                 <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 12, 30, 0.96); z-index: 10000; display: flex; flex-direction: column; font-family: inherit;">
                     <div style="flex-shrink: 0; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
                         <div style="color: #fff;">
                             <div style="font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; font-weight: 700;">NEXUS · Visor de Archivos</div>
-                            <div style="font-size: 1.05rem; font-weight: 700;" id="nexus-viewer-name">${photos[currentIndex].nombre}</div>
+                            <div style="font-size: 1.05rem; font-weight: 700;" id="nexus-viewer-name">${currentPhoto.nombre}</div>
                         </div>
                         <button onclick="nexusCloseImageViewer()" style="width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.18); color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
                     </div>
                     <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px; min-height: 0; overflow: hidden;">
                         <button id="nexus-viewer-prev-btn" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === 0 ? 'disabled' : ''}>◀</button>
-                        <img id="nexus-viewer-image" src="${photos[currentIndex].url}" alt="${photos[currentIndex].nombre}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">
+                        ${mediaElement}
                         <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
                     </div>
                     <div style="flex-shrink: 0; padding: 18px 24px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
                         <div style="display: flex; gap: 10px;">
-                            <a id="nexus-viewer-download-btn" href="${photos[currentIndex].downloadUrl}" download="${photos[currentIndex].nombre}" style="padding: 10px 20px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-download"></i> Descargar</a>
+                            <a id="nexus-viewer-download-btn" href="${currentPhoto.downloadUrl}" download="${currentPhoto.nombre}" style="padding: 10px 20px; background: var(--color-primary); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-download"></i> Descargar</a>
                             <button onclick="nexusCloseImageViewer()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">Cerrar</button>
                         </div>
                     </div>
@@ -23224,15 +23571,32 @@
 
             const prevBtn = document.getElementById('nexus-viewer-prev-btn');
             const nextBtn = document.getElementById('nexus-viewer-next-btn');
-            const viewerImage = document.getElementById('nexus-viewer-image');
             const downloadBtn = document.getElementById('nexus-viewer-download-btn');
             const nameEl = document.getElementById('nexus-viewer-name');
             const countEl = document.getElementById('nexus-viewer-count');
 
             function actualizarVisor() {
                 const photo = photos[currentIndex];
-                viewerImage.src = photo.url;
-                viewerImage.alt = photo.nombre;
+                const isVideo = photo.isVideo || nexusEsVideoArchivo(photo.nombre, photo.url);
+                const viewerImage = document.getElementById('nexus-viewer-image');
+
+                if (isVideo) {
+                    const fileId = nexusExtractFileIdFromUrl(photo.url);
+                    const previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : photo.url;
+                    if (viewerImage.tagName === 'IMG') {
+                        viewerImage.outerHTML = `<iframe id="nexus-viewer-image" src="${previewUrl}" style="max-width: 100%; max-height: 100%; border: none; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);" allow="autoplay; fullscreen"></iframe>`;
+                    } else {
+                        viewerImage.src = previewUrl;
+                    }
+                } else {
+                    if (viewerImage.tagName === 'IFRAME') {
+                        viewerImage.outerHTML = `<img id="nexus-viewer-image" src="${photo.url}" alt="${photo.nombre}" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.08);">`;
+                    } else {
+                        viewerImage.src = photo.url;
+                        viewerImage.alt = photo.nombre;
+                    }
+                }
+
                 downloadBtn.href = photo.downloadUrl;
                 downloadBtn.download = photo.nombre;
                 nameEl.textContent = photo.nombre;
@@ -23287,10 +23651,12 @@
             // Construir el arreglo de fotos para el visor con navegación
             const photosParaVisor = urls.map((url, i) => {
                 const fileId = nexusExtraerFileIdDrive(url);
+                const isVideo = nexusEsVideoArchivo(`Archivo ${i + 1}`, url);
                 return {
                     url: fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600` : url,
                     downloadUrl: fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url,
-                    nombre: `Archivo ${i + 1}`
+                    nombre: `Archivo ${i + 1}`,
+                    isVideo: isVideo
                 };
             });
             window._nexusArchivosAdjuntosActuales = photosParaVisor;
@@ -23300,10 +23666,12 @@
                 if (!fileId) return '';
                 const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
                 const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+                const isVideo = nexusEsVideoArchivo(`Archivo ${i + 1}`, url);
                 return `
                     <div class="nexus-extract-photo-card">
-                        <a href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})" title="Clic para ampliar">
+                        <a href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})" title="Clic para ampliar" style="position: relative; display: block;">
                             <img class="nexus-extract-photo-frame" src="${thumbUrl}" loading="lazy" alt="Archivo adjunto ${i + 1}">
+                            ${isVideo ? '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px;">▶</div>' : ''}
                         </a>
                         <div class="nexus-extract-photo-actions">
                             <a class="nx-open" href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})"><i class="fas fa-expand"></i> Ampliar</a>
@@ -24327,7 +24695,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusLoginModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
-                <canvas class="auth-bh-canvas" data-tint="0.22,0.46,0.95" aria-hidden="true"></canvas>
+                <video class="auth-bh-video" data-src="assets/video/bh_modal.mp4" poster="assets/images/bh_modal-poster.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
                 <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Accede a tu cuenta</div>
             </div>
@@ -24368,7 +24736,7 @@
         <div class="auth-modal-card">
             <button class="auth-modal-close" onclick="closeNexusRegisterModal()" aria-label="Cerrar">&#x2715;</button>
             <div class="auth-modal-logo">
-                <canvas class="auth-bh-canvas" data-tint="0.10,0.55,1.0" aria-hidden="true"></canvas>
+                <video class="auth-bh-video" data-src="assets/video/bh_modal.mp4" poster="assets/images/bh_modal-poster.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
                 <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
                 <div class="auth-modal-subtitle">Crea tu cuenta de solicitante</div>
             </div>
@@ -25674,6 +26042,7 @@
                 var chip = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(id) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
 
                 var esListo = (estado === 'LISTO');
+                var cerrada = (sol.SolicitudPurgada === true);   // solicitud ya purgada en un cierre: no admite correcciones
                 eyebrow.textContent = esListo ? 'NEXUS · ARTE FINAL' : 'NEXUS · ARTE DESCARGADO';
                 title.innerHTML = '<i class="fas fa-eye"></i> Revisa tu arte';
 
@@ -25691,13 +26060,15 @@
                 body.innerHTML = chip +
                     '<p class="nx-arte-texto">Verifica que el arte esté correcto. Si todo está bien, ' +
                         (esListo ? 'descárgalo' : 'puedes pedir que se habilite la descarga de nuevo') +
-                        '; si algo debe cambiar, solicita una corrección.</p>' +
+                        (cerrada
+                            ? '. Esta solicitud ya fue cerrada, así que no admite correcciones: si algo debe cambiar, crea una nueva solicitud.</p>'
+                            : '; si algo debe cambiar, solicita una corrección.</p>') +
                     '<div class="nx-arte-previews">' + vistas + '</div>' +
                     '<div class="nx-foot">' +
                         '<span class="nx-count"></span>' +
                         '<div class="nx-actions">' +
                             '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cerrar</button>' +
-                            '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>' +
+                            (cerrada ? '' : '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>') +
                             botonPrincipal +
                         '</div>' +
                     '</div>';
@@ -25738,7 +26109,9 @@
                     '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
                     filas +
                     '<div class="nx-arte-hint" id="nxArteHint" role="status" aria-live="polite"><i class="fas fa-circle-check"></i><span><b>¡Tu descarga ya inició!</b> Cuando el archivo termine de bajar, presiona <b>«Ya descargué mi arte»</b> para confirmar.</span></div>' +
-                    '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>' +
+                    (sol.SolicitudPurgada === true
+                        ? '<p class="nx-arte-note"><b>Esta solicitud ya fue cerrada.</b> Al confirmar tu descarga, el arte se elimina del sistema: asegúrate de que el archivo bajó completo.</p>'
+                        : '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>') +
                     '<div class="nx-foot">' +
                         '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
                         '<div class="nx-actions">' +
@@ -25801,6 +26174,10 @@
                     window.nexusCerrarModalArte();
                     return;
                 }
+                if (sol.SolicitudPurgada === true) {
+                    toast('warning', 'Solicitud cerrada', 'Esta solicitud ya fue cerrada. Crea una nueva solicitud para pedir la corrección.', 6000);
+                    return;
+                }
                 _corrId = _solId; _corrOcupado = false;
                 var chip = document.getElementById('nxCorreccionChip');
                 if (chip) chip.innerHTML = '<div class="nx-request-chip"><span class="dot"></span><span><b>' + esc(_corrId) + '</b> · ' + esc(sol.Solicitud || 'Solicitud') + '</span></div>';
@@ -25847,6 +26224,11 @@
                 if (texto.length < 10) return;
                 var sol = buscar(id);
                 if (!sol || estadoArte(sol) === 'SOLICITADA') { window.nexusCerrarModalCorreccion(false); window.nexusCerrarModalArte(); return; }
+                if (sol.SolicitudPurgada === true) {
+                    toast('warning', 'Solicitud cerrada', 'Esta solicitud ya fue cerrada. Crea una nueva solicitud para pedir la corrección.', 6000);
+                    window.nexusCerrarModalCorreccion(false);
+                    return;
+                }
 
                 _corrOcupado = true;
                 var btn = document.getElementById('nxCorreccionEnviarBtn');
@@ -25864,7 +26246,8 @@
                         if (snap.exists()) { mes = meses[i]; reg = snap.val(); }
                     }
                     if (!reg || String(reg.Estatus || '').toUpperCase() !== 'FINALIZADA') {
-                        toast('error', 'No se pudo enviar', 'No encontramos esta solicitud entre las finalizadas. Avisa al equipo de diseño.', 5000);
+                        // Ya no está entre las finalizadas: se purgó en un cierre mensual.
+                        toast('warning', 'Solicitud cerrada', 'Esta solicitud ya fue cerrada. Crea una nueva solicitud para pedir la corrección.', 6000);
                         return;
                     }
 
@@ -26165,6 +26548,31 @@
                     ? (NexusSession.nombre || (NexusSession.user && NexusSession.user.email) || 'Usuario') : 'Usuario';
             }
 
+            // Arte sin solicitud (Fase 8): la solicitud ya fue purgada en un cierre mensual y el documento quedó marcado
+            // SolicitudPurgada. Al confirmarse la descarga se manda cada archivo a la papelera de Drive (acción deleteFile
+            // del GAS) y, solo si todos pasaron, se borra el documento de artes_finales. Segundo plano: NUNCA lanza.
+            // Si algo falla, el documento queda DESCARGADO y la autopurga diaria lo limpia (archivos y documento).
+            async function eliminarArteSinSolicitud(id, sol) {
+                try {
+                    var ids = urlsDe(sol).map(idDrive).filter(Boolean);
+                    var todoOk = true;
+                    for (var i = 0; i < ids.length; i++) {
+                        var r = await nexusEliminarArchivoDriveViaScript(ids[i]);
+                        if (!r) todoOk = false;
+                    }
+                    if (!todoOk) {
+                        console.warn('[NEXUS Artes] No todos los archivos de ' + id + ' pasaron a la papelera; la autopurga lo limpiará.');
+                        return false;
+                    }
+                    var S = window.fbStore;
+                    await S.deleteDoc(S.doc(window.db, 'artes_finales', id));
+                    return true;
+                } catch (e) {
+                    console.warn('[NEXUS Artes] No se pudo eliminar el arte sin solicitud ' + id + ' (lo limpiará la autopurga):', e);
+                    return false;
+                }
+            }
+
             // ARTE LISTO -> DESCARGADO (1 escritura en Firestore)
             window.nexusArteConfirmarDescarga = async function () {
                 if (_ocupado || !_solId) return;
@@ -26181,9 +26589,13 @@
                         ArteDescargadoPor: nombreUsuario(),
                         ArteDescargadoFecha: new Date().toISOString()
                     });
-                    toast('success', 'Descarga confirmada', 'Tu arte quedó marcado como descargado.');
+                    var sinSolicitud = (sol.SolicitudPurgada === true);
+                    toast('success', 'Descarga confirmada', sinSolicitud
+                        ? 'Tu arte quedó descargado y se eliminará del sistema, porque la solicitud ya fue cerrada.'
+                        : 'Tu arte quedó marcado como descargado.', sinSolicitud ? 5000 : undefined);
                     nexusNotificarTelegramArte(sol, 'DESCARGA_OK');
                     window.nexusCerrarModalArte();
+                    if (sinSolicitud) eliminarArteSinSolicitud(id, sol);   // segundo plano; no bloquea ni lanza
                 } catch (e) {
                     console.error('[NEXUS Artes] Error al confirmar la descarga:', e);
                     toast('error', 'No se pudo confirmar', 'Inténtalo de nuevo.', 4000);
@@ -26609,16 +27021,14 @@
         }
 
         function nexusCalcularPiezasDiseno(sol, tipoPieza) {
-            // Metodología oficial:
-            // Textil, Pendón, Certificado, Efemérides, Actividades de Aprendizaje: SIEMPRE cuentan como 1 pieza
-            if (['Textil', 'Pendón', 'Certificado', 'Efeméride', 'Actividad de Aprendizaje', 'Actividad Deportiva', 'Obituario'].includes(tipoPieza)) {
-                return 1;
+            // Contar el número de archivos (links) en la columna ArteFinal
+            // Esto permite contar múltiples archivos adjuntos por el diseñador
+            const arteFinal = String(sol.ArteFinal || "").trim();
+            if (arteFinal !== '') {
+                // ArteFinal puede contener múltiples URLs separadas por coma
+                return arteFinal.split(',').filter(function(u) { return u.trim(); }).length;
             }
-            // Flyer y otros tipos: Cuentan como 1 pieza SOLO si tienen arte final adjunto
-            if (sol.ArteFinal && String(sol.ArteFinal).trim() !== '') {
-                return 1;
-            }
-            // Si está finalizada pero sin arte final registrado explícito
+            // Si está finalizada pero sin arte final registrado, contar como 1
             if ((sol.Estatus || '').toUpperCase() === 'FINALIZADA') {
                 return 1;
             }
@@ -26695,7 +27105,8 @@
             const topUnidades = aPares(d.topUnidades);
             const todosTipos = aPares(d.todosTipos);
             const diasOrdenados = aPares(d.diasOrdenados);
-            const disenadoresOrdenados = aPares(d.disenadoresOrdenados);
+            // "Sin Asignar" no es un diseñador (también se filtra aquí por si el cierre archivado es anterior a este ajuste)
+            const disenadoresOrdenados = aPares(d.disenadoresOrdenados).filter(([nombre]) => nombre && nombre !== 'Sin Asignar');
             const topEsp = aPares(d.topEsp);
             const topServ = aPares(d.topServ);
             const disp = d.dispositivos || {};
@@ -26898,22 +27309,24 @@
                 <!-- Rendimiento Semanal -->
                 <div style="margin-top: 20px;">
                     <div class="nx-rep-sec-title"><i class="fas fa-chart-bar"></i> Rendimiento Semanal - ${periodo}</div>
-                    <p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Estructura de corte semanal oficial: Sábado a Viernes. La primera y la última semana del mes pueden tener menos de 7 días.</p>
+                    <p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Estructura de corte semanal oficial: Sábado a Viernes. Las semanas se arman con las fechas de las solicitudes que hay en la hoja: una semana puede abarcar dos meses y solo se muestran las semanas con movimiento. Una solicitud rechazada cuenta como finalizada en la semana en que se cerró.</p>
                     
                     ${semanas.map(s => {
+                        const rech = s.rechazadas || 0;
                         const ef = s.recibidas > 0 ? Math.round((s.finalizadas / s.recibidas) * 100) : 100;
-                        const pctBar = Math.min(100, ef);
+                        const pctBar = s.recibidas > 0 ? Math.min(100, Math.round((s.finalizadas / s.recibidas) * 100)) : 0;
+                        const pctRech = s.recibidas > 0 ? Math.min(100, Math.round((rech / s.recibidas) * 100)) : 0;
                         return `
                         <div class="nx-semana-card">
                             <div class="nx-semana-head">
                                 <span>Semana ${s.num}: ${s.rango}</span>
-                                <span class="nx-semana-stats">Recibidas: <b>${s.recibidas}</b> | Finalizadas: <b>${s.finalizadas}</b> | Eficiencia: <b>${ef}%</b></span>
+                                <span class="nx-semana-stats">Recibidas: <b>${s.recibidas}</b> | Finalizadas: <b>${s.finalizadas}</b> (rechazadas: <b>${rech}</b>) | Eficiencia: <b>${ef}%</b></span>
                             </div>
                             <div class="nx-semana-bars">
                                 <div class="nx-semana-row">
                                     <span class="nx-semana-label">Recibidas</span>
                                     <div class="nx-semana-bar-track">
-                                        <div class="nx-semana-bar-fill" style="width: 100%; background: #023047;"></div>
+                                        <div class="nx-semana-bar-fill" style="width: ${s.recibidas > 0 ? 100 : 0}%; background: #023047;"></div>
                                     </div>
                                     <span class="nx-semana-num">${s.recibidas}</span>
                                 </div>
@@ -26923,6 +27336,13 @@
                                         <div class="nx-semana-bar-fill" style="width: ${pctBar}%; background: #059669;"></div>
                                     </div>
                                     <span class="nx-semana-num">${s.finalizadas}</span>
+                                </div>
+                                <div class="nx-semana-row">
+                                    <span class="nx-semana-label">Rechazadas</span>
+                                    <div class="nx-semana-bar-track">
+                                        <div class="nx-semana-bar-fill" style="width: ${pctRech}%; background: #c1121f;"></div>
+                                    </div>
+                                    <span class="nx-semana-num">${rech}</span>
                                 </div>
                             </div>
                         </div>`;
@@ -26947,15 +27367,16 @@
    - Entran al reporte solo solicitudes con Estatus FINALIZADA y con
      diseñador asignado (distinto de "Sin Asignar"). Se excluyen
      "Copy RRSS" y "Prensa".
-   - El mes lo define la FECHA DE FINALIZACIÓN (fechaFinalizacionKey).
+   - Desde 8A (05/10/2026) no se filtra por mes: cuenta todo lo que esté en la hoja.
    - "Total de solicitudes" = todas esas solicitudes (todos los diseñadores);
      es la misma cifra en la hoja de cada diseñador.
    - "Finalizadas" de un diseñador = las del total que tienen su nombre
      en el campo Disenador (finalizan los admin, no los diseñadores).
    - Resultados semanales: se suman por día de la semana todos los días
      del mes (los 4 o 5 lunes, martes, etc.).
-       · Asignadas   -> por fechaAsignacionKey (cualquier estatus)
-       · Finalizadas -> por fechaFinalizacionKey (solo FINALIZADA)
+       · Asignadas   -> por FechaAsignacionDisenador del Sheet (cualquier estatus)
+       · Finalizadas -> por DiaFinalizacion del Sheet (solo FINALIZADA)
+   Los números los calcula GAS (nexusDatosDiseno_); este archivo solo dibuja.
    ===================================================================== */
 
 const NX_DIS_TIPOS_COLOR = {
@@ -26966,12 +27387,13 @@ const NX_DIS_TIPOS_COLOR = {
     'Textil': '#CD853F',
     'Certificado': '#0799b6',
     'Pendón': '#9B7BFF',
-    // Sin acento definido en la app: propuestos
-    'Flyer': '#3876F2',
     'Actividad Deportiva': '#2f9e44'
 };
 const NX_DIS_COLOR_OTRO = '#94a3b8';
-const NX_DIS_ORDEN_TIPOS = ['Flyer', 'Efeméride', 'Obituario', 'Actividad de Aprendizaje', 'Actividad Deportiva', 'Textil', 'Certificado', 'Pendón'];
+// Los tipos son los nombres reales de las solicitudes (ya no hay categoría "Flyer"): los que no tienen color fijo
+// toman uno de esta paleta según su posición en el listado global, para que cada tipo conserve su color en todas las hojas.
+const NX_DIS_PALETA = ['#3876F2', '#0b2f8f', '#8fbf1f', '#d6155a', '#8e1b8e', '#4a2c1a', '#0ea5e9', '#14b8a6', '#6366f1', '#ec4899', '#65a30d', '#b45309'];
+let _nxDisColoresTipo = {};
 const NX_DIS_DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const NX_DIS_C_TEXTO = '#023047';   // correcciones de texto / finalizadas
 const NX_DIS_C_DISENO = '#f59e0b';  // correcciones de diseño / asignadas
@@ -27004,10 +27426,7 @@ function nxDisDiaIdx(key) {
     return isNaN(d) ? -1 : (d.getDay() + 6) % 7;
 }
 
-function nxDisColorTipo(tipo) { return NX_DIS_TIPOS_COLOR[tipo] || NX_DIS_COLOR_OTRO; }
-
-/* ---------- Consulta (RTDB finalizadas del mes + vivas del mes, con fallback a Firestore) ---------- */
-async function nexusObtenerSolicitudesDisenoDelMes(cMes) { console.warn('[NEXUS·STUB] nexusObtenerSolicitudesDisenoDelMes: pendiente de reescribir'); return null; }
+function nxDisColorTipo(tipo) { return NX_DIS_TIPOS_COLOR[tipo] || _nxDisColoresTipo[tipo] || NX_DIS_COLOR_OTRO; }
 
 /* ---------- Cálculo ---------- */
 function nexusCalcularDatosDiseno(solicitudes, claveMes) {
@@ -27060,11 +27479,7 @@ function nexusCalcularDatosDiseno(solicitudes, claveMes) {
 
 /* ---------- Gráficos SVG ---------- */
 function nxDisTiposOrdenados(tipos) {
-    return Object.entries(tipos).filter(([, n]) => n > 0).sort((a, b) => {
-        if (b[1] !== a[1]) return b[1] - a[1];
-        const ia = NX_DIS_ORDEN_TIPOS.indexOf(a[0]), ib = NX_DIS_ORDEN_TIPOS.indexOf(b[0]);
-        return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
-    });
+    return Object.entries(tipos || {}).filter(([, n]) => n > 0).sort((a, b) => (b[1] - a[1]) || a[0].localeCompare(b[0], 'es'));
 }
 
 function nxDisDonut(segs, opt) {
@@ -27122,9 +27537,19 @@ function nxDisBarras(asig, fin, w, h) {
 }
 
 /* ---------- Piezas de la maqueta ---------- */
+const NX_DIS_ICONOS = {
+    'fa-circle-check': '<circle cx="12" cy="12" r="10"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+    'fa-images': '<path d="M3 7v11a2 2 0 0 0 2 2h13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="3" width="16" height="13" rx="2"/><path d="M8 14l3.5-4 2.5 2.8 2-2.3 3.5 3.5z" fill="#fff"/><circle cx="17.5" cy="7" r="1.5" fill="#fff"/>',
+    'fa-thumbs-up': '<path d="M2 10h4v11H2z"/><path d="M8 21V10l4-8c1.7 0 3 1.3 3 3v4h5.2c1.2 0 2.1 1.1 1.9 2.3l-1.4 8A2 2 0 0 1 18.7 21H8z"/>',
+    'fa-star': '<polygon points="12,2 14.9,8.6 22,9.3 16.6,14 18.2,21 12,17.3 5.8,21 7.4,14 2,9.3 9.1,8.6"/>'
+};
+function nxDisIcono(clase) {
+    const d = NX_DIS_ICONOS[clase];
+    return d ? `<svg class="k-ico" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">${d}</svg>` : '';
+}
 function nxDisKpi(label, valor, icono, nota) {
     return `<div class="nx-dis-kpi">
-        <div class="k-top"><span class="k-l">${label}</span>${icono ? `<i class="fas ${icono}"></i>` : ''}</div>
+        <div class="k-top"><span class="k-l">${label}</span>${icono ? nxDisIcono(icono) : ''}</div>
         <div class="k-v">${valor}</div>${nota ? `<div class="k-n">${nota}</div>` : ''}
     </div>`;
 }
@@ -27140,6 +27565,18 @@ function nxDisSegsTipos(tipos) {
     return nxDisTiposOrdenados(tipos).map(([t, n]) => ({ label: t, valor: n, color: nxDisColorTipo(t) }));
 }
 
+// Piezas = archivos que el diseñador subió a Drive. Los cierres archivados antes de este ajuste no traen el dato.
+function nxDisPiezas(d) { return (d && d.piezas != null) ? d.piezas : '—'; }
+
+// Columna de correcciones (Texto o Diseño): total y contador de cada subtipo
+function nxDisCorrColumna(titulo, total, color, subtipos, sub) {
+    const s = sub || {};
+    return `<div class="nx-dis-corr-n">
+        <span>${titulo}</span><b style="color:${color}">${total}</b>
+        <ul class="nx-dis-sub">${subtipos.map(([nombre, k]) => `<li><span>${nombre}</span><b style="color:${color}">${s[k] || 0}</b></li>`).join('')}</ul>
+    </div>`;
+}
+
 function nxDisTarjetaDisenador(nombre, d, totalGlobal) {
     const totCorr = d.cTex + d.cDis;
     return `
@@ -27147,6 +27584,7 @@ function nxDisTarjetaDisenador(nombre, d, totalGlobal) {
         <aside class="nx-dis-side">
             ${nxDisKpi('Total de solicitudes', totalGlobal, '')}
             ${nxDisKpi('Finalizados', d.total, 'fa-circle-check')}
+            ${nxDisKpi('Total de piezas', nxDisPiezas(d), 'fa-images')}
             ${nxDisKpi('Sin corrección', d.sinCorr, 'fa-thumbs-up')}
             ${nxDisKpi('Con corrección', d.conCorr, 'fa-star')}
         </aside>
@@ -27155,12 +27593,14 @@ function nxDisTarjetaDisenador(nombre, d, totalGlobal) {
             <div class="nx-dis-grid">
                 <div class="nx-dis-panel nx-dis-corr">
                     <div class="nx-dis-pill center">Correcciones</div>
-                    ${nxDisDonut([
+                    <div class="nx-dis-corr-donut">${nxDisDonut([
                         { label: 'Texto', valor: d.cTex, color: NX_DIS_C_TEXTO },
                         { label: 'Diseño', valor: d.cDis, color: NX_DIS_C_DISENO }
-                    ], { size: 122, stroke: 17, centro: totCorr, sub: 'correcciones', aria: 'Correcciones de texto y de diseño' })}
-                    <div class="nx-dis-corr-n"><span>Texto</span><b style="color:${NX_DIS_C_TEXTO}">${d.cTex}</b></div>
-                    <div class="nx-dis-corr-n"><span>Diseño</span><b style="color:${NX_DIS_C_DISENO}">${d.cDis}</b></div>
+                    ], { size: 132, stroke: 18, centro: totCorr, sub: 'correcciones', aria: 'Correcciones de texto y de diseño' })}</div>
+                    <div class="nx-dis-corr-2">
+                        ${nxDisCorrColumna('Texto', d.cTex, NX_DIS_C_TEXTO, [['Fecha', 'fecha'], ['Dirección', 'direccion'], ['Contenido', 'contenido']], d.sub)}
+                        ${nxDisCorrColumna('Diseño', d.cDis, NX_DIS_C_DISENO, [['Foto', 'foto'], ['Elementos', 'elementos'], ['Color', 'color']], d.sub)}
+                    </div>
                 </div>
                 <div class="nx-dis-col">
                     <div class="nx-dis-panel nx-dis-tipos">
@@ -27189,11 +27629,12 @@ function nxDisTarjetaGlobal(g) {
         <aside class="nx-dis-side">
             ${nxDisKpi('Total de solicitudes', g.total, '')}
             ${nxDisKpi('Finalizados', g.total, 'fa-circle-check', 'todos los diseñadores')}
+            ${nxDisKpi('Total de piezas', nxDisPiezas(g), 'fa-images', 'todos los diseñadores')}
             ${nxDisKpi('Sin corrección', g.sinCorr, 'fa-thumbs-up', 'todos los diseñadores')}
             ${nxDisKpi('Con corrección', g.conCorr, 'fa-star', 'todos los diseñadores')}
         </aside>
         <div class="nx-dis-main">
-            <h3 class="nx-dis-titulo">Estadísticas por tipo de pieza</h3>
+            <h3 class="nx-dis-titulo">Estadísticas por tipo de solicitud</h3>
             <div class="nx-dis-panel nx-dis-tipos nx-dis-tipos-global">
                 <div class="nx-dis-pill right">Tipos de solicitud Finalizadas</div>
                 <div class="nx-dis-tipos-body">
@@ -27207,7 +27648,7 @@ function nxDisTarjetaGlobal(g) {
 
 function nxDisEncabezado(periodo, fechaGen) {
     return `
-    <header class="nx-dis-head">
+    <div class="nx-dis-head">
         <div class="nx-dis-brand">
             <svg xmlns="http://www.w3.org/2000/svg" width="140" height="40" viewBox="0 0 140 40" style="display:block;">
                 <rect width="140" height="40" rx="6" fill="#023047"/>
@@ -27219,7 +27660,7 @@ function nxDisEncabezado(periodo, fechaGen) {
         <h1>🎨 REPORTE DE RENDIMIENTO DE DISEÑO</h1>
         <div class="nx-dis-periodo">Período auditado: ${nxDisEsc(periodo)}</div>
         <p class="nx-dis-sub">Auditoría institucional de piezas finalizadas y correcciones | Generado: ${nxDisEsc(fechaGen)}</p>
-    </header>`;
+    </div>`;
 }
 
 function nxDisPie(periodo, n, total) {
@@ -27249,22 +27690,30 @@ const NX_DIS_CSS = `
 .nx-dis-side { width: 132px; flex: none; padding: 10px 10px; display: flex; flex-direction: column; gap: 8px; background: linear-gradient(160deg, #023047 0%, #1b4d70 100%); }
 .nx-dis-kpi { flex: 1; background: #fff; padding: 7px 9px; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.25); }
 .nx-dis-kpi .k-top { display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; color: #023047; }
-.nx-dis-kpi .k-top i { font-size: 13px; }
+.nx-dis-kpi .k-top .k-ico { flex: none; }
 .nx-dis-kpi .k-v { font-size: 30px; font-weight: 800; color: #023047; line-height: 1.1; margin-top: 3px; }
 .nx-dis-kpi .k-n { font-size: 8.5px; color: #64748b; font-weight: 600; }
 .nx-dis-main { flex: 1; min-width: 0; padding: 9px 12px 10px; display: flex; flex-direction: column; }
 .nx-dis-titulo { margin: 0 0 8px; font: 700 13.5px 'Segoe UI', Arial, sans-serif; color: #0f172a; }
-.nx-dis-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 148px 1fr; gap: 9px; }
+.nx-dis-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 196px 1fr; gap: 9px; }
 .nx-dis-col { min-height: 0; display: flex; flex-direction: column; gap: 8px; }
 .nx-dis-panel { background: #fff; box-shadow: 0 2px 8px rgba(2,48,71,.14); padding: 8px 10px; }
 .nx-dis-pill { display: inline-block; background: #023047; color: #fff; font: 700 10.5px 'Segoe UI', Arial, sans-serif; padding: 4px 11px; border-radius: 8px; }
 .nx-dis-pill.center { align-self: center; }
 .nx-dis-pill.right { align-self: flex-end; margin-bottom: 4px; }
-.nx-dis-corr { display: flex; flex-direction: column; align-items: center; gap: 7px; }
-.nx-dis-corr .nx-dis-donut { margin-top: 12px; }
-.nx-dis-corr-n { width: 100%; text-align: center; border-top: 1px solid #dbe2ec; padding-top: 3px; }
-.nx-dis-corr-n span { display: block; font-size: 12px; color: #0f172a; }
-.nx-dis-corr-n b { font-size: 26px; line-height: 1.05; }
+.nx-dis-corr { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 10px 12px; }
+.nx-dis-corr .nx-dis-pill.center { align-self: center; }
+.nx-dis-corr-donut { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 6px 0; }
+.nx-dis-corr .d-num { font-size: 28px; }
+.nx-dis-corr-2 { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1px solid #dbe2ec; padding-top: 8px; }
+.nx-dis-corr-n { text-align: center; padding: 0 8px; }
+.nx-dis-corr-n:first-child { padding-left: 0; }
+.nx-dis-corr-n:last-child { padding-right: 0; border-left: 1px solid #e3e8ef; }
+.nx-dis-corr-n > span { display: block; font-size: 13px; font-weight: 600; color: #0f172a; }
+.nx-dis-corr-n > b { display: block; font-size: 32px; line-height: 1.05; }
+.nx-dis-sub { list-style: none; margin: 8px 0 0; padding: 0; text-align: left; }
+.nx-dis-sub li { display: flex; justify-content: space-between; align-items: baseline; gap: 3px; font-size: 10.5px; line-height: 1.25; padding: 5px 0; border-top: 1px solid #e3e8ef; color: #334155; }
+.nx-dis-sub li b { font-size: 13px; }
 .nx-dis-tipos { flex: 1.35; display: flex; flex-direction: column; min-height: 0; }
 .nx-dis-tipos-body { flex: 1; min-height: 0; display: flex; align-items: center; gap: 12px; }
 .nx-dis-leyenda { list-style: none; margin: 0; padding: 0; flex: 1; }
@@ -27288,7 +27737,7 @@ const NX_DIS_CSS = `
 .nx-dis-donut .seg:hover { opacity: 1; }
 .nx-dis-bars .bar:hover rect { opacity: .8; }
 
-.nx-dis-card-global { height: 340px; }
+.nx-dis-card-global { height: 440px; }
 .nx-dis-tipos-global { flex: 1; }
 .nx-dis-tipos-global .nx-dis-tipos-body { gap: 26px; padding: 0 14px; }
 .nx-dis-tipos-global .nx-dis-leyenda li { font-size: 13px; padding: 5px 0; }
@@ -27321,8 +27770,11 @@ const NX_DIS_CSS = `
 function nexusGenerarHtmlReporteDiseno(datos, periodo) {
     const fechaGen = (typeof nexusFormatearFechaReporte === 'function') ? nexusFormatearFechaReporte(new Date()) : new Date().toLocaleString('es-VE');
     // Los datos llegan calculados por Google Apps Script; aquí solo se ordena y se dibuja.
-    const global = (datos && datos.global) || { total: 0, sinCorr: 0, conCorr: 0, cTex: 0, cDis: 0, tipos: {}, semAsig: [0, 0, 0, 0, 0, 0, 0], semFin: [0, 0, 0, 0, 0, 0, 0], asignadas: 0 };
+    const global = (datos && datos.global) || { total: 0, piezas: 0, sinCorr: 0, conCorr: 0, cTex: 0, cDis: 0, sub: {}, tipos: {}, semAsig: [0, 0, 0, 0, 0, 0, 0], semFin: [0, 0, 0, 0, 0, 0, 0], asignadas: 0 };
     const porDis = (datos && datos.porDis) || {};
+    // Color estable por tipo: según su posición en el listado global (todos los diseñadores)
+    _nxDisColoresTipo = {};
+    nxDisTiposOrdenados(global.tipos).forEach(([t], i) => { _nxDisColoresTipo[t] = NX_DIS_PALETA[i % NX_DIS_PALETA.length]; });
     const disenadores = Object.keys(porDis).sort((a, b) => (porDis[b].total - porDis[a].total) || a.localeCompare(b, 'es'));
 
     // Hojas de diseñadores: 2 tarjetas por hoja carta
@@ -27339,8 +27791,8 @@ function nexusGenerarHtmlReporteDiseno(datos, periodo) {
 
     const filasDis = disenadores.map(n => {
         const d = porDis[n];
-        return `<tr><td><b>${nxDisEsc(n)}</b></td><td>${d.asignadas}</td><td><b>${d.total}</b></td><td>${d.sinCorr}</td><td>${d.conCorr}</td><td>${d.cTex}</td><td>${d.cDis}</td></tr>`;
-    }).join('') || '<tr><td colspan="7">Sin actividad de diseño en este período</td></tr>';
+        return `<tr><td><b>${nxDisEsc(n)}</b></td><td>${d.asignadas}</td><td><b>${d.total}</b></td><td>${nxDisPiezas(d)}</td><td>${d.sinCorr}</td><td>${d.conCorr}</td><td>${d.cTex}</td><td>${d.cDis}</td></tr>`;
+    }).join('') || '<tr><td colspan="8">Sin actividad de diseño en este período</td></tr>';
 
     const hojaGlobal = `
         <div class="nx-dis-page" data-tipo="global">
@@ -27348,16 +27800,17 @@ function nexusGenerarHtmlReporteDiseno(datos, periodo) {
             ${nxDisTarjetaGlobal(global)}
             <div class="nx-dis-sec">Resumen por diseñador</div>
             <table class="nx-dis-tabla">
-                <thead><tr><th>Diseñador</th><th>Asignadas</th><th>Finalizadas</th><th>Sin corrección</th><th>Con corrección</th><th>Corr. texto</th><th>Corr. diseño</th></tr></thead>
+                <thead><tr><th>Diseñador</th><th>Asignadas</th><th>Finalizadas</th><th>Piezas</th><th>Sin corrección</th><th>Con corrección</th><th>Corr. texto</th><th>Corr. diseño</th></tr></thead>
                 <tbody>${filasDis}</tbody>
-                <tfoot><tr><td>Total</td><td>${disenadores.reduce((a, n) => a + porDis[n].asignadas, 0)}</td><td>${global.total}</td><td>${global.sinCorr}</td><td>${global.conCorr}</td><td>${global.cTex}</td><td>${global.cDis}</td></tr></tfoot>
+                <tfoot><tr><td>Total</td><td>${disenadores.reduce((a, n) => a + porDis[n].asignadas, 0)}</td><td>${global.total}</td><td>${nxDisPiezas(global)}</td><td>${global.sinCorr}</td><td>${global.conCorr}</td><td>${global.cTex}</td><td>${global.cDis}</td></tr></tfoot>
             </table>
             <div class="nx-dis-metodo">
                 <p><b>Metodología de cálculo</b></p>
-                <p><b>Total de solicitudes:</b> solicitudes con estatus finalizada y diseñador asignado, finalizadas dentro del mes auditado. Es la misma cifra para todos los diseñadores.</p>
-                <p><b>Finalizadas de un diseñador:</b> las del total que tienen su nombre como diseñador asignado. <b>Asignadas:</b> solicitudes asignadas al diseñador dentro del mes, en cualquier estatus.</p>
-                <p><b>Sin / con corrección:</b> piezas finalizadas sin ninguna corrección o con al menos una (texto o diseño). <b>Correcciones:</b> suma de correcciones de texto y de diseño.</p>
-                <p><b>Resultados semanales:</b> suma, por día de la semana, de todos los días del mes. Se excluyen "Copy RRSS" y "Prensa".</p>
+                <p><b>Total de solicitudes:</b> solicitudes con estatus finalizada y diseñador asignado, que están en la hoja el día del reporte (no se filtra por mes). Es la misma cifra para todos los diseñadores.</p>
+                <p><b>Finalizadas de un diseñador:</b> las del total que tienen su nombre como diseñador asignado. <b>Asignadas:</b> solicitudes asignadas al diseñador que están en la hoja, en cualquier estatus.</p>
+                <p><b>Total de piezas:</b> cantidad de archivos que el diseñador subió a Drive como arte final de sus solicitudes finalizadas (una solicitud puede tener varias piezas). <b>Tipos de solicitud:</b> se listan con el nombre real de la solicitud y cuentan solicitudes, no piezas.</p>
+                <p><b>Sin / con corrección:</b> solicitudes finalizadas sin ninguna corrección o con al menos una (texto o diseño). <b>Correcciones:</b> suma de correcciones de texto y de diseño; debajo se desglosan por subtipo (texto: fecha, dirección y contenido; diseño: foto, elementos y color).</p>
+                <p><b>Resultados semanales:</b> suma, por día de la semana, de todo lo que está en la hoja. Se excluyen "Copy RRSS" y "Prensa".</p>
             </div>
             ${nxDisPie(periodo, totalHojas, totalHojas)}
         </div>`;
@@ -27394,202 +27847,213 @@ function nexusInicializarReporteDiseno(contenedor) {
 }
 
         /**
-         * 3. REPORTE DE PRENSA Y REDES SOCIALES (Carta Print-Friendly)
+         * 3. REPORTE DE PRENSA Y REDES SOCIALES (Dashboard, carta print-friendly)
+         * Los números llegan calculados por Google Apps Script (nexusDatosPrensa_):
+         *   datos.copy  = { total, finalizadas, rechazadas, pendientes, finalizadasSinRedes, publicaciones,
+         *                   redes:[{nombre,cant}], unidades:[{nombre,cant}] (top 5), totalUnidades }
+         *   datos.notas = { total, finalizadas, rechazadas, pendientes, lista:[{id,estatus,fechaReg,fechaFin,titulo}] }
+         * Aquí solo se calculan porcentajes y se dibuja. Los estilos van dentro del propio HTML
+         * porque la ventana de impresión no hereda el CSS de la página.
          */
         function nexusGenerarHtmlReportePrensa(datos, periodo) {
-            // Las listas llegan ya armadas por Google Apps Script (fechas listas para mostrar, redes activas,
-            // estado al cierre del mes); aquí solo se arma el HTML.
-            const fechaGenerado = nexusFormatearFechaReporte(new Date());
             const esc = t => String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const fechaGenerado = nexusFormatearFechaReporte(new Date());
+            const n = v => Number(v) || 0;
+            const pct = (a, b) => b > 0 ? (Math.round((a / b) * 1000) / 10).toString().replace('.', ',') + '%' : '0%';
+            const ancho = (a, b) => b > 0 ? Math.max(0, Math.min(100, (a / b) * 100)) : 0;
 
-            const redesLista = ['HS', 'Instagram', 'Facebook', 'Threads', 'X', 'Telegram', 'Tiktok', 'Youtube'];
-            const conteoPorRed = { 'HS': 0, 'Threads': 0, 'X': 0, 'Telegram': 0, 'Facebook': 0, 'Instagram': 0, 'Tiktok': 0, 'Youtube': 0 };
+            // Formato anterior (listas planas) o sin datos: el dashboard necesita los totales de GAS.
+            if (!datos || !datos.copy || Array.isArray(datos.copy) || !datos.notas) {
+                return `<div class="nx-rep-empty-state" style="text-align:center;padding:60px 20px;color:#64748b;">
+                    <div style="font-size:3rem;color:#f59e0b;margin-bottom:16px;"><i class="fas fa-exclamation-triangle"></i></div>
+                    <h3 style="font-size:1.15rem;font-weight:700;color:#1e293b;margin-bottom:8px;">Datos de Prensa en formato anterior</h3>
+                    <p style="font-size:0.9rem;max-width:520px;margin:0 auto;line-height:1.5;">Este período trae los datos de Prensa con la estructura vieja. Si es una vista previa, vuelve a desplegar el script de Google Apps Script con la versión nueva y pulsa Vista Previa otra vez.</p>
+                </div>`;
+            }
 
-            const d = datos || {};
-            const solicitudesCopy = d.copy || [];
-            const solicitudesPrensa = d.prensa || [];
+            const c = datos.copy, nt = datos.notas;
+            const PALETA = { 'HS': '#023047', 'Instagram': '#d6249f', 'Facebook': '#1877f2', 'Threads': '#6b7280', 'X': '#111827', 'Telegram': '#229ed9', 'Tiktok': '#14b8a6', 'Youtube': '#dc2626' };
+            const ordenFijo = ['HS', 'Instagram', 'Facebook', 'Threads', 'X', 'Telegram', 'Tiktok', 'Youtube'];
 
-            let copyFinalizados = 0;
-            let copyRechazados = 0;
+            const copyTotal = n(c.total), copyFin = n(c.finalizadas), copyRec = n(c.rechazadas);
+            const redes = (Array.isArray(c.redes) ? c.redes : []).map(r => ({ nombre: String(r.nombre), cant: n(r.cant) }))
+                .sort((a, b) => (b.cant - a.cant) || (ordenFijo.indexOf(a.nombre) - ordenFijo.indexOf(b.nombre)));
+            const publicaciones = n(c.publicaciones) || redes.reduce((s, r) => s + r.cant, 0);
+            const unidades = Array.isArray(c.unidades) ? c.unidades : [];
+            const totalUnidades = n(c.totalUnidades);
 
-            const filasCopy = solicitudesCopy.map((sol, index) => {
-                if (sol.estatus === 'FINALIZADA') copyFinalizados++;
-                if (sol.estatus === 'RECHAZADA') copyRechazados++;
+            // ---- Dona: participación de cada red sobre el total de publicaciones ----
+            const R = 52, CIRC = 2 * Math.PI * R;
+            let acum = 0;
+            const segmentos = publicaciones > 0 ? redes.filter(r => r.cant > 0).map(r => {
+                const largo = (r.cant / publicaciones) * CIRC;
+                const visible = redes.filter(x => x.cant > 0).length > 1 ? Math.max(largo - 1.5, 0.5) : largo;
+                const seg = `<circle cx="70" cy="70" r="${R}" fill="none" stroke="${PALETA[r.nombre] || '#94a3b8'}" stroke-width="22" stroke-dasharray="${visible.toFixed(2)} ${(CIRC - visible).toFixed(2)}" stroke-dashoffset="${(-acum).toFixed(2)}" transform="rotate(-90 70 70)"/>`;
+                acum += largo;
+                return seg;
+            }).join('') : '';
+            const dona = `
+                <svg class="nx-pr-dona" viewBox="0 0 140 140" width="170" height="170" role="img" aria-label="Distribución de publicaciones por red social">
+                    <circle cx="70" cy="70" r="${R}" fill="none" stroke="#e2e8f0" stroke-width="22"/>
+                    ${segmentos}
+                    <text x="70" y="68" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="800" fill="#023047">${publicaciones}</text>
+                    <text x="70" y="84" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="6.5" font-weight="700" fill="#64748b" letter-spacing="0.2">PUBLICACIONES</text>
+                </svg>`;
 
-                const celdasRedes = redesLista.map(red => {
-                    const activa = Array.isArray(sol.redes) && sol.redes.includes(red);
-                    if (activa) {
-                        conteoPorRed[red] = (conteoPorRed[red] || 0) + 1;
-                        return '<td class="center nx-mark-x">X</td>';
-                    }
-                    return '<td class="center" style="color:#cbd5e1;">-</td>';
-                }).join('');
+            const filasRedes = redes.map(r => `
+                <tr>
+                    <td><span class="nx-pr-dot" style="background:${PALETA[r.nombre] || '#94a3b8'}"></span><b>${esc(r.nombre)}</b></td>
+                    <td class="c"><b>${r.cant}</b></td>
+                    <td class="c">${pct(r.cant, copyFin)}</td>
+                    <td class="c">${pct(r.cant, publicaciones)}</td>
+                    <td style="width:26%"><div class="nx-pr-bar"><i style="width:${ancho(r.cant, copyFin).toFixed(1)}%;background:${PALETA[r.nombre] || '#94a3b8'}"></i></div></td>
+                </tr>`).join('');
 
-                return `
-                    <tr>
-                        <td class="center font-bold">${index + 1}</td>
-                        <td style="font-family: monospace; font-size: 10px;">${esc(sol.id)}</td>
-                        <td class="center">${esc(sol.fechaReg || '-')}</td>
-                        <td class="center">${esc(sol.fechaFin || '-')}</td>
-                        ${celdasRedes}
-                    </tr>
-                `;
-            }).join('');
+            // ---- Top 5 unidades ----
+            const maxUni = unidades.length ? n(unidades[0].cant) : 0;
+            const sumaTop = unidades.reduce((s, u) => s + n(u.cant), 0);
+            const filasUni = unidades.map((u, i) => `
+                <tr>
+                    <td class="c"><span class="nx-pr-rank">${i + 1}</span></td>
+                    <td><b>${esc(u.nombre)}</b></td>
+                    <td class="c"><b>${n(u.cant)}</b></td>
+                    <td class="c">${pct(n(u.cant), copyTotal)}</td>
+                    <td style="width:30%"><div class="nx-pr-bar"><i style="width:${ancho(n(u.cant), maxUni).toFixed(1)}%;background:#3876F2"></i></div></td>
+                </tr>`).join('');
 
-            let prensaFinalizados = 0;
-            let prensaRechazados = 0;
+            // ---- Notas de prensa ----
+            const insignia = est => {
+                const e = String(est || '').toUpperCase();
+                if (e.indexOf('FINALIZAD') === 0) return '<span class="nx-pr-badge ok">Finalizada</span>';
+                if (e.indexOf('RECHAZAD') === 0) return '<span class="nx-pr-badge no">Rechazada</span>';
+                return '<span class="nx-pr-badge pe">Pendiente</span>';
+            };
+            const lista = Array.isArray(nt.lista) ? nt.lista : [];
+            const filasNotas = lista.map((s, i) => `
+                <tr>
+                    <td class="c"><b>${i + 1}</b></td>
+                    <td class="mono">${esc(s.id)}</td>
+                    <td class="c">${esc(s.fechaReg || '-')}</td>
+                    <td class="c">${esc(s.fechaFin || '-')}</td>
+                    <td class="c">${insignia(s.estatus)}</td>
+                    <td>${esc(s.titulo)}</td>
+                </tr>`).join('');
+            const notasTotal = n(nt.total), notasFin = n(nt.finalizadas), notasRec = n(nt.rechazadas), notasPen = n(nt.pendientes);
 
-            const filasPrensa = solicitudesPrensa.map((sol, index) => {
-                if (sol.estatus === 'FINALIZADA') prensaFinalizados++;
-                if (sol.estatus === 'RECHAZADA') prensaRechazados++;
+            const resumen = copyTotal === 0
+                ? 'No se recibieron solicitudes de Copy RRSS en este período.'
+                : `Se ${copyTotal === 1 ? 'recibió <b>1</b> solicitud' : `recibieron <b>${copyTotal}</b> solicitudes`} de Copy RRSS: <b>${copyFin}</b> finalizada${copyFin === 1 ? '' : 's'} (${pct(copyFin, copyTotal)}), <b>${copyRec}</b> rechazada${copyRec === 1 ? '' : 's'} (${pct(copyRec, copyTotal)}).`;
 
-                return `
-                    <tr>
-                        <td class="center font-bold">${index + 1}</td>
-                        <td style="font-family: monospace; font-size: 10px;">${esc(sol.id)}</td>
-                        <td class="center">${esc(sol.fechaReg || '-')}</td>
-                        <td class="center">${esc(sol.fechaFin || '-')}</td>
-                        <td>${esc(sol.titulo)}</td>
-                    </tr>
-                `;
-            }).join('');
+            const css = `
+                .nx-pr-root{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;color:#0f172a;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+                .nx-pr-root *{box-sizing:border-box}
+                .nx-pr-head{text-align:center;margin-bottom:18px;padding-bottom:14px;border-bottom:3px solid #023047}
+                .nx-pr-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px}
+                .nx-pr-brand .div{width:1px;height:30px;background:#cbd5e1}
+                .nx-pr-brand .t{font-family:'Audiowide','Segoe UI',Arial,sans-serif;font-size:15px;color:#023047;letter-spacing:2px;text-align:left}
+                .nx-pr-brand .s{font-size:8px;font-weight:700;color:#64748b;letter-spacing:1.6px;text-align:left}
+                .nx-pr-head h1{font-size:20px;margin:6px 0 4px;color:#023047;font-weight:800}
+                .nx-pr-per{font-size:12px;font-weight:700;color:#023047;text-transform:uppercase;margin-bottom:2px}
+                .nx-pr-sub{font-size:10.5px;color:#64748b;margin:0}
+                .nx-pr-sec{font-size:12.5px;font-weight:800;color:#023047;margin:20px 0 10px;padding-left:10px;border-left:4px solid #3876F2;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px;break-after:avoid}
+                .nx-pr-block{break-inside:avoid;page-break-inside:avoid}
+                .nx-pr-resumen{font-size:12px;background:#f1f5f9;border-left:4px solid #3876F2;border-radius:6px;padding:10px 14px;margin-bottom:12px}
+                .nx-pr-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+                .nx-pr-kpis.k3{grid-template-columns:repeat(3,1fr)}
+                .nx-pr-kpi{border:1px solid #cbd5e1;border-radius:8px;padding:12px 8px;text-align:center;background:#fff}
+                .nx-pr-kpi .v{font-size:26px;font-weight:800;color:#023047;line-height:1.1}
+                .nx-pr-kpi .v.g{color:#059669}.nx-pr-kpi .v.r{color:#dc2626}.nx-pr-kpi .v.a{color:#d97706}.nx-pr-kpi .v.b{color:#2563eb}
+                .nx-pr-kpi .p{font-size:11px;font-weight:700;color:#475569;margin-top:2px}
+                .nx-pr-kpi .l{font-size:9.5px;font-weight:700;color:#64748b;letter-spacing:.6px;margin-top:3px;text-transform:uppercase}
+                .nx-pr-redes{display:flex;gap:18px;align-items:center}
+                .nx-pr-donawrap{flex:0 0 180px;text-align:center}
+                .nx-pr-nota{font-size:9.5px;color:#64748b;margin-top:6px;line-height:1.35}
+                .nx-pr-tabla{width:100%;border-collapse:collapse;font-size:11px}
+                .nx-pr-tabla th{background:#f8fafc;color:#1e293b;font-weight:700;padding:6px 8px;border:1px solid #cbd5e1;text-align:left;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+                .nx-pr-tabla td{padding:6px 8px;border:1px solid #e2e8f0;vertical-align:middle}
+                .nx-pr-tabla .c{text-align:center}
+                .nx-pr-tabla .mono{font-family:Consolas,monospace;font-size:10px;white-space:nowrap}
+                .nx-pr-tabla tr{break-inside:avoid;page-break-inside:avoid}
+                .nx-pr-tabla tbody tr:nth-child(even) td{background:#f8fafc}
+                .nx-pr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+                .nx-pr-bar{height:9px;background:#e2e8f0;border-radius:5px;overflow:hidden}
+                .nx-pr-bar i{display:block;height:100%;border-radius:5px}
+                .nx-pr-rank{display:inline-block;width:20px;height:20px;line-height:20px;border-radius:50%;background:#023047;color:#fff;font-size:10px;font-weight:800;text-align:center}
+                .nx-pr-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:9.5px;font-weight:700}
+                .nx-pr-badge.ok{background:#d1fae5;color:#047857}.nx-pr-badge.no{background:#fee2e2;color:#b91c1c}.nx-pr-badge.pe{background:#fef3c7;color:#b45309}
+                .nx-pr-vacio{text-align:center;color:#64748b;padding:14px;font-size:11px}
+                .nx-pr-foot{margin-top:24px;padding-top:10px;border-top:1px solid #cbd5e1;text-align:center;font-size:10px;color:#64748b}
+                @media (max-width:700px){.nx-pr-kpis,.nx-pr-kpis.k3{grid-template-columns:repeat(2,1fr)}.nx-pr-redes{flex-direction:column}.nx-pr-donawrap{flex:none}}
+            `;
 
-            // Ordenar estadísticas por red social de mayor a menor
-            const redesOrdenadas = Object.entries(conteoPorRed).sort((a, b) => b[1] - a[1]);
-
-            // Totales Generales
-            const totalGeneral = solicitudesCopy.length + solicitudesPrensa.length;
-            const totalFinalizados = copyFinalizados + prensaFinalizados;
-            const totalRechazados = copyRechazados + prensaRechazados;
             return `
-            <div class="nx-print-sheet">
-                <!-- Encabezado Prensa -->
-                <div class="nx-rep-header">
-                    <div class="nx-rep-brand-header">
+            <div class="nx-print-sheet nx-pr-root"><style>${css}</style>
+                <div class="nx-pr-head">
+                    <div class="nx-pr-brand">
                         <svg xmlns="http://www.w3.org/2000/svg" width="140" height="40" viewBox="0 0 140 40" style="display:block;">
                             <rect width="140" height="40" rx="6" fill="#023047"/>
                             <text x="70" y="27" font-family="Arial Black, Arial, sans-serif" font-size="20" font-weight="900" letter-spacing="4" fill="white" text-anchor="middle">NEX<tspan fill="#3876F2">U</tspan>S</text>
                         </svg>
-                        <div class="nx-brand-divider"></div>
-                        <div class="nx-brand-sira">
-                            <div class="sira-title">NEXUS</div>
-                            <div class="sira-sub">SISTEMA INTELIGENTE</div>
-                        </div>
+                        <div class="div"></div>
+                        <div><div class="t">NEXUS</div><div class="s">SISTEMA INTELIGENTE</div></div>
                     </div>
                     <h1>📰 REPORTE MENSUAL DE PRENSA</h1>
-                    <div style="font-size: 13px; font-weight: 700; color: #023047; margin-bottom: 4px; text-transform: uppercase;">Período Auditado: ${periodo}</div>
-                    <p class="nx-rep-sub">Copy RRSS y Difusión Institucional | Generado: ${fechaGenerado}</p>
+                    <div class="nx-pr-per">Período Auditado: ${esc(periodo)}</div>
+                    <p class="nx-pr-sub">Copy RRSS y Corrección Nota de Prensa | Generado: ${esc(fechaGenerado)}</p>
                 </div>
 
-                <!-- Listado Detallado de Copy RRSS -->
-                <div class="nx-rep-sec-title"><i class="fas fa-clipboard-list"></i> Listado Detallado de Solicitudes (Copy RRSS)</div>
-                <table class="nx-rep-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;" class="center">Nro</th>
-                            <th style="width: 130px;">Requerimiento</th>
-                            <th style="width: 120px;" class="center">Fecha Registro</th>
-                            <th style="width: 120px;" class="center">Fecha Finalización</th>
-                            ${redesLista.map(r => `<th style="width: 42px;" class="center">${r}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filasCopy || '<tr><td colspan="12" class="center">No hay solicitudes de Copy RRSS en este período</td></tr>'}
-                    </tbody>
+                <div class="nx-pr-block">
+                    <div class="nx-pr-sec"><i class="fas fa-mobile-alt"></i> Copy RRSS · Resumen del período</div>
+                    <div class="nx-pr-resumen">${resumen}</div>
+                    <div class="nx-pr-kpis k3">
+                        <div class="nx-pr-kpi"><div class="v b">${copyTotal}</div><div class="l">Recibidas</div></div>
+                        <div class="nx-pr-kpi"><div class="v g">${copyFin}</div><div class="p">${pct(copyFin, copyTotal)}</div><div class="l">Finalizadas</div></div>
+                        <div class="nx-pr-kpi"><div class="v r">${copyRec}</div><div class="p">${pct(copyRec, copyTotal)}</div><div class="l">Rechazadas</div></div>
+                    </div>
+                </div>
+
+                <div class="nx-pr-block">
+                    <div class="nx-pr-sec"><i class="fas fa-share-alt"></i> Actividad por red social</div>
+                    ${copyFin === 0 ? '<div class="nx-pr-vacio">No hay Copy RRSS finalizadas en este período.</div>' : `
+                    <div class="nx-pr-redes">
+                        <div class="nx-pr-donawrap">${dona}</div>
+                        <div style="flex:1;min-width:0">
+                            <table class="nx-pr-tabla">
+                                <thead><tr><th>Red social</th><th class="c">Cantidad</th><th class="c">% de finalizadas</th><th class="c">% de publicaciones</th><th></th></tr></thead>
+                                <tbody>${filasRedes}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="nx-pr-nota">Cada solicitud finalizada puede publicarse en varias redes, por eso la suma de redes puede ser mayor que el total de finalizadas (${copyFin}). La dona muestra la participación de cada red sobre el total de publicaciones (${publicaciones}); el porcentaje de la tabla se calcula sobre el total de finalizadas.${n(c.finalizadasSinRedes) > 0 ? ` <b>${n(c.finalizadasSinRedes)}</b> finalizada${n(c.finalizadasSinRedes) === 1 ? ' no tiene' : 's no tienen'} redes registradas.` : ''}</div>`}
+                </div>
+
+                <div class="nx-pr-block">
+                    <div class="nx-pr-sec"><i class="fas fa-building"></i> Top 5 unidades que más enviaron Copy RRSS</div>
+                    ${unidades.length === 0 ? '<div class="nx-pr-vacio">Sin solicitudes de Copy RRSS en este período.</div>' : `
+                    <table class="nx-pr-tabla">
+                        <thead><tr><th class="c" style="width:40px">#</th><th>Unidad</th><th class="c">Solicitudes</th><th class="c">% del total recibido</th><th></th></tr></thead>
+                        <tbody>${filasUni}</tbody>
+                    </table>
+                    <div class="nx-pr-nota">${unidades.length === 1 ? 'Esta unidad concentra' : `Estas ${unidades.length} unidades concentran`} ${sumaTop} de las ${copyTotal} solicitudes (${pct(sumaTop, copyTotal)})${totalUnidades > 0 ? `, de un total de ${totalUnidades} ${totalUnidades === 1 ? 'unidad que envió' : 'unidades que enviaron'} Copy RRSS` : ''}. Se cuentan todas las solicitudes enviadas, incluidas las rechazadas.</div>`}
+                </div>
+
+                <div class="nx-pr-block">
+                    <div class="nx-pr-sec"><i class="fas fa-pen-nib"></i> Corrección Nota de Prensa</div>
+                    <div class="nx-pr-kpis ${notasPen > 0 ? '' : 'k3'}">
+                        <div class="nx-pr-kpi"><div class="v b">${notasTotal}</div><div class="l">Total general</div></div>
+                        <div class="nx-pr-kpi"><div class="v g">${notasFin}</div><div class="p">${pct(notasFin, notasTotal)}</div><div class="l">Finalizadas</div></div>
+                        <div class="nx-pr-kpi"><div class="v r">${notasRec}</div><div class="p">${pct(notasRec, notasTotal)}</div><div class="l">Rechazadas</div></div>
+                        ${notasPen > 0 ? `<div class="nx-pr-kpi"><div class="v a">${notasPen}</div><div class="p">${pct(notasPen, notasTotal)}</div><div class="l">Pendientes</div></div>` : ''}
+                    </div>
+                </div>
+
+                <div class="nx-pr-sec"><i class="fas fa-newspaper"></i> Listado de notas</div>
+                <table class="nx-pr-tabla">
+                    <thead><tr><th class="c" style="width:34px">Nro</th><th style="width:135px">Requerimiento</th><th class="c" style="width:82px">Registro</th><th class="c" style="width:82px">Finalización</th><th class="c" style="width:78px">Estado</th><th>Título de la nota</th></tr></thead>
+                    <tbody>${filasNotas || '<tr><td colspan="6" class="nx-pr-vacio">No hay notas de prensa registradas en este período</td></tr>'}</tbody>
                 </table>
 
-                <!-- Solicitudes de Nota de Prensa -->
-                <div class="nx-rep-sec-title" style="margin-top: 30px;"><i class="fas fa-newspaper"></i> Solicitudes de Nota de Prensa</div>
-                <table class="nx-rep-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;" class="center">Nro</th>
-                            <th style="width: 130px;">Requerimiento</th>
-                            <th style="width: 100px;" class="center">Fecha Registro</th>
-                            <th style="width: 100px;" class="center">Fecha Finalización</th>
-                            <th>Título de la Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${filasPrensa || '<tr><td colspan="5" class="center">No hay notas de prensa registradas en este período</td></tr>'}
-                    </tbody>
-                </table>
-
-                <!-- Estadísticas Copy RRSS -->
-                <div class="nx-rep-sec-title" style="margin-top: 30px;"><i class="fas fa-mobile-alt"></i> Estadísticas Copy RRSS</div>
-                <div class="nx-kpi-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 600px;">
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val">${solicitudesCopy.length}</div>
-                        <div class="nx-kpi-lbl">TOTAL COPY RRSS</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val green">${copyFinalizados}</div>
-                        <div class="nx-kpi-lbl">FINALIZADOS</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val red">${copyRechazados}</div>
-                        <div class="nx-kpi-lbl">RECHAZADOS</div>
-                    </div>
-                </div>
-
-                <!-- Estadísticas por Red Social -->
-                <div class="nx-rep-sec-title"><i class="fas fa-share-alt"></i> Estadísticas por Red Social (Copy RRSS)</div>
-                <table class="nx-rep-table" style="max-width: 450px;">
-                    <thead>
-                        <tr>
-                            <th>Red Social</th>
-                            <th class="center" style="width: 120px;">Cantidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${redesOrdenadas.map(([r, c]) => `
-                            <tr>
-                                <td class="font-bold">${r}</td>
-                                <td class="center font-bold" style="color:#023047; font-size:12px;">${c}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-
-                <!-- Estadísticas Nota de Prensa -->
-                <div class="nx-rep-sec-title" style="margin-top: 30px;"><i class="fas fa-pen-nib"></i> Estadísticas Nota de Prensa</div>
-                <div class="nx-kpi-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 600px;">
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val">${solicitudesPrensa.length}</div>
-                        <div class="nx-kpi-lbl">TOTAL NOTA PRENSA</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val green">${prensaFinalizados}</div>
-                        <div class="nx-kpi-lbl">FINALIZADOS</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val red">${prensaRechazados}</div>
-                        <div class="nx-kpi-lbl">RECHAZADOS</div>
-                    </div>
-                </div>
-
-                <!-- Resumen General -->
-                <div class="nx-rep-sec-title" style="margin-top: 30px;"><i class="fas fa-poll"></i> Resumen General</div>
-                <div class="nx-kpi-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 600px;">
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val blue">${totalGeneral}</div>
-                        <div class="nx-kpi-lbl">TOTAL GENERAL</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val green">${totalFinalizados}</div>
-                        <div class="nx-kpi-lbl">FINALIZADOS</div>
-                    </div>
-                    <div class="nx-kpi-card">
-                        <div class="nx-kpi-val red">${totalRechazados}</div>
-                        <div class="nx-kpi-lbl">RECHAZADOS</div>
-                    </div>
-                </div>
-
-                <!-- Footer Oficial -->
-                <div class="nx-rep-footer">
-                    📰 <strong>NEXUS</strong> - Sistema de Reportes de Prensa & Redes Sociales<br>
-                    Reporte generado el ${fechaGenerado} | Período Auditado: ${periodo}
-                </div>
+                <div class="nx-pr-foot">📰 <strong>NEXUS</strong> - Reporte de Prensa &amp; Redes Sociales<br>Reporte generado el ${esc(fechaGenerado)} | Período Auditado: ${esc(periodo)}</div>
             </div>`;
         }
 
@@ -27863,11 +28327,25 @@ function nexusInicializarReporteDiseno(contenedor) {
                 }
             };
 
-            if (doc.fonts && doc.fonts.ready) {
-                doc.fonts.ready.then(() => setTimeout(triggerPrint, 300)).catch(() => setTimeout(triggerPrint, 500));
-            } else {
-                setTimeout(triggerPrint, 600);
-            }
+            // fonts.ready se cumple antes de que llegue la hoja de Font Awesome y el PDF salía sin iconos:
+            // se espera a que cargue la hoja y se piden explícitamente las fuentes de iconos (máx. 4 s).
+            const esperarIconos = () => new Promise(resolve => {
+                const limite = setTimeout(resolve, 4000);
+                const fin = () => { clearTimeout(limite); resolve(); };
+                const link = doc.querySelector('link[href*="font-awesome"]');
+                if (!link || !doc.fonts || !doc.fonts.load) return fin();
+                const pedirFuentes = () => Promise.all([
+                    doc.fonts.load('900 14px "Font Awesome 6 Free"'),
+                    doc.fonts.load('400 14px "Font Awesome 6 Free"'),
+                    doc.fonts.load('400 14px "Font Awesome 6 Brands"')
+                ]).then(fin).catch(fin);
+                if (link.sheet) pedirFuentes();
+                else { link.addEventListener('load', pedirFuentes); link.addEventListener('error', fin); }
+            });
+            esperarIconos()
+                .then(() => (doc.fonts && doc.fonts.ready) ? doc.fonts.ready : null)
+                .then(() => setTimeout(triggerPrint, 300))
+                .catch(() => setTimeout(triggerPrint, 500));
         }
 
         function nexusImprimirReporteActual() {
@@ -27909,7 +28387,7 @@ function nexusInicializarReporteDiseno(contenedor) {
                 ${_nexusReportesDataActual.htmlPrensa}
             `;
 
-            nexusImprimirHtml(htmlTres, `Reportes Mensuales Completos - ${periodo}`);
+            nexusImprimirHtml(htmlTres, `Reportes General, Diseño y Prensa - ${periodo}`);
         }
 
         // --- CONTROL DE TABS Y NAVEGACIÓN ---
@@ -27938,24 +28416,18 @@ function nexusInicializarReporteDiseno(contenedor) {
 
         // --- CARGA DE DATOS Y AGREGACIÓN MENSUAL ---
         //
-        // SISTEMA REESCRITO. Reglas del negocio:
-        // 1) La colección "solicitudes" de Firestore es la ÚNICA verdad absoluta.
-        //    Cada documento tiene fechaCreacionKey ("YYYY-MM-DD"), que es lo que
-        //    se usa para determinar a qué mes pertenece.
-        // 2) Si el mes ya fue cerrado oficialmente (existe en reportes_historicos),
-        //    los reportes se leen de ahí (no se recalculan ni se tocan solicitudes).
-        // 3) Si el mes NO está cerrado (sea el mes en curso o un mes anterior que
-        //    nunca se cerró), se genera una Vista Previa en vivo leyendo Firestore
-        //    directamente. Esa vista previa NO se guarda en ningún lado.
-        // 4) Todo el "Corte de Viernes" / "corte semanal incremental" fue eliminado:
-        //    era código muerto, nunca conectado a los reportes, y una de sus
-        //    funciones tenía además un ReferenceError que la rompía siempre.
+        // MÓDULO DE REPORTES (reglas vigentes, Fase 7):
+        // 1) La fuente de verdad del mes es la hoja "Solicitudes" del Sheet. Los datos de los
+        //    reportes los calcula Google Apps Script (acción calcularReportesMes); el front
+        //    solo arma el HTML con los números que recibe.
+        // 2) Si el mes ya fue cerrado (reportes_historicos/{aaaa-mm} con estado "cerrado"),
+        //    se lee ese documento (una lectura) y no se recalcula nada.
+        // 3) Si el mes NO está cerrado (el actual, o uno anterior sin cierre), se pide a GAS una
+        //    Vista Previa con guardar:false. No se guarda en ningún lado.
+        // 4) El código del "Corte de Viernes" / corte semanal fue eliminado. Lo único semanal que
+        //    queda es el desglose "Rendimiento Semanal" (sábado a viernes) del reporte General.
 
         let _nexusHayPreviewSinGuardar = false;
-
-        async function nexusObtenerSolicitudesDelMes(cMes) { console.warn('[NEXUS·STUB] nexusObtenerSolicitudesDelMes: pendiente de reescribir'); return null; }
-
-        async function nexusObtenerCopyRRSSDelMes(cMes) { console.warn('[NEXUS·STUB] nexusObtenerCopyRRSSDelMes: pendiente de reescribir'); return null; }
 
         // Reutiliza nexusCalcularEstadisticasCompletas(vivas, finalizadas, claveMes)
         // sin modificarla: solo separamos la lista plana de solicitudes en los dos
@@ -27979,20 +28451,43 @@ function nexusInicializarReporteDiseno(contenedor) {
             return fnCalc ? fnCalc(vivasObj, finalizadasObj, cMes) : null;
         }
 
-        // Lee el respaldo oficial de un mes cerrado. Estructura en Firestore:
-        //   reportes_historicos/{claveMes}                      -> metadatos (sin solicitudes)
-        //   reportes_historicos/{claveMes}/reportes/general      -> { html }
-        //   reportes_historicos/{claveMes}/reportes/diseno       -> { html }
-        //   reportes_historicos/{claveMes}/reportes/prensa       -> { html }
-        // No se guardan las solicitudes crudas, solo los datos que muestran los
-        // 3 reportes (su HTML ya compilado), evitando además el límite de 1MB
-        // por documento de Firestore.
-        async function nexusLeerReporteHistorico(cMes) { console.warn('[NEXUS·STUB] nexusLeerReporteHistorico: pendiente de reescribir'); return null; }
+        // Lee el respaldo oficial de un mes cerrado. Estructura real en Firestore (la escribe GAS):
+        //   reportes_historicos/{aaaa-mm} -> UN solo documento con los campos
+        //     meta (periodo, claveMes, fechaCierre, cerradoPor, totalSolicitudes, estado:'cerrado')
+        //     + general {..} + diseno {..} + prensa {..}   (datos calculados, NO html ni solicitudes)
+        //   reportes_mensuales_unidades/{aaaa-mm}_{unidad} -> un documento por unidad (reporte por unidad)
+        // El HTML se arma en el navegador con nexusGenerarHtmlReporteGeneral / ...Diseno.
+        // Devuelve el documento reportes_historicos/{aaaa-mm} SOLO si el mes está cerrado (una lectura).
+        // Si no existe o no está cerrado devuelve null y el reporte se arma como vista previa.
+        async function nexusLeerReporteHistorico(cMes) {
+            await nexusEsperarFirestore(20);
+            const S = window.fbStore;
+            if (!S || !window.db) throw new Error('Firestore aún no está listo. Intenta de nuevo en unos segundos.');
+            const snap = await S.getDoc(S.doc(window.db, 'reportes_historicos', cMes));
+            if (!snap.exists()) return null;
+            const d = snap.data();
+            return (d && d.estado === 'cerrado') ? d : null;
+        }
 
         // Pide a Google Apps Script que calcule los datos de los reportes desde la hoja "Solicitudes".
         //  guardar=false -> devuelve los datos (vista previa, no escribe nada)
         //  guardar=true  -> GAS los guarda en Firestore (reportes_historicos y reportes_mensuales_unidades) y los verifica
-        async function nexusPedirReportesGas(cMes, guardar) { console.warn('[NEXUS·STUB] nexusPedirReportesGas: pendiente de reescribir'); return null; }
+        async function nexusPedirReportesGas(cMes, guardar) {
+            const payload = { action: 'calcularReportesMes', claveMes: cMes, guardar: guardar === true };
+            if (payload.guardar) {
+                payload.cerradoPor = String((typeof NexusSession !== 'undefined' && NexusSession && (NexusSession.nombre || (NexusSession.user && NexusSession.user.email))) || '').substring(0, 120);
+            }
+            // GAS recorre la hoja Solicitudes: puede tardar. Un reintento por si responde con error transitorio.
+            const res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            }, 60000, 1);
+            if (!res || !res.success || !res.data) {
+                throw new Error((res && res.error) || 'Google Apps Script no devolvió los datos del reporte');
+            }
+            return res.data;
+        }
 
         async function nexusCargarReportesMes(claveMes) {
             const cMes = claveMes || _nexusReportesMesActivo || nexusObtenerClaveMes();
@@ -28030,19 +28525,17 @@ function nexusInicializarReporteDiseno(contenedor) {
                     // Mes cerrado oficialmente: se muestra lo que Google Apps Script calculó y guardó en el
                     // cierre (una sola lectura de Firestore), sin recalcular nada.
                     esHistorico = true;
-                    if (historico.general) {
-                        htmlGen = nexusGenerarHtmlReporteGeneral(historico.general, periodoLabel);
-                        htmlDis = nexusGenerarHtmlReporteDiseno(historico.diseno, periodoLabel);
-                        htmlPre = nexusGenerarHtmlReportePrensa(historico.prensa, periodoLabel);
-                    } else {
-                        htmlGen = historico.htmlGeneral;
-                        htmlDis = historico.htmlDiseno;
-                        htmlPre = historico.htmlPrensa;
+                    if (!historico.general || !historico.diseno) {
+                        throw new Error('El cierre archivado de ' + periodoLabel + ' está incompleto (faltan datos de General o Diseño).');
                     }
+                    htmlGen = nexusGenerarHtmlReporteGeneral(historico.general, periodoLabel);
+                    htmlDis = nexusGenerarHtmlReporteDiseno(historico.diseno, periodoLabel);
+                    htmlPre = nexusGenerarHtmlReportePrensa(historico.prensa, periodoLabel);
                 } else {
                     // Mes no cerrado (el actual, o uno anterior que nunca se cerró): vista previa en vivo.
                     // Google Apps Script calcula los datos desde la hoja; no se guarda nada.
                     const previa = await nexusPedirReportesGas(cMes, false);
+                    if (!previa.general || !previa.diseno) throw new Error('La respuesta de Google Apps Script no trae los datos de General y Diseño.');
                     htmlGen = nexusGenerarHtmlReporteGeneral(previa.general, periodoLabel);
                     htmlDis = nexusGenerarHtmlReporteDiseno(previa.diseno, periodoLabel);
                     htmlPre = nexusGenerarHtmlReportePrensa(previa.prensa, periodoLabel);
@@ -28162,7 +28655,19 @@ function nexusInicializarReporteDiseno(contenedor) {
 
         // Devuelve las claves de mes (YYYY-MM) que ya tienen respaldo oficial
         // guardado en reportes_historicos.
-        async function nexusObtenerMesesHistoricosDisponibles() { console.warn('[NEXUS·STUB] nexusObtenerMesesHistoricosDisponibles: pendiente de reescribir'); return null; }
+        async function nexusObtenerMesesHistoricosDisponibles() {
+            try {
+                await nexusEsperarFirestore(20);
+                const S = window.fbStore;
+                if (!S || !window.db) return [];
+                const snap = await S.getDocs(S.query(S.collection(window.db, 'reportes_historicos'), S.where('estado', '==', 'cerrado')));
+                return snap.docs.map(d => d.id).filter(id => /^\d{4}-\d{2}$/.test(id));
+            } catch (err) {
+                // Sin cierres visibles el selector sigue funcionando con el mes en curso.
+                console.warn('[NEXUS Reportes] No se pudo listar los meses archivados:', err);
+                return [];
+            }
+        }
 
         // Construye las opciones del selector: el mes actual siempre está
         // disponible (aunque no tenga cierre, se ve como vista previa en vivo),
@@ -28230,15 +28735,16 @@ function nexusInicializarReporteDiseno(contenedor) {
         // ====================================================================
         //
         // Reglas:
-        // - Solo se puede ejecutar el día 1 de cada mes.
-        // - Solo aplica al mes recién finalizado (el mes calendario anterior a hoy).
-        // - Lee TODAS las solicitudes de ese mes directamente de RTDB
-        //   ("solicitudes"), justo antes de respaldar y purgar — nunca desde
-        //   memoria/caché — para que un timeout o dato viejo nunca pueda
-        //   provocar un respaldo vacío seguido de una purga real.
-        // - Si el respaldo falla por cualquier motivo, el proceso se aborta
-        //   por completo ANTES de tocar Drive o borrar nada de las bases de
-        //   datos. La purga solo continúa si el respaldo ya quedó guardado.
+        // - Solo se puede ejecutar el día 1 de cada mes y solo sobre el mes calendario anterior.
+        // - Primero se repite sincronizarVivasSheet y se verifica que cada id de
+        //   solicitudes_finalizadas_mes/{mes} figure en el Sheet con el mismo estatus.
+        // - Después GAS (calcularReportesMes con guardar:true) lee la hoja "Solicitudes", guarda en
+        //   Firestore reportes_historicos/{mes} y reportes_mensuales_unidades/*, y verifica el
+        //   documento leyéndolo de vuelta (estado "cerrado"). Solo entonces se purga.
+        // - Si el respaldo falla, el proceso se aborta ANTES de tocar Drive o borrar nada.
+        // - Purga: finalizadas/{mes} (RTDB), filas cerradas del Sheet y archivos de Drive,
+        //   saltando los de solicitudes vivas y los de artes que aún existan en artes_finales.
+        //   Las solicitudes ya NO viven en Firestore: no hay nada que purgar allí.
 
         function nexusMesCerrable() {
             // El único mes que se puede cerrar hoy es el mes calendario anterior.
@@ -28318,7 +28824,6 @@ function nexusInicializarReporteDiseno(contenedor) {
         window.nexusGenerarHtmlReporteGeneral = nexusGenerarHtmlReporteGeneral;
         window.nexusGenerarHtmlReporteDiseno = nexusGenerarHtmlReporteDiseno;
         window.nexusInicializarReporteDiseno = nexusInicializarReporteDiseno;
-        window.nexusObtenerSolicitudesDisenoDelMes = nexusObtenerSolicitudesDisenoDelMes;
         window.nexusGenerarHtmlReportePrensa = nexusGenerarHtmlReportePrensa;
         window.nexusImprimirHtml = nexusImprimirHtml;
         window.nexusImprimirReporteActual = nexusImprimirReporteActual;
@@ -28337,312 +28842,92 @@ function nexusInicializarReporteDiseno(contenedor) {
 
     <script>
     // ============================================================
-    // CABECERA "AGUJERO NEGRO" DE LOS MODALES DE LOGIN Y REGISTRO
-    // Shader WebGL (sin librerías): lente gravitacional + disco de acreción.
-    //  - Mover el mouse / el dedo sobre el modal inclina la cámara.
-    //  - Arrastrar el encabezado orbita libremente (vuelve suave al soltar).
-    //  - Enfocar o escribir en un campo acelera y aviva el disco.
-    //  - Solo dibuja mientras el modal está visible; respeta "reducir movimiento".
-    // Color: atributo data-tint="r,g,b" (0-1) del <canvas class="auth-bh-canvas">.
+    // CABECERA "AGUJERO NEGRO" DE LOS MODALES DE LOGIN/REGISTRO Y DEL AVISO DE ANUNCIOS
+    // Video corto (assets/video/bh_modal.mp4) en lugar del shader WebGL.
+    //  - No se descarga hasta que el modal se muestra por primera vez.
+    //  - Solo reproduce mientras es visible y la pestaña está activa.
+    //  - Enfocar o escribir en un campo acelera un poco el video y vuelve suave a la normalidad.
+    //  - En los modales, mover el mouse desplaza ligeramente el video (solo con puntero de mouse).
+    //  - "Reducir movimiento", ahorro de datos o conexión 2G/3G: solo se ve el póster.
     // ============================================================
     (function () {
         'use strict';
 
-        var VERT = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}';
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-        var FRAG = [
-            '#ifdef GL_FRAGMENT_PRECISION_HIGH',
-            'precision highp float;',
-            '#else',
-            'precision mediump float;',
-            '#endif',
-            'uniform vec2 uRes;',
-            'uniform float uTime;',
-            'uniform vec2 uCam;',
-            'uniform float uEnergy;',
-            'uniform vec3 uTint;',
-            'const float PI = 3.14159265;',
+        function initBHVideo(video) {
+            if (!video || video._bhInit) return;
+            video._bhInit = true;
 
-            'float hash21(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }',
+            var host = video.parentElement;
+            var card = (host && host.closest('.auth-modal-card, .nx-anuncio-card')) || host;
+            var overlay = (host && host.closest('.auth-modal-overlay, .nx-anuncio-overlay')) || card;
+            var ahorro = (typeof window.nexusAhorroDeDatos === 'function') ? window.nexusAhorroDeDatos() : false;
+            var visible = false, cargado = false;
 
-            'float vnoise(vec2 p){',
-            '  vec2 i = floor(p); vec2 f = fract(p); f = f*f*(3.0-2.0*f);',
-            '  float a = hash21(i); float b = hash21(i+vec2(1.0,0.0));',
-            '  float c = hash21(i+vec2(0.0,1.0)); float d = hash21(i+vec2(1.0,1.0));',
-            '  return mix(mix(a,b,f.x), mix(c,d,f.x), f.y);',
-            '}',
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
 
-            // Estrellas de fondo (rejilla sobre la esfera de direcciones)
-            'vec3 stars(vec3 d){',
-            '  float lon = atan(d.z, d.x);',
-            '  float lat = asin(clamp(d.y, -1.0, 1.0));',
-            '  vec3 c = vec3(0.0);',
-            '  for (int l = 0; l < 2; l++) {',
-            '    float fl = float(l);',
-            '    vec2 g = vec2(lon/(2.0*PI)*(420.0+fl*260.0), lat/PI*(210.0+fl*130.0));',
-            '    vec2 id = floor(g); vec2 f = fract(g);',
-            '    float h = hash21(id + fl*31.7);',
-            '    if (h > 0.93) {',
-            '      vec2 pos = vec2(hash21(id+3.1), hash21(id+7.7))*0.6 + 0.2;',
-            '      float dd = length(f - pos);',
-            '      float sz = mix(0.10, 0.22, hash21(id+11.3));',
-            '      float tw = 0.75 + 0.25*sin(uTime*(1.5+3.0*hash21(id+5.5)) + h*40.0);',
-            '      c += smoothstep(sz, 0.0, dd) * tw * mix(vec3(0.75,0.85,1.0), vec3(1.0,0.92,0.85), hash21(id+9.9));',
-            '    }',
-            '  }',
-            '  return c;',
-            '}',
-
-            // Textura del disco: rotación diferencial (kepleriana) con dos fases
-            // desfasadas para que la espiral nunca se enrolle indefinidamente.
-            'float pattern(vec3 q, float tt){',
-            '  float r = length(q.xz);',
-            '  float om = 1.3 * pow(r/3.0, -1.5) * (1.0 + 0.9*uEnergy);',
-            '  float a = atan(q.z, q.x) - tt*om;',
-            '  vec2 dir = vec2(cos(a), sin(a));',
-            '  float clump = vnoise(dir*2.2 + r*0.9)*0.6 + vnoise(dir*5.0 + r*2.3 + 3.7)*0.4;',
-            '  float rings = vnoise(vec2(r*16.0, 1.0))*0.6 + vnoise(vec2(r*40.0, 2.0))*0.4;',
-            '  return clamp(clump*0.9 + rings*0.8, 0.0, 1.5);',
-            '}',
-
-            'vec3 disk(vec3 q, vec3 v, out float alpha){',
-            '  float r = length(q.xz);',
-            '  float rin = 2.5; float rout = 10.0;',
-            '  alpha = 0.0;',
-            '  if (r < rin || r > rout) return vec3(0.0);',
-            '  float T = 8.0;',
-            '  float ph1 = mod(uTime, T); float ph2 = mod(uTime + T*0.5, T);',
-            '  float w1 = 1.0 - abs(ph1/T*2.0 - 1.0); float w2 = 1.0 - abs(ph2/T*2.0 - 1.0);',
-            '  float dens = pattern(q, ph1)*w1 + pattern(q, ph2)*w2;',
-            '  float edge = smoothstep(rin, rin+0.35, r) * (1.0 - smoothstep(rout-4.5, rout, r));',
-            '  float heat = pow(rin/r, 1.6);',
-            // Rampa de azules: azul profundo (borde) → azul medio (uTint) → azul claro → blanco (núcleo)
-            '  float hv = heat + (dens - 0.5)*0.25;',
-            '  vec3 col = mix(vec3(0.02, 0.22, 0.90), uTint, smoothstep(0.0, 0.35, hv));',
-            '  col = mix(col, vec3(0.68, 0.80, 1.0), smoothstep(0.30, 0.65, hv));',
-            '  col = mix(col, vec3(1.0), smoothstep(0.62, 0.95, heat));',
-            '  vec3 vel = normalize(vec3(-q.z, 0.0, q.x));',
-            '  float dop = clamp(1.0 + 0.7*dot(vel, -v), 0.15, 2.0);',
-            '  float bright = (0.30 + 1.6*heat) * (0.30 + dens) * pow(dop, 2.2) * (1.0 + 0.6*uEnergy);',
-            '  alpha = edge * smoothstep(0.12, 0.65, dens);',
-            '  return col * bright;',
-            '}',
-
-            'void main(){',
-            '  vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;',
-            '  uv.y -= 0.07;   // sube el agujero para dejar sitio al título',
-            '  float yaw = uCam.x; float pitch = uCam.y;',
-            '  vec3 ro = 15.0 * vec3(cos(pitch)*sin(yaw), sin(pitch), cos(pitch)*cos(yaw));',
-            '  vec3 fw = normalize(-ro);',
-            '  vec3 rt = normalize(cross(fw, vec3(0.0,1.0,0.0)));',
-            '  vec3 up = cross(rt, fw);',
-            '  vec3 v = normalize(fw*1.15 + rt*uv.x + up*uv.y);',
-            '  vec3 p = ro;',
-            '  vec3 hv = cross(p, v);',
-            '  float h2 = dot(hv, hv);',
-            '  vec3 col = vec3(0.0);',
-            '  float trans = 1.0;',
-            '  float minr = 100.0;',
-            '  bool hit = false;',
-            '  for (int i = 0; i < 120; i++) {',
-            '    float r2 = dot(p, p); float r = sqrt(r2);',
-            '    minr = min(minr, r);',
-            '    if (r < 1.0) { hit = true; break; }',
-            '    if (r > 30.0 && dot(p, v) > 0.0) break;',
-            '    float dt = clamp(0.07*r, 0.035, 1.0);',
-            '    vec3 acc = -1.5 * h2 * p / (r2*r2*r);',
-            '    v = normalize(v + acc*dt);',
-            '    vec3 pn = p + v*dt;',
-            '    if (p.y * pn.y < 0.0) {',
-            '      float t = p.y / (p.y - pn.y);',
-            '      vec3 q = mix(p, pn, t);',
-            '      float al;',
-            '      vec3 dc = disk(q, v, al);',
-            '      col += trans * dc * al;',
-            '      trans *= (1.0 - al);',
-            '      if (trans < 0.02) break;',
-            '    }',
-            '    p = pn;',
-            '  }',
-            '  if (!hit) {',
-            '    col += trans * (stars(v) + uTint*0.02);',
-            '  }',
-            // halo del anillo de fotones
-            '  col += uTint * 0.9 * exp(-pow(max(minr-1.5, 0.0)*2.6, 1.2)) * (hit ? 0.0 : 1.0) * (0.6 + 0.6*uEnergy);',
-            '  col = 1.0 - exp(-col*1.1);',
-            '  gl_FragColor = vec4(col, 1.0);',
-            '}'
-        ].join('\n');
-
-        function compile(gl, type, src) {
-            var s = gl.createShader(type);
-            gl.shaderSource(s, src);
-            gl.compileShader(s);
-            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-                console.warn('[NEXUS] Shader agujero negro:', gl.getShaderInfoLog(s));
-                return null;
-            }
-            return s;
-        }
-
-        function initBlackHole(canvas) {
-            var host = canvas.parentElement;
-            var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-
-            var gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' })
-                  || canvas.getContext('experimental-webgl');
-            if (!gl) { host.classList.add('bh-fallback'); return; }
-
-            var vs = compile(gl, gl.VERTEX_SHADER, VERT);
-            var fs = compile(gl, gl.FRAGMENT_SHADER, FRAG);
-            var prog = gl.createProgram();
-            if (!vs || !fs) { host.classList.add('bh-fallback'); return; }
-            gl.attachShader(prog, vs);
-            gl.attachShader(prog, fs);
-            gl.linkProgram(prog);
-            if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-                console.warn('[NEXUS] Programa agujero negro:', gl.getProgramInfoLog(prog));
-                host.classList.add('bh-fallback');
-                return;
-            }
-            gl.useProgram(prog);
-
-            var buf = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-            var loc = gl.getAttribLocation(prog, 'p');
-            gl.enableVertexAttribArray(loc);
-            gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-
-            var uRes = gl.getUniformLocation(prog, 'uRes');
-            var uTime = gl.getUniformLocation(prog, 'uTime');
-            var uCam = gl.getUniformLocation(prog, 'uCam');
-            var uEnergy = gl.getUniformLocation(prog, 'uEnergy');
-            var uTint = gl.getUniformLocation(prog, 'uTint');
-
-            var tint = (canvas.getAttribute('data-tint') || '0.30,0.45,1.0').split(',').map(Number);
-            gl.uniform3f(uTint, tint[0], tint[1], tint[2]);
-
-            var BASE_PITCH = 0.15;
-            var st = { yaw: 0, pitch: BASE_PITCH, tyaw: 0, tpitch: BASE_PITCH,
-                       dragYaw: 0, dragPitch: 0, energy: 0, dragging: false, lx: 0, ly: 0 };
-            var scale = 0.85, visible = false, raf = 0;
-            var t0 = performance.now(), last = t0, frames = 0, accum = 0;
-
-            function resize() {
-                var r = canvas.getBoundingClientRect();
-                if (!r.width || !r.height) return false;
-                var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-                var w = Math.max(2, Math.round(r.width * dpr * scale));
-                var h = Math.max(2, Math.round(r.height * dpr * scale));
-                if (w !== canvas.width || h !== canvas.height) { canvas.width = w; canvas.height = h; }
-                gl.viewport(0, 0, w, h);
-                return true;
-            }
-
-            function draw(t) {
-                gl.uniform2f(uRes, canvas.width, canvas.height);
-                gl.uniform1f(uTime, t);
-                gl.uniform2f(uCam, st.yaw, st.pitch);
-                gl.uniform1f(uEnergy, st.energy);
-                gl.drawArrays(gl.TRIANGLES, 0, 3);
-            }
-
-            function frame(now) {
-                raf = 0;
-                if (!visible) return;
-                var dt = Math.min((now - last) / 1000, 0.1);
-                last = now;
-                var t = (now - t0) / 1000;
-
-                var k = 1 - Math.exp(-dt * 4);
-                var ty = st.tyaw + st.dragYaw + 0.30 * Math.sin(t * 0.13);
-                var tp = st.tpitch + st.dragPitch + 0.03 * Math.sin(t * 0.09);
-                st.yaw += (ty - st.yaw) * k;
-                st.pitch += (Math.max(-1.2, Math.min(1.3, tp)) - st.pitch) * k;
-                st.energy *= Math.exp(-dt * 1.3);
-                if (!st.dragging) {   // al soltar, la órbita vuelve suavemente
-                    var back = Math.pow(0.5, dt / 1.5);
-                    st.dragYaw *= back;
-                    st.dragPitch *= back;
+            function reproducir() {
+                if (ahorro || document.hidden || !visible) return;
+                if (!cargado) {
+                    cargado = true;
+                    var src = video.getAttribute('data-src');
+                    if (src) video.src = src;
                 }
-
-                resize();
-                draw(t);
-
-                // Ajuste automático de resolución si el equipo va justo
-                frames++; accum += dt;
-                if (frames >= 30) {
-                    var avg = accum / frames;
-                    if (avg > 0.034 && scale > 0.45) scale *= 0.8;
-                    frames = 0; accum = 0;
-                }
-                raf = requestAnimationFrame(frame);
+                var p = video.play();
+                if (p && p.catch) p.catch(function () {});
             }
-
-            function start() {
-                if (reduce) {          // movimiento reducido: un solo fotograma estático
-                    if (resize()) draw(2.5);
-                    return;
-                }
-                if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
-            }
+            function pausar() { if (!video.paused) video.pause(); }
 
             if ('IntersectionObserver' in window) {
                 new IntersectionObserver(function (entries) {
                     visible = entries[entries.length - 1].isIntersecting;
-                    if (visible) start();
-                }).observe(canvas);
+                    if (visible) reproducir(); else pausar();
+                }).observe(video);
             } else {
-                visible = true; start();
+                visible = true; reproducir();
             }
             document.addEventListener('visibilitychange', function () {
-                if (!document.hidden && visible) start();
-            });
-            window.addEventListener('resize', function () {
-                if (visible && reduce) { if (resize()) draw(2.5); }
+                if (document.hidden) pausar(); else if (visible) reproducir();
             });
 
-            if (reduce) return;   // sin interacción si se pidió reducir movimiento
+            if (ahorro) return;   // sin efectos si se pidió ahorrar
 
-            // --- Interacción ---
-            var card = host.closest('.auth-modal-card') || host;
-            var overlay = host.closest('.auth-modal-overlay') || card;
+            // Enfocar o escribir en un campo acelera el video y luego vuelve a su ritmo
+            var rate = 1, raf = 0;
+            function volver() {
+                raf = 0;
+                rate += (1 - rate) * 0.04;
+                if (rate < 1.01) rate = 1;
+                video.playbackRate = rate;
+                if (rate > 1) raf = requestAnimationFrame(volver);
+            }
+            function acelerar(v) {
+                rate = Math.max(rate, v);
+                video.playbackRate = rate;
+                if (!raf) raf = requestAnimationFrame(volver);
+            }
+            card.addEventListener('focusin', function () { acelerar(1.6); });
+            card.addEventListener('input', function () { acelerar(1.9); }, true);
 
-            overlay.addEventListener('pointermove', function (e) {
-                if (st.dragging) return;
-                var r = card.getBoundingClientRect();
-                var nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width / 2 + 80)));
-                var ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height / 2 + 80)));
-                st.tyaw = nx * 0.55;
-                st.tpitch = BASE_PITCH - ny * 0.30;
-            });
-
-            canvas.addEventListener('pointerdown', function (e) {
-                st.dragging = true; st.lx = e.clientX; st.ly = e.clientY;
-                try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
-                canvas.classList.add('grabbing');
-            });
-            canvas.addEventListener('pointermove', function (e) {
-                if (!st.dragging) return;
-                st.dragYaw -= (e.clientX - st.lx) * 0.010;
-                st.dragPitch = Math.max(-0.5, Math.min(1.1, st.dragPitch + (e.clientY - st.ly) * 0.008));
-                st.lx = e.clientX; st.ly = e.clientY;
-            });
-            function endDrag() { st.dragging = false; canvas.classList.remove('grabbing'); }
-            canvas.addEventListener('pointerup', endDrag);
-            canvas.addEventListener('pointercancel', endDrag);
-
-            // Escribir o enfocar un campo aviva el disco
-            card.addEventListener('focusin', function () { st.energy = Math.max(st.energy, 0.7); });
-            card.addEventListener('input', function () { st.energy = Math.min(1, st.energy + 0.25); }, true);
+            // Leve desplazamiento con el mouse (solo en los modales de login/registro)
+            if (host.closest('.auth-modal-card') && window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+                overlay.addEventListener('pointermove', function (e) {
+                    var r = card.getBoundingClientRect();
+                    var nx = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2 + 80), -1, 1);
+                    var ny = clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2 + 80), -1, 1);
+                    video.style.transform = 'translate3d(' + (nx * -8).toFixed(1) + 'px,' + (ny * -5).toFixed(1) + 'px,0) scale(1.06)';
+                });
+            }
         }
 
         function initAll() {
-            var list = document.querySelectorAll('canvas.auth-bh-canvas');
-            for (var i = 0; i < list.length; i++) initBlackHole(list[i]);
+            var list = document.querySelectorAll('video.auth-bh-video');
+            for (var i = 0; i < list.length; i++) initBHVideo(list[i]);
         }
-        window.nexusInitBlackHole = initBlackHole;
+        window.nexusInitBHVideo = initBHVideo;
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAll);
         else initAll();
     })();
@@ -28898,39 +29183,9 @@ function nexusInicializarReporteDiseno(contenedor) {
         .nx-anuncio-card::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
         .nx-anuncio-card::-webkit-scrollbar-thumb { background: rgba(5,84,242,0.4); border-radius: 3px; }
 
-        /* Cabecera compacta en fila: título a la izquierda, agujero negro a la derecha */
-        .nx-anuncio-head {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 18px 64px 18px 22px;
-            border-radius: 20px 20px 0 0;
-            background: linear-gradient(135deg, rgba(5,84,242,0.14) 0%, rgba(10,15,24,0.02) 70%);
-            border-bottom: 1px solid var(--border);
-        }
-        .nx-anuncio-head-title {
-            font-family: 'Audiowide', cursive;
-            font-size: 18px;
-            font-weight: 400;
-            letter-spacing: 1px;
-            line-height: 1.25;
-            color: #fff;
-            text-align: left;
-        }
-        .nx-anuncio-head-title span { color: #5a82ff; }
-        .nx-anuncio-orb {
-            position: relative;
-            flex-shrink: 0;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.55), 0 0 0 2px rgba(56,118,242,0.35);
-        }
-        .nx-anuncio-orb canvas { width: 100%; height: 100%; display: block; }
+        /* Cabecera igual a la de login/registro (clase auth-modal-logo): video a todo el ancho con el título encima */
+        .nx-anuncio-head.auth-modal-logo { margin: 0; }
+        .nx-anuncio-head .auth-bh-video { transform: none; object-position: 50% 25%; }
 
         .nx-anuncio-body { padding: 20px 24px 24px; }
         .nx-anuncio-titulo {
@@ -28965,11 +29220,6 @@ function nexusInicializarReporteDiseno(contenedor) {
             text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         }
         .nx-anuncio-x:hover { color: #fff; }
-        @media (max-width: 600px) {
-            .nx-anuncio-head { padding: 14px 54px 14px 16px; }
-            .nx-anuncio-head-title { font-size: 15px; }
-            .nx-anuncio-orb { width: 46px; height: 46px; }
-        }
     </style>
 
     <script>
@@ -29095,18 +29345,26 @@ function nexusInicializarReporteDiseno(contenedor) {
             card.appendChild(closeBtn);
 
             const head = document.createElement('div');
-            head.className = 'nx-anuncio-head';
+            head.className = 'nx-anuncio-head auth-modal-logo';
+            const bhVideo = document.createElement('video');
+            bhVideo.className = 'auth-bh-video';
+            bhVideo.setAttribute('data-src', 'assets/video/bh_modal.mp4');
+            bhVideo.poster = 'assets/images/bh_modal-poster.jpg';
+            bhVideo.muted = true;
+            bhVideo.loop = true;
+            bhVideo.playsInline = true;
+            bhVideo.preload = 'none';
+            bhVideo.setAttribute('aria-hidden', 'true');
+            bhVideo.tabIndex = -1;
             const headTitle = document.createElement('div');
-            headTitle.className = 'nx-anuncio-head-title';
-            headTitle.innerHTML = 'ANUNCIOS <span>NEXUS</span>';
-            const orb = document.createElement('div');
-            orb.className = 'nx-anuncio-orb';
-            const canvas = document.createElement('canvas');
-            canvas.className = 'auth-bh-canvas';
-            canvas.setAttribute('data-tint', '0.35,0.55,1');
-            orb.appendChild(canvas);
+            headTitle.className = 'auth-nexus-title';
+            headTitle.innerHTML = 'NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span>';
+            const headSub = document.createElement('div');
+            headSub.className = 'auth-modal-subtitle';
+            headSub.textContent = 'Anuncios';
+            head.appendChild(bhVideo);
             head.appendChild(headTitle);
-            head.appendChild(orb);
+            head.appendChild(headSub);
             card.appendChild(head);
 
             const body = document.createElement('div');
@@ -29143,7 +29401,7 @@ function nexusInicializarReporteDiseno(contenedor) {
             card.appendChild(body);
             ov.appendChild(card);
 
-            if (typeof window.nexusInitBlackHole === 'function') window.nexusInitBlackHole(canvas);
+            if (typeof window.nexusInitBHVideo === 'function') window.nexusInitBHVideo(bhVideo);
         }
     </script>
 
