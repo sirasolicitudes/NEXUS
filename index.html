@@ -21915,7 +21915,7 @@
         const NEXUS_HERO_VIDEOS = [
             { src: 'assets/video/hero1.mp4', poster: 'assets/images/hero1-poster.jpg', pos: '55% 50%' },
             { src: 'assets/video/hero2.mp4', poster: 'assets/images/hero2-poster.jpg', pos: '50% 50%' },
-            { src: 'assets/video/hero3.mp4', poster: 'assets/images/hero3-poster.jpg', pos: '36% 50%' }   // el agujero negro queda a la izquierda: en móvil se centra con object-position
+            { src: 'assets/video/hero3.mp4', poster: 'assets/images/hero3-poster.jpg', pos: '36% 50%', posMovil: '31% 50%' }   // el agujero negro queda a la izquierda: en móvil (<=768px) se centra con posMovil; en PC se usa pos. Bajar el % de posMovil mueve el agujero a la DERECHA, subirlo lo mueve a la izquierda
         ];
         let nexusHeroVideoIdx = null;
         let nexusHeroVideoCargado = false;
@@ -21934,6 +21934,14 @@
             if (p && p.catch) p.catch(function () { /* autoplay bloqueado: se queda el póster */ });
         }
 
+        // Móvil (<=768px): usa posMovil si el video la define; PC y demás videos: pos (sin cambios).
+        function nexusAplicarPosHero(video, v) {
+            const movil = !!(window.matchMedia && window.matchMedia('(max-width: 768px)').matches);
+            video.style.objectPosition = (movil && v.posMovil) ? v.posMovil : v.pos;
+            // El póster de fondo sigue la misma posición en móvil para que no "salte" al arrancar el video; en PC queda centrado como antes.
+            if (video.parentElement) video.parentElement.style.backgroundPosition = (movil && v.posMovil) ? v.posMovil : '';
+        }
+
         function initHeroVideo() {
             const wrap = document.getElementById('hero-video-bg');
             const video = document.getElementById('hero-video');
@@ -21946,7 +21954,11 @@
             const v = NEXUS_HERO_VIDEOS[nexusHeroVideoIdx];
             wrap.style.backgroundImage = "url('" + v.poster + "')";
             video.poster = v.poster;
-            video.style.objectPosition = v.pos;
+            nexusAplicarPosHero(video, v);
+            if (window.matchMedia && !video._nexusPosListener) {
+                video._nexusPosListener = true;
+                window.matchMedia('(max-width: 768px)').addEventListener('change', function () { nexusAplicarPosHero(video, NEXUS_HERO_VIDEOS[nexusHeroVideoIdx]); });
+            }
 
             if (nexusAhorroDeDatos()) return;       // solo póster
 
