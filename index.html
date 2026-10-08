@@ -10797,11 +10797,11 @@
                     </p>
                     <div style="background: #fff3f3; border: 1px solid #ffccd5; border-radius: 8px; padding: 14px; margin-bottom: 20px; font-size: 0.85rem; color: #590000; line-height: 1.4;">
                         <ul style="margin: 0; padding-left: 20px;">
-                            <li><strong>Respaldo histórico:</strong> Se guardarán los reportes del mes en Firestore (<code>reportes_historicos</code> y los reportes por unidad) y se congelará la hoja de estadísticas del mes en Google Sheets.</li>
-                            <li><strong>Descarga:</strong> podrás descargar los reportes General, Diseño y Prensa del mes.</li>
-                            <li><strong>Purga Google Drive:</strong> Se eliminarán por lotes los archivos de las solicitudes cerradas de este mes. No se tocan los de solicitudes vivas ni los de artes que aún estén disponibles para descarga.</li>
-                            <li><strong>Artes sin descargar:</strong> Los artes con fecha de evento vigente se conservan hasta que se autopurguen al pasar el evento.</li>
-                            <li><strong>Purga Bases de Datos:</strong> Se eliminarán las solicitudes finalizadas/rechazadas del mes en RTDB y las filas cerradas del Sheet, preservando las solicitudes vivas.</li>
+                            <li><strong>Respaldo histórico:</strong> el reporte se calcula con todo lo que haya en la hoja hoy y se guarda en Firestore (<code>reportes_historicos</code>). No se borra nada hasta verificar que quedó guardado.</li>
+                            <li><strong>Descarga:</strong> al terminar podrás abrir y descargar los reportes General, Diseño y Prensa del mes archivado.</li>
+                            <li><strong>Purga Google Drive:</strong> los archivos de las solicitudes finalizadas y rechazadas van a la <b>papelera</b> de Drive (recuperables unos 30 días). No se tocan los de solicitudes pendientes o en proceso.</li>
+                            <li><strong>Artes vigentes:</strong> el arte se conserva hasta que el usuario confirme su descarga o pase la fecha del evento. Si necesita una corrección, debe crear una solicitud nueva.</li>
+                            <li><strong>Purga de bases de datos:</strong> se eliminan las finalizadas y rechazadas de la hoja y de RTDB. Las pendientes y en proceso se quedan y vuelven a contar en el cierre siguiente.</li>
                         </ul>
                     </div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #111; margin-bottom: 8px;">
@@ -10836,14 +10836,17 @@
                     <span id="nxProgresoPct">0%</span>
                 </div>
 
-                <!-- Checklist de Pasos -->
+                <!-- Checklist de Pasos (los 7 pasos del motor de cierre) -->
                 <div style="text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; font-size: 0.85rem; color: #334155;">
-                    <div id="nxPaso1" style="margin-bottom: 6px;"><i class="fas fa-circle-notch fa-spin" style="color:#3876F2;"></i> 1. Respaldo histórico (Firestore + RTDB)</div>
-                    <div id="nxPaso2" style="margin-bottom: 6px; opacity: 0.5;"><i class="far fa-circle"></i> 2. Generación y emisión de PDFs</div>
-                    <div id="nxPaso3" style="margin-bottom: 6px; opacity: 0.5;"><i class="far fa-circle"></i> 3. Purga de archivos en Google Drive</div>
-                    <div id="nxPaso4" style="margin-bottom: 6px; opacity: 0.5;"><i class="far fa-circle"></i> 4. Purga y limpieza de Firestore</div>
-                    <div id="nxPaso5" style="opacity: 0.5;"><i class="far fa-circle"></i> 5. Limpieza y reinicio en RTDB</div>
+                    <div id="nxPaso1" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 1. Preparar y fijar las listas a purgar</div>
+                    <div id="nxPaso2" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 2. Calcular los reportes con lo que hay en la hoja</div>
+                    <div id="nxPaso3" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 3. Guardar y verificar el reporte archivado</div>
+                    <div id="nxPaso4" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 4. Purgar las filas cerradas de la hoja</div>
+                    <div id="nxPaso5" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 5. Enviar archivos de Drive a la papelera</div>
+                    <div id="nxPaso6" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 6. Purgar finalizadas y rechazadas en RTDB</div>
+                    <div id="nxPaso7" style=" opacity: 0.7;"><i class="far fa-circle"></i> 7. Actualizar estadísticas y finalizar</div>
                 </div>
+                <div id="nxProgresoAcciones" style="display:none; gap:10px; justify-content:center; margin-top:18px;"></div>
             </div>
         </div>
 
@@ -10860,7 +10863,7 @@
                 </div>
                 <div class="nexus-modal-body" style="padding: 24px;">
                     <p style="font-size: 0.9rem; line-height: 1.5; color: #333; margin-bottom: 16px;">
-                        Estás viendo una <strong>previsualización en vivo</strong>, generada con los datos actuales de Firestore. No queda respaldada en ningún lado.
+                        Estás viendo una <strong>previsualización en vivo</strong>, generada con los datos actuales de la hoja. No queda respaldada en ningún lado.
                     </p>
                     <ul style="font-size: 0.85rem; color: #475569; margin: 0 0 18px 20px; padding: 0; line-height: 1.6;">
                         <li>Si la necesitas, descárgala ahora con <strong>Imprimir / PDF</strong> o <strong>Los 3 Reportes</strong>.</li>
@@ -28818,7 +28821,7 @@ function nexusInicializarReporteDiseno(contenedor) {
             const mesActual = nexusObtenerClaveMes();
             const historicos = await nexusObtenerMesesHistoricosDisponibles();
 
-            const clavesUnicas = Array.from(new Set([mesActual, ...historicos]));
+            const clavesUnicas = Array.from(new Set([mesActual, nexusMesCerrable(), ...historicos]));
             clavesUnicas.sort((a, b) => b.localeCompare(a)); // más reciente primero
 
             const meses = clavesUnicas.map(clave => ({ clave, label: nexusNombreMes(clave) }));
@@ -28953,7 +28956,211 @@ function nexusInicializarReporteDiseno(contenedor) {
             }
         }
 
-        async function nexusConfirmarYEjecutarPurga() { console.warn('[NEXUS·STUB] nexusConfirmarYEjecutarPurga: pendiente de reescribir'); return null; }
+        // ====================================================================
+        // 8E · Ejecución del Cierre Oficial y Purga (el motor de 7 pasos vive en GAS)
+        // ====================================================================
+        // El front SOLO: (0) pone al día la hoja, (1) lanza la acción ejecutarCierreMensual y
+        // (2) muestra el resultado. No borra nada por su cuenta. Si la llamada falla o se corta,
+        // NO se asume que falló: se consulta Firestore para saber en qué punto quedó el cierre.
+        let _nxCierreEnCurso = false;
+
+        const NX_CIERRE_PASOS = 7;
+
+        function nexusCierrePintarPasos(modo) {
+            // modo: 'espera' (círculo gris) | 'ok' (todos con check verde)
+            for (let i = 1; i <= NX_CIERRE_PASOS; i++) {
+                const el = document.getElementById('nxPaso' + i);
+                if (!el) continue;
+                const ico = el.querySelector('i');
+                if (modo === 'ok') {
+                    el.style.opacity = '1';
+                    if (ico) { ico.className = 'fas fa-check-circle'; ico.style.color = '#2ecc71'; }
+                } else {
+                    el.style.opacity = '0.7';
+                    if (ico) { ico.className = 'far fa-circle'; ico.style.color = ''; }
+                }
+            }
+        }
+
+        function nexusCierreProgresoUI(estado, info) {
+            const $ = (id) => document.getElementById(id);
+            const modal = $('nxModalProgresoCierre');
+            if (modal) modal.style.display = 'flex';
+            const icon = $('nxProgresoIcon'), titulo = $('nxProgresoTitulo'), sub = $('nxProgresoSubtitulo');
+            const barra = $('nxProgresoBarra'), etapa = $('nxProgresoEtapa'), pct = $('nxProgresoPct');
+            const acc = $('nxProgresoAcciones');
+            const esc = (t) => String(t == null ? '' : t).replace(/[<>&]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+            info = info || {};
+
+            if (acc) { acc.innerHTML = ''; acc.style.display = 'none'; }
+            const botones = (lista) => {
+                if (!acc) return;
+                acc.style.display = 'flex';
+                lista.forEach(b => {
+                    const el = document.createElement('button');
+                    el.type = 'button';
+                    el.className = 'nexus-modal-btn';
+                    el.style.cssText = b.estilo;
+                    el.innerHTML = b.html;
+                    el.onclick = b.onclick;
+                    acc.appendChild(el);
+                });
+            };
+
+            if (estado === 'sync' || estado === 'motor') {
+                if (icon) icon.innerHTML = '<i class="fas fa-sync fa-spin"></i>';
+                if (titulo) titulo.textContent = 'Procesando Cierre Mensual';
+                if (sub) sub.textContent = 'No cierres ni recargues esta ventana. Puede tardar hasta un par de minutos.';
+                if (barra) barra.style.width = estado === 'sync' ? '25%' : '60%';
+                if (pct) pct.textContent = estado === 'sync' ? '25%' : '60%';
+                if (etapa) etapa.textContent = estado === 'sync' ? 'Poniendo al día la hoja…' : 'Ejecutando el cierre en el servidor…';
+                nexusCierrePintarPasos('espera');
+            } else if (estado === 'ok') {
+                if (icon) icon.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i>';
+                if (titulo) titulo.textContent = info.yaCerrado ? 'El mes ya estaba cerrado' : 'Cierre completado';
+                if (sub) sub.innerHTML = esc(info.mensaje || 'El cierre y la purga terminaron correctamente.') + '<br><b>Ya puedes levantar el modo mantenimiento.</b>';
+                if (barra) barra.style.width = '100%';
+                if (pct) pct.textContent = '100%';
+                if (etapa) etapa.textContent = 'Listo';
+                nexusCierrePintarPasos('ok');
+                botones([{ estilo: 'background:#023047;color:#fff;', html: 'Cerrar', onclick: () => nexusCierreCerrarProgreso() }]);
+            } else {
+                // 'error'
+                if (icon) icon.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#c1121f;"></i>';
+                if (titulo) titulo.textContent = 'El cierre no se completó';
+                if (sub) sub.innerHTML = esc(info.mensaje || 'Ocurrió un error.');
+                if (etapa) etapa.textContent = info.etapa || 'Detenido';
+                nexusCierrePintarPasos('espera');
+                const lista = [];
+                if (info.puedeReintentar !== false) {
+                    lista.push({ estilo: 'background:#c1121f;color:#fff;', html: '<i class="fas fa-redo"></i> Reintentar', onclick: () => nexusCierreReintentar() });
+                }
+                lista.push({ estilo: 'background:#e2e8f0;color:#333;', html: 'Cerrar', onclick: () => nexusCierreCerrarProgreso() });
+                botones(lista);
+            }
+        }
+
+        function nexusCierreCerrarProgreso() {
+            const modal = document.getElementById('nxModalProgresoCierre');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function nexusCierreReintentar() {
+            // Reintento: mismo mes y mismo botón; el motor retoma desde el paso guardado en cierre_control.
+            if (_nxCierreEnCurso) return;
+            nexusCierreEjecutar(window._nxCierreMesActual);
+        }
+
+        // Consulta el estado real del cierre en Firestore (lectura solo admin).
+        //  'terminado'   -> reportes_historicos/{mes} cerrado y ya no hay cierre_control
+        //  'parcial'     -> existe cierre_control (el cierre quedó a medias; devuelve el paso)
+        //  'sin_iniciar' -> ni cerrado ni control: no se tocó nada
+        //  'desconocido' -> no se pudo consultar
+        async function nexusCierreVerificarEstado(cMes) {
+            try {
+                await nexusEsperarFirestore(20);
+                const S = window.fbStore;
+                if (!S || !window.db) return { estado: 'desconocido' };
+                const [hist, ctrl] = await Promise.all([
+                    S.getDoc(S.doc(window.db, 'reportes_historicos', cMes)),
+                    S.getDoc(S.doc(window.db, 'cierre_control', cMes))
+                ]);
+                const cerrado = hist.exists() && hist.data() && hist.data().estado === 'cerrado';
+                if (ctrl.exists()) return { estado: 'parcial', paso: (ctrl.data() || {}).paso || null };
+                return { estado: cerrado ? 'terminado' : 'sin_iniciar' };
+            } catch (e) {
+                console.warn('[NEXUS] No se pudo verificar el estado del cierre:', e);
+                return { estado: 'desconocido' };
+            }
+        }
+
+        async function nexusCierrePostGAS(payload, timeoutMs, reintentos) {
+            return nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            }, timeoutMs, reintentos);
+        }
+
+        async function nexusCierreAlTerminar(cMes, info) {
+            nexusCierreProgresoUI('ok', info);
+            showToast({ type: 'success', title: 'Cierre completado', message: 'Ya puedes levantar el modo mantenimiento.', duration: 6000 });
+            // Refresca el módulo: el mes recién cerrado pasa a ser histórico.
+            try {
+                _nexusReportesDataActual = null;
+                await nexusPoblarSelectorDeMeses();
+                const sel = document.getElementById('nxReporteMesSelector');
+                if (sel) sel.value = cMes;
+                await nexusCargarReportesMes(cMes);
+            } catch (e) { console.warn('[NEXUS] No se pudo refrescar Reportes tras el cierre:', e); }
+            try { nexusActualizarEstadoBotonCierre(); } catch (_) {}
+        }
+
+        async function nexusCierreEjecutar(cMes) {
+            if (_nxCierreEnCurso) return null;
+            _nxCierreEnCurso = true;
+            window._nxCierreMesActual = cMes;
+            const cerradoPor = String((typeof NexusSession !== 'undefined' && NexusSession && (NexusSession.nombre || (NexusSession.user && NexusSession.user.email))) || 'Administrador').substring(0, 80);
+            try {
+                // Paso previo: toda finalizada/rechazada debe estar en la hoja ANTES de calcular;
+                // si no, se purgaría algo que no entró al reporte. Si falla, no se borra nada.
+                nexusCierreProgresoUI('sync');
+                const rSync = await nexusCierrePostGAS({ action: 'sincronizarVivasSheet' }, 90000, 1);
+                if (!rSync || !rSync.success) throw new Error('No se pudo sincronizar la hoja: ' + ((rSync && rSync.error) || 'sin respuesta') + '. No se borró nada.');
+                const rRec = await nexusCierrePostGAS({ action: 'reconciliarPendientesSheet' }, 120000, 1);
+                if (!rRec || !rRec.success) throw new Error('No se pudo reconciliar las finalizadas pendientes: ' + ((rRec && rRec.error) || 'sin respuesta') + '. No se borró nada.');
+                const nFall = Number(rRec.data && rRec.data.fallidas) || 0;
+                if (nFall > 0) throw new Error('Hay ' + nFall + ' solicitud(es) finalizada(s) que no pudieron escribirse en la hoja. Si cerráramos ahora se perderían del reporte. No se borró nada; reintenta en unos minutos.');
+
+                // El cierre real (7 pasos en GAS). Sin reintento automático: lo decide el admin tras verificar.
+                nexusCierreProgresoUI('motor');
+                const res = await nexusCierrePostGAS({ action: 'ejecutarCierreMensual', claveMes: cMes, cerradoPor: cerradoPor }, 200000, 0);
+                if (res && res.success && res.data && (res.data.completado || res.data.yaCerrado)) {
+                    await nexusCierreAlTerminar(cMes, { yaCerrado: !!res.data.yaCerrado, mensaje: res.data.mensaje });
+                    return null;
+                }
+                throw new Error((res && res.error) || 'El servidor no confirmó el cierre.');
+            } catch (err) {
+                console.error('[NEXUS] Cierre mensual:', err);
+                const msgErr = String((err && err.message) || err);
+                // No asumimos que falló: puede haber terminado (o seguir corriendo) en GAS.
+                const v = await nexusCierreVerificarEstado(cMes);
+                if (v.estado === 'terminado') {
+                    await nexusCierreAlTerminar(cMes, { mensaje: 'El cierre terminó correctamente (verificado en Firestore).' });
+                } else if (v.estado === 'parcial') {
+                    nexusCierreProgresoUI('error', { etapa: 'Cierre a medias' + (v.paso ? ' (paso ' + v.paso + ' de 7)' : ''), mensaje: msgErr + ' El cierre quedó a medias: «Reintentar» lo retoma desde donde quedó, sin repetir lo ya hecho.' });
+                } else if (v.estado === 'sin_iniciar') {
+                    nexusCierreProgresoUI('error', { etapa: 'No se modificó nada', mensaje: msgErr });
+                } else {
+                    nexusCierreProgresoUI('error', { etapa: 'Estado sin verificar', mensaje: msgErr + ' No se pudo comprobar en qué punto quedó. Espera un minuto y pulsa «Reintentar»: es seguro, el servidor retoma o avisa si ya estaba cerrado.' });
+                }
+            } finally {
+                _nxCierreEnCurso = false;
+            }
+            return null;
+        }
+
+        async function nexusConfirmarYEjecutarPurga() {
+            if (_nxCierreEnCurso) return null;
+            if (!nexusEsAdmin()) {
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el administrador puede ejecutar el cierre.', duration: 4000 });
+                return null;
+            }
+            const input = document.getElementById('nxInputConfirmarPurga');
+            if ((input && input.value || '').trim().toUpperCase() !== 'PURGAR') return null;
+
+            const cMes = _nexusReportesMesActivo || nexusObtenerClaveMes();
+            // Mismas reglas que el botón: día 1 y solo el mes calendario anterior.
+            if (new Date().getDate() !== 1 || cMes !== nexusMesCerrable()) {
+                showToast({ type: 'warning', title: 'Cierre no disponible', message: 'Solo se puede cerrar el mes anterior, y únicamente el día 1.', duration: 5000 });
+                nexusCerrarModalCierre();
+                return null;
+            }
+            const btn = document.getElementById('nxBtnConfirmarPurgaEjecutar');
+            if (btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.cursor = 'not-allowed'; }
+            nexusCerrarModalCierre();
+            return nexusCierreEjecutar(cMes);
+        }
 
         // Exponer funciones del módulo de Reportes al ámbito global
         window.nexusDeterminarTipoPieza = nexusDeterminarTipoPieza;
@@ -28975,6 +29182,8 @@ function nexusInicializarReporteDiseno(contenedor) {
         window.nexusCerrarModalCierre = nexusCerrarModalCierre;
         window.nexusValidarTextoPurga = nexusValidarTextoPurga;
         window.nexusConfirmarYEjecutarPurga = nexusConfirmarYEjecutarPurga;
+        window.nexusCierreCerrarProgreso = nexusCierreCerrarProgreso;
+        window.nexusCierreReintentar = nexusCierreReintentar;
         window.nexusCerrarModalAvisoPreview = nexusCerrarModalAvisoPreview;
         window.nexusPoblarSelectorDeMeses = nexusPoblarSelectorDeMeses;
     </script>
