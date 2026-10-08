@@ -6550,6 +6550,37 @@
             gap: 3px;
         }
 
+        /* Cuarto círculo: aviso de Post-it (nota amarilla pegada con cinta adhesiva) */
+        .card-circle.circle-postit {
+            background: rgba(0, 0, 0, 0.7);
+            cursor: help;
+        }
+        .circle-postit .pi-note {
+            position: relative;
+            display: block;
+            width: 27px;
+            height: 29px;
+            background:
+                repeating-linear-gradient(to bottom, transparent 0 5px, rgba(120, 90, 0, 0.28) 5px 6px) 4px 11px / 19px 15px no-repeat,
+                linear-gradient(160deg, #fffbd0 0%, #fff176 100%);
+            border-radius: 2px 2px 7px 2px;
+            transform: rotate(-7deg);
+            box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.45);
+        }
+        .circle-postit .pi-tape {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 15px;
+            height: 8px;
+            margin-left: -8px;
+            background: rgba(225, 225, 225, 0.78);
+            border-left: 1px dashed rgba(255, 255, 255, 0.7);
+            border-right: 1px dashed rgba(255, 255, 255, 0.7);
+            transform: rotate(5deg);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        }
+
         /* Badge Adaptativo con texto que contrasta (Reemplaza NEW por NUEVA) */
         .card-adaptive-badge {
             display: inline-block;
@@ -10999,6 +11030,15 @@
             <div class="nx-body">
                 <div class="nx-request-chip" style="border-color: rgba(156, 210, 211, 0.3); background: rgba(156, 210, 211, 0.08); color: #9cd2d3;">
                     <span>Solicitud: <b id="nexusRRSSRequestId" style="color: #9cd2d3;">-</b></span>
+                </div>
+
+                <!-- Post-it de la solicitud (lo que se guardó con /postit en Telegram o desde el panel).
+                     Solo se muestra si la solicitud tiene Post-it; es una guía para el admin. -->
+                <div id="nexusRRSSPostItBox" style="display:none; margin-bottom: 16px;">
+                    <label style="display:block; font-size:0.85rem; color: var(--color-tertiary); margin-bottom:8px;">
+                        <i class="fas fa-sticky-note"></i> Post-it de esta solicitud
+                    </label>
+                    <div id="nexusRRSSPostItTexto" style="background: #fff9c4; border: 2px solid #fbc02d; border-radius: 8px; padding: 10px 12px; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; font-size: 0.85rem; color: #333; line-height: 1.4; white-space: pre-line; word-break: break-word;"></div>
                 </div>
 
                 <label style="display:block; font-size:0.85rem; color: var(--color-tertiary); margin-bottom:12px;">
@@ -21690,6 +21730,15 @@
                     ? '<div class="card-circle circle-support" title="Archivos en Drive">📷' + cantArchivos + '</div>'
                     : '<div class="card-circle circle-support" title="Sin archivos">❌</div>';
 
+                // Cuarto círculo: la solicitud tiene Post-it (solo lo ve el equipo de diseño / admin).
+                // El texto del Post-it aparece al pasar el cursor (title).
+                var postItHtml = '';
+                var _notaPostIt = String(s.PostIt || '').trim();
+                if (_notaPostIt && typeof nexusEsDisenador === 'function' && nexusEsDisenador()) {
+                    postItHtml = '<div class="card-circle circle-postit" title="Post-it: ' + nexusEscHtml(_notaPostIt) + '">' +
+                        '<span class="pi-note"><span class="pi-tape"></span></span></div>';
+                }
+
                 // Badge adaptativo: 'PRIORIZAR' para solicitudes urgentes, 'NUEVA' para pendientes normales, o el estatus
                 var solicitudLower = (s.Solicitud || '').toLowerCase();
                 var esPrioritaria = solicitudLower.includes('obituario') || 
@@ -21775,6 +21824,7 @@
                             '<div class="card-circle ' + statusCircleClass + '" title="Estatus: ' + estatus + '">' + shortStatus + '</div>' +
                             designerHtml +
                             supportHtml +
+                            postItHtml +
                         '</div>' +
                         '<div class="card-adaptive-badge ' + badgeClass + '">' + badgeText + '</div>' +
                         '<div class="card-req-id">' + (s.id || 'NEXUS-SOLICITUD') + '</div>' +
@@ -22841,6 +22891,16 @@
                 // Poblar chip con ID de la solicitud seleccionada
                 const idEl = document.getElementById('nexusRRSSRequestId');
                 if (idEl) idEl.textContent = nexusSelectedRequestId || '-';
+
+                // Mostrar el Post-it guardado (registro vivo más reciente; textContent evita inyectar HTML)
+                const postItBox = document.getElementById('nexusRRSSPostItBox');
+                const postItTxt = document.getElementById('nexusRRSSPostItTexto');
+                if (postItBox && postItTxt) {
+                    const reg = nexusRegistroVivoActual(nexusSelectedRequestId) || nexusSelectedRequestData || {};
+                    const nota = String(reg.PostIt || '').trim();
+                    postItTxt.textContent = nota;
+                    postItBox.style.display = nota ? 'block' : 'none';
+                }
 
                 modal.classList.add('active');
                 // Limpiar todos los checkboxes
@@ -31547,4 +31607,3 @@ function nexusInicializarReporteDiseno(contenedor) {
 
 </body>
 </html>
-
