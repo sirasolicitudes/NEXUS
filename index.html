@@ -14787,8 +14787,10 @@
                 };
 
                 if (window.dbRT && window.fbRT) {
-                    const rtdbRef = nexusObtenerRefSolicitudViva(docId, solicitudData.Unidad);
-                    await window.fbRT.set(rtdbRef, solicitudData);
+                    const upNueva = {};
+                    upNueva['solicitudes_vivas/' + (solicitudData.Unidad ? nexusSanitizarClaveRTDB(solicitudData.Unidad) : 'GENERAL') + '/' + docId] = solicitudData;
+                    nexusKpiSumar(upNueva, 'pendientes', 1);
+                    await nexusKpiActualizar(upNueva);
                 }
 
                 nexusGuardarSolicitudEnSheet(solicitudData).catch(err => {
@@ -20559,7 +20561,7 @@
             try { if (window.auth && window.fbAuth) await window.fbAuth.signOut(window.auth); } catch (e) {}
             NexusSession.clear();
             nexusDetenerListeners();
-            nexusDetenerSolKpiListener();
+            nexusKpiDetener();
             nexusDetenerArtesFinalesListener();
             if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
             if (typeof showSection === 'function') showSection('inicio');
@@ -20844,7 +20846,7 @@
             if (!user) {
                 if (typeof nexusDetenerPresenciaRTDB === 'function') await nexusDetenerPresenciaRTDB();
                 nexusDetenerListeners();
-                nexusDetenerSolKpiListener();
+                nexusKpiDetener();
                 nexusDetenerErrorLogsListener();
                 nexusDetenerArtesFinalesListener();
                 if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
@@ -21154,7 +21156,7 @@
 
             _nexusSolicitudesCargando = (_nexusSolicitudesData.length === 0);
             _nexusUnsubscribeSolicitudes = window.fbRT.onValue(vivasRef, callback, _nexusSolicitudesListenerError);
-            nexusEscucharContadoresSolicitudes();
+            nexusKpiEscuchar();
             if (_nexusSolicitudesCargando) nexusRenderizarTarjetasPaginadas();
         }
 
@@ -21208,7 +21210,7 @@
                 _nexusUnsubscribeSolicitudes = null;
                 console.log('[NEXUS] Listeners de solicitudes desconectados');
             }
-            if (typeof nexusDetenerSolKpiListener === 'function') nexusDetenerSolKpiListener();
+            if (typeof nexusKpiDetener === 'function') nexusKpiDetener();
         }
 
         // Ordena (más recientes primero) y dispara el render de tarjetas paginadas.
@@ -21427,93 +21429,90 @@
             if (elRech)  elRech.textContent  = rech;
         }
 
-        // Referencia a la función de desuscripción del listener de KPIs (solo Staff)
-        var _nexusSolKpiUnsubscribe = null;
-        var _nexusSolContFin = 0;
-        var _nexusSolContRech = 0;
+        // ============================================================
+        // KPI DE SOLICITUDES (sistema nuevo) · nodo RTDB kpi_solicitudes
+        //   kpi_solicitudes = { pendientes, procesando, finalizadas, rechazadas, actualizadoEn }
+        // Refleja lo que EXISTE ahora, sin histórico (el histórico lo guarda el reporte mensual). La purga del
+        // cierre mensual lo reinicia: finalizadas y rechazadas vuelven a 0 y quedan las vivas que sobreviven.
+        // Es la ÚNICA fuente de las 5 tarjetas (Total = suma de los 4 números). El panel solo lo lee.
+        // Cada cambio de estado ajusta el nodo con increment() DENTRO de la misma escritura atómica
+        // que cambia la solicitud (nexusKpiSumar + nexusKpiActualizar), así nunca queda a medias.
+        // Red de seguridad: el trigger horario de GAS (reconciliarPendientesSheetTrigger) lo compara con
+        // RTDB y con la hoja y lo corrige.
+        // ============================================================
+        var NEXUS_KPI_RUTA = 'kpi_solicitudes';
+        var _nexusKpiUnsub = null;
+        var _nexusKpiDatos = null;   // null = aún sin datos (o sin permiso): las tarjetas muestran «—»
 
-        // Escucha en vivo contadores_solicitudes/{mes} = { finalizadas, rechazadas } (nodo diminuto).
-        function nexusEscucharContadoresSolicitudes() {
-            if (typeof _nexusSolKpiUnsubscribe === 'function') return;
+        // Estatus de una solicitud viva -> contador que le corresponde (null si no cuenta como viva).
+        function nexusKpiClaveEstatus(est) {
+            est = String(est || 'PENDIENTE').toUpperCase();
+            if (est === 'PENDIENTE') return 'pendientes';
+            if (est === 'PROCESANDO' || est === 'EN PROCESO') return 'procesando';
+            return null;
+        }
+
+        // Agrega a un update multirruta `up` el ajuste de un contador.
+        // campo: 'pendientes' | 'procesando' | 'finalizadas' | 'rechazadas'.
+        function nexusKpiSumar(up, campo, delta) {
+            if (!campo || !delta) return;
+            up[NEXUS_KPI_RUTA + '/' + campo] = window.fbRT.increment(delta);
+        }
+
+        // Ejecuta el update multirruta. Si RTDB lo rechaza por permisos y el update incluía contadores
+        // (p. ej. reglas aún sin publicar), reintenta SIN ellos: nunca se bloquea crear, asignar o cerrar
+        // una solicitud por culpa del KPI; el trigger horario lo corrige.
+        async function nexusKpiActualizar(up) {
+            var raiz = window.fbRT.ref(window.dbRT);
+            try {
+                await window.fbRT.update(raiz, up);
+            } catch (err) {
+                var sinKpi = {}, habiaKpi = false;
+                Object.keys(up).forEach(function (k) {
+                    if (k.indexOf(NEXUS_KPI_RUTA + '/') === 0) habiaKpi = true; else sinKpi[k] = up[k];
+                });
+                var denegado = /permission|PERMISSION_DENIED/i.test(String((err && (err.code || err.message)) || ''));
+                if (!habiaKpi || !denegado) throw err;
+                console.warn('[NEXUS] kpi_solicitudes rechazado por reglas; se guarda sin contadores:', err && err.message);
+                await window.fbRT.update(raiz, sinKpi);
+            }
+        }
+
+        // Escucha en vivo el nodo completo (diminuto). Solo Staff.
+        function nexusKpiEscuchar() {
+            if (typeof _nexusKpiUnsub === 'function') return;
             if (!window.dbRT || !window.fbRT) return;
-            var mes = NexusData.mesKey();
-            _nexusSolKpiUnsubscribe = window.fbRT.onValue(
-                window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes),
+            _nexusKpiUnsub = window.fbRT.onValue(
+                window.fbRT.ref(window.dbRT, NEXUS_KPI_RUTA),
                 function (snap) {
-                    var v = snap.exists() ? (snap.val() || {}) : {};
-                    _nexusSolContFin = Number(v.finalizadas) || 0;
-                    _nexusSolContRech = Number(v.rechazadas) || 0;
-                    nexusActualizarContadoresSolicitudes();
+                    _nexusKpiDatos = snap.exists() ? (snap.val() || {}) : {};
+                    nexusKpiRender();
                 },
                 function (err) {
-                    console.warn('[NEXUS] Contadores de solicitudes no disponibles:', err && err.message);
-                    _nexusSolKpiUnsubscribe = null;
+                    console.warn('[NEXUS] KPI de solicitudes no disponible:', err && err.message);
+                    _nexusKpiUnsub = null;
+                    _nexusKpiDatos = null;
+                    nexusKpiRender();
                 }
             );
         }
 
-        // Suma/resta 1 en el contador del mes. Va en una escritura aparte y sin bloquear:
-        // si falla (reglas, red) el cierre/corrección ya quedó guardado y solo se atrasa el KPI.
-        function nexusAjustarContadorSolicitudes(mes, campo, delta) {
-            try {
-                var up = {};
-                up[campo] = window.fbRT.increment(delta);
-                return window.fbRT.update(window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes), up)
-                    .catch(function (e) { console.warn('[NEXUS] No se pudo ajustar contadores_solicitudes/' + mes + ':', e && e.message); });
-            } catch (e) { console.warn('[NEXUS] Contador de solicitudes:', e); }
-        }
-
-        // Recalcula contadores_solicitudes/{mes} desde solicitudes_finalizadas_mes/{mes} (una lectura).
-        // Úsala UNA vez al estrenar el nodo, o para corregir diferencias. Solo Admin. Desde la consola:
-        //   nexusSembrarContadoresSolicitudes()
-        window.nexusSembrarContadoresSolicitudes = async function (mesOpcional) {
-            var mes = mesOpcional || NexusData.mesKey();
-            var snap = await window.fbRT.get(window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + mes));
-            var fin = 0, rech = 0;
-            if (snap.exists()) {
-                var val = snap.val();
-                Object.keys(val).forEach(function (k) {
-                    var est = String((val[k] && val[k].Estatus) || '').toUpperCase();
-                    if (est === 'RECHAZADA' || est === 'RECHAZADO') rech++;
-                    else if (est === 'FINALIZADA' || est === 'FINALIZADO') fin++;
-                });
-            }
-            await window.fbRT.set(window.fbRT.ref(window.dbRT, 'contadores_solicitudes/' + mes), { finalizadas: fin, rechazadas: rech });
-            console.log('[NEXUS] contadores_solicitudes/' + mes + ' =', { finalizadas: fin, rechazadas: rech });
-            return { finalizadas: fin, rechazadas: rech };
-        };
-
-        function nexusActualizarContadoresSolicitudes() {
+        // Pinta las 5 tarjetas desde el nodo.
+        function nexusKpiRender() {
             var isStaff = (NexusSession.role === 'Admin Principal' || NexusSession.role === 'ADMIN' || NexusSession.role === 'Diseñador');
-
-            if (isStaff) {
-                // Staff (Admin / Diseñador): los contadores se actualizan contando
-                // directamente sobre las solicitudes vivas en memoria y las finalizadas
-                if (typeof _nexusSolicitudesData !== 'undefined' && Array.isArray(_nexusSolicitudesData)) {
-                    // Pendientes y En proceso: en vivo desde solicitudes_vivas (ya en memoria).
-                    // Finalizadas y Rechazadas: del nodo contadores_solicitudes/{mes} (RTDB, en vivo).
-                    var pend = 0;
-                    var proc = 0;
-                    for (var i = 0; i < _nexusSolicitudesData.length; i++) {
-                        var est = (_nexusSolicitudesData[i].Estatus || '').toUpperCase();
-                        if (est === 'PENDIENTE') pend++;
-                        else if (est === 'PROCESANDO' || est === 'EN PROCESO') proc++;
-                    }
-                    var fin = Math.max(0, Number(_nexusSolContFin) || 0);
-                    var rech = Math.max(0, Number(_nexusSolContRech) || 0);
-                    _nexusSetSolKpis(pend + proc + fin + rech, pend, proc, fin, rech);
-                }
-            } else {
-                // Usuario básico: los KPIs los actualiza el listener de unidad
-            }
+            if (!isStaff) return;   // usuario básico: no ve esta barra
+            if (!_nexusKpiDatos) { _nexusSetSolKpis('—', '—', '—', '—', '—'); return; }
+            var n = function (v) { return Math.max(0, Number(v) || 0); };
+            var d = _nexusKpiDatos;
+            var pend = n(d.pendientes), proc = n(d.procesando), fin = n(d.finalizadas), rech = n(d.rechazadas);
+            _nexusSetSolKpis(pend + proc + fin + rech, pend, proc, fin, rech);
         }
 
-        // Detiene el listener de KPIs de Solicitudes (se llama en logout / cambio de sesión)
-        function nexusDetenerSolKpiListener() {
-            if (typeof _nexusSolKpiUnsubscribe === 'function') {
-                _nexusSolKpiUnsubscribe();
-            }
-            _nexusSolKpiUnsubscribe = null;
+        // Detiene el listener (logout / cambio de sesión)
+        function nexusKpiDetener() {
+            if (typeof _nexusKpiUnsub === 'function') _nexusKpiUnsub();
+            _nexusKpiUnsub = null;
+            _nexusKpiDatos = null;
         }
 
         // ===== Buscador de Solicitudes (por Unidad / Código) + Filtro por Tipo =====
@@ -21639,7 +21638,7 @@
                 kpiGrid.style.display = isStaffKpi ? '' : 'none';
             }
 
-            nexusActualizarContadoresSolicitudes();
+            nexusKpiRender();
 
 
             var totalReal = _nexusSolicitudesData.length;
@@ -22624,7 +22623,12 @@
 
             window._nxAsignacionEnCurso = true;
             try {
-                await window.fbRT.update(nexusObtenerRefSolicitudViva(id, base.Unidad), cambios);
+                const upAsig = {};
+                const rutaAsig = 'solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id + '/';
+                Object.keys(cambios).forEach(function (k) { upAsig[rutaAsig + k] = cambios[k]; });
+                const kpiAntes = nexusKpiClaveEstatus(base.Estatus), kpiDespues = nexusKpiClaveEstatus(cambios.Estatus);
+                if (kpiAntes !== kpiDespues) { nexusKpiSumar(upAsig, kpiAntes, -1); nexusKpiSumar(upAsig, kpiDespues, 1); }
+                await nexusKpiActualizar(upAsig);
                 showToast({
                     type: 'success',
                     title: desasignar ? 'Diseñador desasignado' : 'Diseñador asignado',
@@ -22804,9 +22808,11 @@
             up['solicitudes_finalizadas_mes/' + mes + '/' + id] =
                 Object.assign(nexusSinUndefined(nexusLimpiarNodoArchivado(registro)), { sheetPendiente: true });
             if (esRechazo && registro.UsuarioUid) up['avisos_rechazo/' + registro.UsuarioUid + '/' + id] = mes;
+            nexusKpiSumar(up, nexusKpiClaveEstatus(base.Estatus), -1);
+            nexusKpiSumar(up, esRechazo ? 'rechazadas' : 'finalizadas', 1);
 
             try {
-                await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
+                await nexusKpiActualizar(up);
             } catch (err) {
                 console.error('[NEXUS] Error al ' + (esRechazo ? 'rechazar' : 'finalizar') + ' solicitud:', err);
                 nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusCerrarSolicitud', tipoSolicitud: tipo, detalles: id + ' · ' + estatus });
@@ -22823,7 +22829,6 @@
                 duration: 4000
             });
             nexusCloseSidePanel();
-            nexusAjustarContadorSolicitudes(mes, esRechazo ? 'rechazadas' : 'finalizadas', 1);
 
             // ---- Segundo plano ----
             // Sheet: GAS reescribe la fila completa, por eso va el registro entero (sin el uid).
@@ -23116,7 +23121,10 @@
                 // Paso 3 · RTDB: aquí se quita la solicitud viva. Si esto falla, la solicitud sigue existiendo.
                 nexusActivateStep('step3');
                 nexusUpdateProgress(85, 'Eliminando la solicitud...');
-                await window.fbRT.remove(nexusObtenerRefSolicitudViva(id, base.Unidad));
+                const upElim = {};
+                upElim['solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id] = null;
+                nexusKpiSumar(upElim, nexusKpiClaveEstatus(base.Estatus), -1);
+                await nexusKpiActualizar(upElim);
                 nexusUpdateProgress(100, 'Solicitud eliminada', 'step3');
 
                 // Segundo plano: quitar la fila del Sheet.
@@ -26413,8 +26421,9 @@
                     var up = {};
                     up['solicitudes_finalizadas_mes/' + mes + '/' + id] = null;
                     up['solicitudes_vivas/' + NexusData.unidadKey(reg.Unidad) + '/' + id] = vivo;
-                    await RT.update(RT.ref(dbRT), up);
-                    nexusAjustarContadorSolicitudes(mes, String(reg.Estatus || '').toUpperCase().indexOf('RECHAZ') === 0 ? 'rechazadas' : 'finalizadas', -1);
+                    nexusKpiSumar(up, String(reg.Estatus || '').toUpperCase().indexOf('RECHAZ') === 0 ? 'rechazadas' : 'finalizadas', -1);
+                    nexusKpiSumar(up, 'procesando', 1);
+                    await nexusKpiActualizar(up);
 
                     toast('success', 'Corrección enviada', 'Tu solicitud volvió al equipo de diseño.', 4000);
                     window.nexusCerrarModalCorreccion(false);
