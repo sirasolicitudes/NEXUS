@@ -6581,6 +6581,31 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
         }
 
+        /* Con 4 circulos (hay Post-it) la fila se compacta: circulos mas chicos que se encogen
+           parejos si la tarjeta es angosta, para que ninguno se corte. */
+        .card-top-circles.circles-4 {
+            gap: 6px;
+            padding: 0 2px;
+            box-sizing: border-box;
+        }
+        .card-top-circles.circles-4 .card-circle {
+            flex: 0 1 40px;
+            width: auto;
+            max-width: 40px;
+            min-width: 30px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            font-size: 0.85rem;
+            overflow: hidden;
+        }
+        .card-top-circles.circles-4 .card-circle.circle-support {
+            font-size: 0.6rem;
+            gap: 1px;
+        }
+        .card-top-circles.circles-4 .circle-postit .pi-note {
+            transform: rotate(-7deg) scale(0.78);
+        }
+
         /* Badge Adaptativo con texto que contrasta (Reemplaza NEW por NUEVA) */
         .card-adaptive-badge {
             display: inline-block;
@@ -12759,20 +12784,6 @@
                 medido_hace_s: Math.round((Date.now() - NEXUS_RED_MEDIDA.ts) / 1000)
             };
         }
-        // Quita undefined/null/''/NaN de forma recursiva (RTDB no admite undefined).
-        function nexusLimpiarParaRTDB(v) {
-            if (Array.isArray(v)) return v.map(nexusLimpiarParaRTDB);
-            if (v && typeof v === 'object') {
-                const o = {};
-                Object.keys(v).forEach(function (k) {
-                    const x = nexusLimpiarParaRTDB(v[k]);
-                    if (x === undefined || x === null || x === '' || (typeof x === 'number' && isNaN(x))) return;
-                    o[k] = x;
-                });
-                return o;
-            }
-            return v;
-        }
 
         // ------------------------------------------------------------
         // BANDEJA DE SALIDA DE LOGS (localStorage)
@@ -17411,20 +17422,6 @@
         // SISTEMA DE MODAL DE CONFIRMACIÓN NEXUS
         // ============================================================
 
-        function renderNexusPreviewItem(item) {
-            const isStacked = item.label && (
-                item.label.toLowerCase().includes('correo') ||
-                item.label.toLowerCase().includes('direcci') ||
-                item.label.toLowerCase().includes('observaci')
-            );
-            const stackedClass = isStacked ? ' stacked' : '';
-            return `
-                <div class="nexus-preview-item${stackedClass}">
-                    <span class="nexus-preview-label">${item.label}</span>
-                    <span class="nexus-preview-value">${item.value}</span>
-                </div>
-            `;
-        }
 
         function showNexusConfirmationModal(formData) {
             // Transformar datos si están en formato de visualización
@@ -21251,15 +21248,6 @@
         // aunque ya no vivan en esa lista (esta ahora solo trae PENDIENTE/PROCESANDO).
         window._nexusArtesFinalesCache = {};
 
-        // "dd/mm/yyyy" (campo Fecha del evento) -> "yyyy-mm-dd", para comparar con nexusHoy()
-        function nexusFechaEventoADiaKey(fechaStr) {
-            if (!fechaStr) return null;
-            var partes = String(fechaStr).split('/');
-            if (partes.length !== 3) return null;
-            var d = partes[0].padStart(2, '0'), m = partes[1].padStart(2, '0'), y = partes[2];
-            if (!d || !m || !y) return null;
-            return y + '-' + m + '-' + d;
-        }
 
         // Escucha en Firestore los artes de la unidad del usuario (colección artes_finales).
         // Solo usuarios normales. Es idempotente: se llama al iniciar sesión y al entrar a la
@@ -21822,7 +21810,7 @@
 
                 html += 
                     '<div class="solicitud-card-mockup ' + themeClass + '"' + cardAttrs + '>' +
-                        '<div class="card-top-circles">' +
+                        '<div class="card-top-circles' + (postItHtml ? ' circles-4' : '') + '">' +
                             '<div class="card-circle ' + statusCircleClass + '" title="Estatus: ' + estatus + '">' + shortStatus + '</div>' +
                             designerHtml +
                             supportHtml +
@@ -23151,35 +23139,6 @@
             }
         }
 
-        // Eliminar archivos de Google Drive asociados a la solicitud
-        async function nexusEliminarArchivosDrive() {
-            if (!nexusSelectedRequestData) return;
-
-            const archivosUrls = [];
-            
-            // Obtener URLs de archivos
-            if (nexusSelectedRequestData.ArchivosDrive) {
-                const urls = nexusSelectedRequestData.ArchivosDrive.split(',').map(url => url.trim());
-                archivosUrls.push(...urls);
-            }
-            
-            // ArteFinal puede traer VARIAS URLs separadas por coma (arte de varias piezas):
-            // hay que borrarlas todas, no solo la primera.
-            if (nexusSelectedRequestData.ArteFinal) {
-                const urlsArte = String(nexusSelectedRequestData.ArteFinal).split(',').map(url => url.trim());
-                archivosUrls.push(...urlsArte);
-            }
-
-            // Eliminar cada archivo de Drive usando el script de Apps Script
-            for (const url of archivosUrls) {
-                if (url && url.includes('drive.google.com')) {
-                    const fileId = nexusExtraerFileIdDrive(url);
-                    if (fileId) {
-                        await nexusEliminarArchivoDriveViaScript(fileId);
-                    }
-                }
-            }
-        }
 
         // Notifica por Telegram (vía backend de Apps Script) que se creó una
         // nueva solicitud. El backend decide el grupo destino (Diseño o
@@ -26160,10 +26119,6 @@
                 return 'LISTO';
             }
 
-            function uidActual() {
-                if (window.auth && window.auth.currentUser && window.auth.currentUser.uid) return window.auth.currentUser.uid;
-                return (typeof NexusSession !== 'undefined' && NexusSession.user && NexusSession.user.uid) ? NexusSession.user.uid : '';
-            }
 
             function toast(type, title, message, ms) {
                 if (typeof showToast === 'function') showToast({ type: type, title: title, message: message, duration: ms || 3500 });
@@ -26354,10 +26309,6 @@
                 }
             };
 
-            function claveMesDe(key) {   // 'YYYY-MM-DD' -> 'YYYY-MM'
-                var m = String(key || '').match(/^(\d{4}-\d{2})/);
-                return m ? m[1] : null;
-            }
 
             // El usuario pide corregir un arte ya finalizado. UNA sola escritura atómica en RTDB:
             // la solicitud sale de solicitudes_finalizadas_mes y vuelve a solicitudes_vivas como
@@ -27152,24 +27103,6 @@
             return 'Diseño Institucional';
         }
 
-        function nexusExtraerTituloNotaPrensa(sol) {
-            if (!sol) return 'Nota de Prensa';
-            if (sol.tituloNota && String(sol.tituloNota).trim()) return String(sol.tituloNota).trim();
-            if (sol.Otros) {
-                const match = String(sol.Otros).match(/(?:•\s*)?Título de la Nota:\s*(.+)/i);
-                if (match && match[1]) {
-                    return match[1].split('\n')[0].trim();
-                }
-            }
-            if (sol.Titulo && String(sol.Titulo).trim()) return String(sol.Titulo).trim();
-            if (sol.Asunto && String(sol.Asunto).trim()) return String(sol.Asunto).trim();
-            if (sol.Descripcion && String(sol.Descripcion).trim()) {
-                const d = String(sol.Descripcion).trim();
-                return d.length > 90 ? d.substring(0, 87) + '...' : d;
-            }
-            if (sol.Solicitud && String(sol.Solicitud).trim()) return String(sol.Solicitud).trim();
-            return 'Nota de Prensa Institucional';
-        }
 
         function nexusCalcularPiezasDiseno(sol, tipoPieza) {
             // Contar el número de archivos (links) en la columna ArteFinal
@@ -27214,30 +27147,6 @@
             }
         }
 
-        function nexusFormatearSoloFecha(val) {
-            if (!val) return '-';
-            try {
-                let d = null;
-                if (typeof val === 'number') d = new Date(val);
-                else if (val.seconds) d = new Date(val.seconds * 1000);
-                else if (typeof val === 'string') {
-                    if (val.length === 10 && val.includes('-')) {
-                        const [y, m, dia] = val.split('-');
-                        return `${dia}/${m}/${y}`;
-                    }
-                    d = new Date(val);
-                }
-                if (d && !isNaN(d.getTime())) {
-                    const dia = String(d.getDate()).padStart(2, '0');
-                    const mes = String(d.getMonth() + 1).padStart(2, '0');
-                    const anio = d.getFullYear();
-                    return `${dia}/${mes}/${anio}`;
-                }
-                return String(val).split(' ')[0] || String(val);
-            } catch (e) {
-                return String(val);
-            }
-        }
 
         // --- MOTORES DE GENERACIÓN HTML PRINT-FRIENDLY ---
 
@@ -27579,54 +27488,6 @@ function nxDisDiaIdx(key) {
 
 function nxDisColorTipo(tipo) { return NX_DIS_TIPOS_COLOR[tipo] || _nxDisColoresTipo[tipo] || NX_DIS_COLOR_OTRO; }
 
-/* ---------- Cálculo ---------- */
-function nexusCalcularDatosDiseno(solicitudes, claveMes) {
-    const esMes = k => !claveMes || (!!k && k.slice(0, 7) === claveMes);
-    const nuevo = () => ({ total: 0, sinCorr: 0, conCorr: 0, cTex: 0, cDis: 0, tipos: {}, semAsig: [0, 0, 0, 0, 0, 0, 0], semFin: [0, 0, 0, 0, 0, 0, 0], asignadas: 0 });
-    const global = nuevo();
-    const porDis = {};
-
-    (solicitudes || []).forEach(sol => {
-        const dis = (sol.Disenador || '').trim();
-        if (!dis || dis === 'Sin Asignar') return;
-        const tipo = nexusDeterminarTipoPieza(sol);
-        if (tipo === 'Copy RRSS' || tipo === 'Prensa') return;
-
-        const d = porDis[dis] || (porDis[dis] = nuevo());
-
-        // Asignadas del mes (carga de trabajo, cualquier estatus)
-        const kAsig = nxDisKey(sol.fechaAsignacionKey || sol.FechaAsignacionDisenador || sol.fechaCreacionKey || sol.Timestamp);
-        if (esMes(kAsig)) {
-            d.asignadas++;
-            const i = nxDisDiaIdx(kAsig);
-            if (i >= 0) d.semAsig[i]++;
-        }
-
-        // Finalizadas del mes
-        if ((sol.Estatus || '').toUpperCase() !== 'FINALIZADA') return;
-        const kFin = nxDisKey(sol.fechaFinalizacionKey || sol.FechaFinalizacion);
-        if (!esMes(kFin)) return;
-
-        const cant = (typeof nexusCalcularPiezasDiseno === 'function') ? nexusCalcularPiezasDiseno(sol, tipo) : 1;
-        if (!cant) return;
-        const cTex = Number(sol.correccionesTexto) || 0;
-        const cDis = Number(sol.correccionesDiseno) || 0;
-        const conCorr = (cTex + cDis) > 0;
-        const iFin = nxDisDiaIdx(kFin);
-
-        [d, global].forEach(t => {
-            t.total += cant;
-            t.cTex += cTex;
-            t.cDis += cDis;
-            if (conCorr) t.conCorr += cant; else t.sinCorr += cant;
-            t.tipos[tipo] = (t.tipos[tipo] || 0) + cant;
-            if (iFin >= 0) t.semFin[iFin] += cant;
-        });
-    });
-
-    const disenadores = Object.keys(porDis).sort((a, b) => (porDis[b].total - porDis[a].total) || a.localeCompare(b, 'es'));
-    return { global, porDis, disenadores };
-}
 
 /* ---------- Gráficos SVG ---------- */
 function nxDisTiposOrdenados(tipos) {
@@ -28210,7 +28071,7 @@ function nexusInicializarReporteDiseno(contenedor) {
 
         // --- SISTEMA DE IMPRESIÓN Y EXPORTACIÓN ---
 
-        function nexusImprimirHtml(htmlContent, documentTitle = 'Reporte Mensual') {
+        function nexusImprimirHtml(htmlContent, documentTitle = 'Reporte Mensual', alTerminar) {
             const iframe = document.createElement('iframe');
             iframe.style.position = 'fixed';
             iframe.style.right = '0';
@@ -28475,6 +28336,7 @@ function nexusInicializarReporteDiseno(contenedor) {
                     setTimeout(() => {
                         if (iframe && iframe.parentNode) iframe.parentNode.removeChild(iframe);
                     }, 3000);
+                    if (typeof alTerminar === 'function') { try { alTerminar(); } catch (e) { console.warn(e); } }
                 }
             };
 
@@ -28580,27 +28442,6 @@ function nexusInicializarReporteDiseno(contenedor) {
 
         let _nexusHayPreviewSinGuardar = false;
 
-        // Reutiliza nexusCalcularEstadisticasCompletas(vivas, finalizadas, claveMes)
-        // sin modificarla: solo separamos la lista plana de solicitudes en los dos
-        // grupos que esa función espera.
-        function nexusConstruirStatsDesdeSolicitudes(solicitudes, cMes) {
-            const vivasObj = {};
-            const finalizadasObj = {};
-            solicitudes.forEach(sol => {
-                const estatus = (sol.Estatus || '').toUpperCase();
-                const key = sol.id || sol.docId;
-                if (!key) return;
-                if (estatus === 'FINALIZADA' || estatus === 'RECHAZADA') {
-                    finalizadasObj[key] = sol;
-                } else {
-                    vivasObj[key] = sol;
-                }
-            });
-            const fnCalc = (typeof window.nexusCalcularEstadisticasCompletas === 'function')
-                ? window.nexusCalcularEstadisticasCompletas
-                : (typeof nexusCalcularEstadisticasCompletas === 'function' ? nexusCalcularEstadisticasCompletas : null);
-            return fnCalc ? fnCalc(vivasObj, finalizadasObj, cMes) : null;
-        }
 
         // Lee el respaldo oficial de un mes cerrado. Estructura real en Firestore (la escribe GAS):
         //   reportes_historicos/{aaaa-mm} -> UN solo documento con los campos
@@ -29676,90 +29517,6 @@ function nexusInicializarReporteDiseno(contenedor) {
             if (ov) ov.style.display = 'none';
         }
 
-        function nxAnuncioMostrarPreview(a) {
-            let ov = document.getElementById('nxAnuncioPreviewOverlay');
-            if (!ov) {
-                ov = document.createElement('div');
-                ov.id = 'nxAnuncioPreviewOverlay';
-                ov.className = 'nx-anuncio-overlay';
-                ov.style.zIndex = '21500';
-                ov.addEventListener('click', function (e) { if (e.target === ov) nxAnuncioCerrarPreview(); });
-                document.body.appendChild(ov);
-            }
-            ov.innerHTML = '';
-            ov.style.display = 'flex';
-
-            const card = document.createElement('div');
-            card.className = 'nx-anuncio-card';
-
-            const closeBtn = document.createElement('button');
-            closeBtn.type = 'button';
-            closeBtn.className = 'nx-anuncio-x';
-            closeBtn.setAttribute('aria-label', 'Cerrar');
-            closeBtn.title = 'Cerrar';
-            closeBtn.textContent = '✕';
-            closeBtn.addEventListener('click', nxAnuncioCerrarPreview);
-            card.appendChild(closeBtn);
-
-            const head = document.createElement('div');
-            head.className = 'nx-anuncio-head auth-modal-logo';
-            const bhVideo = document.createElement('video');
-            bhVideo.className = 'auth-bh-video';
-            bhVideo.setAttribute('data-src', 'assets/video/bh_modal.mp4');
-            bhVideo.poster = 'assets/images/bh_modal-poster.jpg';
-            bhVideo.muted = true;
-            bhVideo.loop = true;
-            bhVideo.playsInline = true;
-            bhVideo.preload = 'none';
-            bhVideo.setAttribute('aria-hidden', 'true');
-            bhVideo.tabIndex = -1;
-            const headTitle = document.createElement('div');
-            headTitle.className = 'auth-nexus-title';
-            headTitle.innerHTML = 'NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span>';
-            const headSub = document.createElement('div');
-            headSub.className = 'auth-modal-subtitle';
-            headSub.textContent = 'Anuncios';
-            head.appendChild(bhVideo);
-            head.appendChild(headTitle);
-            head.appendChild(headSub);
-            card.appendChild(head);
-
-            const body = document.createElement('div');
-            body.className = 'nx-anuncio-body';
-
-            const eyebrow = document.createElement('p');
-            eyebrow.style.cssText = 'margin:0 0 10px; font-size:0.72rem; letter-spacing:0.5px; color: #5a82ff; text-transform:uppercase; font-weight:700;';
-            eyebrow.innerHTML = '<i class="fas fa-eye"></i> Vista previa · así lo verán los usuarios';
-            body.appendChild(eyebrow);
-
-            if (a.tipo === 'imagen' && a.imagen_url) {
-                const img = document.createElement('img');
-                img.className = 'nx-anuncio-img';
-                img.alt = 'Anuncio';
-                body.appendChild(img);
-                nxAnuncioSetImgConFallback(img, a.imagen_url);
-                nxAnuncioAjustarCardAImagen(card, img);
-            } else {
-                const t = document.createElement('h3');
-                t.className = 'nx-anuncio-titulo';
-                t.textContent = a.titulo || '';
-                const c = document.createElement('p');
-                c.className = 'nx-anuncio-cuerpo';
-                c.textContent = a.cuerpo || '';
-                body.appendChild(t);
-                body.appendChild(c);
-            }
-
-            const fechas = document.createElement('p');
-            fechas.style.cssText = 'margin: 14px 0 0; font-size: 0.8rem; color: var(--color-tertiary);';
-            fechas.textContent = 'Vigente del ' + a.fecha_inicio + ' al ' + a.fecha_fin;
-            body.appendChild(fechas);
-
-            card.appendChild(body);
-            ov.appendChild(card);
-
-            if (typeof window.nexusInitBHVideo === 'function') window.nexusInitBHVideo(bhVideo);
-        }
     </script>
 
     <!-- ============================================================
@@ -29970,17 +29727,46 @@ function nexusInicializarReporteDiseno(contenedor) {
         // ============================================================
         var _nxReporteMensualData = null;
         var _nxReporteMensualDocId = null;
+        var _nxReporteMensualPrueba = false;
 
+        // Mes anterior (aaaa-mm) según la hora de Caracas, no la del dispositivo.
         function nexusObtenerClaveMesAnterior() {
-            var d = new Date();
-            d.setDate(1);
-            d.setMonth(d.getMonth() - 1);
-            var y = d.getFullYear();
-            var m = String(d.getMonth() + 1).padStart(2, '0');
-            return y + '-' + m;
+            var f = nexusFechaVenezuela();
+            var y = f.year, m = f.month - 1;
+            if (m < 1) { m = 12; y--; }
+            return y + '-' + String(m).padStart(2, '0');
         }
 
-        async function nexusRevisarReporteMensualUnidad() { console.warn('[NEXUS·STUB] nexusRevisarReporteMensualUnidad: pendiente de reescribir'); return null; }
+        function nexusDocIdReporteUnidad(mes, unidad) {
+            return mes + '_' + String(unidad || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+        }
+
+        // Al iniciar sesión: el usuario normal ve el reporte de su unidad (mes anterior) los días 1 al 3,
+        // hasta que confirme que lo guardó. El admin limpia lo vencido a partir del día 4. Una sola lectura.
+        async function nexusRevisarReporteMensualUnidad() {
+            try {
+                if (!NexusSession || !NexusSession.user) return null;
+                var f = nexusFechaVenezuela();
+                if (nexusEsDisenador()) {
+                    if (nexusEsAdmin() && f.day >= 4) nexusLimpiarColeccionReportesUnidades();
+                    return null;
+                }
+                if (f.day < 1 || f.day > 3 || !NexusSession.unidad) return null;
+                var S = window.fbStore;
+                var docId = nexusDocIdReporteUnidad(nexusObtenerClaveMesAnterior(), NexusSession.unidad);
+                var snap = await S.getDoc(S.doc(window.db, 'reportes_mensuales_unidades', docId));
+                if (!snap.exists()) return null;
+                var rep = snap.data();
+                var conf = Array.isArray(rep.usuariosConfirmados) ? rep.usuariosConfirmados : [];
+                if (conf.indexOf(NexusSession.user.uid) !== -1) return null;
+                _nxReporteMensualPrueba = false;
+                nexusRenderizarReporteMensualModal(rep, docId);
+                return rep;
+            } catch (e) {
+                console.warn('[NEXUS] Reporte mensual de la unidad:', e);
+                return null;
+            }
+        }
 
         function nexusRenderizarReporteMensualModal(rep, docId) {
             if (!rep) return;
@@ -30047,12 +29833,120 @@ function nexusInicializarReporteDiseno(contenedor) {
             if (modalOverlay) modalOverlay.style.display = 'flex';
         }
 
-        async function nexusDescargarReportePdf() { console.warn('[NEXUS·STUB] nexusDescargarReportePdf: pendiente de reescribir'); return null; }
+        // Genera el PDF en el propio dispositivo (html2pdf) y lo descarga directo, sin diálogo de impresión:
+        // funciona igual en teléfono y en PC. Luego aparece «Ya guardé mi PDF»: solo ese botón registra la
+        // confirmación, porque en algunos teléfonos la descarga puede fallar sin avisar y el reporte se borra.
+        async function nexusDescargarReportePdf() {
+            var doc = document.getElementById('nxReporteMensualDoc');
+            if (!doc || !_nxReporteMensualData) return null;
+            var btn = document.getElementById('nxBtnDescargarRepPdf');
+            if (btn && btn.disabled) return null;
+            var htmlBtn = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...'; }
+            try {
+                if (typeof html2pdf !== 'function') throw new Error('html2pdf no está disponible');
+                if (document.fonts && document.fonts.ready) await document.fonts.ready;
+                var nombre = ('Reporte_mensual_' + (_nxReporteMensualData.Mes || '') + '_' + (_nxReporteMensualData.Unidad || ''))
+                    .replace(/[^a-zA-Z0-9_-]+/g, '_').replace(/_+/g, '_') + '.pdf';
+                await html2pdf().set({
+                    margin: [8, 8, 8, 8],
+                    filename: nombre,
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 900 },
+                    jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'] }
+                }).from(doc).save();
+                var cont = document.querySelector('#nxReporteMensualOverlay .nx-repmen-acciones');
+                if (cont && !document.getElementById('nxBtnConfirmarRepPdf')) {
+                    var b = document.createElement('button');
+                    b.type = 'button'; b.id = 'nxBtnConfirmarRepPdf'; b.className = 'btn-repmen-pdf';
+                    b.style.background = '#2d6a4f';
+                    b.innerHTML = '<i class="fas fa-check"></i> Ya guardé mi PDF';
+                    b.onclick = nexusConfirmarReporteGuardado;
+                    cont.appendChild(b);
+                }
+                showToast({ type: 'success', title: 'PDF generado', message: 'Revisa tus descargas y luego pulsa «Ya guardé mi PDF».' });
+            } catch (e) {
+                console.error('[NEXUS] Generar PDF del reporte mensual:', e);
+                nexusRegistrarFallaEnvioRTDB(e, { operacion: 'nexusDescargarReportePdf', detalles: _nxReporteMensualDocId || '' });
+                showToast({ type: 'error', title: 'No se pudo generar el PDF', message: 'Inténtalo de nuevo. Tu reporte sigue disponible.' });
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = htmlBtn; }
+            }
+            return true;
+        }
+
+        // «Descargar más tarde»: solo oculta el aviso en esta sesión; vuelve a salir al iniciar sesión (días 1 al 3).
+        function nexusPosponerReporteMensual() {
+            var o = document.getElementById('nxReporteMensualOverlay');
+            if (o) o.style.display = 'none';
+        }
+
+        // Registra que este usuario ya guardó el reporte. Cuando lo confirmaron todos los usuarios
+        // registrados de la unidad, el documento se borra solo.
+        async function nexusConfirmarReporteGuardado() {
+            var b = document.getElementById('nxBtnConfirmarRepPdf');
+            if (b) { b.disabled = true; b.remove(); }
+            var o = document.getElementById('nxReporteMensualOverlay');
+            var rep = _nxReporteMensualData, docId = _nxReporteMensualDocId;
+            if (_nxReporteMensualPrueba || !rep || !docId) { if (o) o.style.display = 'none'; return; }
+            try {
+                var S = window.fbStore, ref = S.doc(window.db, 'reportes_mensuales_unidades', docId);
+                await S.updateDoc(ref, { usuariosConfirmados: S.arrayUnion(NexusSession.user.uid) });
+                if (o) o.style.display = 'none';
+                showToast({ type: 'success', title: 'Reporte guardado', message: 'Ya no volverá a mostrarse.' });
+                // La confirmación ya quedó guardada: si falla el borrado automático no es un error del usuario
+                // (el admin limpia lo vencido desde el día 4).
+                try {
+                    var q = S.query(S.collection(window.db, 'usuarios'), S.where('unidad', '==', rep.Unidad));
+                    var total = (await S.getCountFromServer(q)).data().count;
+                    var actual = await S.getDoc(ref);
+                    var conf = actual.exists() && Array.isArray(actual.data().usuariosConfirmados) ? actual.data().usuariosConfirmados.length : 0;
+                    if (total > 0 && conf >= total) await S.deleteDoc(ref);
+                } catch (e2) {
+                    console.warn('[NEXUS] Borrado automático del reporte de unidad:', e2);
+                }
+            } catch (e) {
+                console.error('[NEXUS] Confirmar reporte mensual:', e);
+                nexusRegistrarFallaEnvioRTDB(e, { operacion: 'nexusConfirmarReporteGuardado', detalles: docId });
+                showToast({ type: 'error', title: 'No se pudo confirmar', message: 'Tu reporte sigue disponible; vuelve a intentarlo.' });
+            }
+        }
+        window.nexusConfirmarReporteGuardado = nexusConfirmarReporteGuardado;
+        window.nexusPosponerReporteMensual = nexusPosponerReporteMensual;
 
         // Función de prueba directa que lee el documento real de Firestore
-        window.nexusProbarReporteMensual = async function(docIdManual) { console.warn('[NEXUS·STUB] nexusProbarReporteMensual: pendiente de reescribir'); return null; };
+        window.nexusProbarReporteMensual = async function(docIdManual) {
+            try {
+                var S = window.fbStore, snap;
+                var id = docIdManual || (NexusSession && NexusSession.unidad ? nexusDocIdReporteUnidad(nexusObtenerClaveMesAnterior(), NexusSession.unidad) : '');
+                if (id) snap = await S.getDoc(S.doc(window.db, 'reportes_mensuales_unidades', id));
+                if ((!snap || !snap.exists()) && nexusEsAdmin()) {
+                    var todos = await S.getDocs(S.collection(window.db, 'reportes_mensuales_unidades'));
+                    if (!todos.empty) { snap = todos.docs[0]; id = snap.id; }
+                }
+                if (!snap || !snap.exists()) { console.warn('[NEXUS] Prueba reporte mensual: no hay documento', id); return null; }
+                _nxReporteMensualPrueba = true;
+                nexusRenderizarReporteMensualModal(snap.data(), id);
+                console.log('[NEXUS] Prueba reporte mensual (no guarda confirmaciones):', id);
+                return snap.data();
+            } catch (e) { console.error('[NEXUS] Prueba reporte mensual:', e); return null; }
+        };
 
-        async function nexusLimpiarColeccionReportesUnidades() { console.warn('[NEXUS·STUB] nexusLimpiarColeccionReportesUnidades: pendiente de reescribir'); return null; }
+        // Desde el día 4 todo lo que quede en reportes_mensuales_unidades ya venció: lo borra el admin al iniciar sesión.
+        async function nexusLimpiarColeccionReportesUnidades() {
+            try {
+                if (!nexusEsAdmin() || nexusFechaVenezuela().day < 4) return 0;
+                var S = window.fbStore;
+                var snap = await S.getDocs(S.collection(window.db, 'reportes_mensuales_unidades'));
+                var n = 0;
+                for (var i = 0; i < snap.docs.length; i++) {
+                    try { await S.deleteDoc(snap.docs[i].ref); n++; } catch (e) { console.warn('[NEXUS] No se pudo borrar', snap.docs[i].id, e); }
+                }
+                if (n) console.log('[NEXUS] Reportes de unidad vencidos borrados:', n);
+                return n;
+            } catch (e) { console.warn('[NEXUS] Limpieza de reportes de unidad:', e); return 0; }
+        }
         // ============================================================
         // SISTEMA DE CUMPLEAÑOS NEXUS
         // ============================================================
@@ -31527,7 +31421,7 @@ function nexusInicializarReporteDiseno(contenedor) {
                 <i class="fas fa-exclamation-triangle"></i>
                 <div>
                     <strong>Aviso de resguardo:</strong>
-                    Una vez descargado este reporte, <u>no volverá a mostrarse en el sistema</u>. Asegúrate de conservarlo en tus archivos locales.
+                    Puedes descargarlo del día 1 al 3 de cada mes. Después de confirmar que lo guardaste <u>no volverá a mostrarse</u>, y si no lo descargas en esos días <u>se elimina del sistema</u>.
                 </div>
             </div>
 
@@ -31535,6 +31429,9 @@ function nexusInicializarReporteDiseno(contenedor) {
             <div class="nx-repmen-acciones">
                 <button type="button" class="btn-repmen-pdf" id="nxBtnDescargarRepPdf" onclick="nexusDescargarReportePdf()">
                     <i class="fas fa-file-pdf"></i> Descargar Reporte PDF
+                </button>
+                <button type="button" class="btn-repmen-pdf" style="background:#64748b;" onclick="nexusPosponerReporteMensual()">
+                    <i class="fas fa-clock"></i> Descargar más tarde
                 </button>
             </div>
         </div>
