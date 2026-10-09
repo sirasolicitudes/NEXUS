@@ -7394,22 +7394,6 @@
                 <h2 class="section-title">Formularios</h2>
                 <p class="section-subtitle">Selecciona el tipo de formulario que necesitas</p>
             </div>
-            <!-- Anuncio (se llena desde Apps Script; se oculta si no hay anuncio vigente) -->
-            <div id="nxAnuncioBanner" class="nx-anuncio-overlay" style="display:none;">
-                <div class="nx-anuncio-card">
-                    <button type="button" class="nx-anuncio-x" onclick="nexusCerrarAnuncioFormularios()" aria-label="Cerrar anuncio" title="Cerrar">✕</button>
-                    <div class="nx-anuncio-head auth-modal-logo">
-                        <video class="auth-bh-video" data-src="assets/video/bh_modal.mp4" poster="assets/images/bh_modal-poster.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
-                        <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
-                        <div class="auth-modal-subtitle">Anuncios</div>
-                    </div>
-                    <div class="nx-anuncio-body">
-                        <h3 id="nxAnuncioTituloTxt" class="nx-anuncio-titulo"></h3>
-                        <p id="nxAnuncioCuerpoTxt" class="nx-anuncio-cuerpo"></p>
-                        <img id="nxAnuncioImgTxt" class="nx-anuncio-img" alt="Anuncio" style="display:none;">
-                    </div>
-                </div>
-            </div>
             <div class="formularios-container">
                 <div class="cards-grid">
                     <!-- Tarjeta: Vida Saludable -->
@@ -11152,6 +11136,24 @@
     </div>
 
     <!-- Loading Overlay NEXUS: solo desenfoque del fondo + progreso (sin capas ni animaciones) -->
+    <!-- Anuncio: se abre desde el botón flotante (nxAnuncioFab). Vive fuera de las secciones para verse desde cualquier pantalla. -->
+    <div id="nxAnuncioBanner" class="nx-anuncio-overlay" style="display:none;" role="dialog" aria-modal="true" aria-label="Anuncio">
+        <div class="nx-anuncio-card">
+            <button type="button" class="nx-anuncio-x" onclick="nexusCerrarAnuncioFormularios()" aria-label="Cerrar anuncio" title="Cerrar">✕</button>
+            <div class="nx-anuncio-head auth-modal-logo">
+                <video class="auth-bh-video" data-src="assets/video/bh_modal.mp4" poster="assets/images/bh_modal-poster.jpg" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1" disablepictureinpicture></video>
+                <div class="auth-nexus-title">NEX<span class="nexus-letter-u">U</span><span class="nexus-letter-s">S</span></div>
+                <div class="auth-modal-subtitle">Anuncios</div>
+            </div>
+            <div class="nx-anuncio-body">
+                <h3 id="nxAnuncioTituloTxt" class="nx-anuncio-titulo"></h3>
+                <p id="nxAnuncioCuerpoTxt" class="nx-anuncio-cuerpo"></p>
+                <img id="nxAnuncioImgTxt" class="nx-anuncio-img" alt="Anuncio" style="display:none;">
+            </div>
+        </div>
+    </div>
+    <button type="button" id="nxAnuncioFab" class="nx-anuncio-fab" onclick="nexusAbrirAnuncio()" aria-label="Ver anuncio" title="Ver anuncio" style="display:none;"><i class="fas fa-bullhorn" aria-hidden="true"></i></button>
+
     <div id="nexusLoadingOverlay" style="display: none; position: fixed; inset: 0; z-index: 30000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #fff; background: rgba(6, 9, 13, 0.62); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
         <div style="width: 100%; max-width: 400px;">
             <div class="nexus-loading-logo" style="font-family: 'Audiowide', cursive; font-size: 3rem; font-weight: 900; letter-spacing: 4px; color: #ffffff; margin-bottom: 16px; text-shadow: 0 4px 20px rgba(5, 84, 242, 0.65); user-select: none;">NEX<span style="color: var(--color-tertiary, #ACC3F2);">US</span></div>
@@ -16798,7 +16800,6 @@
             // Favoritos: si no están en memoria todavía, se leen una vez por sesión
             if (sectionId === 'formularios') {
                 nexusAsegurarFavoritos();
-                if (typeof nexusCargarAnuncioFormularios === 'function') nexusCargarAnuncioFormularios();
             }
 
             // Reportes es exclusivo para Administradores
@@ -21877,6 +21878,7 @@
         }
 
                         function nexusActualizarUIAuth() {
+            if (typeof nexusAnuncioFabSync === 'function') nexusAnuncioFabSync();   // reevalúa la animación del botón de anuncios
             var greetingEl  = document.getElementById('hero-user-greeting');
             var titleEl     = document.getElementById('hero-main-title');
             var heroButtons = document.querySelector('.hero-buttons');
@@ -29327,7 +29329,7 @@ function nexusInicializarReporteDiseno(contenedor) {
                     throw new Error((res && (res.error || res.message)) || 'El servidor no guardó el anuncio');
                 }
 
-                nxAnuncioCache = null; nxAnuncioCacheT = 0;   // el siguiente formulario que se abra lo trae fresco
+                if (typeof nexusAnuncioRefrescar === 'function') nexusAnuncioRefrescar(true);   // refresca la copia y el botón del admin
                 showToast({ type: 'success', title: 'Anuncio guardado', message: 'Reemplaza al anterior y se mostrará en las fechas indicadas.', duration: 4000 });
                 nexusCerrarModalAnuncios();
             } catch (err) {
@@ -29418,13 +29420,65 @@ function nexusInicializarReporteDiseno(contenedor) {
             text-shadow: 0 1px 4px rgba(0,0,0,0.8);
         }
         .nx-anuncio-x:hover { color: #fff; }
+
+        /* Botón flotante de anuncios: abajo a la izquierda (los toast salen a la derecha).
+           Mientras el usuario no lo abre en la sesión, emite ondas; después queda quieto. */
+        .nx-anuncio-fab {
+            position: fixed;
+            left: 22px;
+            bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+            z-index: 9000;
+            width: 56px;
+            height: 56px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #3876f2 0%, #0554f2 100%);
+            color: #fff;
+            font-size: 1.35rem;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(5, 84, 242, 0.4);
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s ease;
+        }
+        .nx-anuncio-fab:active { transform: scale(0.94); }
+        .nx-anuncio-fab:focus-visible { outline: 3px solid #ACC3F2; outline-offset: 3px; }
+        .nx-anuncio-fab i { position: relative; z-index: 1; }
+        .nx-anuncio-fab::before,
+        .nx-anuncio-fab::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid #ACC3F2;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .nx-anuncio-fab.nx-fab-pulso::before { animation: nxAnuncioOnda 2.2s ease-out infinite; }
+        .nx-anuncio-fab.nx-fab-pulso::after  { animation: nxAnuncioOnda 2.2s ease-out 1.1s infinite; }
+        @keyframes nxAnuncioOnda {
+            0%   { transform: scale(1);   opacity: 0.9; }
+            100% { transform: scale(1.9); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .nx-anuncio-fab.nx-fab-pulso::before,
+            .nx-anuncio-fab.nx-fab-pulso::after { animation: none; }
+            /* sin movimiento: un aro fijo indica que hay anuncio sin ver */
+            .nx-anuncio-fab.nx-fab-pulso { box-shadow: 0 0 0 4px rgba(172, 195, 242, 0.6), 0 6px 18px rgba(5, 84, 242, 0.4); }
+        }
     </style>
 
     <script>
-        let nxAnuncioCache = null;
-        let nxAnuncioCacheT = 0;
-        let nxAnuncioOrbIniciado = false;
-        const NX_ANUNCIO_TTL_MS = 30 * 60 * 1000;
+        let nxAnuncioActual = null;          // anuncio vigente (de la copia local o de Apps Script)
+        let nxAnuncioUltimaConsulta = 0;
+        let nxAnuncioConsultando = false;
+        const NX_ANUNCIO_TTL_MS = 30 * 60 * 1000;            // no consultar a GAS más de 1 vez cada 30 min por pestaña abierta
+        const NX_ANUNCIO_LS_KEY = 'nexus_anuncio_cache_v3';   // copia local para que el botón salga al instante
+        const NX_ANUNCIO_LS_MAX_MS = 12 * 60 * 60 * 1000;     // una copia local de más de 12 h no se usa
+        let nxAnuncioVistoClave = '';                         // quién ya abrió qué anuncio; solo en memoria (recargar = sesión nueva)
 
         // Asigna la imagen con una alternativa de respaldo (thumbnail de Drive)
         // por si el CDN de mayor calidad no carga en algún navegador.
@@ -29460,54 +29514,157 @@ function nexusInicializarReporteDiseno(contenedor) {
             }
         }
 
-        // Trae el anuncio vigente de GAS (hoja "Anuncios"); caché de 30 min para no pegarle al Apps Script
-        // cada vez que se abre un formulario. Si el usuario ya cerró ese anuncio, no se vuelve a mostrar.
-        async function nexusCargarAnuncioFormularios() {
-            const banner = document.getElementById('nxAnuncioBanner');
-            if (!banner) return null;
+        // ------------------------------------------------------------
+        // Botón flotante de anuncios
+        //  - Al abrir la página se pinta con la copia local (si existe) y en segundo plano se
+        //    consulta a Apps Script (hoja "Anuncios"). Si ya no hay anuncio, el botón desaparece.
+        //  - El botón solo existe con la sesión iniciada. Mientras no se abra en la sesión actual,
+        //    emite ondas. Cerrar sesión, recargar la página (que cierra la sesión), entrar con otra
+        //    cuenta o publicar un anuncio nuevo vuelven a activar la animación.
+        //  - Abrirlo no guarda nada en Firebase y se puede ver todas las veces que se quiera.
+        // ------------------------------------------------------------
+        function nxAnuncioClaveSesion() {
+            const uid = (typeof NexusSession !== 'undefined' && NexusSession.user && NexusSession.user.uid) || '';
+            return uid + '|' + (nxAnuncioActual ? String(nxAnuncioActual.id) : '');
+        }
+        // Fecha de hoy en Caracas ("aaaa-mm-dd") y si el anuncio está dentro de sus fechas (inicio y fin incluidos).
+        // Sin fechas en el anuncio (copia antigua) no se restringe: manda lo que diga Apps Script.
+        function nxAnuncioHoyCaracas() {
+            try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Caracas' }).format(new Date()); }
+            catch (e) { return ''; }
+        }
+        function nxAnuncioEnFechas(a) {
+            const hoy = nxAnuncioHoyCaracas();
+            if (!a || !hoy) return !!a;
+            if (a.fecha_inicio && hoy < a.fecha_inicio) return false;
+            if (a.fecha_fin && hoy > a.fecha_fin) return false;
+            return true;
+        }
+        function nxAnuncioHaySesion() {
+            return typeof NexusSession !== 'undefined' && !!NexusSession.user;
+        }
+        function nxAnuncioYaVistoEnSesion() { return nxAnuncioVistoClave === nxAnuncioClaveSesion(); }
+        function nxAnuncioMarcarVisto() { nxAnuncioVistoClave = nxAnuncioClaveSesion(); }
+        function nxAnuncioLeerCopia() {
             try {
-                if (!nxAnuncioCacheT || Date.now() - nxAnuncioCacheT > NX_ANUNCIO_TTL_MS) {
-                    const res = await nexusFetchJSON(NEXUS_SCRIPT_URL + '?action=obtenerAnuncio', {}, 15000, 1);
-                    nxAnuncioCache = (res && res.success && res.data) ? res.data : null;
-                    nxAnuncioCacheT = Date.now();
-                }
-                const a = nxAnuncioCache;
-                if (!a || !a.id) { banner.style.display = 'none'; return null; }
-                if (localStorage.getItem('nexus_anuncio_visto') === String(a.id)) { banner.style.display = 'none'; return null; }
-
-                const titulo = document.getElementById('nxAnuncioTituloTxt');
-                const cuerpo = document.getElementById('nxAnuncioCuerpoTxt');
-                const img = document.getElementById('nxAnuncioImgTxt');
-                const card = banner.querySelector('.nx-anuncio-card');
-
-                banner.dataset.anuncioId = String(a.id);
-                if (a.tipo === 'imagen' && a.imagen_url) {
-                    titulo.style.display = 'none'; cuerpo.style.display = 'none';
-                    img.style.display = '';
-                    nxAnuncioSetImgConFallback(img, a.imagen_url);
-                    nxAnuncioAjustarCardAImagen(card, img);
-                } else {
-                    img.style.display = 'none'; img.removeAttribute('src');
-                    if (card) card.style.maxWidth = '';
-                    titulo.style.display = ''; cuerpo.style.display = '';
-                    titulo.textContent = a.titulo || '';
-                    cuerpo.textContent = a.cuerpo || '';
-                }
-                banner.style.display = 'flex';
-            } catch (e) {
-                console.warn('[NEXUS] No se pudo cargar el anuncio:', e && e.message);
-                banner.style.display = 'none';
+                const raw = localStorage.getItem(NX_ANUNCIO_LS_KEY);
+                if (!raw) return null;
+                const c = JSON.parse(raw);
+                if (!c || !c.a || !c.a.id || Date.now() - (c.t || 0) > NX_ANUNCIO_LS_MAX_MS) return null;
+                return c.a;
+            } catch (e) { return null; }
+        }
+        function nxAnuncioGuardarCopia(a) {
+            try {
+                if (a) localStorage.setItem(NX_ANUNCIO_LS_KEY, JSON.stringify({ a: a, t: Date.now() }));
+                else localStorage.removeItem(NX_ANUNCIO_LS_KEY);
+            } catch (e) {}
+        }
+        // Descarga la imagen por adelantado para que el anuncio abra sin esperar
+        function nxAnuncioPrecargarImagen(a) {
+            if (!a || a.tipo !== 'imagen' || !a.imagen_url) return;
+            try { const im = new Image(); im.src = a.imagen_url; } catch (e) {}
+        }
+        function nxAnuncioPintarFab() {
+            const fab = document.getElementById('nxAnuncioFab');
+            if (!fab) return;
+            // Sin anuncio vigente (por fechas), o sin sesión iniciada: el botón no se ve ni se puede tocar
+            if (!nxAnuncioActual || !nxAnuncioEnFechas(nxAnuncioActual) || !nxAnuncioHaySesion()) {
+                fab.style.display = 'none';
+                fab.classList.remove('nx-fab-pulso');
+                if (!nxAnuncioHaySesion()) nxAnuncioVistoClave = '';   // sesión cerrada: la próxima vez vuelve a ondear
+                nexusCerrarAnuncioFormularios();
+                return;
             }
-            return null;
+            fab.style.display = 'flex';
+            fab.classList.toggle('nx-fab-pulso', !nxAnuncioYaVistoEnSesion());
+        }
+        // Se llama desde nexusActualizarUIAuth: al iniciar o cerrar sesión se reevalúa la animación
+        function nexusAnuncioFabSync() { nxAnuncioPintarFab(); }
+
+        function nexusAbrirAnuncio() {
+            const a = nxAnuncioActual;
+            const ov = document.getElementById('nxAnuncioBanner');
+            if (!a || !ov || !nxAnuncioHaySesion() || !nxAnuncioEnFechas(a)) return;
+            const titulo = document.getElementById('nxAnuncioTituloTxt');
+            const cuerpo = document.getElementById('nxAnuncioCuerpoTxt');
+            const img = document.getElementById('nxAnuncioImgTxt');
+            const card = ov.querySelector('.nx-anuncio-card');
+            ov.dataset.anuncioId = String(a.id);
+            if (a.tipo === 'imagen' && a.imagen_url) {
+                titulo.style.display = 'none'; cuerpo.style.display = 'none';
+                img.style.display = '';
+                nxAnuncioSetImgConFallback(img, a.imagen_url);
+                nxAnuncioAjustarCardAImagen(card, img);
+            } else {
+                img.style.display = 'none'; img.removeAttribute('src');
+                if (card) card.style.maxWidth = '';
+                titulo.style.display = ''; cuerpo.style.display = '';
+                titulo.textContent = a.titulo || '';
+                cuerpo.textContent = a.cuerpo || '';
+            }
+            ov.style.display = 'flex';
+            nxAnuncioMarcarVisto();
+            nxAnuncioPintarFab();
+            const x = ov.querySelector('.nx-anuncio-x');
+            if (x) { try { x.focus({ preventScroll: true }); } catch (e) {} }
         }
 
         function nexusCerrarAnuncioFormularios() {
-            const banner = document.getElementById('nxAnuncioBanner');
-            if (!banner) return;
-            if (banner.dataset.anuncioId) {
-                localStorage.setItem('nexus_anuncio_visto', banner.dataset.anuncioId);
+            const ov = document.getElementById('nxAnuncioBanner');
+            if (!ov || ov.style.display === 'none') return;
+            ov.style.display = 'none';
+            const fab = document.getElementById('nxAnuncioFab');
+            if (fab && fab.style.display !== 'none') { try { fab.focus({ preventScroll: true }); } catch (e) {} }
+        }
+
+        // Consulta a Apps Script. Si falla (sin red, GAS caído) se conserva lo que ya se mostraba.
+        async function nexusAnuncioRefrescar(forzar) {
+            if (nxAnuncioConsultando) return;
+            if (!forzar && nxAnuncioUltimaConsulta && Date.now() - nxAnuncioUltimaConsulta < NX_ANUNCIO_TTL_MS) return;
+            nxAnuncioConsultando = true;
+            try {
+                const res = await nexusFetchJSON(NEXUS_SCRIPT_URL + '?action=obtenerAnuncio', {}, 15000, 1);
+                if (!res || res.success !== true) return;
+                nxAnuncioUltimaConsulta = Date.now();
+                const a = (res.data && res.data.id) ? res.data : null;
+                nxAnuncioActual = a;
+                nxAnuncioGuardarCopia(a);
+                nxAnuncioPrecargarImagen(a);
+                if (!a) nexusCerrarAnuncioFormularios();
+                nxAnuncioPintarFab();
+            } catch (e) {
+                console.warn('[NEXUS] No se pudo consultar el anuncio:', e && e.message);
+            } finally {
+                nxAnuncioConsultando = false;
             }
-            banner.style.display = 'none';
+        }
+
+        function nexusAnuncioInit() {
+            const copia = nxAnuncioLeerCopia();
+            if (copia) {
+                nxAnuncioActual = copia;
+                nxAnuncioPrecargarImagen(copia);
+                nxAnuncioPintarFab();
+            }
+            nexusAnuncioRefrescar(true);
+            const ov = document.getElementById('nxAnuncioBanner');
+            if (ov) ov.addEventListener('click', function (e) { if (e.target === ov) nexusCerrarAnuncioFormularios(); });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') nexusCerrarAnuncioFormularios();
+            });
+            // Revisa las fechas cada minuto (sin consultar a Apps Script): el botón desaparece solo al
+            // pasar la fecha de fin o aparece al llegar la de inicio, aunque la pestaña siga abierta.
+            setInterval(nxAnuncioPintarFab, 60 * 1000);
+            // Pestaña abierta mucho tiempo: al volver a ella se actualiza (máx. 1 consulta cada 30 min)
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) nexusAnuncioRefrescar(false);
+            });
+        }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function () { setTimeout(nexusAnuncioInit, 0); });
+        } else {
+            setTimeout(nexusAnuncioInit, 0);
         }
     </script>
 
