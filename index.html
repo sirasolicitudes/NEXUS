@@ -11540,10 +11540,9 @@
 
                 if (sol.Unidad) incKey(data.porUnidad, sol.Unidad);
                 if (sol.Solicitud) incKey(data.porSolicitud, sol.Solicitud);
-                if (sol.TipoEspecialidad === 'Especialidades') {
-                    nexusListaDesdeBullets(sol.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
-                }
-                nexusListaDesdeBullets(sol.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
+                const espSrv = nexusNormalizarEspSrv(sol);
+                nexusListaDesdeBullets(espSrv.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
+                nexusListaDesdeBullets(espSrv.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
             });
 
             // --- Procesar solicitudes FINALIZADAS/RECHAZADAS del mes ---
@@ -11580,10 +11579,9 @@
 
                 if (sol.Unidad) incKey(data.porUnidad, sol.Unidad);
                 if (sol.Solicitud) incKey(data.porSolicitud, sol.Solicitud);
-                if (sol.TipoEspecialidad === 'Especialidades') {
-                    nexusListaDesdeBullets(sol.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
-                }
-                nexusListaDesdeBullets(sol.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
+                const espSrv = nexusNormalizarEspSrv(sol);
+                nexusListaDesdeBullets(espSrv.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
+                nexusListaDesdeBullets(espSrv.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
             });
 
             return data;
@@ -14417,6 +14415,38 @@
         }
         window.nexusListaDesdeBullets = nexusListaDesdeBullets;
 
+        // ============================================================
+        // MODELO DE DATOS: Especialidades vs Servicios
+        //   • Especialidades = SOLO especialidades médicas (Vida Saludable, Atención Médica
+        //     Integral, Jornada Conjunta).
+        //   • Servicios      = servicios adicionales + las selecciones de Jornada de Vacunación
+        //     (vacunas) y de las 3 Captaciones Quirúrgicas (patologías).
+        // nexusNormalizarEspSrv también arregla en memoria las solicitudes antiguas que todavía
+        // traen vacunas/patologías en Especialidades (hasta que corra la migración).
+        // ============================================================
+        function nexusEsTipoSoloServicios(tipo) {
+            return /QUIR[ÚU]RGICA|VACUNACI[ÓO]N|INMUNIZACI[ÓO]N/.test(String(tipo || '').toUpperCase());
+        }
+        function nexusEtiquetaServiciosEspeciales(tipo) {
+            const t = String(tipo || '').toUpperCase();
+            if (/VACUNACI[ÓO]N|INMUNIZACI[ÓO]N/.test(t)) return 'Vacunas';
+            if (/PEDI[ÁA]TRICA/.test(t)) return 'Patologías Pediátricas';
+            if (/OFTALMOL[ÓO]GICA/.test(t)) return 'Patologías Oftalmológicas';
+            return 'Patologías Quirúrgicas';
+        }
+        function nexusNormalizarEspSrv(sol) {
+            const vacio = function (v) { return !v || v === 'Ninguno'; };
+            let esp = (sol && sol.Especialidades) || 'Ninguno';
+            let srv = (sol && sol.Servicios) || 'Ninguno';
+            const legado = sol && sol.TipoEspecialidad && sol.TipoEspecialidad !== 'Especialidades';
+            if (sol && (nexusEsTipoSoloServicios(sol.Solicitud) || legado)) {
+                if (!vacio(esp)) srv = vacio(srv) ? esp : (srv + '\n' + esp);
+                esp = 'Ninguno';
+            }
+            return { Especialidades: esp, Servicios: srv };
+        }
+        window.nexusNormalizarEspSrv = nexusNormalizarEspSrv;
+
         function transformFormDataToPlain(formData) {
             // Si ya está en formato plano (tiene propiedades directas pero no arrays general/location), retornarlo tal cual
             if (!formData.general && !formData.location && (formData.tipo || formData.unidad || formData.telefono)) {
@@ -14719,21 +14749,15 @@
                     }
                 }
 
+                // Modelo de datos: la columna Especialidades lleva SOLO especialidades médicas.
+                // Las vacunas y las patologías de las 3 captaciones quirúrgicas van en Servicios.
                 let especialidadesValor = plainData.especialidades || '';
-                let especialidadesNombre = 'Especialidades';
-
-                if (plainData.patologiasQuirurgicas) {
-                    especialidadesValor = plainData.patologiasQuirurgicas;
-                    especialidadesNombre = 'Patologías Quirúrgicas';
-                } else if (plainData.patologiasPediatricas) {
-                    especialidadesValor = plainData.patologiasPediatricas;
-                    especialidadesNombre = 'Patologías Pediátricas';
-                } else if (plainData.patologiasOftalmologicas) {
-                    especialidadesValor = plainData.patologiasOftalmologicas;
-                    especialidadesNombre = 'Patologías Oftalmológicas';
-                } else if (plainData.vacunas) {
-                    especialidadesValor = plainData.vacunas;
-                    especialidadesNombre = 'Vacunas';
+                let serviciosValor = plainData.servicios || '';
+                const seleccionSoloServicios = plainData.patologiasQuirurgicas || plainData.patologiasPediatricas ||
+                    plainData.patologiasOftalmologicas || plainData.vacunas || '';
+                if (seleccionSoloServicios) {
+                    serviciosValor = [seleccionSoloServicios, serviciosValor].filter(Boolean).join(', ');
+                    especialidadesValor = '';
                 }
 
                 let otrosValor = plainData.otros || '';
@@ -14777,8 +14801,7 @@
                     Solicitud: plainData.tipo || '',
                     Otros: otrosValor,
                     Especialidades: nexusToBullets(especialidadesValor),
-                    TipoEspecialidad: especialidadesNombre,
-                    Servicios: nexusToBullets(plainData.servicios || ''),
+                    Servicios: nexusToBullets(serviciosValor),
                     Fecha: plainData.fecha || '',
                     Hora: (plainData.hora || 'N/A').replace('AM', 'a.m.').replace('PM', 'p.m.'),
                     Direccion: plainData.direccion || '',
@@ -23580,18 +23603,23 @@
             if (esEspecial) {
                 campos.push(['Detalles del Requerimiento', data.Otros]);
             } else {
-                const countDetalle = data.Especialidades ? (data.Especialidades.match(/•/g) || []).length : 0;
-                const countServicios = data.Servicios ? (data.Servicios.match(/•/g) || []).length : 0;
+                const espSrv = nexusNormalizarEspSrv(data);
+                const contarItems = function (t) { return t ? (t.match(/•/g) || []).length : 0; };
+                const countDetalle = contarItems(espSrv.Especialidades);
+                const countServicios = contarItems(espSrv.Servicios);
 
-                let tituloDetalle = countDetalle === 1 ? 'Especialidad' : 'Especialidades';
-                if (solUpper.includes('INMUNIZACIÓN') || solUpper.includes('INMUNIZACION')) tituloDetalle = countDetalle === 1 ? 'Vacuna' : 'Esquema de vacunas';
-                else if (solUpper.includes('QUIRÚRGICA') || solUpper.includes('QUIRURGICA')) tituloDetalle = countDetalle === 1 ? 'Patología' : 'Patologías';
-                else if (solUpper.includes('ESCUELA')) tituloDetalle = countDetalle === 1 ? 'Especialidad médica' : 'Especialidades médicas';
-
-                const tituloServicios = countServicios === 1 ? 'Servicio adicional' : 'Servicios adicionales';
-
-                campos.push([tituloDetalle, data.Especialidades]);
-                campos.push([tituloServicios, data.Servicios]);
+                if (nexusEsTipoSoloServicios(data.Solicitud)) {
+                    // Vacunas y patologías viven en Servicios (no hay Especialidades en estos formularios).
+                    let tituloSel = countServicios === 1 ? 'Patología' : 'Patologías';
+                    if (/VACUNACI[ÓO]N|INMUNIZACI[ÓO]N/.test(solUpper)) tituloSel = countServicios === 1 ? 'Vacuna' : 'Esquema de vacunas';
+                    campos.push([tituloSel, espSrv.Servicios]);
+                } else {
+                    let tituloDetalle = countDetalle === 1 ? 'Especialidad' : 'Especialidades';
+                    if (solUpper.includes('ESCUELA')) tituloDetalle = countDetalle === 1 ? 'Especialidad médica' : 'Especialidades médicas';
+                    const tituloServicios = countServicios === 1 ? 'Servicio adicional' : 'Servicios adicionales';
+                    campos.push([tituloDetalle, espSrv.Especialidades]);
+                    campos.push([tituloServicios, espSrv.Servicios]);
+                }
             }
 
             let labelFecha = 'Fecha de Actividad';
@@ -23928,21 +23956,24 @@
                 document.getElementById('nexusEdit-especialidades').value = '';
                 document.getElementById('nexusEdit-servicios').value = '';
             } else {
-                // Solo aplica Especialidades/Patologías/Vacunas + Servicios
+                // Especialidades (solo médicas) + Servicios. En Vacunación y Captaciones Quirúrgicas
+                // no existen Especialidades: la selección (vacunas/patologías) se edita en Servicios.
                 if (campoOtros) campoOtros.style.display = 'none';
-                if (campoEspecialidades) campoEspecialidades.style.display = '';
+                const espSrv = nexusNormalizarEspSrv(data);
+                const soloServ = nexusEsTipoSoloServicios(data.Solicitud);
+                const lblServ = document.getElementById('nexusEdit-label-servicios');
+                if (soloServ) {
+                    if (campoEspecialidades) campoEspecialidades.style.display = 'none';
+                    if (lblServ) lblServ.textContent = nexusEtiquetaServiciosEspeciales(data.Solicitud);
+                } else {
+                    if (campoEspecialidades) campoEspecialidades.style.display = '';
+                    if (lblServ) lblServ.textContent = 'Servicios Adicionales';
+                    document.getElementById('nexusEdit-label-especialidades').textContent = solUpper.includes('ESCUELA') ? 'Especialidades Médicas' : 'Especialidades';
+                }
                 if (campoServicios) campoServicios.style.display = '';
 
-                let etiquetaEspecialidad = 'Especialidades';
-                if (solUpper.includes('INMUNIZACIÓN') || solUpper.includes('INMUNIZACION')) etiquetaEspecialidad = 'Vacunas';
-                else if (solUpper.includes('QUIRÚRGICA') || solUpper.includes('QUIRURGICA')) etiquetaEspecialidad = 'Patologías Quirúrgicas';
-                else if (solUpper.includes('PEDIÁTRICA') || solUpper.includes('PEDIATRICA')) etiquetaEspecialidad = 'Patologías Pediátricas';
-                else if (solUpper.includes('OFTALMOLÓGICA') || solUpper.includes('OFTALMOLOGICA')) etiquetaEspecialidad = 'Patologías Oftalmológicas';
-                else if (solUpper.includes('ESCUELA')) etiquetaEspecialidad = 'Especialidades Médicas';
-
-                document.getElementById('nexusEdit-label-especialidades').textContent = etiquetaEspecialidad;
-                document.getElementById('nexusEdit-especialidades').value = limpiarBullets(data.Especialidades);
-                document.getElementById('nexusEdit-servicios').value = limpiarBullets(data.Servicios);
+                document.getElementById('nexusEdit-especialidades').value = soloServ ? '' : limpiarBullets(espSrv.Especialidades);
+                document.getElementById('nexusEdit-servicios').value = limpiarBullets(espSrv.Servicios);
                 document.getElementById('nexusEdit-otros').value = '';
             }
 
@@ -24000,7 +24031,11 @@
             if (esEspecial) {
                 nuevos.Otros = val('otros');
             } else {
-                nuevos.Especialidades = nexusToBullets(val('especialidades'));
+                if (nexusEsTipoSoloServicios(base.Solicitud)) {
+                    nuevos.Especialidades = 'Ninguno';
+                } else {
+                    nuevos.Especialidades = nexusToBullets(val('especialidades'));
+                }
                 nuevos.Servicios = nexusToBullets(val('servicios'));
             }
 
@@ -25538,7 +25573,7 @@
                     <span class="nexus-edit-hint">Separa cada elemento con comas — se mostrarán como lista con viñetas (•).</span>
                 </div>
                 <div class="nexus-edit-field" id="nexusEdit-field-servicios">
-                    <label class="nexus-edit-label"><i class="fas fa-hand-holding-medical"></i> Servicios Adicionales</label>
+                    <label class="nexus-edit-label"><i class="fas fa-hand-holding-medical"></i> <span id="nexusEdit-label-servicios">Servicios Adicionales</span></label>
                     <textarea id="nexusEdit-servicios" class="nexus-edit-textarea" rows="2"></textarea>
                     <span class="nexus-edit-hint">Separa cada elemento con comas — se mostrarán como lista con viñetas (•).</span>
                 </div>
