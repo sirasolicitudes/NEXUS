@@ -10453,11 +10453,60 @@
                         text-align: center; padding: 50px 20px; opacity: .6; grid-column: 1 / -1;
                     }
                     .artes-finales-empty i { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+                    .artes-desc-wrap [hidden] { display: none !important; }
+                    /* .nx-btn-ghost es de texto claro (modal oscuro): aquí el fondo es claro */
+                    .artes-desc-wrap .nx-btn {
+                        background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)) !important;
+                        color: #fff !important; border: none !important;
+                        padding: 12px 24px; box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+                    }
+                    .artes-desc-wrap .nx-btn:hover { filter: brightness(1.08); }
+                    .artes-desc-wrap .nx-btn:disabled { opacity: .6; cursor: default; }
+                    .artes-desc-head .nx-btn { padding: 8px 14px; font-size: .78rem; }
+                    .artes-desc-wrap { margin-top: 28px; text-align: center; }
+                    .artes-desc-panel { margin-top: 18px; text-align: left; }
+                    .artes-desc-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+                    .artes-desc-head h3 { margin: 0; font-size: 1.05rem; }
+                    .artes-desc-head .nx-btn { display: inline-flex; align-items: center; gap: 6px; }
+                    .artes-vigencia-aviso {
+                        display: flex; align-items: flex-start; gap: 14px;
+                        background: #eaf1ff; border: 1px solid rgba(5,84,242,0.25); border-left: 4px solid var(--color-primary);
+                        border-radius: 12px; padding: 14px 18px; margin: 0 0 22px;
+                        font-family: 'Poppins', sans-serif; color: #1f2d4d; text-align: left;
+                    }
+                    .artes-vigencia-aviso > i { color: var(--color-primary); font-size: 1.25rem; margin-top: 2px; }
+                    .artes-vigencia-aviso p { margin: 0; font-size: 0.88rem; line-height: 1.55; }
+                    .artes-vigencia-aviso p + p { margin-top: 4px; }
+                    .artes-vigencia-aviso strong { font-weight: 600; }
+                    @media (max-width: 560px) { .artes-vigencia-aviso { padding: 12px 14px; gap: 10px; } .artes-vigencia-aviso p { font-size: 0.82rem; } }
                 </style>
+                <div class="artes-vigencia-aviso" role="note">
+                    <i class="fas fa-calendar-check"></i>
+                    <div>
+                        <p>Tu arte estará disponible para <strong>descarga o corrección</strong> hasta la <strong>fecha del evento</strong>.</p>
+                        <p>Los <strong>obituarios</strong> estarán disponibles por <strong>4 días</strong> desde que se finalizan.</p>
+                    </div>
+                </div>
                 <div class="solicitudes-cards-grid" id="artesFinalesGrid">
                     <div class="artes-finales-empty" id="artesFinalesEmptyState">
                         <i class="fas fa-images"></i>
                         <p>No tienes artes finales pendientes de descarga por ahora.</p>
+                    </div>
+                </div>
+                <!-- Artes ya descargados: no se escuchan en vivo; se leen una sola vez al pulsar el botón. -->
+                <div class="artes-desc-wrap" id="artesDescargadosWrap">
+                    <button type="button" class="nx-btn nx-btn-ghost" id="artesDescargadosBtn" onclick="nexusVerArtesDescargados()">
+                        <i class="fas fa-box-archive"></i> Ver descargados
+                    </button>
+                    <div class="artes-desc-panel" id="artesDescargadosPanel" hidden>
+                        <div class="artes-desc-head">
+                            <h3><i class="fas fa-check"></i> Artes descargados</h3>
+                            <div style="display:flex; gap:8px;">
+                                <button type="button" class="nx-btn nx-btn-ghost" id="artesDescargadosRefresh" onclick="nexusVerArtesDescargados(true)"><i class="fas fa-rotate"></i> Actualizar</button>
+                                <button type="button" class="nx-btn nx-btn-ghost" onclick="nexusOcultarArtesDescargados()">Ocultar</button>
+                            </div>
+                        </div>
+                        <div class="solicitudes-cards-grid" id="artesDescargadosGrid"></div>
                     </div>
                 </div>
             </div>
@@ -21272,6 +21321,17 @@
         // aunque ya no vivan en esa lista (esta ahora solo trae PENDIENTE/PROCESANDO).
         window._nexusArtesFinalesCache = {};
 
+        // Caché APARTE para los artes DESCARGADO (botón «Ver descargados»). El listener reemplaza
+        // _nexusArtesFinalesCache completa en cada actualización y borraría estos documentos.
+        // buscar() y nexusAbrirArteFinalCard miran en las dos.
+        window._nexusArtesDescargadosCache = {};
+        var _nexusArtesDescargadosCargados = false;   // ya se hizo la lectura de esta sesión
+        var _nexusArtesDescargadosOcupado = false;
+
+        function _nexusEpochDeIdArte(id) {
+            var m = String(id || '').match(/NEXUS-(\d+)/);
+            return m ? parseInt(m[1], 10) : 0;
+        }
 
         // Escucha en Firestore los artes de la unidad del usuario (colección artes_finales).
         // Solo usuarios normales. Es idempotente: se llama al iniciar sesión y al entrar a la
@@ -21287,12 +21347,15 @@
             nexusDetenerArtesFinalesListener();
             _nexusArtesUnidadEscuchada = unidad;
             var S = window.fbStore;
-            var q = S.query(S.collection(window.db, 'artes_finales'), S.where('Unidad', '==', unidad));
-
-            function epochDeId(id) {
-                var m = String(id || '').match(/NEXUS-(\d+)/);
-                return m ? parseInt(m[1], 10) : 0;
-            }
+            // Solo los artes vivos del flujo: LISTO y DESCARGA SOLICITADA (este último para que no
+            // desaparezca mientras el admin autoriza). Los DESCARGADO se leen bajo demanda con
+            // el botón «Ver descargados» (nexusVerArtesDescargados).
+            var q = S.query(
+                S.collection(window.db, 'artes_finales'),
+                S.where('Unidad', '==', unidad),
+                S.where('ArteEstado', 'in', ['LISTO', 'DESCARGA SOLICITADA'])
+            );
+            var epochDeId = _nexusEpochDeIdArte;
 
             _nexusUnsubArtes = S.onSnapshot(q, function (snap) {
                 var lista = [];
@@ -21350,16 +21413,20 @@
             _nexusArtesUnidadEscuchada = null;
             _nexusArtesFinalesData = [];
             window._nexusArtesFinalesCache = {};
+            nexusReiniciarArtesDescargados();
             nexusActualizarAvisoArtesFinales();
         }
 
-        function nexusRenderizarArtesFinales(lista) {
-            var grid = document.getElementById('artesFinalesGrid');
+        // gridId / vacioHtml opcionales: por defecto pinta la lista principal. «Ver descargados»
+        // reutiliza esta misma función con su propia grilla.
+        function nexusRenderizarArtesFinales(lista, gridId, vacioHtml) {
+            var grid = document.getElementById(gridId || 'artesFinalesGrid');
             if (!grid) return;
 
             if (!lista.length) {
-                grid.innerHTML = '<div class="artes-finales-empty" id="artesFinalesEmptyState">' +
-                    '<i class="fas fa-images"></i><p>No tienes artes finales pendientes de descarga por ahora.</p></div>';
+                grid.innerHTML = vacioHtml || ('<div class="artes-finales-empty" id="artesFinalesEmptyState">' +
+                    '<i class="fas fa-images"></i><p>No tienes artes finales pendientes de descarga por ahora.</p>' +
+                    '<p style="font-size:.85rem;margin-top:6px;">Los que ya descargaste están en «Ver descargados».</p></div>');
                 return;
             }
 
@@ -21410,7 +21477,8 @@
         // trae con un getDoc puntual. Luego se abre el modal de descarga/corrección de siempre.
         window.nexusAbrirArteFinalCard = async function (id) {
             var cache = window._nexusArtesFinalesCache = window._nexusArtesFinalesCache || {};
-            if (!cache[id] && window.db && window.fbStore) {
+            var cacheDesc = window._nexusArtesDescargadosCache || {};
+            if (!cache[id] && !cacheDesc[id] && window.db && window.fbStore) {
                 try {
                     var S = window.fbStore;
                     var d = await S.getDoc(S.doc(window.db, 'artes_finales', id));
@@ -21419,13 +21487,116 @@
                     console.warn('[NEXUS] No se pudo leer artes_finales/' + id + ':', e);
                 }
             }
-            if (!cache[id]) {
+            if (!cache[id] && !cacheDesc[id]) {
                 if (typeof showToast === 'function') showToast({ type: 'warning', title: 'Arte no disponible', message: 'Este arte ya no está disponible.' });
                 return null;
             }
             if (typeof window.nexusAbrirModalArte === 'function') window.nexusAbrirModalArte(id);
             return null;
         };
+
+        // ---------- «Ver descargados» ----------
+        // Una sola lectura (getDocs) de los artes DESCARGADO de la unidad; después todo es local.
+        // «Actualizar» vuelve a leer, con un respiro de 10 s para que no se pulse en ráfaga.
+        var _nexusArtesDescargadosUltima = 0;
+        var NEXUS_ARTES_DESC_VACIO = '<div class="artes-finales-empty"><i class="fas fa-box-archive"></i><p>Aún no has descargado ningún arte.</p></div>';
+
+        function nexusPintarArtesDescargados() {
+            var cache = window._nexusArtesDescargadosCache || {};
+            var lista = Object.keys(cache).map(function (k) { return cache[k]; });
+            lista.sort(function (a, b) { return _nexusEpochDeIdArte(b.id) - _nexusEpochDeIdArte(a.id); });
+            nexusRenderizarArtesFinales(lista, 'artesDescargadosGrid', NEXUS_ARTES_DESC_VACIO);
+        }
+
+        window.nexusVerArtesDescargados = async function (forzar) {
+            var panel = document.getElementById('artesDescargadosPanel');
+            var btn = document.getElementById('artesDescargadosBtn');
+            if (!panel) return null;
+            if (_nexusArtesDescargadosOcupado) return null;
+            var unidad = (typeof NexusSession !== 'undefined' && NexusSession) ? NexusSession.unidad : '';
+            if (!unidad || !window.db || !window.fbStore) return null;
+
+            // Ya cargados en esta sesión: solo mostrar (0 lecturas), salvo «Actualizar».
+            if (_nexusArtesDescargadosCargados && forzar !== true) {
+                panel.hidden = false;
+                if (btn) btn.hidden = true;
+                nexusPintarArtesDescargados();
+                return null;
+            }
+            if (forzar === true && Date.now() - _nexusArtesDescargadosUltima < 10000) {
+                if (typeof showToast === 'function') showToast({ type: 'info', title: 'Lista al día', message: 'Ya se actualizó hace un momento.', duration: 2500 });
+                return null;
+            }
+
+            _nexusArtesDescargadosOcupado = true;
+            var refresh = document.getElementById('artesDescargadosRefresh');
+            var btnHtml = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...'; }
+            if (refresh) refresh.disabled = true;
+            try {
+                var S = window.fbStore;
+                var snap = await S.getDocs(S.query(
+                    S.collection(window.db, 'artes_finales'),
+                    S.where('Unidad', '==', unidad),
+                    S.where('ArteEstado', '==', 'DESCARGADO')
+                ));
+                var cache = {};
+                snap.forEach(function (d) {
+                    // El modal de descarga exige Estatus FINALIZADA; el documento no lo guarda.
+                    cache[d.id] = Object.assign({ Estatus: 'FINALIZADA', id: d.id }, d.data());
+                });
+                window._nexusArtesDescargadosCache = cache;
+                _nexusArtesDescargadosCargados = true;
+                _nexusArtesDescargadosUltima = Date.now();
+                panel.hidden = false;
+                if (btn) btn.hidden = true;
+                nexusPintarArtesDescargados();
+            } catch (err) {
+                console.error('[NEXUS] No se pudieron leer los artes descargados:', err);
+                if (typeof showToast === 'function') showToast({ type: 'error', title: 'No se pudo cargar', message: 'Inténtalo de nuevo en un momento.', duration: 4000 });
+            } finally {
+                _nexusArtesDescargadosOcupado = false;
+                if (btn) { btn.disabled = false; btn.innerHTML = btnHtml; }
+                if (refresh) refresh.disabled = false;
+            }
+            return null;
+        };
+
+        window.nexusOcultarArtesDescargados = function () {
+            var panel = document.getElementById('artesDescargadosPanel');
+            var btn = document.getElementById('artesDescargadosBtn');
+            if (panel) panel.hidden = true;
+            if (btn) btn.hidden = false;
+        };
+
+        // Un arte salió de DESCARGADO (redescarga pedida o corrección): se quita de la vista local.
+        window.nexusQuitarArteDescargado = function (id) {
+            if (window._nexusArtesDescargadosCache && window._nexusArtesDescargadosCache[id]) {
+                delete window._nexusArtesDescargadosCache[id];
+                if (_nexusArtesDescargadosCargados) nexusPintarArtesDescargados();
+            }
+        };
+
+        // Un arte acaba de pasar a DESCARGADO: si la vista ya se cargó, se añade sin leer nada.
+        // (Si aún no se cargó, la primera lectura lo traerá.)
+        window.nexusAgregarArteDescargado = function (sol) {
+            if (!_nexusArtesDescargadosCargados || !sol || !sol.id) return;
+            window._nexusArtesDescargadosCache[sol.id] = Object.assign({}, sol, { ArteEstado: 'DESCARGADO', Estatus: 'FINALIZADA' });
+            nexusPintarArtesDescargados();
+        };
+
+        function nexusReiniciarArtesDescargados() {
+            window._nexusArtesDescargadosCache = {};
+            _nexusArtesDescargadosCargados = false;
+            _nexusArtesDescargadosOcupado = false;
+            _nexusArtesDescargadosUltima = 0;
+            var panel = document.getElementById('artesDescargadosPanel');
+            var btn = document.getElementById('artesDescargadosBtn');
+            var grid = document.getElementById('artesDescargadosGrid');
+            if (panel) panel.hidden = true;
+            if (btn) { btn.hidden = false; btn.disabled = false; }
+            if (grid) grid.innerHTML = '';
+        }
 
         // Helper: aplica los 5 valores a los elementos KPI de Solicitudes
         function _nexusSetSolKpis(total, pend, proc, fin, rech) {
@@ -26043,6 +26214,8 @@
         #nxArteModalOverlay .nx-foot { flex-wrap: wrap; min-width: 0; }
         #nxArteModalOverlay .nx-actions { flex-wrap: wrap; min-width: 0; max-width: 100%; }
         #nxArteModalOverlay .nx-actions .nx-btn { min-width: 0; }
+        #nxArteModalOverlay .nx-actions-review { flex-wrap: nowrap; gap: 10px; }
+        #nxArteModalOverlay .nx-actions-review .nx-btn { flex: 1 1 0; white-space: normal; }
         @media (max-width: 560px) {
             #nxArteModalOverlay .nx-body { padding: 18px 16px 20px; }
             #nxArteModalOverlay .nx-foot { flex-direction: column; align-items: stretch; gap: 8px; }
@@ -26051,6 +26224,10 @@
             #nxArteModalOverlay .nx-actions .nx-btn { width: 100%; padding: 12px 10px; }
             /* El botón principal (Descargar / Solicitar descarga) ocupa todo el ancho */
             #nxArteModalOverlay .nx-actions .nx-btn-primary { grid-column: 1 / -1; order: -1; }
+            /* Modal de revisión (sin «Cerrar», ya existe la X): corrección y botón principal en una sola línea */
+            #nxArteModalOverlay .nx-actions-review .nx-btn-primary { grid-column: auto; order: 0; }
+            #nxArteModalOverlay .nx-actions-review .nx-btn { font-size: 0.8rem; padding: 12px 8px; white-space: normal; line-height: 1.25; }
+            #nxArteModalOverlay .nx-actions-review .nx-btn:only-child { grid-column: 1 / -1; }
         }
     </style>
 
@@ -26136,6 +26313,10 @@
                 if (window._nexusArtesFinalesCache && window._nexusArtesFinalesCache[id]) {
                     return window._nexusArtesFinalesCache[id];
                 }
+                // Artes DESCARGADO cargados con «Ver descargados» (caché aparte).
+                if (window._nexusArtesDescargadosCache && window._nexusArtesDescargadosCache[id]) {
+                    return window._nexusArtesDescargadosCache[id];
+                }
                 return null;
             }
 
@@ -26207,8 +26388,7 @@
                     '<div class="nx-arte-previews">' + vistas + '</div>' +
                     '<div class="nx-foot">' +
                         '<span class="nx-count"></span>' +
-                        '<div class="nx-actions">' +
-                            '<button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalArte()">Cerrar</button>' +
+                        '<div class="nx-actions nx-actions-review">' +
                             (cerrada ? '' : '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>') +
                             botonPrincipal +
                         '</div>' +
@@ -26414,6 +26594,7 @@
                     await nexusKpiActualizar(up);
 
                     toast('success', 'Corrección enviada', 'Tu solicitud volvió al equipo de diseño.', 4000);
+                    if (typeof nexusQuitarArteDescargado === 'function') nexusQuitarArteDescargado(id);   // el documento se borra de artes_finales
                     window.nexusCerrarModalCorreccion(false);
                     window.nexusCerrarModalArte();
 
@@ -26731,7 +26912,10 @@
                     var sinSolicitud = (sol.SolicitudPurgada === true);
                     toast('success', 'Descarga confirmada', sinSolicitud
                         ? 'Tu arte quedó descargado y se eliminará del sistema, porque la solicitud ya fue cerrada.'
-                        : 'Tu arte quedó marcado como descargado.', sinSolicitud ? 5000 : undefined);
+                        : 'Tu arte quedó descargado. Lo encontrarás en «Ver descargados», al final de esta pestaña.', 5000);
+                    // Sale de la lista principal (el listener ya no lo trae). Si «Ver descargados» ya
+                    // se cargó, se agrega ahí sin leer nada; los que se eliminan (sin solicitud) no.
+                    if (!sinSolicitud && typeof nexusAgregarArteDescargado === 'function') nexusAgregarArteDescargado(sol);
                     nexusNotificarTelegramArte(sol, 'DESCARGA_OK');
                     window.nexusCerrarModalArte();
                     if (sinSolicitud) eliminarArteSinSolicitud(id, sol);   // segundo plano; no bloquea ni lanza
@@ -26762,6 +26946,7 @@
                         MotivoRedescarga: motivo
                     });
                     toast('success', 'Petición enviada', 'El administrador revisará tu solicitud de descarga.');
+                    if (typeof nexusQuitarArteDescargado === 'function') nexusQuitarArteDescargado(id);   // pasa a la lista principal por el listener
                     nexusNotificarTelegramArte(sol, 'REDESCARGA_SOLICITADA', motivo);
                     window.nexusCerrarModalArte();
                 } catch (e) {
