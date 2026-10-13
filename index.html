@@ -9999,84 +9999,63 @@
             </div>
             <div class="solicitudes-container">
                 <!-- Contenedor Principal de Tarjetas Verticales de Solicitudes -->
-                <div class="solicitudes-kpi-grid" id="solicitudesKpiGrid">
-                    <div class="solicitudes-kpi-card kpi-total">
-                        <div class="icon-badge"><i class="fas fa-layer-group"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Total Solicitudes</span>
-                            <span class="kpi-value" id="solKpiTotal">0</span>
-                        </div>
-                    </div>
-                    <div class="solicitudes-kpi-card kpi-pend">
-                        <div class="icon-badge"><i class="fas fa-hourglass-half"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Pendientes</span>
-                            <span class="kpi-value" id="solKpiPend">0</span>
-                        </div>
-                    </div>
-                    <div class="solicitudes-kpi-card kpi-proc">
-                        <div class="icon-badge"><i class="fas fa-spinner"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">En Proceso</span>
-                            <span class="kpi-value" id="solKpiProc">0</span>
-                        </div>
-                    </div>
-                    <div class="solicitudes-kpi-card kpi-fin">
-                        <div class="icon-badge"><i class="fas fa-check-circle"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Finalizadas</span>
-                            <span class="kpi-value" id="solKpiFin">0</span>
-                        </div>
-                    </div>
-                    <div class="solicitudes-kpi-card kpi-rech">
-                        <div class="icon-badge"><i class="fas fa-ban"></i></div>
-                        <div class="kpi-content">
-                            <span class="kpi-label">Rechazadas</span>
-                            <span class="kpi-value" id="solKpiRech">0</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="kpi-dist" id="solicitudesKpiGrid" data-prefix="solKpi">
+    <div class="kd-top"><span class="kd-total" id="solKpiTotal">0</span><span class="kd-total-l">solicitudes en total</span></div>
+    <div class="kd-bar" aria-hidden="true"><i class="kd-pend"></i><i class="kd-proc"></i><i class="kd-fin"></i><i class="kd-rech"></i></div>
+    <div class="kd-leg">
+        <div class="kd-item kd-pend"><span class="kd-l"><b></b>Pendientes</span><span class="kd-vr"><span class="kd-v" id="solKpiPend">0</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-proc"><span class="kd-l"><b></b>En proceso</span><span class="kd-vr"><span class="kd-v" id="solKpiProc">0</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-fin"><span class="kd-l"><b></b>Finalizadas</span><span class="kd-vr"><span class="kd-v" id="solKpiFin">0</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-rech"><span class="kd-l"><b></b>Rechazadas</span><span class="kd-vr"><span class="kd-v" id="solKpiRech">0</span><span class="kd-p"></span></span></div>
+    </div>
+</div>
 
                 <style>
-                    .solicitudes-kpi-grid {
-                        display: grid;
-                        grid-template-columns: repeat(5, minmax(0, 1fr));
-                        gap: 14px;
-                        margin-bottom: 20px;
-                    }
-                    @media (max-width: 1100px) {
-                        .solicitudes-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-                    }
-                    @media (max-width: 768px) {
-                        .solicitudes-kpi-grid { grid-template-columns: 1fr; }
-                    }
-                    .solicitudes-kpi-card {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding: 16px 18px;
-                        border-radius: 20px;
-                        color: #fff;
-                        box-shadow: 0 10px 26px rgba(0,0,0,0.18);
-                    }
-                    .solicitudes-kpi-card .icon-badge {
-                        width: 40px; height: 40px;
-                        border-radius: 10px;
-                        background: rgba(255,255,255,0.2);
-                        display: flex; align-items: center; justify-content: center;
-                        font-size: 16px;
-                        flex-shrink: 0;
-                    }
-                    .solicitudes-kpi-card .kpi-content { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; flex: 1; min-width: 0; }
-                    .solicitudes-kpi-card .kpi-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; opacity: 0.95; line-height: 1.2; }
-                    .solicitudes-kpi-card .kpi-value { font-family: 'Audiowide', cursive; font-size: 1.8rem; font-weight: 400; line-height: 1; margin-left: auto; flex-shrink: 0; }
-                    @media (max-width: 768px) { .solicitudes-kpi-card .kpi-label { font-size: 0.9rem; } }
-                    .solicitudes-kpi-card.kpi-total { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
-                    .solicitudes-kpi-card.kpi-pend { background: linear-gradient(135deg, #0077b6 0%, #023047 100%); }
-                    .solicitudes-kpi-card.kpi-proc { background: linear-gradient(135deg, #fb8500 0%, #c96200 100%); }
-                    .solicitudes-kpi-card.kpi-fin { background: linear-gradient(135deg, #2d9d5f 0%, #1a531a 100%); }
-                    .solicitudes-kpi-card.kpi-rech { background: linear-gradient(135deg, #e63946 0%, #8b0000 100%); }
+                    /* ===== KPIs de Solicitudes · distribución por estado ===== */
+                    .kpi-dist { background:#fff; border:1px solid rgba(15,23,42,.08); border-radius:20px; padding:20px 24px; box-shadow:0 4px 20px rgba(0,0,0,.06); margin-bottom:20px; font-family:'Poppins',Arial,sans-serif; color:#14213d; }
+                    .kpi-dist .kd-top { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+                    .kpi-dist .kd-total { font-size:2.4rem; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; color:var(--color-primary); }
+                    .kpi-dist .kd-total-l { font-size:.9rem; color:#64708a; font-weight:500; }
+                    .kpi-dist .kd-bar { display:flex; gap:3px; height:10px; margin:16px 0 18px; border-radius:99px; background:#eef1f7; overflow:hidden; }
+                    .kpi-dist .kd-bar i { display:block; height:100%; flex:0; min-width:0; border-radius:99px; background:var(--c); transition:flex .4s; }
+                    .kpi-dist .kd-pend { --c:#0077b6; } .kpi-dist .kd-proc { --c:#fb8500; }
+                    .kpi-dist .kd-fin { --c:#2d9d5f; } .kpi-dist .kd-rech { --c:#e63946; }
+                    .kpi-dist .kd-leg { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:14px; }
+                    .kpi-dist .kd-item { display:flex; flex-direction:column; gap:6px; min-width:0; }
+                    .kpi-dist .kd-l { display:flex; align-items:center; gap:7px; font-size:.82rem; color:#64708a; font-weight:500; white-space:nowrap; }
+                    .kpi-dist .kd-l b { width:9px; height:9px; border-radius:50%; background:var(--c); flex:none; }
+                    .kpi-dist .kd-vr { display:flex; align-items:baseline; gap:8px; }
+                    .kpi-dist .kd-v { font-size:1.6rem; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+                    .kpi-dist .kd-p { font-size:.78rem; color:#64708a; }
                 </style>
+                <script>
+                /* Barra de distribución de KPIs: lee los números que ya escribe el código y dibuja barra y porcentajes. */
+                (function () {
+                    function num(id) { var e = document.getElementById(id); var n = e ? parseInt(String(e.textContent).replace(/[^\d]/g, ''), 10) : 0; return isNaN(n) ? 0 : n; }
+                    function pintar(c) {
+                        var p = c.getAttribute('data-prefix'), ks = ['Pend', 'Proc', 'Fin', 'Rech'];
+                        var v = ks.map(function (k) { return num(p + k); });
+                        var suma = v.reduce(function (a, b) { return a + b; }, 0);
+                        var base = num(p + 'Total') || suma;
+                        var barras = c.querySelectorAll('.kd-bar i'), pcs = c.querySelectorAll('.kd-p');
+                        for (var i = 0; i < ks.length; i++) {
+                            barras[i].style.flex = suma ? String(v[i]) : '0';
+                            barras[i].style.minWidth = v[i] > 0 ? '4px' : '0';
+                            var t = base ? Math.round(v[i] * 100 / base) + '%' : '';
+                            if (pcs[i].textContent !== t) pcs[i].textContent = t;
+                        }
+                    }
+                    function iniciar() {
+                        document.querySelectorAll('.kpi-dist').forEach(function (c) {
+                            var f = function () { pintar(c); };
+                            var mo = new MutationObserver(f);
+                            c.querySelectorAll('.kd-v, .kd-total').forEach(function (el) { mo.observe(el, { childList: true, characterData: true, subtree: true }); });
+                            f();
+                        });
+                    }
+                    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar); else iniciar();
+                })();
+                </script>
 
                 <style>
                     /* ===== Buscador de Solicitudes (por Unidad / Código) + Filtro por Tipo ===== */
@@ -10539,43 +10518,16 @@
                     </div>
 
                     <!-- 1. KPIs globales -->
-                    <div class="nxd-kpi-grid">
-                        <div class="nxd-kpi-card nxd-kpi-total">
-                            <div class="icon-badge"><i class="fas fa-layer-group"></i></div>
-                            <div class="kpi-content">
-                                <span class="kpi-label">Total Solicitudes</span>
-                                <span class="kpi-value" id="nxdKpiTotal">—</span>
-                            </div>
-                        </div>
-                        <div class="nxd-kpi-card nxd-kpi-pend">
-                            <div class="icon-badge"><i class="fas fa-hourglass-half"></i></div>
-                            <div class="kpi-content">
-                                <span class="kpi-label">Pendientes</span>
-                                <span class="kpi-value" id="nxdKpiPend">—</span>
-                            </div>
-                        </div>
-                        <div class="nxd-kpi-card nxd-kpi-proc">
-                            <div class="icon-badge"><i class="fas fa-spinner"></i></div>
-                            <div class="kpi-content">
-                                <span class="kpi-label">En Proceso</span>
-                                <span class="kpi-value" id="nxdKpiProc">—</span>
-                            </div>
-                        </div>
-                        <div class="nxd-kpi-card nxd-kpi-fin">
-                            <div class="icon-badge"><i class="fas fa-check-circle"></i></div>
-                            <div class="kpi-content">
-                                <span class="kpi-label">Finalizadas</span>
-                                <span class="kpi-value" id="nxdKpiFin">—</span>
-                            </div>
-                        </div>
-                        <div class="nxd-kpi-card nxd-kpi-rech">
-                            <div class="icon-badge"><i class="fas fa-ban"></i></div>
-                            <div class="kpi-content">
-                                <span class="kpi-label">Rechazadas</span>
-                                <span class="kpi-value" id="nxdKpiRech">—</span>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="kpi-dist" data-prefix="nxdKpi">
+    <div class="kd-top"><span class="kd-total" id="nxdKpiTotal">—</span><span class="kd-total-l">solicitudes en total</span></div>
+    <div class="kd-bar" aria-hidden="true"><i class="kd-pend"></i><i class="kd-proc"></i><i class="kd-fin"></i><i class="kd-rech"></i></div>
+    <div class="kd-leg">
+        <div class="kd-item kd-pend"><span class="kd-l"><b></b>Pendientes</span><span class="kd-vr"><span class="kd-v" id="nxdKpiPend">—</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-proc"><span class="kd-l"><b></b>En proceso</span><span class="kd-vr"><span class="kd-v" id="nxdKpiProc">—</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-fin"><span class="kd-l"><b></b>Finalizadas</span><span class="kd-vr"><span class="kd-v" id="nxdKpiFin">—</span><span class="kd-p"></span></span></div>
+        <div class="kd-item kd-rech"><span class="kd-l"><b></b>Rechazadas</span><span class="kd-vr"><span class="kd-v" id="nxdKpiRech">—</span><span class="kd-p"></span></span></div>
+    </div>
+</div>
 
                     <!-- 2. Gráficos principales -->
                     <div class="nxd-grid-2">
