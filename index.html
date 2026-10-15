@@ -27742,11 +27742,13 @@ function nxDisKpi(label, valor, icono, nota) {
     </div>`;
 }
 
-function nxDisLeyendaTipos(tipos) {
+function nxDisLeyendaTipos(tipos, compacto) {
     const filas = nxDisTiposOrdenados(tipos);
     if (!filas.length) return '<div class="nx-dis-vacio">Sin solicitudes finalizadas</div>';
-    return `<ul class="nx-dis-leyenda">${filas.map(([t, n]) =>
-        `<li><span class="dot" style="background:${nxDisColorTipo(t)}"></span><span class="t">${nxDisEsc(t)}</span><b style="color:${nxDisColorTipo(t)}">${n}</b></li>`).join('')}</ul>`;
+    // En los paneles de diseñador el espacio es fijo: según la cantidad de tipos se reduce la letra o se usan 2 columnas.
+    const dens = !compacto ? '' : (filas.length <= 9 ? ' cmp' : filas.length <= 12 ? ' cmp dens-m' : filas.length <= 15 ? ' cmp dens-s' : ' cmp dens-xs');
+    return `<ul class="nx-dis-leyenda${dens}">${filas.map(([t, n]) =>
+        `<li title="${nxDisEsc(t)}"><span class="dot" style="background:${nxDisColorTipo(t)}"></span><span class="t">${nxDisEsc(t)}</span><b style="color:${nxDisColorTipo(t)}">${n}</b></li>`).join('')}</ul>`;
 }
 
 function nxDisSegsTipos(tipos) {
@@ -27794,8 +27796,8 @@ function nxDisTarjetaDisenador(nombre, d, totalGlobal) {
                     <div class="nx-dis-panel nx-dis-tipos">
                         <div class="nx-dis-pill right">Tipos de solicitud Finalizadas</div>
                         <div class="nx-dis-tipos-body">
-                            ${nxDisDonut(nxDisSegsTipos(d.tipos), { size: 118, stroke: 15, centro: d.total, sub: 'finalizadas', aria: 'Solicitudes finalizadas por tipo' })}
-                            ${nxDisLeyendaTipos(d.tipos)}
+                            ${nxDisDonut(nxDisSegsTipos(d.tipos), { size: 100, stroke: 14, centro: d.total, sub: 'finalizadas', aria: 'Solicitudes finalizadas por tipo' })}
+                            ${nxDisLeyendaTipos(d.tipos, true)}
                         </div>
                     </div>
                     <div class="nx-dis-panel nx-dis-sem">
@@ -27904,6 +27906,17 @@ const NX_DIS_CSS = `
 .nx-dis-sub li b { font-size: 13px; }
 .nx-dis-tipos { flex: 1.35; display: flex; flex-direction: column; min-height: 0; }
 .nx-dis-tipos-body { flex: 1; min-height: 0; display: flex; align-items: center; gap: 12px; }
+/* Paneles de diseñador: más alto para el listado de tipos; la leyenda se compacta según cuántos tipos haya */
+.nx-dis-col .nx-dis-tipos { flex: 1.6; }
+.nx-dis-col .nx-dis-tipos-body > svg { flex: none; }
+.nx-dis-col .nx-dis-tipos, .nx-dis-col .nx-dis-tipos-body { min-width: 0; }
+.nx-dis-leyenda.cmp { min-width: 0; }
+.nx-dis-leyenda.cmp .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nx-dis-leyenda.cmp.dens-m li { font-size: 9.5px; line-height: 1.1; padding: .5px 0; }
+.nx-dis-leyenda.cmp.dens-m b { font-size: 10.5px; }
+.nx-dis-leyenda.cmp.dens-s li, .nx-dis-leyenda.cmp.dens-xs li { font-size: 8.5px; line-height: 1.05; padding: 0; }
+.nx-dis-leyenda.cmp.dens-s b, .nx-dis-leyenda.cmp.dens-xs b { font-size: 9.5px; }
+.nx-dis-leyenda.cmp.dens-xs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 10px; align-content: center; }
 .nx-dis-leyenda { list-style: none; margin: 0; padding: 0; flex: 1; }
 .nx-dis-leyenda li { display: flex; align-items: center; gap: 6px; padding: 1.5px 0; line-height: 1.15; border-bottom: 1px solid #cdd5e1; font-size: 10.5px; }
 .nx-dis-leyenda .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
