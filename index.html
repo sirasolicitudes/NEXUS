@@ -28847,7 +28847,10 @@ function nexusInicializarReporteDiseno(contenedor) {
             const mesActual = nexusObtenerClaveMes();
             const historicos = await nexusObtenerMesesHistoricosDisponibles();
 
-            const clavesUnicas = Array.from(new Set([mesActual, nexusMesCerrable(), ...historicos]));
+            // El mes cerrable (el anterior) solo se ofrece el día 1, que es cuando se puede ejecutar el Cierre y Purga.
+            // Fuera de ese día, un mes sin documento histórico en Firestore no se muestra en el selector.
+            const ofrecerMesCerrable = new Date().getDate() === 1;
+            const clavesUnicas = Array.from(new Set([mesActual, ...(ofrecerMesCerrable ? [nexusMesCerrable()] : []), ...historicos]));
             clavesUnicas.sort((a, b) => b.localeCompare(a)); // más reciente primero
 
             const meses = clavesUnicas.map(clave => ({ clave, label: nexusNombreMes(clave) }));
