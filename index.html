@@ -15,7 +15,6 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.0.js"></script>
     <!-- Canvas Confetti para explosión de globos reventables -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js" onerror="console.warn('[NEXUS] cdnjs falló, cargando Chart.js desde jsDelivr...'); document.write('<scr'+'ipt src=\'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js\'></scr'+'ipt>')"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Elementos de audio para notificaciones por sexo -->
@@ -243,35 +242,6 @@
             nav a.nav-arte-listo,
             nav a.nav-arte-listo .nav-arte-dl { animation: none !important; }
             .menu-toggle.has-arte-listo:not([aria-expanded="true"]) .menu-toggle-dl { display: none; }
-        }
-
-        /* Pestaña "Estadisticas" (solo admin y diseñadores): aviso de datos recién actualizados */
-        nav a.nav-stats-nuevo {
-            color: #7ee0ff;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background-color: rgba(126, 224, 255, 0.12);
-            animation: nxNavStatsPulse 2.4s ease-in-out infinite;
-        }
-        nav a.nav-stats-nuevo:hover { color: #fff; background-color: rgba(126, 224, 255, 0.25); }
-        nav a.nav-stats-nuevo .nav-stats-ic { margin-right: 6px; animation: nxNavArteBounce 1.4s ease-in-out infinite; }
-        @keyframes nxNavStatsPulse {
-            0%, 100% { box-shadow: inset 0 0 0 1px rgba(126, 224, 255, 0.35), 0 0 0 rgba(126, 224, 255, 0); }
-            50%      { box-shadow: inset 0 0 0 1px rgba(126, 224, 255, 0.95), 0 0 14px rgba(126, 224, 255, 0.45); }
-        }
-        @keyframes nxToggleStatsGlow {
-            0%, 100% { box-shadow: 0 0 0 rgba(126, 224, 255, 0); }
-            50%      { box-shadow: 0 0 14px rgba(126, 224, 255, 0.65); }
-        }
-        @media (max-width: 860px) {
-            .menu-toggle.has-stats-nuevo:not([aria-expanded="true"]) {
-                border-color: rgba(126, 224, 255, 0.9);
-                animation: nxToggleStatsGlow 2.2s ease-in-out infinite;
-            }
-            nav a.nav-stats-nuevo { color: #7ee0ff !important; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            .menu-toggle.has-stats-nuevo, nav a.nav-stats-nuevo, nav a.nav-stats-nuevo .nav-stats-ic { animation: none !important; }
         }
 
         /* Hero Section */
@@ -5793,7 +5763,7 @@
             box-shadow: 0 0 18px rgba(5, 84, 242, 0.3);
         }
 
-        /* Botón de mantenimiento en toolbar de estadísticas */
+        /* Botón de mantenimiento (pestaña Estadísticas, solo ADMIN) */
         #nxd-btn-maint {
             display: none; /* visible solo para ADMIN vía JS */
             align-items: center;
@@ -7024,214 +6994,15 @@
         }
     </style>
     <style>
-        /* ============================================================
-           DASHBOARD DE ESTADÍSTICAS — NEXUS
-           ============================================================ */
-        .nxd-wrap { display: flex; flex-direction: column; gap: 22px; }
-
-        .nxd-toolbar {
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 12px;
-            background: white; border-radius: 16px; padding: 14px 20px;
+        /* Pestaña Estadísticas en construcción */
+        .nx-cons-toolbar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+        .nx-cons-box {
+            background: white; border-radius: 16px; padding: 56px 24px; text-align: center;
             box-shadow: 0 4px 16px rgba(0,0,0,0.06);
         }
-        .nxd-toolbar-label { font-family:'DM Sans',sans-serif; font-size:0.95rem; color: var(--color-dark); font-weight: 600; }
-        .nxd-toolbar-label span { color: var(--color-primary); }
-        .nxd-refresh-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-            color: white; border: none; padding: 10px 18px; border-radius: 10px;
-            font-family:'DM Sans',sans-serif; font-weight: 600; font-size: 0.85rem;
-            cursor: pointer; box-shadow: 0 8px 18px rgba(5,84,242,0.3);
-            transition: transform .15s ease, box-shadow .15s ease;
-        }
-        .nxd-refresh-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(5,84,242,0.4); }
-        .nxd-refresh-btn.loading i { animation: nxdSpin 0.8s linear infinite; }
-        @keyframes nxdSpin { to { transform: rotate(360deg); } }
-        /* Hora de los datos + cuenta regresiva a la próxima actualización (reemplaza el botón de recarga) */
-        .nxd-sync {
-            display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
-            background: rgba(5,84,242,0.07); color: var(--color-dark);
-            border-radius: 999px; padding: 8px 14px;
-            font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500;
-        }
-        .nxd-sync i { color: var(--color-primary); }
-        .nxd-sync-cuenta { font-weight: 600; color: var(--color-primary); font-variant-numeric: tabular-nums; }
-        .nxd-sync-sep { opacity: 0.4; }
-        .nxd-sync.nxd-sync-retraso .nxd-sync-cuenta, .nxd-sync.nxd-sync-retraso i { color: #e67e22; }
-        @media (max-width: 600px) {
-            .nxd-sync { width: 100%; justify-content: center; font-size: 0.75rem; }
-            .nxd-sync-sep { display: none; }
-        }
-
-        /* KPI cards */
-        .nxd-kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-        @media (max-width: 1200px) { .nxd-kpi-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 768px) { .nxd-kpi-grid { grid-template-columns: 1fr; } }
-
-        .nxd-kpi-card {
-            border-radius: 20px; padding: 16px 18px; color: white; position: relative;
-            overflow: hidden; box-shadow: 0 10px 26px rgba(0,0,0,0.18);
-            display: flex; align-items: center; gap: 12px;
-        }
-        .nxd-kpi-card .icon-badge {
-            width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.2);
-            display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
-        }
-        .nxd-kpi-card .kpi-content {
-            display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px;
-            flex: 1; min-width: 0; text-align: left;
-        }
-        .nxd-kpi-card .kpi-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: .04em; opacity: .95; font-weight: 700; line-height: 1.2; }
-        .nxd-kpi-card .kpi-value { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.6rem; line-height: 1; margin-left: auto; flex-shrink: 0; }
-        .nxd-kpi-total  { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%); }
-        .nxd-kpi-pend   { background: linear-gradient(135deg, #0077b6 0%, #023047 100%); }
-        .nxd-kpi-proc   { background: linear-gradient(135deg, #fb8500 0%, #c96200 100%); }
-        .nxd-kpi-fin    { background: linear-gradient(135deg, #2d9d5f 0%, #1a531a 100%); }
-        .nxd-kpi-rech   { background: linear-gradient(135deg, #e63946 0%, #8b0000 100%); }
-
-        /* Panel genérico */
-        .nxd-panel {
-            background: white; border-radius: 20px; padding: 22px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
-        .nxd-panel-title {
-            font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--color-dark);
-            display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
-            font-weight: 600;
-        }
-        .nxd-panel-title .tag {
-            margin-left: auto; font-size: 0.65rem; font-weight: 700; color: var(--color-primary);
-            background: rgba(5,84,242,0.08); padding: 4px 10px; border-radius: 10px; font-family:'DM Sans',sans-serif;
-        }
-        .nxd-grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; }
-        .nxd-grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-        .nxd-chart-box { position: relative; width: 100%; }
-
-        /* Mini stat inline (semanal / métricas) */
-        .nxd-mini-card {
-            border-radius: 16px; padding: 16px; color: white; text-align: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-        .nxd-mini-card .mini-label { font-size: 0.75rem; opacity: .92; font-weight: 600; margin-bottom: 6px; }
-        .nxd-mini-card .mini-value { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.7rem; }
-        .nxd-mini-card .mini-sub { font-size: 0.7rem; opacity: .85; margin-top: 4px; }
-
-        /* Diseñadores */
-        .nxd-designer-row {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-            border-radius: 12px; background: #f8f9fa; margin-bottom: 8px;
-        }
-        .nxd-designer-avatar {
-            width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-size: 1rem; color: white; flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .nxd-designer-info { flex: 1; min-width: 0; }
-        .nxd-designer-name { font-weight: 700; font-size: 0.85rem; color: var(--color-dark); }
-        .nxd-designer-bar-track { height: 6px; border-radius: 4px; background: #e9ecef; margin-top: 4px; overflow: hidden; }
-        .nxd-designer-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--color-primary), var(--color-secondary)); }
-        .nxd-designer-count { font-family:'Sora', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--color-primary); flex-shrink: 0; }
-
-        /* Carga de trabajo de diseñadores (comparativa mensual) */
-        .nxd-comp-designers-grid {
-            display: flex; flex-direction: column; gap: 12px;
-        }
-        .nxd-comp-designer-card {
-            display: flex; align-items: center; gap: 14px; padding: 14px 20px;
-            border-radius: 20px; border: 2px solid;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: transform .15s ease, box-shadow .15s ease;
-            flex-wrap: wrap; row-gap: 10px;
-        }
-        .nxd-comp-designer-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.09); }
-        .nxd-comp-designer-avatar-lg {
-            width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; box-shadow: 0 3px 8px rgba(0,0,0,0.18);
-        }
-        .nxd-comp-designer-name-lg { font-weight: 800; font-size: 0.95rem; color: var(--color-dark); flex-shrink: 0; min-width: 80px; }
-        .nxd-comp-designer-stats { display: flex; align-items: center; gap: 14px; flex: 1 1 160px; justify-content: center; }
-        .nxd-comp-designer-stat { text-align: center; min-width: 55px; }
-        .nxd-comp-designer-stat .lbl { font-size: 0.6rem; text-transform: uppercase; font-weight: 700; color: #94a3b8; letter-spacing: .02em; line-height: 1.25; }
-        .nxd-comp-designer-stat .val { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.3rem; line-height: 1.3; }
-        .nxd-comp-designer-arrow { color: #cbd5e1; font-size: 1.1rem; flex-shrink: 0; }
-        .nxd-comp-designer-trend {
-            padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 800;
-            white-space: nowrap; text-align: center; flex-shrink: 0; margin-left: auto;
-        }
-
-        /* Ranking de eficiencia */
-        .nxd-rank-row {
-            display: flex; align-items: center; gap: 14px; padding: 12px 14px;
-            border-radius: 14px; background: #f8f9fa; margin-bottom: 10px;
-        }
-        .nxd-rank-medal {
-            width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 0.85rem; color: white;
-            background: #adb5bd;
-        }
-        .nxd-rank-medal.gold   { background: linear-gradient(135deg,#ffd60a,#c99400); }
-        .nxd-rank-medal.silver { background: linear-gradient(135deg,#dee2e6,#868e96); }
-        .nxd-rank-medal.bronze { background: linear-gradient(135deg,#e0a672,#a9662c); }
-        .nxd-rank-info { flex: 1; min-width: 0; }
-        .nxd-rank-name { font-weight: 700; font-size: 0.85rem; color: var(--color-dark); margin-bottom: 4px; }
-        .nxd-rank-sub { font-size: 0.7rem; color: #6c757d; }
-        .nxd-rank-track { height: 8px; border-radius: 5px; background: #e9ecef; margin-top: 6px; overflow: hidden; }
-        .nxd-rank-fill { height: 100%; border-radius: 5px; }
-        .nxd-rank-badge {
-            font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1rem; flex-shrink: 0; min-width: 54px; text-align: right;
-        }
-        .nxd-rank-badge.high { color: #2d9d5f; }
-        .nxd-rank-badge.mid  { color: #fb8500; }
-        .nxd-rank-badge.low  { color: #e63946; }
-
-        /* Top listas */
-        .nxd-top-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-        .nxd-top-item {
-            display: flex; align-items: center; gap: 10px; padding: 9px 12px;
-            background: #f8f9fa; border-radius: 10px; font-size: 0.82rem;
-        }
-        .nxd-top-rank {
-            width: 22px; height: 22px; border-radius: 50%; background: var(--color-primary); color: white;
-            font-size: 0.68rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .nxd-top-name { flex: 1; color: var(--color-dark); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .nxd-top-count { font-family:'Sora', sans-serif; font-weight: 700; color: var(--color-primary); font-size: 0.85rem; flex-shrink: 0; }
-
-        /* Comparativa mensual */
-        .nxd-comp-card {
-            display: flex; align-items: center; justify-content: space-around; padding: 18px;
-            border-radius: 18px; background: white; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-            border-top: 4px solid var(--color-primary);
-        }
-        .nxd-comp-side { text-align: center; }
-        .nxd-comp-side .lbl { font-size: 0.68rem; text-transform: uppercase; color: #6c757d; font-weight: 700; letter-spacing: .03em; }
-        .nxd-comp-side .val { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.7rem; color: var(--color-dark); }
-        .nxd-comp-vs {
-            width: 40px; height: 40px; border-radius: 50%; background: #f1f3f5; color: #adb5bd;
-            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.75rem; flex-shrink: 0;
-        }
-        .nxd-comp-trend { font-size: 0.72rem; font-weight: 700; margin-top: 4px; }
-        .nxd-trend-up { color: #2d9d5f; }
-        .nxd-trend-down { color: #e63946; }
-        .nxd-trend-flat { color: #6c757d; }
-
-        .nxd-empty {
-            text-align: center; padding: 30px; color: #adb5bd; font-size: 0.85rem;
-        }
-        .nxd-loading-line {
-            height: 14px; border-radius: 7px; background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-            background-size: 200% 100%; animation: nxdShimmer 1.4s infinite;
-        }
-        @keyframes nxdShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        @media (max-width: 768px) {
-            .nxd-kpi-card .kpi-value { font-size: 1.8rem; }
-            .nxd-kpi-card .kpi-label { font-size: 0.9rem; }
-            .nxd-comp-side .val { font-size: 1.3rem; }
-        }
+        .nx-cons-box i { font-size: 3rem; color: var(--color-primary); margin-bottom: 18px; display: block; }
+        .nx-cons-box h3 { font-family: 'Sora', sans-serif; font-size: 1.4rem; color: var(--color-dark); margin: 0 0 8px; }
+        .nx-cons-box p { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #64708a; margin: 0; }
     </style>
 </head>
 <body>
@@ -10493,187 +10264,23 @@
             </div>
         </section>
 
-        <!-- Estadisticas Section -->
+        <!-- Estadisticas Section (en construcción) -->
         <section id="estadisticas" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Estadísticas</h2>
-                <p class="section-subtitle">Análisis y métricas del sistema</p>
+                <p class="section-subtitle">Estamos preparando las nuevas estadísticas</p>
             </div>
             <div class="estadisticas-container">
-                <div class="nxd-wrap" id="nxdRoot">
-
-                    <!-- Toolbar -->
-                    <div class="nxd-toolbar">
-                        <div class="nxd-toolbar-label">📅 Período: <span id="nxdMesActualLabel">—</span></div>
-                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                            <button id="nxd-btn-maint" onclick="nexusToggleMantenimiento()" title="Activar / Desactivar modo mantenimiento">
-                                <i class="fas fa-tools"></i>
-                                <span id="nxd-btn-maint-label">🛠️ Mantenimiento <span id="nxd-maint-status" style="color:#e63946; font-weight:700;">● OFF</span></span>
-                            </button>
-                            <div class="nxd-sync" id="nxdSync" role="status" aria-live="off" title="Las estadísticas se actualizan solas cada hora">
-                                <i class="fas fa-clock"></i>
-                                <span class="nxd-sync-hora" id="nxdSyncHora">Actualizado: —</span>
-                                <span class="nxd-sync-sep">·</span>
-                                <span class="nxd-sync-cuenta" id="nxdSyncCuenta"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 1. KPIs globales -->
-                    <div class="kpi-dist" data-prefix="nxdKpi">
-    <div class="kd-top"><span class="kd-total" id="nxdKpiTotal">—</span><span class="kd-total-l">solicitudes en total</span></div>
-    <div class="kd-bar" aria-hidden="true"><i class="kd-pend"></i><i class="kd-proc"></i><i class="kd-fin"></i><i class="kd-rech"></i></div>
-    <div class="kd-leg">
-        <div class="kd-item kd-pend"><span class="kd-l"><b></b>Pendientes</span><span class="kd-vr"><span class="kd-v" id="nxdKpiPend">—</span><span class="kd-p"></span></span></div>
-        <div class="kd-item kd-proc"><span class="kd-l"><b></b>En proceso</span><span class="kd-vr"><span class="kd-v" id="nxdKpiProc">—</span><span class="kd-p"></span></span></div>
-        <div class="kd-item kd-fin"><span class="kd-l"><b></b>Finalizadas</span><span class="kd-vr"><span class="kd-v" id="nxdKpiFin">—</span><span class="kd-p"></span></span></div>
-        <div class="kd-item kd-rech"><span class="kd-l"><b></b>Rechazadas</span><span class="kd-vr"><span class="kd-v" id="nxdKpiRech">—</span><span class="kd-p"></span></span></div>
-    </div>
-</div>
-
-                    <!-- 2. Gráficos principales -->
-                    <div class="nxd-grid-2">
-                        <div class="nxd-panel">
-                            <div class="nxd-panel-title"><i class="fas fa-chart-line" style="color:var(--color-primary);"></i> Solicitudes Recibidas <span class="tag">Por día</span></div>
-                            <div class="nxd-chart-box" style="height:260px;"><canvas id="nxdChartRecibidas"></canvas></div>
-                        </div>
-                        <div class="nxd-panel">
-                            <div class="nxd-panel-title"><i class="fas fa-chart-bar" style="color:var(--color-primary);"></i> Recibidas vs Finalizadas <span class="tag">Por día</span></div>
-                            <div class="nxd-chart-box" style="height:260px;"><canvas id="nxdChartFinVsRec"></canvas></div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Rendimiento de diseñadores -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-palette" style="color:var(--color-primary);"></i> Rendimiento de Diseñadores <span class="tag">Finalizadas este mes</span></div>
-                        <div class="nxd-grid-2" style="align-items:center;">
-                            <div class="nxd-chart-box" style="height:280px;"><canvas id="nxdChartDisenadores"></canvas></div>
-                            <div id="nxdDesignerCards"><div class="nxd-empty">Cargando diseñadores…</div></div>
-                        </div>
-                    </div>
-
-                    <!-- 3.1 Ranking de diseñadores por eficiencia -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-trophy" style="color:var(--color-primary);"></i> Ranking de Diseñadores por Eficiencia <span class="tag">Finalizadas / Asignadas</span></div>
-                        <div id="nxdEfficiencyRanking"><div class="nxd-empty">Cargando ranking…</div></div>
-                    </div>
-
-                    <!-- 4. Rendimiento semanal -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-calendar-week" style="color:var(--color-primary);"></i> Rendimiento Semanal <span class="tag">Sáb - Vie</span></div>
-                        <div class="nxd-grid-4" style="margin-bottom:18px;">
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#219ebc,#023047);">
-                                <div class="mini-label">Recibidas esta Semana</div>
-                                <div class="mini-value" id="nxdWeekReceived">—</div>
-                            </div>
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#2d9d5f,#1a531a);">
-                                <div class="mini-label">Finalizadas esta Semana</div>
-                                <div class="mini-value" id="nxdWeekFinalized">—</div>
-                            </div>
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#e63946,#8b0000);">
-                                <div class="mini-label">Rechazadas esta Semana</div>
-                                <div class="mini-value" id="nxdWeekRejected">—</div>
-                            </div>
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#fb8500,#c96200);">
-                                <div class="mini-label">Eficiencia Semanal</div>
-                                <div class="mini-value" id="nxdWeekEfficiency">—</div>
-                            </div>
-                        </div>
-                        <div class="nxd-chart-box" style="height:320px;"><canvas id="nxdChartSemanal"></canvas></div>
-                    </div>
-
-                    <!-- 5. Métricas avanzadas -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-gauge-high" style="color:var(--color-primary);"></i> Métricas Avanzadas</div>
-                        <div class="nxd-grid-4">
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#667eea,#764ba2);">
-                                <div class="mini-label">✅ Tasa de Finalización</div>
-                                <div class="mini-value" id="nxdCompletionRate">—</div>
-                            </div>
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#e63946,#8b0000);">
-                                <div class="mini-label">🚫 Tasa de Rechazo</div>
-                                <div class="mini-value" id="nxdRejectionRate">—</div>
-                            </div>
-                            <div class="nxd-mini-card" style="background:linear-gradient(135deg,#4facfe,#00669e);">
-                                <div class="mini-label">📆 Hoy vs Promedio</div>
-                                <div class="mini-value"><span id="nxdTodayCount">—</span> <span style="font-size:0.9rem;opacity:.8;">/ <span id="nxdAvgCount">—</span></span></div>
-                                <div class="mini-sub">Solicitudes diarias</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 6. Top listas -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-ranking-star" style="color:var(--color-primary);"></i> Estadísticas Detalladas <span class="tag">Este mes</span></div>
-                        <div class="nxd-grid-4">
-                            <div>
-                                <div style="font-weight:700; font-size:0.8rem; color:var(--color-dark); margin-bottom:10px;">🏥 Top Unidades</div>
-                                <ul class="nxd-top-list" id="nxdTopUnidades"><li class="nxd-empty">Cargando…</li></ul>
-                            </div>
-                            <div>
-                                <div style="font-weight:700; font-size:0.8rem; color:var(--color-dark); margin-bottom:10px;">📂 Top Solicitudes</div>
-                                <ul class="nxd-top-list" id="nxdTopSolicitudes"><li class="nxd-empty">Cargando…</li></ul>
-                            </div>
-                            <div>
-                                <div style="font-weight:700; font-size:0.8rem; color:var(--color-dark); margin-bottom:10px;">🩺 Top Especialidades</div>
-                                <ul class="nxd-top-list" id="nxdTopEspecialidades"><li class="nxd-empty">Cargando…</li></ul>
-                            </div>
-                            <div>
-                                <div style="font-weight:700; font-size:0.8rem; color:var(--color-dark); margin-bottom:10px;">🔧 Top Servicios</div>
-                                <ul class="nxd-top-list" id="nxdTopServicios"><li class="nxd-empty">Cargando…</li></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 7. Comparativa mensual -->
-                    <div class="nxd-panel">
-                        <div class="nxd-panel-title"><i class="fas fa-scale-balanced" style="color:var(--color-primary);"></i> Comparativa: <span id="nxdMesActualComp" style="color:var(--color-primary);">Actual</span> vs <span id="nxdMesAnteriorComp" style="color:#6c757d;">Anterior</span></div>
-
-                        <div id="nxdCompNoData" class="nxd-empty" style="display:none;">
-                            <span style="font-size:2rem; display:block; margin-bottom:8px;">📉</span>
-                            No hay datos todavía este mes para mostrar la comparativa.
-                        </div>
-
-                        <div id="nxdCompContent">
-                            <div class="nxd-grid-4" style="margin-bottom:20px;">
-                                <div class="nxd-comp-card" style="border-top-color: var(--color-primary);">
-                                    <div class="nxd-comp-side"><span class="lbl">Anterior</span><div class="val" id="nxdCompPrevTotal">0</div></div>
-                                    <div class="nxd-comp-vs">VS</div>
-                                    <div class="nxd-comp-side"><span class="lbl">Actual</span><div class="val" id="nxdCompCurrTotal">0</div><div class="nxd-comp-trend" id="nxdCompTrendTotal"></div></div>
-                                </div>
-                                <div class="nxd-comp-card" style="border-top-color: #2d9d5f;">
-                                    <div class="nxd-comp-side"><span class="lbl">Anterior</span><div class="val" id="nxdCompPrevFin">0</div></div>
-                                    <div class="nxd-comp-vs">VS</div>
-                                    <div class="nxd-comp-side"><span class="lbl">Actual</span><div class="val" id="nxdCompCurrFin">0</div><div class="nxd-comp-trend" id="nxdCompTrendFin"></div></div>
-                                </div>
-                                <div class="nxd-comp-card" style="border-top-color: #e63946;">
-                                    <div class="nxd-comp-side"><span class="lbl">Anterior</span><div class="val" id="nxdCompPrevRech">0</div></div>
-                                    <div class="nxd-comp-vs">VS</div>
-                                    <div class="nxd-comp-side"><span class="lbl">Actual</span><div class="val" id="nxdCompCurrRech">0</div><div class="nxd-comp-trend" id="nxdCompTrendRech"></div></div>
-                                </div>
-                            </div>
-
-                            <div class="nxd-grid-2">
-                                <div class="nxd-panel" style="box-shadow:none; border:1px solid #eee;">
-                                    <div class="nxd-panel-title" style="margin-bottom:10px; font-size:0.85rem;">Distribución: Recibidas vs Finalizadas vs Rechazadas</div>
-                                    <div class="nxd-chart-box" style="height:300px;"><canvas id="nxdChartComparativa"></canvas></div>
-                                </div>
-                                <div class="nxd-panel" style="box-shadow:none; border:1px solid #eee;">
-                                    <div class="nxd-panel-title" style="margin-bottom:10px; font-size:0.85rem;">🎨 Carga de Trabajo: Diseñadores</div>
-                                    <div id="nxdCompDesigners" class="nxd-comp-designers-grid"><div class="nxd-empty">Cargando…</div></div>
-                                </div>
-                            </div>
-
-                            <div class="nxd-panel" style="margin-top:18px; box-shadow:none; border:1px solid #eee;">
-                                <div class="nxd-panel-title" style="margin-bottom:10px; font-size:0.85rem;">Evolución Diaria: Solicitudes Recibidas</div>
-                                <div class="nxd-chart-box" style="height:300px;"><canvas id="nxdChartEvolucion"></canvas></div>
-                                <div style="text-align:center; margin-top:12px; font-size:0.75rem; color:#6c757d;">
-                                    Línea punteada gris: <b>Mes Anterior</b> · Línea sólida azul: <b>Mes Actual</b>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="nx-cons-toolbar">
+                    <button id="nxd-btn-maint" onclick="nexusToggleMantenimiento()" title="Activar / Desactivar modo mantenimiento">
+                        <i class="fas fa-tools"></i>
+                        <span id="nxd-btn-maint-label">🛠️ Mantenimiento <span id="nxd-maint-status" style="color:#e63946; font-weight:700;">● OFF</span></span>
+                    </button>
+                </div>
+                <div class="nx-cons-box">
+                    <i class="fas fa-person-digging" aria-hidden="true"></i>
+                    <h3>En construcción</h3>
+                    <p>Muy pronto tendrás aquí las nuevas estadísticas de NEXUS.</p>
                 </div>
             </div>
         </section>
@@ -10856,7 +10463,7 @@
                     <div id="nxPaso4" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 4. Purgar las filas cerradas de la hoja</div>
                     <div id="nxPaso5" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 5. Enviar archivos de Drive a la papelera</div>
                     <div id="nxPaso6" style="margin-bottom: 6px; opacity: 0.7;"><i class="far fa-circle"></i> 6. Purgar finalizadas y rechazadas en RTDB</div>
-                    <div id="nxPaso7" style=" opacity: 0.7;"><i class="far fa-circle"></i> 7. Actualizar estadísticas y finalizar</div>
+                    <div id="nxPaso7" style=" opacity: 0.7;"><i class="far fa-circle"></i> 7. Finalizar el cierre</div>
                 </div>
                 <div id="nxProgresoAcciones" style="display:none; gap:10px; justify-content:center; margin-top:18px;"></div>
             </div>
@@ -11376,7 +10983,7 @@
         };
 
         // ============================================================
-        // SISTEMA DE ESTADÍSTICAS NEXUS - HELPERS
+        // HELPERS NEXUS (fechas, claves y estatus)
         // ============================================================
 
         // Devuelve año/mes/día/hora SIEMPRE en hora de Venezuela (America/Caracas,
@@ -11438,14 +11045,8 @@
         }
 
         // ============================================================
-        // DASHBOARD DE ESTADÍSTICAS — NEXUS
-        // Calcula métricas en tiempo real leyendo:
-        //   • solicitudes_vivas/{id}       — activas (PENDIENTE, PROCESANDO)
-        //   • solicitudes_finalizadas_mes/{mes}/{id} — finalizadas/rechazadas del mes
+        // HELPERS DE MES (los usan los reportes mensuales)
         // ============================================================
-        window._nexusStatsCharts = {};
-        window._nexusStatsLoaded = false;
-
         function nexusClaveMesAnterior(claveMes) {
             const [y, m] = claveMes.split('-').map(Number);
             const d = new Date(y, m - 2, 1); // m-1 (0-index) - 1 mes
@@ -11458,138 +11059,6 @@
             return nombres[m - 1] + ' ' + y;
         }
 
-        /**
-         * Motor de cálculo de estadísticas en tiempo real.
-         * @param {Object} vivas   — mapa { id: solicitudData } de solicitudes activas
-         * @param {Object} finalizadas — mapa { id: solicitudData } de solicitudes finalizadas/rechazadas del mes
-         * @param {string} claveMes — ej. "2026-09"  (solo para filtrar vivas del mismo mes)
-         * @returns {Object} data compatible con todas las funciones nxdRender*
-         */
-        function nexusCalcularEstadisticasCompletas(vivas, finalizadas, claveMes) {
-            const data = {
-                resumen: { total: 0, pendientes: 0, procesando: 0, finalizados: 0, rechazados: 0 },
-                porDia: {},
-                porDisenador: {},
-                porUnidad: {},
-                porSolicitud: {},
-                porEspecialidad: {},
-                porServicio: {}
-            };
-
-            function ensureDia(dia) {
-                if (!data.porDia[dia]) {
-                    data.porDia[dia] = { total: 0, pendientes: 0, procesando: 0, finalizados: 0, rechazados: 0, asignadasPorDisenador: {} };
-                }
-                return data.porDia[dia];
-            }
-
-            function ensureDisenador(nombre) {
-                const key = nexusSanitizarKey(nombre);
-                if (!data.porDisenador[key]) data.porDisenador[key] = { asignadas: 0, finalizadas: 0, _displayName: nombre };
-                return data.porDisenador[key];
-            }
-
-            // Pre-poblar diseñadores del sistema para que siempre existan en el nodo RTDB
-            const disenadoresBase = (typeof NEXUS_DESIGNERS !== 'undefined' && Array.isArray(NEXUS_DESIGNERS))
-                ? NEXUS_DESIGNERS.map(d => d.name)
-                : ['Bermina', 'Jorsy', 'Xamir', 'Ángel'];
-            disenadoresBase.forEach(nombre => {
-                ensureDisenador(nombre);
-            });
-
-            function incKey(obj, rawKey) {
-                const k = nexusSanitizarKey(rawKey);
-                obj[k] = (obj[k] || 0) + 1;
-            }
-
-            // --- Procesar solicitudes VIVAS (pendientes o procesando del mes en curso) ---
-            const listaVivas = [];
-            Object.values(vivas || {}).forEach(function(item) {
-                if (item && typeof item === 'object') {
-                    if (item.id || item.Solicitud || item.Estatus) {
-                        listaVivas.push(item);
-                    } else {
-                        Object.values(item).forEach(function(subItem) {
-                            if (subItem && typeof subItem === 'object') {
-                                listaVivas.push(subItem);
-                            }
-                        });
-                    }
-                }
-            });
-
-            listaVivas.forEach(function(sol) {
-                // Solo contar vivas cuya fecha de creación pertenece al mes actual
-                const diaCreacion = sol.fechaCreacionKey || nexusFechaTextoADiaKey(sol.Timestamp);
-                if (!diaCreacion || !diaCreacion.startsWith(claveMes)) return;
-
-                const estatus = (sol.Estatus || 'PENDIENTE').toUpperCase();
-                const campo = nexusCampoEstatus(estatus) || 'pendientes';
-                const disenador = (sol.Disenador && sol.Disenador !== 'Sin Asignar') ? sol.Disenador : null;
-
-                data.resumen.total++;
-                data.resumen[campo] = (data.resumen[campo] || 0) + 1;
-
-                const diaData = ensureDia(diaCreacion);
-                diaData.total++;
-                diaData[campo] = (diaData[campo] || 0) + 1;
-
-                if (disenador) {
-                    const d = ensureDisenador(disenador);
-                    d.asignadas++;
-                    diaData.asignadasPorDisenador[nexusSanitizarKey(disenador)] =
-                        (diaData.asignadasPorDisenador[nexusSanitizarKey(disenador)] || 0) + 1;
-                }
-
-                if (sol.Unidad) incKey(data.porUnidad, sol.Unidad);
-                if (sol.Solicitud) incKey(data.porSolicitud, sol.Solicitud);
-                const espSrv = nexusNormalizarEspSrv(sol);
-                nexusListaDesdeBullets(espSrv.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
-                nexusListaDesdeBullets(espSrv.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
-            });
-
-            // --- Procesar solicitudes FINALIZADAS/RECHAZADAS del mes ---
-            Object.values(finalizadas || {}).forEach(function(sol) {
-                const estatus = (sol.Estatus || '').toUpperCase();
-                const campo = nexusCampoEstatus(estatus); // 'finalizados' o 'rechazados'
-                if (!campo) return; // solo contamos FINALIZADA y RECHAZADA aquí
-
-                // Usar fecha de creación para porDia (coherente con "recibidas por día")
-                const diaCreacion = sol.fechaCreacionKey || nexusFechaTextoADiaKey(sol.Timestamp);
-                const diaFin = sol.fechaFinalizacionKey || nexusFechaTextoADiaKey(sol.FechaFinalizacion) || diaCreacion;
-                const disenador = (sol.Disenador && sol.Disenador !== 'Sin Asignar') ? sol.Disenador : null;
-
-                data.resumen.total++;
-                data.resumen[campo] = (data.resumen[campo] || 0) + 1;
-
-                // Dia de creación registra la solicitud recibida
-                if (diaCreacion) {
-                    const diaData = ensureDia(diaCreacion);
-                    diaData.total++;
-                    diaData[campo] = (diaData[campo] || 0) + 1;
-                }
-
-                if (disenador) {
-                    const d = ensureDisenador(disenador);
-                    d.asignadas++;
-                    if (estatus === 'FINALIZADA') d.finalizadas++;
-                    if (diaFin) {
-                        const diaFinData = ensureDia(diaFin);
-                        diaFinData.asignadasPorDisenador[nexusSanitizarKey(disenador)] =
-                            (diaFinData.asignadasPorDisenador[nexusSanitizarKey(disenador)] || 0) + 1;
-                    }
-                }
-
-                if (sol.Unidad) incKey(data.porUnidad, sol.Unidad);
-                if (sol.Solicitud) incKey(data.porSolicitud, sol.Solicitud);
-                const espSrv = nexusNormalizarEspSrv(sol);
-                nexusListaDesdeBullets(espSrv.Especialidades).forEach(function(n) { incKey(data.porEspecialidad, n); });
-                nexusListaDesdeBullets(espSrv.Servicios).forEach(function(n) { incKey(data.porServicio, n); });
-            });
-
-            return data;
-        }
-
         // Exponer funciones helper globalmente para que estén disponibles en todo el código
         window.nexusObtenerClaveMes = nexusObtenerClaveMes;
         window.nexusNombreMes = nexusNombreMes;
@@ -11599,7 +11068,6 @@
         window.nexusSanitizarKey = nexusSanitizarKey;
         window.nexusFechaTextoADiaKey = nexusFechaTextoADiaKey;
         window.nexusCampoEstatus = nexusCampoEstatus;
-        window.nexusCalcularEstadisticasCompletas = nexusCalcularEstadisticasCompletas;
 
         /**
          * Limpia recursivamente un objeto para Firebase RTDB (elimina claves con valor undefined
@@ -11629,788 +11097,6 @@
             return tieneClaves ? limpio : undefined;
         }
         window.nexusLimpiarParaRTDB = nexusLimpiarParaRTDB;
-
-        /**
-         * Garantiza que el objeto de estadísticas contenga todos los nodos y contadores esperados
-         * por las funciones de renderizado (nxdRender*), incluso si en RTDB algún mapa vacío fue omitido.
-         */
-        function nexusNormalizarEstadisticas(data) {
-            if (!data) data = {};
-            return {
-                resumen: Object.assign({ total: 0, pendientes: 0, procesando: 0, finalizados: 0, rechazados: 0 }, data.resumen || {}),
-                porDia: data.porDia || {},
-                porDisenador: data.porDisenador || {},
-                porUnidad: data.porUnidad || {},
-                porSolicitud: data.porSolicitud || {},
-                porEspecialidad: data.porEspecialidad || {},
-                porServicio: data.porServicio || {},
-                ultimaActualizacion: data.ultimaActualizacion || Date.now()
-            };
-        }
-
-        /**
-         * Devuelve las estadísticas que Apps Script publica cada hora en Firestore (estadisticas/actual):
-         * mes en curso o mes anterior. No recalcula ni escribe nada.
-         * @param {string} [claveMes] — formato "YYYY-MM" (por defecto mes en curso)
-         * @returns {Promise<Object>} data consolidada normalizada
-         */
-        async function nexusRecalcularYGuardarEstadisticas(claveMes) {
-            // Ya no recalcula ni escribe: devuelve las estadísticas que GAS dejó en estadisticas/actual
-            // (mes en curso o mes anterior). Para cualquier otro mes devuelve null.
-            try {
-                let d = _nexusEstDoc;
-                if (!d) {
-                    const S = window.fbStore;
-                    if (!S || !window.db) return null;
-                    const snap = await S.getDoc(S.doc(window.db, 'estadisticas', 'actual'));
-                    d = snap.exists() ? nexusEstNormalizarDoc(snap.data()) : null;
-                }
-                if (!d) return null;
-                if (!claveMes || claveMes === d.claveMes) return d.actual;
-                if (claveMes === d.claveMesAnterior) return d.anterior;
-                return null;
-            } catch (e) {
-                console.error('[NEXUS] No se pudieron leer las estadísticas:', e);
-                return null;
-            }
-        }
-        window.nexusLimpiarParaRTDB = nexusLimpiarParaRTDB;
-        window.nexusNormalizarEstadisticas = nexusNormalizarEstadisticas;
-        window.nexusRecalcularYGuardarEstadisticas = nexusRecalcularYGuardarEstadisticas;
-
-        function nxdDestroyChart(key) {
-            if (window._nexusStatsCharts[key]) {
-                window._nexusStatsCharts[key].destroy();
-                delete window._nexusStatsCharts[key];
-            }
-        }
-
-        function nexusFormatearNombreTitulo(str) {
-            if (!str) return '';
-            const limpio = String(str).replace(/_/g, ' ').trim();
-            // Si ya tiene mayúsculas y minúsculas naturales (como "Don Simón Rodríguez" o "Cirugía General"), respetarlo tal cual
-            if (limpio !== limpio.toLowerCase() && limpio !== limpio.toUpperCase()) {
-                return limpio;
-            }
-            // Si viene todo en minúsculas, capitalizar solo al inicio o tras un espacio (evitando que acentos activen \b)
-            return limpio.toLowerCase().replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
-        }
-
-        function nxdTopList(elId, obj, icon) {
-            const el = document.getElementById(elId);
-            if (!el) return;
-            if (!obj || Object.keys(obj).length === 0) {
-                el.innerHTML = '<li class="nxd-empty">Sin datos este mes</li>';
-                return;
-            }
-            const entries = Object.entries(obj)
-                .filter(([k, v]) => k !== 'ultimaActualizacion' && v > 0)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            if (entries.length === 0) {
-                el.innerHTML = '<li class="nxd-empty">Sin datos este mes</li>';
-                return;
-            }
-            el.innerHTML = entries.map(([nombre, count], i) => {
-                const displayName = nexusFormatearNombreTitulo(nombre);
-                return '<li class="nxd-top-item"><span class="nxd-top-rank">' + (i + 1) + '</span>' +
-                    '<span class="nxd-top-name">' + displayName + '</span>' +
-                    '<span class="nxd-top-count">' + count + '</span></li>';
-            }).join('');
-        }
-
-        function nxdTrendHtml(elId, prev, curr) {
-            const el = document.getElementById(elId);
-            if (!el) return;
-            const diff = curr - prev;
-            if (prev === 0 && curr === 0) { el.innerHTML = ''; return; }
-            const pct = prev > 0 ? Math.round((diff / prev) * 100) : 100;
-            if (diff > 0) el.innerHTML = '<span class="nxd-trend-up"><i class="fas fa-arrow-up"></i> +' + pct + '%</span>';
-            else if (diff < 0) el.innerHTML = '<span class="nxd-trend-down"><i class="fas fa-arrow-down"></i> ' + pct + '%</span>';
-            else el.innerHTML = '<span class="nxd-trend-flat">Sin cambios</span>';
-        }
-
-        let _nexusEstActualesListenerActivo = false;
-
-        // ============================================================
-        // DASHBOARD DE ESTADÍSTICAS · lee Firestore (Fase 7)
-        // Apps Script calcula las estadísticas cada hora y las guarda en UN documento
-        // (estadisticas/actual, con el mes en curso y el anterior). El panel solo lo lee:
-        // admin y diseñadores, sin pasar por Apps Script. No hay botón de recarga: se
-        // muestra la hora de los datos y cuánto falta para la próxima actualización.
-        // Un listener sobre ese único documento avisa en la pestaña cuando llegan datos nuevos.
-        // ============================================================
-        const NEXUS_EST_TOLERANCIA_MS = 15 * 60 * 1000; // los triggers por horas de Apps Script no corren a la hora exacta
-        const NEXUS_EST_ESPERA_MAX_MS = 10000;
-        let _nexusEstDoc = null;            // último documento recibido, ya normalizado
-        let _nexusEstUnsub = null;          // listener de estadisticas/actual
-        let _nexusEstListo = null;          // promesa: primera respuesta del listener
-        let _nexusEstGeneradoVisto = null;  // generadoEn del último documento (para detectar cambios)
-        let _nexusEstTimer = null;          // intervalo del contador (solo corre con la pestaña abierta)
-        let _nexusEstAviso = false;         // hay datos nuevos que el usuario aún no ha visto
-        let _nexusEstCargando = false;
-
-        function nexusEstEsStaff() {
-            return typeof nexusEsDisenador === 'function' && !!nexusEsDisenador(); // incluye admin
-        }
-
-        function nexusEstEnSeccion() {
-            const sec = document.getElementById('estadisticas');
-            return !!(sec && sec.classList.contains('active'));
-        }
-
-        function nexusEstNormalizarDoc(raw) {
-            if (!raw || !raw.actual) return null;
-            const clave = raw.claveMes || nexusObtenerClaveMes();
-            const ms = Date.parse(raw.generadoEn || '');
-            return {
-                claveMes: clave,
-                claveMesAnterior: raw.claveMesAnterior || nexusClaveMesAnterior(clave),
-                actual: nexusNormalizarEstadisticas(raw.actual),
-                anterior: nexusNormalizarEstadisticas(raw.anterior),
-                generadoEn: raw.generadoEn || '',
-                generadoMs: isNaN(ms) ? 0 : ms,
-                intervaloMs: Math.max(1, Number(raw.intervaloMin) || 60) * 60000
-            };
-        }
-
-        function nexusEstMostrarEstado(msg) {
-            const h = document.getElementById('nxdSyncHora');
-            const c = document.getElementById('nxdSyncCuenta');
-            if (h) h.textContent = msg;
-            if (c) c.textContent = '';
-        }
-
-        function nexusEstRenderizar(d) {
-            const nombreActual = nexusNombreMes(d.claveMes);
-            const nombreAnterior = nexusNombreMes(d.claveMesAnterior);
-            const poner = function (id, t) { const el = document.getElementById(id); if (el) el.textContent = t; };
-            poner('nxdMesActualLabel', nombreActual);
-            poner('nxdMesActualComp', nombreActual);
-            poner('nxdMesAnteriorComp', nombreAnterior);
-            const a = d.actual;
-            // Cada bloque va aparte: si uno falla, los demás se siguen dibujando.
-            [
-                ['KPIs', function () { nxdRenderKpis(a); }],
-                ['Recibidas', function () { nxdRenderChartRecibidas(a); }],
-                ['Finalizadas vs recibidas', function () { nxdRenderChartFinVsRec(a); }],
-                ['Diseñadores', function () { nxdRenderDisenadores(a); }],
-                ['Eficiencia', function () { nxdRenderEfficiencyRanking(a); }],
-                ['Semana', function () { nxdRenderSemanal(a); }],
-                ['Métricas', function () { nxdRenderMetricasAvanzadas(a); }],
-                ['Top unidades', function () { nxdTopList('nxdTopUnidades', a.porUnidad); }],
-                ['Top solicitudes', function () { nxdTopList('nxdTopSolicitudes', a.porSolicitud); }],
-                ['Top especialidades', function () { nxdTopList('nxdTopEspecialidades', a.porEspecialidad); }],
-                ['Top servicios', function () { nxdTopList('nxdTopServicios', a.porServicio); }],
-                ['Comparativa', function () { nxdRenderComparativa(a, d.anterior); }]
-            ].forEach(function (p) {
-                try { p[1](); } catch (e) { console.error('[NEXUS] Estadísticas · ' + p[0] + ':', e); }
-            });
-        }
-
-        // ---- Hora de los datos y cuenta regresiva ----
-        function nexusEstFormatoHora(ms) {
-            const f = function (opts) { return new Date(ms).toLocaleString('es-VE', Object.assign({ timeZone: 'America/Caracas' }, opts)); };
-            const hora = f({ hour: 'numeric', minute: '2-digit', hour12: true });
-            const hoy = f({ day: '2-digit', month: '2-digit' }) === new Date().toLocaleString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: '2-digit' });
-            return hoy ? hora : (f({ day: '2-digit', month: '2-digit' }) + ', ' + hora);
-        }
-
-        function nexusEstPintarContador() {
-            const d = _nexusEstDoc;
-            const horaEl = document.getElementById('nxdSyncHora');
-            const cuentaEl = document.getElementById('nxdSyncCuenta');
-            const pill = document.getElementById('nxdSync');
-            if (!horaEl || !cuentaEl) return;
-            if (!d || !d.generadoMs) { horaEl.textContent = 'Actualizado: —'; cuentaEl.textContent = ''; return; }
-            horaEl.textContent = 'Actualizado: ' + nexusEstFormatoHora(d.generadoMs);
-            const resta = d.generadoMs + d.intervaloMs - Date.now();
-            let retraso = false;
-            if (resta > 0) {
-                const s = Math.ceil(resta / 1000);
-                cuentaEl.textContent = 'Próxima actualización en ' + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-            } else if (-resta <= NEXUS_EST_TOLERANCIA_MS) {
-                cuentaEl.textContent = 'Actualizando…';
-            } else {
-                cuentaEl.textContent = 'Actualización retrasada';
-                retraso = true;
-            }
-            if (pill) pill.classList.toggle('nxd-sync-retraso', retraso);
-        }
-
-        function nexusEstDetenerContador() {
-            if (_nexusEstTimer) clearInterval(_nexusEstTimer);
-            _nexusEstTimer = null;
-        }
-
-        function nexusEstIniciarContador() {
-            nexusEstPintarContador();
-            if (_nexusEstTimer) return;
-            _nexusEstTimer = setInterval(function () {
-                if (!nexusEstEnSeccion()) { nexusEstDetenerContador(); return; } // fuera de la pestaña no se pinta nada
-                if (document.hidden) return;
-                nexusEstPintarContador();
-            }, 1000);
-        }
-
-        // ---- Aviso en la pestaña (y en la hamburguesa, en móvil) ----
-        function nexusEstActualizarAviso() {
-            const toggle = document.getElementById('menuToggle');
-            const link = document.querySelector('#mainNav a[onclick*="estadisticas"]');
-            const avisar = _nexusEstAviso && nexusEstEsStaff() && !nexusEstEnSeccion();
-            if (toggle) {
-                toggle.classList.toggle('has-stats-nuevo', avisar);
-                if (avisar) toggle.setAttribute('aria-label', 'Abrir menú (estadísticas actualizadas)');
-            }
-            if (link) {
-                link.classList.toggle('nav-stats-nuevo', avisar);
-                let ic = link.querySelector('.nav-stats-ic');
-                if (avisar && !ic) {
-                    ic = document.createElement('i');
-                    ic.className = 'fas fa-chart-line nav-stats-ic';
-                    ic.setAttribute('aria-hidden', 'true');
-                    link.insertBefore(ic, link.firstChild);
-                } else if (!avisar && ic) {
-                    ic.remove();
-                }
-            }
-        }
-
-        // ---- Listener de estadisticas/actual (1 documento; 1 lectura por cada actualización de GAS) ----
-        function nexusEscucharEstadisticas() {
-            if (_nexusEstUnsub || !nexusEstEsStaff()) return _nexusEstListo;
-            const S = window.fbStore;
-            if (!S || !window.db) return null;
-            let resolver = null;
-            _nexusEstListo = new Promise(function (res) { resolver = res; });
-            const liberar = function () { if (resolver) { resolver(); resolver = null; } };
-
-            _nexusEstUnsub = S.onSnapshot(S.doc(window.db, 'estadisticas', 'actual'), function (snap) {
-                if (!snap.exists()) { _nexusEstDoc = null; liberar(); return; }
-                const d = nexusEstNormalizarDoc(snap.data());
-                if (!d) { liberar(); return; }
-                // El primer documento tras iniciar sesión es el estado actual, no una novedad.
-                const cambio = _nexusEstGeneradoVisto !== null && d.generadoEn !== _nexusEstGeneradoVisto;
-                _nexusEstGeneradoVisto = d.generadoEn;
-                _nexusEstDoc = d;
-                if (!_nexusEstCargando) {
-                    if (nexusEstEnSeccion()) { nexusEstRenderizar(d); nexusEstIniciarContador(); }
-                    else if (cambio) { _nexusEstAviso = true; }
-                }
-                nexusEstActualizarAviso();
-                liberar();
-            }, function (err) {
-                console.error('[NEXUS] No se pudo escuchar estadisticas/actual:', err);
-                _nexusEstUnsub = null;
-                liberar();
-            });
-            return _nexusEstListo;
-        }
-
-        function nexusDetenerEstadisticasListener() {
-            if (typeof _nexusEstUnsub === 'function') _nexusEstUnsub();
-            _nexusEstUnsub = null;
-            _nexusEstListo = null;
-            _nexusEstDoc = null;
-            _nexusEstGeneradoVisto = null;
-            _nexusEstAviso = false;
-            nexusEstDetenerContador();
-            nexusEstActualizarAviso();
-        }
-
-        // Se llama al entrar a la pestaña Estadísticas. El parámetro de recarga ya no existe:
-        // los datos solo cambian cuando Apps Script publica uno nuevo (cada hora).
-        async function nexusCargarDashboardEstadisticas() {
-            if (!document.getElementById('nxdRoot') || !nexusEstEsStaff()) return null;
-
-            // Mantenimiento: botón solo para el administrador
-            const btnMaint = document.getElementById('nxd-btn-maint');
-            if (btnMaint) btnMaint.style.display = (typeof nexusEsAdmin === 'function' && nexusEsAdmin()) ? '' : 'none';
-
-            _nexusEstAviso = false;
-            nexusEstActualizarAviso();
-
-            _nexusEstCargando = true;
-            try {
-                if (!_nexusEstDoc) {
-                    nexusEstMostrarEstado('Cargando estadísticas…');
-                    const listo = nexusEscucharEstadisticas();
-                    if (listo) {
-                        await Promise.race([listo, new Promise(function (r) { setTimeout(r, NEXUS_EST_ESPERA_MAX_MS); })]);
-                    }
-                }
-                if (!_nexusEstDoc) {
-                    nexusEstMostrarEstado(_nexusEstUnsub ? 'Las estadísticas aún no se han generado' : 'No se pudieron cargar las estadísticas');
-                    return null;
-                }
-                nexusEstRenderizar(_nexusEstDoc);
-                nexusEstIniciarContador();
-                window._nexusStatsLoaded = true;
-                return _nexusEstDoc;
-            } catch (e) {
-                console.error('[NEXUS] Dashboard de estadísticas:', e);
-                nexusEstMostrarEstado('No se pudieron cargar las estadísticas');
-                return null;
-            } finally {
-                _nexusEstCargando = false;
-            }
-        }
-        window.nexusCargarDashboardEstadisticas = nexusCargarDashboardEstadisticas;
-        window.nexusEscucharEstadisticas = nexusEscucharEstadisticas;
-        window.nexusDetenerEstadisticasListener = nexusDetenerEstadisticasListener;
-        window.nexusEstActualizarAviso = nexusEstActualizarAviso;
-
-        function nxdRenderKpis(data) {
-            const r = data.resumen || {};
-            document.getElementById('nxdKpiTotal').textContent = Math.max(0, r.total || 0);
-            document.getElementById('nxdKpiPend').textContent = Math.max(0, r.pendientes || 0);
-            document.getElementById('nxdKpiProc').textContent = Math.max(0, r.procesando || 0);
-            document.getElementById('nxdKpiFin').textContent = Math.max(0, r.finalizados || 0);
-            document.getElementById('nxdKpiRech').textContent = Math.max(0, r.rechazados || 0);
-        }
-
-        function nxdOrdenarPorDia(porDia) {
-            return Object.keys(porDia || {}).filter(k => k !== 'ultimaActualizacion').sort();
-        }
-
-        function nxdRenderChartRecibidas(data) {
-            const porDia = data.porDia || {};
-            const dias = nxdOrdenarPorDia(porDia);
-            const ctx = document.getElementById('nxdChartRecibidas');
-            if (!ctx) return;
-            nxdDestroyChart('recibidas');
-
-            if (dias.length === 0) {
-                ctx.parentElement.innerHTML = '<div class="nxd-empty">No hay solicitudes registradas este mes</div>';
-                return;
-            }
-
-            window._nexusStatsCharts.recibidas = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: dias.map(d => d.slice(8, 10) + '/' + d.slice(5, 7)),
-                    datasets: [{
-                        label: 'Recibidas',
-                        data: dias.map(d => porDia[d].total || 0),
-                        borderColor: '#0554F2',
-                        backgroundColor: 'rgba(5,84,242,0.12)',
-                        fill: true, tension: 0.35, pointRadius: 3, pointBackgroundColor: '#0554F2'
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                }
-            });
-        }
-
-        function nxdRenderChartFinVsRec(data) {
-            const porDia = data.porDia || {};
-            const dias = nxdOrdenarPorDia(porDia);
-            const ctx = document.getElementById('nxdChartFinVsRec');
-            if (!ctx) return;
-            nxdDestroyChart('finVsRec');
-
-            if (dias.length === 0) {
-                ctx.parentElement.innerHTML = '<div class="nxd-empty">No hay datos disponibles</div>';
-                return;
-            }
-
-            window._nexusStatsCharts.finVsRec = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: dias.map(d => d.slice(8, 10) + '/' + d.slice(5, 7)),
-                    datasets: [
-                        { label: 'Recibidas', data: dias.map(d => porDia[d].total || 0), backgroundColor: '#3876F2', borderRadius: 5 },
-                        { label: 'Finalizadas', data: dias.map(d => porDia[d].finalizados || 0), backgroundColor: '#2d9d5f', borderRadius: 5 }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                }
-            });
-        }
-
-        // Devuelve SIEMPRE el mismo color para un diseñador, tomando como fuente
-        // de verdad NEXUS_DESIGNERS (el mismo color usado en los botones de
-        // asignación). Así el color de cada diseñador es idéntico en todos los
-        // paneles (Carga de Trabajo, Rendimiento de Diseñadores, Rendimiento
-        // Semanal, etc.), sin depender del orden en que llegan los datos.
-        // Devuelve el nombre canónico y legible de un diseñador con acentos y mayúsculas
-        function nxdNombreDisplayDisenador(nombre, objDis) {
-            if (objDis && objDis._displayName) return objDis._displayName;
-            const limpio = (nombre || '').replace(/_/g, ' ').trim();
-            const limpioNorm = limpio.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-            if (typeof NEXUS_DESIGNERS !== 'undefined' && Array.isArray(NEXUS_DESIGNERS)) {
-                const encontrado = NEXUS_DESIGNERS.find(d => {
-                    const dLow = d.name.toLowerCase();
-                    const dNorm = dLow.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-                    return dLow === limpio.toLowerCase() || dNorm === limpioNorm || (limpioNorm === 'ngel' && dNorm === 'angel');
-                });
-                if (encontrado) return encontrado.name;
-            }
-            return nexusFormatearNombreTitulo(limpio);
-        }
-
-        // Devuelve SIEMPRE el mismo color para un diseñador, tomando como fuente
-        // de verdad NEXUS_DESIGNERS (el mismo color usado en los botones de
-        // asignación). Así el color de cada diseñador es idéntico en todos los
-        // paneles (Carga de Trabajo, Rendimiento de Diseñadores, Rendimiento
-        // Semanal, etc.), sin depender del orden en que llegan los datos.
-        function nxdColorDisenador(nombre, indiceFallback) {
-            const limpio = (nombre || '').replace(/_/g, ' ').trim().toLowerCase();
-            const limpioNorm = limpio.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-            const enSistema = (typeof NEXUS_DESIGNERS !== 'undefined' && Array.isArray(NEXUS_DESIGNERS))
-                ? NEXUS_DESIGNERS.find(d => {
-                    const dLow = d.name.toLowerCase();
-                    const dNorm = dLow.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-                    return dLow === limpio || dNorm === limpioNorm || (limpioNorm === 'ngel' && dNorm === 'angel');
-                })
-                : null;
-            if (enSistema) return enSistema.color;
-            const paletaFallback = ['#219ebc', '#2d9d5f', '#f72585', '#e63946', '#9d4edd', '#0554F2'];
-            return paletaFallback[(indiceFallback || 0) % paletaFallback.length];
-        }
-
-        // Ícono/emoji del diseñador según el sistema (mismo emoji que sus botones
-        // de asignación). Si no está en el sistema, usa el ícono genérico de usuario.
-        function nxdIconoDisenador(nombre) {
-            const limpio = (nombre || '').replace(/_/g, ' ').trim().toLowerCase();
-            const limpioNorm = limpio.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-            const enSistema = (typeof NEXUS_DESIGNERS !== 'undefined' && Array.isArray(NEXUS_DESIGNERS))
-                ? NEXUS_DESIGNERS.find(d => {
-                    const dLow = d.name.toLowerCase();
-                    const dNorm = dLow.normalize("NFD").replace(/[\u0300-\u036f]/g, '');
-                    return dLow === limpio || dNorm === limpioNorm || (limpioNorm === 'ngel' && dNorm === 'angel');
-                })
-                : null;
-            return enSistema ? enSistema.icon : '<i class="fas fa-user"></i>';
-        }
-
-        function nxdRenderDisenadores(data) {
-            // Rendimiento de Diseñadores = tareas FINALIZADAS en lo que va del mes (acumulado
-            // general por diseñador), no un corte por día ni la carga "asignadas" actual.
-            const porDisenador = data.porDisenador || {};
-            const nombres = Object.keys(porDisenador).filter(k => k !== 'ultimaActualizacion');
-            const ctx = document.getElementById('nxdChartDisenadores');
-            const cardsEl = document.getElementById('nxdDesignerCards');
-
-            nxdDestroyChart('disenadores');
-
-            if (nombres.length === 0) {
-                if (ctx) ctx.parentElement.innerHTML = '<div class="nxd-empty">Sin diseñadores con finalizadas este mes</div>';
-                if (cardsEl) cardsEl.innerHTML = '';
-                return;
-            }
-
-            const finalizadas = nombres.map(n => porDisenador[n].finalizadas || 0);
-            const maxFinalizadas = Math.max(...finalizadas, 1);
-
-            if (ctx) {
-                window._nexusStatsCharts.disenadores = new Chart(ctx.getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: nombres.map(n => nxdNombreDisplayDisenador(n, porDisenador[n])),
-                        datasets: [{ data: finalizadas, backgroundColor: nombres.map((n, i) => nxdColorDisenador(n, i)) }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } } }
-                });
-            }
-
-            if (cardsEl) {
-                cardsEl.innerHTML = nombres.map((n, i) => {
-                    const d = porDisenador[n];
-                    const pct = Math.round(((d.finalizadas || 0) / maxFinalizadas) * 100);
-                    const color = nxdColorDisenador(n, i);
-                    const displayName = nxdNombreDisplayDisenador(n, d);
-                    return '<div class="nxd-designer-row">' +
-                        '<div class="nxd-designer-avatar" style="background:' + color + ';"><i class="fas fa-user"></i></div>' +
-                        '<div class="nxd-designer-info"><div class="nxd-designer-name">' + displayName + '</div>' +
-                        '<div class="nxd-designer-bar-track"><div class="nxd-designer-bar-fill" style="width:' + pct + '%; background:' + color + ';"></div></div></div>' +
-                        '<div class="nxd-designer-count">' + (d.finalizadas || 0) + '</div></div>';
-                }).join('');
-            }
-        }
-
-        function nxdRenderEfficiencyRanking(data) {
-            const el = document.getElementById('nxdEfficiencyRanking');
-            if (!el) return;
-
-            const porDisenador = data.porDisenador || {};
-            const nombres = Object.keys(porDisenador).filter(k => k !== 'ultimaActualizacion');
-
-            if (nombres.length === 0) {
-                el.innerHTML = '<div class="nxd-empty">Sin diseñadores con asignaciones este mes</div>';
-                return;
-            }
-
-            const medallas = ['gold', 'silver', 'bronze'];
-            const ranking = nombres.map(n => {
-                const d = porDisenador[n] || {};
-                const asignadas = d.asignadas || 0;
-                const finalizadas = d.finalizadas || 0;
-                const eficiencia = asignadas > 0 ? Math.round((finalizadas / asignadas) * 100) : 0;
-                const nombre = nxdNombreDisplayDisenador(n, d);
-                return { nombre, asignadas, finalizadas, eficiencia };
-            }).sort((a, b) => b.eficiencia - a.eficiencia || b.finalizadas - a.finalizadas);
-
-            el.innerHTML = ranking.map((r, i) => {
-                const nivel = r.eficiencia >= 80 ? 'high' : (r.eficiencia >= 50 ? 'mid' : 'low');
-                const colorFill = r.eficiencia >= 80 ? '#2d9d5f' : (r.eficiencia >= 50 ? '#fb8500' : '#e63946');
-                const medalClass = i < 3 ? medallas[i] : '';
-                const medalContent = i < 3 ? '<i class="fas fa-medal"></i>' : ('#' + (i + 1));
-                return '<div class="nxd-rank-row">' +
-                    '<div class="nxd-rank-medal ' + medalClass + '">' + medalContent + '</div>' +
-                    '<div class="nxd-rank-info">' +
-                        '<div class="nxd-rank-name">' + r.nombre + '</div>' +
-                        '<div class="nxd-rank-sub">' + r.finalizadas + ' finalizadas de ' + r.asignadas + ' asignadas</div>' +
-                        '<div class="nxd-rank-track"><div class="nxd-rank-fill" style="width:' + r.eficiencia + '%; background:' + colorFill + ';"></div></div>' +
-                    '</div>' +
-                    '<div class="nxd-rank-badge ' + nivel + '">' + r.eficiencia + '%</div>' +
-                '</div>';
-            }).join('');
-        }
-
-        // Semana laboral: Sábado a Viernes (igual criterio que SIRA 3.0), no una
-        // ventana móvil de "últimos 7 días".
-        function nxdSemanaLaboral() {
-            const hoy = new Date();
-            const diaActual = hoy.getDay(); // 0=Dom,...,6=Sáb
-            const diasDesdeSabado = diaActual === 6 ? 0 : diaActual + 1;
-            const inicioSemana = new Date(hoy);
-            inicioSemana.setDate(hoy.getDate() - diasDesdeSabado);
-            inicioSemana.setHours(0, 0, 0, 0);
-
-            const nombresDias = ['Sáb', 'Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie'];
-            const dias = [];
-            for (let i = 0; i < 7; i++) {
-                const fecha = new Date(inicioSemana);
-                fecha.setDate(inicioSemana.getDate() + i);
-                const y = fecha.getFullYear();
-                const m = String(fecha.getMonth() + 1).padStart(2, '0');
-                const d = String(fecha.getDate()).padStart(2, '0');
-                dias.push({ key: y + '-' + m + '-' + d, label: [nombresDias[i], d + '/' + m + '/' + String(y).slice(2)] });
-            }
-            return dias;
-        }
-
-        function nxdRenderSemanal(data) {
-            const porDia = data.porDia || {};
-            const dias = nxdSemanaLaboral();
-
-            let recibidas = 0, finalizadas = 0, rechazadas = 0;
-            dias.forEach(d => {
-                const dd = porDia[d.key];
-                if (dd) { recibidas += dd.total || 0; finalizadas += dd.finalizados || 0; rechazadas += dd.rechazados || 0; }
-            });
-            const eficiencia = recibidas > 0 ? Math.round((finalizadas / recibidas) * 100) : 0;
-
-            document.getElementById('nxdWeekReceived').textContent = recibidas;
-            document.getElementById('nxdWeekFinalized').textContent = finalizadas;
-            document.getElementById('nxdWeekRejected').textContent = rechazadas;
-            document.getElementById('nxdWeekEfficiency').textContent = eficiencia + '%';
-
-            const ctx = document.getElementById('nxdChartSemanal');
-            if (!ctx) return;
-            nxdDestroyChart('semanal');
-
-            // Diseñadores con asignaciones esta semana laboral
-            const nombresSet = new Set();
-            dias.forEach(d => {
-                const porDisDia = (porDia[d.key] && porDia[d.key].asignadasPorDisenador) || {};
-                Object.keys(porDisDia).filter(n => n !== 'ultimaActualizacion').forEach(n => nombresSet.add(n));
-            });
-            const nombresDisenadores = Array.from(nombresSet);
-
-            const datasets = [
-                { label: 'Recibidas', data: dias.map(d => (porDia[d.key] && porDia[d.key].total) || 0), backgroundColor: '#219ebc', borderRadius: 4 },
-                { label: 'Finalizadas', data: dias.map(d => (porDia[d.key] && porDia[d.key].finalizados) || 0), backgroundColor: '#2d9d5f', borderRadius: 4 },
-                { label: 'Rechazadas', data: dias.map(d => (porDia[d.key] && porDia[d.key].rechazados) || 0), backgroundColor: '#e63946', borderRadius: 4 }
-            ];
-            nombresDisenadores.forEach((n, i) => {
-                datasets.push({
-                    label: n.replace(/_/g, ' '),
-                    data: dias.map(d => ((porDia[d.key] && porDia[d.key].asignadasPorDisenador && porDia[d.key].asignadasPorDisenador[n]) || 0)),
-                    backgroundColor: nxdColorDisenador(n, i),
-                    borderRadius: 4
-                });
-            });
-
-            window._nexusStatsCharts.semanal = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: { labels: dias.map(d => d.label), datasets },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { usePointStyle: true, padding: 16, font: { size: 11, weight: '600' } } },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-                }
-            });
-        }
-
-        function nxdRenderMetricasAvanzadas(data) {
-            const r = data.resumen || {};
-            const porDia = data.porDia || {};
-            const total = r.total || 0;
-
-            const completionRate = total > 0 ? Math.round(((r.finalizados || 0) / total) * 100) : 0;
-            const rejectionRate = total > 0 ? Math.round(((r.rechazados || 0) / total) * 100) : 0;
-
-            document.getElementById('nxdCompletionRate').textContent = completionRate + '%';
-            document.getElementById('nxdRejectionRate').textContent = rejectionRate + '%';
-
-            const dias = nxdOrdenarPorDia(porDia);
-            const hoyKey = nexusHoy();
-            const hoyCount = (porDia[hoyKey] && porDia[hoyKey].total) || 0;
-            const sumaTotal = dias.reduce((acc, d) => acc + (porDia[d].total || 0), 0);
-            const promedio = dias.length > 0 ? Math.round((sumaTotal / dias.length) * 10) / 10 : 0;
-
-            document.getElementById('nxdTodayCount').textContent = hoyCount;
-            document.getElementById('nxdAvgCount').textContent = promedio;
-        }
-
-        function nxdRenderComparativa(actual, anterior) {
-            const rActual = actual.resumen || {};
-            const rAnterior = anterior.resumen || {};
-            // Mientras haya datos del MES ACTUAL, se muestra la comparativa (contra 0 si
-            // el mes anterior no tiene datos todavía). Solo se oculta si ni siquiera hay
-            // datos del mes en curso.
-            const hayActual = Object.keys(rActual).length > 0;
-
-            document.getElementById('nxdCompNoData').style.display = hayActual ? 'none' : 'block';
-            document.getElementById('nxdCompContent').style.display = hayActual ? 'block' : 'none';
-            if (!hayActual) return;
-
-            document.getElementById('nxdCompPrevTotal').textContent = rAnterior.total || 0;
-            document.getElementById('nxdCompCurrTotal').textContent = rActual.total || 0;
-            nxdTrendHtml('nxdCompTrendTotal', rAnterior.total || 0, rActual.total || 0);
-
-            document.getElementById('nxdCompPrevFin').textContent = rAnterior.finalizados || 0;
-            document.getElementById('nxdCompCurrFin').textContent = rActual.finalizados || 0;
-            nxdTrendHtml('nxdCompTrendFin', rAnterior.finalizados || 0, rActual.finalizados || 0);
-
-            document.getElementById('nxdCompPrevRech').textContent = rAnterior.rechazados || 0;
-            document.getElementById('nxdCompCurrRech').textContent = rActual.rechazados || 0;
-            nxdTrendHtml('nxdCompTrendRech', rAnterior.rechazados || 0, rActual.rechazados || 0);
-
-            const nombreAnterior = nexusNombreMes(nexusClaveMesAnterior(nexusObtenerClaveMes()));
-            const nombreActual = nexusNombreMes(nexusObtenerClaveMes());
-
-            // Distribución Recibidas vs Finalizadas vs Rechazadas: barras agrupadas
-            // comparando Mes Anterior vs Mes Actual (igual criterio que SIRA 3.0)
-            const ctxDist = document.getElementById('nxdChartComparativa');
-            if (ctxDist) {
-                nxdDestroyChart('comparativa');
-                window._nexusStatsCharts.comparativa = new Chart(ctxDist.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: ['Total Recibidas', 'Finalizadas', 'Rechazadas'],
-                        datasets: [
-                            { label: 'Total (' + nombreAnterior + ')', data: [rAnterior.total || 0, null, null], backgroundColor: '#4a6eb0', borderRadius: 5, stack: 'Stack 0' },
-                            { label: 'Total (' + nombreActual + ')', data: [rActual.total || 0, null, null], backgroundColor: '#0799b6', borderRadius: 5, stack: 'Stack 1' },
-                            { label: 'Fin. (' + nombreAnterior + ')', data: [null, rAnterior.finalizados || 0, null], backgroundColor: '#1a531a', borderRadius: 5, stack: 'Stack 0' },
-                            { label: 'Fin. (' + nombreActual + ')', data: [null, rActual.finalizados || 0, null], backgroundColor: '#2d9d5f', borderRadius: 5, stack: 'Stack 1' },
-                            { label: 'Rech. (' + nombreAnterior + ')', data: [null, null, rAnterior.rechazados || 0], backgroundColor: '#8b0000', borderRadius: 5, stack: 'Stack 0' },
-                            { label: 'Rech. (' + nombreActual + ')', data: [null, null, rActual.rechazados || 0], backgroundColor: '#e63946', borderRadius: 5, stack: 'Stack 1' }
-                        ]
-                    },
-                    options: {
-                        responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } }, tooltip: { mode: 'point' } },
-                        scales: { y: { beginAtZero: true, grid: { display: false }, ticks: { precision: 0 } }, x: { stacked: true } }
-                    }
-                });
-            }
-
-            // Carga de trabajo diseñadores: comparativa Mes Anterior vs Mes Actual
-            // (cantidad de solicitudes asignadas a cada diseñador) — tarjetas llamativas
-            const compDesignersEl = document.getElementById('nxdCompDesigners');
-            if (compDesignersEl) {
-                const porDisenadorActual = actual.porDisenador || {};
-                const porDisenadorAnterior = anterior.porDisenador || {};
-                const nombres = Array.from(new Set([
-                    ...Object.keys(porDisenadorActual).filter(k => k !== 'ultimaActualizacion'),
-                    ...Object.keys(porDisenadorAnterior).filter(k => k !== 'ultimaActualizacion')
-                ]));
-
-                if (nombres.length === 0) {
-                    compDesignersEl.innerHTML = '<div class="nxd-empty">Sin datos de diseñadores</div>';
-                } else {
-                    const partesAnterior = nombreAnterior.split(' ');
-                    const partesActual = nombreActual.split(' ');
-                    const lblAnterior = '<div>' + partesAnterior[0].toUpperCase() + '</div><div>' + partesAnterior[1] + '</div>';
-                    const lblActual = '<div>' + partesActual[0].toUpperCase() + '</div><div>' + partesActual[1] + '</div>';
-
-                    compDesignersEl.innerHTML = nombres.map((n, i) => {
-                        const curr = (porDisenadorActual[n] && porDisenadorActual[n].asignadas) || 0;
-                        const prev = (porDisenadorAnterior[n] && porDisenadorAnterior[n].asignadas) || 0;
-                        const diff = curr - prev;
-                        const color = nxdColorDisenador(n, i);
-                        const icono = nxdIconoDisenador(n);
-
-                        let trendTexto, trendColor;
-                        if (prev === 0 && curr === 0) {
-                            trendTexto = 'Sin cambios'; trendColor = '#6c757d';
-                        } else if (prev === 0) {
-                            trendTexto = '↑ +' + curr; trendColor = '#2d9d5f';
-                        } else {
-                            const pct = Math.round((diff / prev) * 100);
-                            if (diff > 0) { trendTexto = '↑ +' + diff + ' (' + pct + '%)'; trendColor = '#2d9d5f'; }
-                            else if (diff < 0) { trendTexto = '↓ ' + diff + ' (' + pct + '%)'; trendColor = '#e63946'; }
-                            else { trendTexto = 'Sin cambios'; trendColor = '#6c757d'; }
-                        }
-
-                        const displayName = nxdNombreDisplayDisenador(n, porDisenadorActual[n] || porDisenadorAnterior[n]);
-
-                        return '<div class="nxd-comp-designer-card" style="border-color:' + color + '40; background:linear-gradient(135deg, #ffffff 0%, ' + color + '0d 100%);">' +
-                            '<div class="nxd-comp-designer-avatar-lg" style="background:' + color + '22;">' + icono + '</div>' +
-                            '<div class="nxd-comp-designer-name-lg">' + displayName + '</div>' +
-                            '<div class="nxd-comp-designer-stats">' +
-                                '<div class="nxd-comp-designer-stat"><div class="lbl">' + lblAnterior + '</div><div class="val" style="color:#94a3b8;">' + prev + '</div></div>' +
-                                '<div class="nxd-comp-designer-arrow"><i class="fas fa-arrow-right"></i></div>' +
-                                '<div class="nxd-comp-designer-stat"><div class="lbl" style="color:' + color + ';">' + lblActual + '</div><div class="val" style="color:' + color + ';">' + curr + '</div></div>' +
-                            '</div>' +
-                            '<div class="nxd-comp-designer-trend" style="background:' + trendColor + '18; color:' + trendColor + ';">' + trendTexto + '</div>' +
-                        '</div>';
-                    }).join('');
-                }
-            }
-
-            // Evolución diaria comparativa
-            const ctxEvo = document.getElementById('nxdChartEvolucion');
-            if (ctxEvo) {
-                nxdDestroyChart('evolucion');
-                const diasActual = nxdOrdenarPorDia(actual.porDia);
-                const diasAnterior = nxdOrdenarPorDia(anterior.porDia);
-                const maxLen = Math.max(diasActual.length, diasAnterior.length, 1);
-                const labels = Array.from({ length: maxLen }, (_, i) => 'Día ' + (i + 1));
-
-                window._nexusStatsCharts.evolucion = new Chart(ctxEvo.getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels,
-                        datasets: [
-                            {
-                                label: nexusNombreMes(nexusClaveMesAnterior(nexusObtenerClaveMes())),
-                                data: diasAnterior.map(d => anterior.porDia[d].total || 0),
-                                borderColor: '#adb5bd', borderDash: [6, 4], pointRadius: 0, tension: 0.3, fill: false
-                            },
-                            {
-                                label: nexusNombreMes(nexusObtenerClaveMes()),
-                                data: diasActual.map(d => actual.porDia[d].total || 0),
-                                borderColor: '#0554F2', backgroundColor: 'rgba(5,84,242,0.1)', pointRadius: 2, tension: 0.3, fill: true
-                            }
-                        ]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
-                });
-            }
-        }
     </script>
 
     <!-- ============================================================
@@ -16881,11 +15567,9 @@
                     behavior: 'smooth'
                 });
 
-                // Si es la sección de estadísticas, cargar el dashboard NEXUS
+                // Pestaña de estadísticas en construcción: solo se refresca el botón de mantenimiento (admin)
                 if (sectionId === 'estadisticas') {
-                    if (typeof nexusCargarDashboardEstadisticas === 'function') {
-                        nexusCargarDashboardEstadisticas();
-                    }
+                    if (typeof nexusUpdateMaintenanceUI === 'function') nexusUpdateMaintenanceUI();
                 }
 
                 // Si es la sección de reportes, cargar el módulo de reportes y cierres
@@ -16911,7 +15595,6 @@
 
             // Al cambiar de pestaña se apaga/enciende el aviso de ARTE LISTO
             if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
-            if (typeof nexusEstActualizarAviso === 'function') nexusEstActualizarAviso();
 
             // Cambiar de sección cuenta como actividad del usuario
             if (typeof _nxPresenciaGesto === 'function') _nxPresenciaGesto();
@@ -20587,7 +19270,6 @@
             nexusDetenerListeners();
             nexusKpiDetener();
             nexusDetenerArtesFinalesListener();
-            if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
             if (typeof showSection === 'function') showSection('inicio');
             if (typeof nexusActualizarUIAuth === 'function') nexusActualizarUIAuth();
             if (typeof nexusResetActiveForm === 'function') nexusResetActiveForm();
@@ -20701,7 +19383,7 @@
                 panelMaintLabel.style.color  = nexusMaintActive ? '#2ecc71' : '#e63946';
             }
 
-            // 4. Botón en toolbar de estadísticas
+            // 4. Botón de mantenimiento en la pestaña Estadísticas
             if (btnMaint) {
                 btnMaint.style.display = esAdmin ? 'inline-flex' : 'none';
                 if (nexusMaintActive) {
@@ -20873,7 +19555,6 @@
                 nexusKpiDetener();
                 nexusDetenerErrorLogsListener();
                 nexusDetenerArtesFinalesListener();
-                if (typeof nexusDetenerEstadisticasListener === 'function') nexusDetenerEstadisticasListener();
                 NexusSession.clear();
                 nexusAplicarFavoritosUI();
                 nexusActualizarUIAuth();
@@ -22094,7 +20775,6 @@
                         '</li>';
                     mainNavUl.innerHTML = menuHtml;
                     if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
-                    if (typeof nexusEstActualizarAviso === 'function') nexusEstActualizarAviso();
                 }
 
                 // Cargar solicitudes vivas en tiempo real al tener sesiÃ³n
@@ -22109,12 +20789,6 @@
                 // entrar a esa pestaña) para poder mostrar el contador de notificaciones.
                 if (!isStaff && typeof nexusEscucharArtesFinales === 'function') {
                     nexusEscucharArtesFinales();
-                }
-
-                // Admin y diseñadores: escuchar estadisticas/actual (un solo documento) para avisar
-                // en la pestaña "Estadisticas" cuando Apps Script publique datos nuevos.
-                if (isStaff && typeof nexusEscucharEstadisticas === 'function') {
-                    nexusEscucharEstadisticas();
                 }
 
             } else {
@@ -22867,8 +21541,7 @@
         }
 
         // Campos que NO se guardan en solicitudes_finalizadas_mes:
-        //  - fecha*Key: solo servían para acelerar el cálculo en memoria del RTDB;
-        //    las estadísticas ahora se calculan en Google Sheets.
+        //  - fecha*Key: solo servían para acelerar el cálculo en memoria del RTDB.
         //  - Corr* (Fecha, Direccion, Contenido, Foto, Elementos, Color) y
         //    CorreccionesTexto/CorreccionesDiseno (con mayúscula): son copias de
         //    detalleCorrecciones y de correccionesTexto/correccionesDiseno.
