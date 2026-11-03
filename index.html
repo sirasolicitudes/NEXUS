@@ -3445,6 +3445,87 @@
         }
         @media (prefers-reduced-motion: reduce) { .cobp-prod-btn { transition: none; } }
 
+        /* Estilo específico para Asistencia Protocolar (paleta violeta medianoche) */
+        .asistencia-protocolar-item .item-overlay {
+            background: linear-gradient(to top, #000177 0%, rgba(0, 1, 119, 0.8) 40%, rgba(1, 1, 39, 0.3) 70%, rgba(1, 1, 39, 0) 100%);
+        }
+        .theme-asistencia-protocolar {
+            background: linear-gradient(135deg, #010127 0%, #000177 40%, #6a2ecc 100%) !important;
+            border-color: #010127 !important;
+        }
+        #asistencia-protocolar-form .btn-primary {
+            background: #6a2ecc;
+            box-shadow: 0 4px 15px rgba(106, 46, 204, 0.3);
+        }
+        #asistencia-protocolar-form .btn-primary:hover {
+            background: #000177;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(106, 46, 204, 0.4);
+        }
+        #asistencia-protocolar-form .form-input:focus {
+            border-color: #6a2ecc;
+            box-shadow: 0 0 0 3px rgba(106, 46, 204, 0.1);
+        }
+        #asistencia-protocolar-form .form-input.field-error {
+            border-color: #fb8500;
+            box-shadow: 0 0 0 3px rgba(251, 133, 0, 0.1);
+        }
+        #asistencia-protocolar-form .region-btn.selected,
+        #asistencia-protocolar-form .unidad-btn.selected,
+        #asistencia-protocolar-form .btn-time.selected {
+            background: #6a2ecc;
+            border-color: #6a2ecc;
+            color: white;
+        }
+        #asistencia-protocolar-form .region-btn:hover,
+        #asistencia-protocolar-form .unidad-btn:hover,
+        #asistencia-protocolar-form .btn-time:hover {
+            background: rgba(106, 46, 204, 0.15);
+            border-color: #6a2ecc;
+        }
+
+        /* Escribir / Adjuntar (Programa y Guion) */
+        .asp-modo-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .asp-modo-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 14px; background: #f1f1f1; border: 2px solid rgba(106, 46, 204, 0.25);
+            border-radius: 10px; color: var(--color-dark); cursor: pointer;
+            font-family: 'DM Sans', Arial, sans-serif; font-size: 0.95rem; font-weight: 700;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .asp-modo-btn:hover { border-color: #6a2ecc; }
+        .asp-modo-btn:focus-visible { outline: 3px solid rgba(159, 100, 216, 0.5); outline-offset: 2px; }
+        .asp-modo-btn.selected {
+            background: linear-gradient(135deg, #000177 0%, #6a2ecc 50%, #9f64d8 100%);
+            border-color: #000177; color: #fff; box-shadow: 0 4px 12px rgba(106, 46, 204, 0.35);
+        }
+        .asp-modo-container.field-error-modo { outline: 2px solid #fb8500; outline-offset: 4px; border-radius: 12px; }
+        .asp-doc-bloque { margin-top: 12px; position: relative; }
+        @media (max-width: 520px) { .asp-modo-container { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { .asp-modo-btn { transition: none; } }
+
+        /* Fotos y videos del lugar (hasta 10, mezclados) */
+        .asp-files-resumen { font-size: 0.9rem; color: #555; margin-bottom: 12px; }
+        .asp-files-resumen span { font-weight: 700; color: #6a2ecc; }
+        .asp-files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .asp-file-slot {
+            position: relative; height: 96px; border: 2px dashed rgba(106, 46, 204, 0.45);
+            border-radius: 10px; background: var(--color-light); overflow: hidden; transition: all 0.3s ease;
+        }
+        .asp-file-slot:hover { border-color: #6a2ecc; background: rgba(106, 46, 204, 0.08); }
+        .asp-file-slot.has-file { border-style: solid; background: rgba(106, 46, 204, 0.08); }
+        .asp-file-slot .asp-slot-label { font-size: 0.7rem; text-align: center; }
+        .asp-file-slot.has-file .asp-slot-label span { display: none; }
+        .asp-file-slot .remove-btn { position: absolute; top: 5px; right: 5px; width: 25px; height: 25px; font-size: 12px; display: none; z-index: 2; }
+        .asp-file-info {
+            position: absolute; inset: 0; display: none; flex-direction: column; align-items: center;
+            justify-content: center; gap: 4px; padding: 6px 10px; text-align: center; pointer-events: none;
+        }
+        .asp-file-info .mi-icon { font-size: 1.6rem; line-height: 1; }
+        .asp-file-info .mi-name { max-width: 100%; font-size: 0.7rem; font-weight: 600; color: var(--color-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .asp-file-info .mi-size { font-size: 0.65rem; color: #777; }
+
         /* Estilo específico para Corrección de Video (verde oliva/lima) */
         .correccion-video-item .item-overlay {
             background: linear-gradient(to top, #6b8e12 0%, rgba(107, 142, 18, 0.8) 40%, rgba(107, 142, 18, 0.3) 70%, rgba(107, 142, 18, 0) 100%);
@@ -6953,7 +7034,7 @@
                         <span class="dept-btn-icon"><i class="fas fa-handshake"></i></span>
                         <span class="dept-btn-text">
                             <span class="dept-btn-name">Protocolo</span>
-                            <span class="dept-btn-count"><span class="dept-btn-total">0</span> formularios<span class="dept-btn-fav" hidden><i class="fas fa-star"></i><span class="dept-btn-fav-n">0</span></span></span>
+                            <span class="dept-btn-count"><span class="dept-btn-total">1</span> formularios<span class="dept-btn-fav" hidden><i class="fas fa-star"></i><span class="dept-btn-fav-n">0</span></span></span>
                         </span>
                         <i class="fas fa-chevron-down dept-btn-chevron"></i>
                     </button>
@@ -7384,10 +7465,23 @@
 
                 <!-- Departamento: Protocolo -->
                 <div class="dept-panel" id="dept-panel-protocolo" data-dept="protocolo" hidden>
-                    <div class="dept-empty">
-                        <i class="fas fa-hourglass-half"></i>
-                        <strong>Próximamente</strong>
-                        Aún no hay formularios disponibles en Protocolo.
+                    <div class="cards-grid">
+                        <!-- Tarjeta: Asistencia Protocolar -->
+                        <div class="item asistencia-protocolar-item" data-form="asistencia-protocolar">
+                            <div class="item-image-wrapper">
+                                <img src="assets/images/protocolo.png" alt="Asistencia Protocolar" width="332" height="378">
+                                <div class="item-overlay asistencia-protocolar-overlay">
+                                    <div class="item_title_main">Asistencia Protocolar</div>
+                                    <div class="button-container">
+                                        <button class="favorite-btn" onclick="toggleFavorite(this, 'asistencia-protocolar')">
+                                            <i class="fas fa-star"></i>
+                                            <span class="favorite-tooltip">Marcar como favorito</span>
+                                        </button>
+                                        <a href="#" onclick="showAsistenciaProtocolarForm()" class="item_button">Acceder</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -9616,6 +9710,208 @@
             </div>
         </section>
 
+        <!-- Asistencia Protocolar Form Section -->
+        <section id="asistencia-protocolar-form" class="section hidden">
+            <div class="form-background">
+                <div class="animated-gradient">
+                    <div class="particles"></div>
+                    <div class="subtle-glow"></div>
+                </div>
+            </div>
+            <div class="aviso-24h">⚠️ IMPORTANTE: LAS SOLICITUDES DE ASISTENCIA PROTOCOLAR DEBEN REALIZARSE CON UN MÍNIMO DE 7 DÍAS DE ANTICIPACIÓN</div>
+            <div class="section-header">
+                <h2 class="section-title">Asistencia Protocolar</h2>
+                <p class="section-subtitle">Solicita el apoyo de Protocolo para tu actividad: datos del evento, programa y guion</p>
+            </div>
+            <div class="formularios-container">
+                <form id="asistencia-protocolar-formulario" class="medical-form">
+                    <!-- Campo oculto para guardar el tipo de formulario -->
+                    <input type="hidden" id="asistencia-protocolar-form-type" name="form-type" value="Asistencia Protocolar">
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🏥 Región *</h3>
+                        <div class="region-grid" id="asp-region-grid">
+                            <!-- Las regiones se generan dinámicamente -->
+                        </div>
+                    </div>
+
+                    <div class="form-section hidden" id="asp-unidad-section">
+                        <h3 class="form-section-title">🏥 Unidad *</h3>
+                        <div class="unidad-grid" id="asp-unidad-grid">
+                            <!-- Las unidades se generan dinámicamente según la región -->
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🎖️ Nombre del Evento *</h3>
+                        <input type="text" id="asp-nombre" class="form-input" placeholder="Nombre del evento o actividad">
+                    </div>
+
+                    <div class="form-section">
+                        <div class="fecha-hora-grid">
+                            <div>
+                                <h3 class="form-section-title">📅 Fecha del Evento *</h3>
+                                <input type="date" id="asp-fecha" class="form-input">
+                                <small style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;">Mínimo 7 días de anticipación</small>
+                            </div>
+                            <div>
+                                <h3 class="form-section-title">⏰ Hora de Inicio *</h3>
+                                <div class="hora-input-wrapper">
+                                    <div class="hora-container">
+                                        <input type="text" id="asp-hora-inicio" class="form-input" placeholder="08:00" style="width: 100px; text-align: center;">
+                                        <button type="button" class="btn-time" id="asp-btn-am" onclick="setAsistenciaProtocolarAMPM('a. m.')">a. m.</button>
+                                        <button type="button" class="btn-time" id="asp-btn-pm" onclick="setAsistenciaProtocolarAMPM('p. m.')">p. m.</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📍 Dirección *</h3>
+                        <input type="text" id="asp-direccion" class="form-input" placeholder="Lugar y dirección exacta donde se realizará el evento">
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">👥 Aforo *</h3>
+                        <input type="number" id="asp-aforo" class="form-input" min="1" step="1" inputmode="numeric" placeholder="Cantidad estimada de asistentes">
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">🏛️ Quién preside la actividad *</h3>
+                        <input type="text" id="asp-preside" class="form-input" placeholder="Nombre y cargo de quien preside la actividad">
+                    </div>
+
+                    <div class="form-section">
+                        <div class="info-box">
+                            ℹ️ Para cada documento (Programa y Guion) elija si desea escribirlo aquí (hasta 4000 caracteres) o adjuntarlo en formato .doc o .docx.
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📋 Programa *</h3>
+                        <div class="asp-modo-container" id="asp-programa-modo">
+                            <button type="button" class="asp-modo-btn" data-modo="escribir" aria-pressed="false" onclick="aspSeleccionarModoDoc('programa', 'escribir')"><span>✍️</span><span>Escribir Programa</span></button>
+                            <button type="button" class="asp-modo-btn" data-modo="adjuntar" aria-pressed="false" onclick="aspSeleccionarModoDoc('programa', 'adjuntar')"><span>📎</span><span>Adjuntar Documento</span></button>
+                        </div>
+                        <div id="asp-programa-escribir" class="asp-doc-bloque hidden">
+                            <textarea id="asp-programa-texto" class="form-input" rows="10" maxlength="4000" oninput="aspActualizarContadorDoc('programa')" placeholder="Escriba aquí el programa de la actividad: orden de los actos, intervenciones y horarios..."></textarea>
+                            <div id="asp-programa-contador" class="copy-rrss-counter">0 / 4000</div>
+                        </div>
+                        <div id="asp-programa-adjuntar" class="asp-doc-bloque hidden">
+                            <input type="file" id="asp-programa-archivo" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
+                            <small style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;">⚠️ Solo se permiten archivos .DOC y .DOCX (máximo 10MB)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📜 Guion *</h3>
+                        <div class="asp-modo-container" id="asp-guion-modo">
+                            <button type="button" class="asp-modo-btn" data-modo="escribir" aria-pressed="false" onclick="aspSeleccionarModoDoc('guion', 'escribir')"><span>✍️</span><span>Escribir Guion</span></button>
+                            <button type="button" class="asp-modo-btn" data-modo="adjuntar" aria-pressed="false" onclick="aspSeleccionarModoDoc('guion', 'adjuntar')"><span>📎</span><span>Adjuntar Documento</span></button>
+                        </div>
+                        <div id="asp-guion-escribir" class="asp-doc-bloque hidden">
+                            <textarea id="asp-guion-texto" class="form-input" rows="10" maxlength="4000" oninput="aspActualizarContadorDoc('guion')" placeholder="Escriba aquí el guion de la actividad para el maestro de ceremonias..."></textarea>
+                            <div id="asp-guion-contador" class="copy-rrss-counter">0 / 4000</div>
+                        </div>
+                        <div id="asp-guion-adjuntar" class="asp-doc-bloque hidden">
+                            <input type="file" id="asp-guion-archivo" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
+                            <small style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;">⚠️ Solo se permiten archivos .DOC y .DOCX (máximo 10MB)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📸 Fotos y Videos del Lugar (opcional, máximo 10)</h3>
+                        <div class="info-box">
+                            ⚠️ Puede adjuntar hasta 10 archivos entre fotos y videos para visualizar el lugar del evento, con un peso total máximo de 1 GB entre todos. Videos permitidos: MP4 y MOV.
+                        </div>
+                        <div class="asp-files-resumen">Archivos: <span id="asp-files-count">0</span> / 10 · Peso total: <span id="asp-files-size">0.00</span> MB / 1024 MB</div>
+                        <div class="asp-files-grid">
+                            <div class="asp-file-slot" id="asp-slot1">
+                                <label for="asp-file1" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 1</span></label>
+                                <input type="file" id="asp-file1" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info1', 'asp-rm1')">
+                                <div id="asp-info1" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm1" class="remove-btn" onclick="aspClearMedia('asp-file1', 'asp-info1', 'asp-rm1')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot2">
+                                <label for="asp-file2" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 2</span></label>
+                                <input type="file" id="asp-file2" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info2', 'asp-rm2')">
+                                <div id="asp-info2" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm2" class="remove-btn" onclick="aspClearMedia('asp-file2', 'asp-info2', 'asp-rm2')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot3">
+                                <label for="asp-file3" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 3</span></label>
+                                <input type="file" id="asp-file3" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info3', 'asp-rm3')">
+                                <div id="asp-info3" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm3" class="remove-btn" onclick="aspClearMedia('asp-file3', 'asp-info3', 'asp-rm3')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot4">
+                                <label for="asp-file4" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 4</span></label>
+                                <input type="file" id="asp-file4" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info4', 'asp-rm4')">
+                                <div id="asp-info4" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm4" class="remove-btn" onclick="aspClearMedia('asp-file4', 'asp-info4', 'asp-rm4')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot5">
+                                <label for="asp-file5" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 5</span></label>
+                                <input type="file" id="asp-file5" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info5', 'asp-rm5')">
+                                <div id="asp-info5" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm5" class="remove-btn" onclick="aspClearMedia('asp-file5', 'asp-info5', 'asp-rm5')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot6">
+                                <label for="asp-file6" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 6</span></label>
+                                <input type="file" id="asp-file6" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info6', 'asp-rm6')">
+                                <div id="asp-info6" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm6" class="remove-btn" onclick="aspClearMedia('asp-file6', 'asp-info6', 'asp-rm6')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot7">
+                                <label for="asp-file7" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 7</span></label>
+                                <input type="file" id="asp-file7" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info7', 'asp-rm7')">
+                                <div id="asp-info7" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm7" class="remove-btn" onclick="aspClearMedia('asp-file7', 'asp-info7', 'asp-rm7')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot8">
+                                <label for="asp-file8" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 8</span></label>
+                                <input type="file" id="asp-file8" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info8', 'asp-rm8')">
+                                <div id="asp-info8" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm8" class="remove-btn" onclick="aspClearMedia('asp-file8', 'asp-info8', 'asp-rm8')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot9">
+                                <label for="asp-file9" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 9</span></label>
+                                <input type="file" id="asp-file9" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info9', 'asp-rm9')">
+                                <div id="asp-info9" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm9" class="remove-btn" onclick="aspClearMedia('asp-file9', 'asp-info9', 'asp-rm9')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot10">
+                                <label for="asp-file10" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 10</span></label>
+                                <input type="file" id="asp-file10" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info10', 'asp-rm10')">
+                                <div id="asp-info10" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm10" class="remove-btn" onclick="aspClearMedia('asp-file10', 'asp-info10', 'asp-rm10')">×</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="form-section-title">📱✉️ Datos de Contacto</h3>
+                        <div class="contacto-grid">
+                            <div>
+                                <label class="form-label">Número de Teléfono</label>
+                                <input type="tel" id="asp-telefono" class="form-input" placeholder="04xx 1234567">
+                            </div>
+                            <div>
+                                <label class="form-label">Correo Electrónico *</label>
+                                <input type="email" id="asp-correo" class="form-input" placeholder="Para comunicarnos con usted">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="showSection('formularios')">Volver</button>
+                        <button type="submit" class="btn-primary">Enviar Solicitud</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
         <!-- Corrección de Video Form Section -->
         <section id="correccion-video-form" class="section hidden">
             <div class="form-background">
@@ -10647,6 +10943,7 @@
                             <button type="button" class="solbusc-tipo-item" data-tipo="Copy RRSS" onclick="nexusFiltrarPorTipo('Copy RRSS')">Copy RRSS</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Corrección Nota de Prensa" onclick="nexusFiltrarPorTipo('Corrección Nota de Prensa')">Corrección Nota de Prensa</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Cobertura de Prensa" onclick="nexusFiltrarPorTipo('Cobertura de Prensa')">Cobertura de Prensa</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Asistencia Protocolar" onclick="nexusFiltrarPorTipo('Asistencia Protocolar')">Asistencia Protocolar</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Corrección de Video" onclick="nexusFiltrarPorTipo('Corrección de Video')">Corrección de Video</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Cumpleaños" onclick="nexusFiltrarPorTipo('Cumpleaños')">Cumpleaños</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Diseño de Pendón" onclick="nexusFiltrarPorTipo('Diseño de Pendón')">Diseño de Pendón</button>
@@ -11242,7 +11539,7 @@
         // NexusData · única capa de datos. La interfaz no toca Firebase ni GAS.
         // =====================================================================
         window.NexusData = {
-            TIPOS_SIN_DISENADOR: ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Corrección de Video'],
+            TIPOS_SIN_DISENADOR: ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Corrección de Video', 'Asistencia Protocolar'],
             _cargando: {},
             mesKey: function (d) {
                 var f = nexusFechaVenezuela(d || new Date());
@@ -12719,6 +13016,11 @@
                 window._nexusTipoSubida = contexto.tipoSolicitud;
             }
 
+            if (contexto && contexto.tipoSolicitud === 'Asistencia Protocolar') {
+                window._nexusLimiteArchivoBytes = 1024 * 1024 * 1024;
+                window._nexusTipoSubida = 'Asistencia Protocolar';
+            }
+
             if (contexto && contexto.tipoSolicitud === 'Corrección de Video') {
                 window._nexusLimiteArchivoBytes = 1024 * 1024 * 1024;
                 window._nexusTipoSubida = 'Corrección de Video';
@@ -13604,6 +13906,12 @@
                 datosInteres: '',
                 textoNota: '',
                 documentoAdjuntoNombre: '',
+                docsTexto: [],
+                aforo: '',
+                preside: '',
+                programaAdjuntoNombre: '',
+                guionAdjuntoNombre: '',
+                fotosVideosResumen: '',
                 igExtras: []
             };
 
@@ -13612,6 +13920,8 @@
                 formData.general.forEach(item => {
                     // Post Simple / Carrusel: campos propios (tema, titular, láminas...) que se guardan como viñetas
                     if (item.extra) { plainData.igExtras.push({ label: item.label, value: item.value }); return; }
+                    // Asistencia Protocolar: Programa/Guion escritos en el formulario (cada uno se convierte en un Google Doc)
+                    if (item.docTexto) { plainData.docsTexto.push({ sufijo: item.docTexto, nombre: item.nombreDoc || item.docTexto, titulo: item.tituloDoc || item.nombreDoc || item.docTexto, contenido: item.value }); return; }
                     if (item.label.includes('Tipo de Formulario') || item.label.includes('Tipo de Solicitud') || item.label.includes('Tipo de Jornada')) {
                         plainData.tipo = item.value;
                     } else if (item.label.includes('Tipo de Solicitud') && !item.label.includes('Formulario')) {
@@ -13690,6 +14000,10 @@
                         plainData.tituloNota = item.value;
                     } else if (item.label.includes('Tipo de Material')) {
                         plainData.tipoMaterial = item.value;
+                    } else if (item.label === 'Aforo') {
+                        plainData.aforo = item.value;
+                    } else if (item.label.includes('Preside la Actividad')) {
+                        plainData.preside = item.value;
                     }
                 });
             }
@@ -13756,6 +14070,12 @@
                         plainData.documentoAdjuntoNombre = item.value;
                     } else if (item.label.includes('Video Adjunto')) {
                         plainData.videoAdjuntoNombre = item.value;
+                    } else if (item.label === 'Programa Adjunto') {
+                        plainData.programaAdjuntoNombre = item.value;
+                    } else if (item.label === 'Guion Adjunto') {
+                        plainData.guionAdjuntoNombre = item.value;
+                    } else if (item.label === 'Fotos y Videos del Lugar') {
+                        plainData.fotosVideosResumen = item.value;
                     }
                 });
             }
@@ -13769,7 +14089,7 @@
             // En SIRA: para tipos especiales, "Otros" se guarda en columna E
             // Para solicitudes normales, "Otros" se convierte a bullets para especialidades
             const tipoLower = (plainData.tipo || '').toLowerCase();
-            const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|voz en off|cobertura de prensa|copy rrss|material para instagram|post simple|carrusel|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
+            const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|voz en off|cobertura de prensa|asistencia protocolar|copy rrss|material para instagram|post simple|carrusel|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
             
             if (esTipoEspecial) {
                 // Para tipos especiales, mantener "otros" como está (como en SIRA columna E)
@@ -13797,7 +14117,8 @@
             'limpieza de audio/clip': 'Audiovisual',
             'correccion nota de prensa': 'Prensa',
             'copy rrss': 'Prensa',
-            'cobertura de prensa': 'Prensa'
+            'cobertura de prensa': 'Prensa',
+            'asistencia protocolar': 'Protocolo'
         };
 
         function nexusDeterminarDepartamento(tipo) {
@@ -13806,7 +14127,7 @@
             const t = sinAcentos;   // respaldo por palabras clave
             if (t.includes('prensa') || t.includes('copy')) return 'Prensa';
             if (t.includes('video') || t.includes('audio') || t.includes('audiovisual') || t.includes('voz en off') || t.includes('locucion')) return 'Audiovisual';
-            if (t.includes('protocolo') || t.includes('evento')) return 'Protocolo';
+            if (t.includes('protocolo') || t.includes('protocolar') || t.includes('evento')) return 'Protocolo';
             return 'Diseño';
         }
 
@@ -13954,6 +14275,58 @@
                     }
                 }
 
+                // Asistencia Protocolar: el Programa y/o el Guion escritos en el formulario se convierten cada uno
+                // en un Google Doc (nombre en Drive: <ID>_programa / <ID>_guion). El GAS es idempotente por nombre.
+                if (Array.isArray(plainData.docsTexto) && plainData.docsTexto.length > 0) {
+                    const docsCreados = [];
+                    try {
+                        showNexusLoadingOverlay('Generando documentos...', 'Creando Google Docs en Drive para el programa/guion', true);
+                        for (const d of plainData.docsTexto) {
+                            try {
+                                const docRes = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                    body: JSON.stringify({
+                                        action: 'crearDocumentoDoc',
+                                        id: docId,
+                                        Requerimiento: docId,
+                                        filename: docId + '_' + d.sufijo,
+                                        sufijo: d.sufijo,
+                                        titulo: d.titulo || ('Documento ' + plainData.tipo),
+                                        contenido: d.contenido,
+                                        tipo: plainData.tipo
+                                    })
+                                }, 45000, 1);
+                                const urlDoc = docRes && (docRes.fileUrl || (docRes.data && docRes.data.fileUrl));
+                                if (docRes && docRes.success !== false && urlDoc) {
+                                    docsCreados.push(urlDoc);
+                                } else {
+                                    const motivo = (docRes && (docRes.error || (docRes.data && docRes.data.error))) || 'respuesta sin enlace del documento';
+                                    console.error('[NEXUS] El GAS no pudo crear el Google Doc de ' + d.nombre + ':', motivo, docRes);
+                                    showToast({ type: 'warning', title: 'Documento no generado',
+                                        message: 'No se pudo crear el documento de ' + d.nombre + ' en Drive (' + motivo + '). Avisa al administrador.', duration: 9000 });
+                                }
+                            } catch (docErr) {
+                                console.error('[NEXUS] Error creando Google Doc de ' + d.nombre + ':', docErr);
+                                showToast({ type: 'warning', title: 'Documento no generado',
+                                    message: 'No se pudo crear el documento de ' + d.nombre + ' en Drive. Avisa al administrador.', duration: 9000 });
+                            }
+                        }
+                    } finally {
+                        hideNexusLoadingOverlay();
+                    }
+                    if (docsCreados.length > 0) {
+                        archivosUrls.unshift(...docsCreados);
+                        archivosConMime.unshift(...docsCreados.map(u => ({ url: u, mime: 'application/vnd.google-apps.document', isVideo: false })));
+                        // Los Google Docs cuentan como "documentos" junto a los .doc/.docx adjuntos
+                        resumenArchivosSubidos = nexusClasificarArchivosSubidos(archivosConMime.map(a => ({
+                            mimeType: a.mime === 'application/vnd.google-apps.document'
+                                ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                                : a.mime
+                        }))) || resumenArchivosSubidos;
+                    }
+                }
+
                 // Modelo de datos: la columna Especialidades lleva SOLO especialidades médicas.
                 // Las vacunas y las patologías de las 3 captaciones quirúrgicas van en Servicios.
                 let especialidadesValor = plainData.especialidades || '';
@@ -13967,7 +14340,7 @@
 
                 let informacionValor = plainData.informacion || '';
                 const tipoLower = (plainData.tipo || '').toLowerCase();
-                const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|voz en off|cobertura de prensa|copy rrss|material para instagram|post simple|carrusel|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
+                const esTipoEspecial = tipoLower.match(/obituario|certificado|textiles|pendón|corrección|correccion|nota de prensa|voz en off|cobertura de prensa|asistencia protocolar|copy rrss|material para instagram|post simple|carrusel|charlas|sesiones educativas|actividades aprendizaje|aprendizaje|actividades deportivas|deportiva|deportivas|taller|curso|efeméride|efemeride|cumpleaños|otros/);
 
                 if (esTipoEspecial) {
                     let otrosDatos = [];
@@ -13996,6 +14369,11 @@
                     if (plainData.vocero) otrosDatos.push(`• Vocero: ${plainData.vocero}`);
                     if (plainData.productosCobertura) otrosDatos.push(`• Productos de la Cobertura: ${plainData.productosCobertura}`);
                     if (plainData.datosInteres) otrosDatos.push(`• Datos de Interés: ${plainData.datosInteres}`);
+                    if (plainData.aforo) otrosDatos.push(`• Aforo: ${plainData.aforo}`);
+                    if (plainData.preside) otrosDatos.push(`• Preside la Actividad: ${plainData.preside}`);
+                    (plainData.docsTexto || []).forEach(d => otrosDatos.push(`• ${d.nombre}: Redactado en formulario (convertido a Google Doc en Drive)`));
+                    if (plainData.programaAdjuntoNombre) otrosDatos.push(`• Programa: Documento adjunto`);
+                    if (plainData.guionAdjuntoNombre) otrosDatos.push(`• Guion: Documento adjunto`);
                     if (plainData.tituloNota) otrosDatos.push(`• Título: ${plainData.tituloNota}`);
                     if (plainData.textoNota) otrosDatos.push(`• Documento: Redactado en formulario (convertido a Google Doc en Drive)`);
                     if (plainData.nombreEfemeride) otrosDatos.push(`• Nombre de la Efeméride: ${plainData.nombreEfemeride}`);
@@ -16159,6 +16537,308 @@
         }
 
         // ============================================================
+        // ASISTENCIA PROTOCOLAR (Protocolo)
+        // Campos: región/unidad, evento, fecha/hora, dirección, aforo, quién preside,
+        // Programa y Guion (cada uno escrito o adjunto), hasta 10 fotos/videos del lugar y contacto.
+        // ============================================================
+        let selectedAsistenciaProtocolarRegion = "";
+        let selectedAsistenciaProtocolarUnidad = "";
+        const ASP_MAX_ARCHIVOS = 10;
+        const ASP_MAX_BYTES = 1024 * 1024 * 1024;      // 1 GB en total entre fotos y videos
+        const ASP_DOC_MAX_BYTES = 10 * 1024 * 1024;    // 10 MB por documento .doc/.docx
+        const ASP_DOCS = {
+            programa: { nombre: 'Programa', modo: '' },
+            guion:    { nombre: 'Guion',    modo: '' }
+        };
+
+        function asistenciaProtocolarFechaMinima() {
+            const p = nexusHoy().split('-').map(Number);
+            return new Date(Date.UTC(p[0], p[1] - 1, p[2] + 7)).toISOString().slice(0, 10);
+        }
+
+        function showAsistenciaProtocolarForm() {
+            const form = document.getElementById('asistencia-protocolar-formulario');
+            if (form) form.reset();
+
+            const fecha = document.getElementById('asp-fecha');
+            if (fecha) fecha.min = asistenciaProtocolarFechaMinima();
+
+            document.querySelectorAll('#asistencia-protocolar-form .btn-time').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('#asistencia-protocolar-formulario .field-error').forEach(el => el.classList.remove('field-error'));
+
+            selectedAsistenciaProtocolarRegion = "";
+            selectedAsistenciaProtocolarUnidad = "";
+            Object.keys(ASP_DOCS).forEach(k => { aspSeleccionarModoDoc(k, ''); aspActualizarContadorDoc(k); });
+            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) aspClearMedia('asp-file' + i, 'asp-info' + i, 'asp-rm' + i);
+
+            showSection('asistencia-protocolar-form');
+            generateAsistenciaProtocolarRegionButtons();
+        }
+
+        function generateAsistenciaProtocolarRegionButtons() {
+            const _lockInfo = nexusUnidadEsFija();
+            if (_lockInfo.fija) {
+                nexusRenderUnidadBloqueada('asp-region-grid', 'asp-unidad-section', 'asp-unidad-grid', _lockInfo.region, _lockInfo.unidad,
+                    function(r) { selectedAsistenciaProtocolarRegion = r; }, function(u) { selectedAsistenciaProtocolarUnidad = u; });
+                return;
+            }
+            const container = document.getElementById('asp-region-grid');
+            if (!container) return;
+            container.innerHTML = ORDEN_REGIONES.map(regionKey => `
+                <div class="region-btn" onclick="selectAsistenciaProtocolarRegion('${regionKey}', this)">
+                    ${getNombreRegionLimpio(regionKey)}
+                </div>
+            `).join('');
+        }
+
+        function selectAsistenciaProtocolarRegion(regionKey, btnElement) {
+            if (selectedAsistenciaProtocolarRegion === regionKey) {
+                document.querySelectorAll('#asp-region-grid .region-btn').forEach(btn => btn.classList.remove('selected'));
+                selectedAsistenciaProtocolarRegion = "";
+                selectedAsistenciaProtocolarUnidad = "";
+                document.getElementById('asp-unidad-section').classList.add('hidden');
+                document.getElementById('asp-unidad-grid').innerHTML = "";
+                return;
+            }
+            document.querySelectorAll('#asp-region-grid .region-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedAsistenciaProtocolarRegion = regionKey;
+            selectedAsistenciaProtocolarUnidad = "";
+
+            const unidades = UNIDADES_IPASME_RAW[regionKey] || [];
+            document.getElementById('asp-unidad-grid').innerHTML = unidades.map(unidad => `
+                <div class="unidad-btn" onclick="selectAsistenciaProtocolarUnidad('${unidad}', this)">
+                    ${unidad}
+                </div>
+            `).join('');
+            document.getElementById('asp-unidad-section').classList.remove('hidden');
+        }
+
+        function selectAsistenciaProtocolarUnidad(unidad, btnElement) {
+            if (selectedAsistenciaProtocolarUnidad === unidad) {
+                document.querySelectorAll('#asp-unidad-grid .unidad-btn').forEach(btn => btn.classList.remove('selected'));
+                selectedAsistenciaProtocolarUnidad = "";
+                return;
+            }
+            document.querySelectorAll('#asp-unidad-grid .unidad-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedAsistenciaProtocolarUnidad = unidad;
+        }
+
+        function setAsistenciaProtocolarAMPM(value) {
+            document.getElementById('asp-btn-am').classList.toggle('selected', value === 'a. m.');
+            document.getElementById('asp-btn-pm').classList.toggle('selected', value !== 'a. m.');
+        }
+
+        // ---- Programa / Guion: escribir o adjuntar ----
+        function aspSeleccionarModoDoc(key, modo) {
+            if (!ASP_DOCS[key]) return;
+            ASP_DOCS[key].modo = modo || '';
+            const cont = document.getElementById('asp-' + key + '-modo');
+            if (cont) {
+                cont.classList.remove('field-error-modo');
+                cont.querySelectorAll('.asp-modo-btn').forEach(function(b) {
+                    const activo = b.getAttribute('data-modo') === modo;
+                    b.classList.toggle('selected', activo);
+                    b.setAttribute('aria-pressed', activo ? 'true' : 'false');
+                });
+            }
+            const esc = document.getElementById('asp-' + key + '-escribir');
+            const adj = document.getElementById('asp-' + key + '-adjuntar');
+            if (esc) esc.classList.toggle('hidden', modo !== 'escribir');
+            if (adj) adj.classList.toggle('hidden', modo !== 'adjuntar');
+            if (modo === 'escribir') {
+                const f = document.getElementById('asp-' + key + '-archivo');
+                if (f) f.value = '';
+            }
+        }
+
+        function aspActualizarContadorDoc(key) {
+            const ta = document.getElementById('asp-' + key + '-texto');
+            const c = document.getElementById('asp-' + key + '-contador');
+            if (ta && c) c.textContent = ta.value.length + ' / 4000';
+        }
+
+        function aspValidarDoc(input) {
+            const f = input && input.files && input.files[0];
+            if (!f) return true;
+            if (!/\.(doc|docx)$/i.test(f.name)) {
+                showToast({ type: 'error', title: 'Formato no permitido', message: 'Solo se permiten archivos .DOC y .DOCX' });
+                input.value = '';
+                return false;
+            }
+            if (f.size > ASP_DOC_MAX_BYTES) {
+                showToast({ type: 'warning', title: 'Archivo muy grande', message: 'El documento no puede exceder 10MB' });
+                input.value = '';
+                return false;
+            }
+            return true;
+        }
+
+        // ---- Fotos y videos del lugar ----
+        function aspEsVideo(f) { return (f.type || '').indexOf('video/') === 0 || /\.(mp4|mov)$/i.test(f.name); }
+        function aspEsImagen(f) { return (f.type || '').indexOf('image/') === 0 || /\.(jpe?g|png|gif|webp|heic|heif)$/i.test(f.name); }
+
+        function aspFormatearPeso(bytes) {
+            if (bytes >= 1024 * 1024 * 1024) return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+
+        function aspResumenMedia() {
+            let count = 0, total = 0, fotos = 0, videos = 0;
+            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) {
+                const inp = document.getElementById('asp-file' + i);
+                const f = inp && inp.files && inp.files[0];
+                if (!f) continue;
+                count++; total += f.size;
+                if (aspEsVideo(f)) videos++; else fotos++;
+            }
+            const c = document.getElementById('asp-files-count');
+            const s = document.getElementById('asp-files-size');
+            if (c) c.textContent = count;
+            if (s) s.textContent = (total / (1024 * 1024)).toFixed(2);
+            return { count: count, total: total, fotos: fotos, videos: videos };
+        }
+
+        function aspHandleMedia(input, infoId, rmId) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            if (!aspEsImagen(file) && !aspEsVideo(file)) {
+                showToast({ type: 'error', title: 'Tipo de archivo no permitido', message: 'Solo se permiten fotos y videos (MP4 o MOV).' });
+                input.value = '';
+                return;
+            }
+            let pesoOtros = 0;
+            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) {
+                const otro = document.getElementById('asp-file' + i);
+                if (otro && otro !== input && otro.files && otro.files[0]) pesoOtros += otro.files[0].size;
+            }
+            if (pesoOtros + file.size > ASP_MAX_BYTES) {
+                showToast({ type: 'error', title: 'Límite de tamaño', message: 'El total de archivos no puede superar 1 GB. Con "' + file.name + '" (' + aspFormatearPeso(file.size) + ') se excedería.' });
+                input.value = '';
+                return;
+            }
+            const info = document.getElementById(infoId);
+            const rm = document.getElementById(rmId);
+            const slot = input.closest('.asp-file-slot');
+            if (info) {
+                info.innerHTML = '';
+                const ic = document.createElement('span'); ic.className = 'mi-icon'; ic.textContent = aspEsVideo(file) ? '🎬' : '🖼️';
+                const nm = document.createElement('span'); nm.className = 'mi-name'; nm.textContent = file.name; nm.title = file.name;
+                const sz = document.createElement('span'); sz.className = 'mi-size'; sz.textContent = aspFormatearPeso(file.size);
+                info.appendChild(ic); info.appendChild(nm); info.appendChild(sz);
+                info.style.display = 'flex';
+            }
+            if (rm) rm.style.display = 'flex';
+            if (slot) slot.classList.add('has-file');
+            aspResumenMedia();
+        }
+
+        function aspClearMedia(inputId, infoId, rmId) {
+            const input = document.getElementById(inputId);
+            const info = document.getElementById(infoId);
+            const rm = document.getElementById(rmId);
+            if (input) {
+                input.value = '';
+                const slot = input.closest('.asp-file-slot');
+                if (slot) slot.classList.remove('has-file');
+            }
+            if (info) { info.innerHTML = ''; info.style.display = 'none'; }
+            if (rm) rm.style.display = 'none';
+            aspResumenMedia();
+        }
+
+        // Valida Programa y Guion (modo elegido + contenido). Devuelve la lista de errores.
+        function aspValidarDocumentos() {
+            const errores = [];
+            let primero = null;
+            Object.keys(ASP_DOCS).forEach(function(key) {
+                const d = ASP_DOCS[key];
+                const cont = document.getElementById('asp-' + key + '-modo');
+                if (!d.modo) {
+                    if (cont) { cont.classList.add('field-error-modo'); if (!primero) primero = cont; }
+                    errores.push(d.nombre + ' (elija escribir o adjuntar)');
+                    return;
+                }
+                if (d.modo === 'escribir') {
+                    const ta = document.getElementById('asp-' + key + '-texto');
+                    if (!ta || !ta.value.trim()) {
+                        if (ta) { ta.classList.add('field-error'); if (!primero) primero = ta; }
+                        errores.push(d.nombre + ' (escriba el texto)');
+                    }
+                } else {
+                    const f = document.getElementById('asp-' + key + '-archivo');
+                    if (!f || !f.files || !f.files[0]) {
+                        if (f) { f.classList.add('field-error'); if (!primero) primero = f; }
+                        errores.push(d.nombre + ' (adjunte el documento .DOC o .DOCX)');
+                    } else if (!aspValidarDoc(f)) {
+                        errores.push(d.nombre + ' (archivo no válido)');
+                    }
+                }
+            });
+            if (primero) primero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return errores;
+        }
+
+        function collectAsistenciaProtocolarFormData() {
+            const formData = { general: [], location: [], contact: [], additional: [], media: [] };
+            const val = id => (document.getElementById(id)?.value || '').trim();
+
+            formData.general.push({ label: 'Tipo de Formulario', value: document.getElementById('asistencia-protocolar-form-type')?.value || 'Asistencia Protocolar' });
+
+            const regionSelect = document.querySelector('#asp-region-grid .region-btn.selected');
+            const unidadSelect = document.querySelector('#asp-unidad-grid .unidad-btn.selected');
+            if (regionSelect) formData.location.push({ label: 'Región', value: regionSelect.textContent.trim() });
+            if (unidadSelect) formData.location.push({ label: 'Unidad', value: unidadSelect.textContent.replace(/🔒/g, '').trim() });
+
+            const nombreEvento = val('asp-nombre');
+            if (nombreEvento) formData.general.push({ label: 'Nombre del Evento', value: nombreEvento });
+            if (val('asp-preside')) formData.general.push({ label: 'Preside la Actividad', value: val('asp-preside') });
+            const aforo = parseInt(val('asp-aforo'), 10);
+            if (aforo > 0) formData.general.push({ label: 'Aforo', value: aforo + (aforo === 1 ? ' persona' : ' personas') });
+
+            // Programa y Guion: si se escriben van a un Google Doc (uno por documento); si se adjuntan, se suben como archivo
+            Object.keys(ASP_DOCS).forEach(function(key) {
+                const d = ASP_DOCS[key];
+                if (d.modo === 'escribir') {
+                    const texto = val('asp-' + key + '-texto');
+                    if (texto) formData.general.push({
+                        label: d.nombre + ' (texto)', value: texto,
+                        docTexto: key, nombreDoc: d.nombre,
+                        tituloDoc: d.nombre + (nombreEvento ? ' - ' + nombreEvento : '')
+                    });
+                } else if (d.modo === 'adjuntar') {
+                    const f = document.getElementById('asp-' + key + '-archivo')?.files[0];
+                    if (f) formData.media.push({ label: d.nombre + ' Adjunto', value: f.name });
+                }
+            });
+
+            const fecha = val('asp-fecha');
+            const hora = val('asp-hora-inicio');
+            const ampm = document.querySelector('#asp-btn-am.selected, #asp-btn-pm.selected')?.textContent;
+            if (fecha) {
+                const [year, month, day] = fecha.split('-');
+                formData.location.push({ label: 'Fecha', value: `${day}/${month}/${year}` });
+            }
+            if (hora && ampm) formData.location.push({ label: 'Hora', value: `${hora} ${ampm}` });
+            if (val('asp-direccion')) formData.location.push({ label: 'Dirección', value: val('asp-direccion') });
+
+            if (val('asp-telefono')) formData.contact.push({ label: 'Teléfono', value: val('asp-telefono') });
+            if (val('asp-correo')) formData.contact.push({ label: 'Correo Electrónico', value: val('asp-correo') });
+
+            const m = aspResumenMedia();
+            if (m.count > 0) {
+                const partes = [];
+                if (m.fotos) partes.push(m.fotos + (m.fotos === 1 ? ' foto' : ' fotos'));
+                if (m.videos) partes.push(m.videos + (m.videos === 1 ? ' video' : ' videos'));
+                formData.media.push({ label: 'Fotos y Videos del Lugar', value: partes.join(', ') });
+                formData.media.push({ label: 'Peso Total', value: (m.total / (1024 * 1024)).toFixed(2) + ' MB' });
+            }
+
+            return formData;
+        }
+
+        // ============================================================
         // CORRECCIÓN DE VIDEO (Audiovisual)
         // ============================================================
         let selectedCorreccionVideoRegion = "";
@@ -17169,7 +17849,7 @@
                 'vida-saludable', 'integral', 'conjunta', 'captacion', 'captacion-pediatrica',
                 'captacion-oftalmologica', 'vacunacion', 'efemerides', 'obituario', 'cumpleanos', 'certificado',
                 'aprendizaje', 'deportivas', 'textiles', 'pendon', 'correccion-nota-prensa',
-                'copy-rrss', 'cobertura-prensa', 'correccion-video', 'postsimple', 'carrusel', 'otros'
+                'copy-rrss', 'cobertura-prensa', 'asistencia-protocolar', 'correccion-video', 'postsimple', 'carrusel', 'otros'
             ];
 
             document.querySelectorAll('.cards-grid').forEach(function (cardsGrid) {
@@ -17538,6 +18218,15 @@
             if (plainData.vocero) {
                 generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Vocero</span><span class="nexus-preview-value">${_esc(plainData.vocero)}</span></div>`;
             }
+            if (plainData.preside) {
+                generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Preside la Actividad</span><span class="nexus-preview-value">${_esc(plainData.preside)}</span></div>`;
+            }
+            if (plainData.aforo) {
+                generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Aforo</span><span class="nexus-preview-value">${_esc(plainData.aforo)}</span></div>`;
+            }
+            (plainData.docsTexto || []).forEach(function (d) {
+                generalSectionContent += `<div class="nexus-preview-item stacked"><span class="nexus-preview-label">${_esc(d.nombre)}</span><span class="nexus-preview-value" style="white-space: pre-wrap; max-height: 220px; overflow-y: auto;">${_esc(d.contenido)}</span></div>`;
+            });
             if (plainData.productosCobertura) {
                 generalSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Productos de la Cobertura</span><span class="nexus-preview-value">${_esc(plainData.productosCobertura)}</span></div>`;
             }
@@ -17622,6 +18311,15 @@
             }
             if (plainData.videoAdjuntoNombre) {
                 mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Video Adjunto</span><span class="nexus-preview-value">${_esc(plainData.videoAdjuntoNombre)}</span></div>`;
+            }
+            if (plainData.programaAdjuntoNombre) {
+                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Programa Adjunto</span><span class="nexus-preview-value">${_esc(plainData.programaAdjuntoNombre)}</span></div>`;
+            }
+            if (plainData.guionAdjuntoNombre) {
+                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Guion Adjunto</span><span class="nexus-preview-value">${_esc(plainData.guionAdjuntoNombre)}</span></div>`;
+            }
+            if (plainData.fotosVideosResumen) {
+                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Fotos y Videos del Lugar</span><span class="nexus-preview-value">${_esc(plainData.fotosVideosResumen)}</span></div>`;
             }
             if (plainData.documentoAdjuntoNombre) {
                 mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Documento Adjunto</span><span class="nexus-preview-value">${plainData.documentoAdjuntoNombre}</span></div>`;
@@ -19651,6 +20349,71 @@
                 });
             }
 
+            // Agregar evento al formulario de Asistencia Protocolar
+            const aspForm = document.getElementById('asistencia-protocolar-formulario');
+            if (aspForm) {
+                aspForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const validation = validateForm('asistencia-protocolar-formulario', {
+                        textFields: [
+                            { id: 'asp-nombre', label: 'Nombre del Evento', message: 'El nombre del evento es obligatorio' },
+                            { id: 'asp-fecha', label: 'Fecha del Evento', message: 'La fecha del evento es obligatoria' },
+                            { id: 'asp-hora-inicio', label: 'Hora de Inicio', message: 'La hora de inicio es obligatoria' },
+                            { id: 'asp-direccion', label: 'Dirección', message: 'La dirección es obligatoria' },
+                            { id: 'asp-aforo', label: 'Aforo', message: 'El aforo es obligatorio' },
+                            { id: 'asp-preside', label: 'Quién preside la actividad', message: 'Indique quién preside la actividad' },
+                            { id: 'asp-correo', label: 'Correo Electrónico', message: 'El correo electrónico es obligatorio' }
+                        ],
+                        regionSelection: {
+                            containerId: 'asp-region-grid',
+                            unidadContainerId: 'asp-unidad-grid',
+                            requireUnidad: true
+                        }
+                    });
+
+                    if (!validation.valid) {
+                        showToast({ type: 'error', title: 'Campos obligatorios requeridos', message: 'Por favor complete los siguientes campos para continuar:', list: validation.errors, duration: 6500 });
+                        return;
+                    }
+
+                    if (!document.querySelector('#asp-btn-am.selected, #asp-btn-pm.selected')) {
+                        showToast({ type: 'warning', title: 'Hora requerida', message: 'Debe seleccionar a. m. o p. m. para la hora' });
+                        const horaContainer = document.querySelector('#asistencia-protocolar-form .hora-container');
+                        if (horaContainer) horaContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    // Mínimo 7 días de anticipación
+                    const aspFechaInput = document.getElementById('asp-fecha');
+                    const aspMinimo = asistenciaProtocolarFechaMinima();
+                    if (aspFechaInput && aspFechaInput.value < aspMinimo) {
+                        aspFechaInput.classList.add('field-error');
+                        const [y, m, d] = aspMinimo.split('-');
+                        showToast({ type: 'warning', title: 'Fecha con poca anticipación', message: `La asistencia protocolar debe solicitarse con al menos 7 días de anticipación. La primera fecha disponible es el ${d}/${m}/${y}.`, duration: 6500 });
+                        aspFechaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    const aforoInput = document.getElementById('asp-aforo');
+                    if (!(parseInt(aforoInput.value, 10) >= 1)) {
+                        aforoInput.classList.add('field-error');
+                        showToast({ type: 'warning', title: 'Aforo no válido', message: 'El aforo debe ser un número mayor a cero.' });
+                        aforoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+
+                    const erroresDocs = aspValidarDocumentos();
+                    if (erroresDocs.length) {
+                        showToast({ type: 'error', title: 'Documentos requeridos', message: 'Complete el Programa y el Guion:', list: erroresDocs, duration: 6500 });
+                        return;
+                    }
+
+                    playSubmitSound();
+                    showNexusConfirmationModal(collectAsistenciaProtocolarFormData());
+                });
+            }
+
             // Agregar evento al formulario de Corrección de Video
             const correccionVideoForm = document.getElementById('correccion-video-formulario');
             if (correccionVideoForm) {
@@ -21248,6 +22011,7 @@
             if (!solicitudTipo) return 'theme-general';
             var s = solicitudTipo.toLowerCase();
             if (s.includes('obituario')) return 'theme-obituario';
+            if (s.includes('asistencia protocolar')) return 'theme-asistencia-protocolar';
             if (s.includes('cobertura')) return 'theme-cobertura-prensa';
             if (s.includes('corrección de video') || s.includes('correccion de video')) return 'theme-correccion-video';
             if (s.includes('limpieza') || s.includes('limpieza de audio') || s.includes('audio/clip')) return 'theme-limpieza-audio-clip';
@@ -24005,6 +24769,7 @@
             if (s.includes('TEXTILES')) return { bg: 'linear-gradient(135deg, #8B4513, #CD853F)', accent: '#CD853F', icon: '🧵' };
             if (s.includes('PENDÓN') || s.includes('PENDON')) return { bg: 'linear-gradient(135deg, #6B4EE6, #9B7BFF)', accent: '#9B7BFF', icon: '🚩' };
             if (s.includes('CORRECCIÓN DE VIDEO') || s.includes('CORRECCION DE VIDEO')) return { bg: 'linear-gradient(135deg, #4d6b0b, #a3c93a)', accent: '#6b8e12', icon: '🎞️' };
+            if (s.includes('ASISTENCIA PROTOCOLAR')) return { bg: 'linear-gradient(135deg, #010127, #6a2ecc)', accent: '#9f64d8', icon: '🎖️' };
             if (s.includes('COBERTURA DE PRENSA')) return { bg: 'linear-gradient(135deg, #7f1d2d, #d6455d)', accent: '#c1394f', icon: '🎙️' };
             if (s.includes('CORRECCIÓN DE DISEÑO') || s.includes('CORRECCION DE DISENO')) return { bg: 'linear-gradient(135deg, #0011aa, #0033cc)', accent: '#3876F2', icon: '🖌️' };
             if (s.includes('CORRECCIÓN') || s.includes('CORRECCION') || s.includes('NOTA DE PRENSA')) return { bg: 'linear-gradient(135deg, #2d6a4f, #52b788)', accent: '#52b788', icon: '📰' };
@@ -24037,7 +24802,7 @@
             campos.push(['Solicitante', data.Unidad]);
             campos.push(['Tipo de Solicitud', data.Solicitud]);
 
-            const esEspecial = /OBITUARIO|CERTIFICADO|RECONOCIMIENTO|TEXTILES|PENDÓN|PENDON|CORRECCIÓN|CORRECCION|NOTA DE PRENSA|COBERTURA DE PRENSA|MATERIAL PARA INSTAGRAM|POST SIMPLE|CARRUSEL|CHARLAS|SESIONES EDUCATIVAS|ACTIVIDADES APRENDIZAJE|APRENDIZAJE|COPY RRSS|ACTIVIDADES DEPORTIVAS|DEPORTIVA|TALLER|CURSO|EFEMÉRIDE|EFEMERIDE|OTROS/.test(solUpper);
+            const esEspecial = /OBITUARIO|CERTIFICADO|RECONOCIMIENTO|TEXTILES|PENDÓN|PENDON|CORRECCIÓN|CORRECCION|NOTA DE PRENSA|COBERTURA DE PRENSA|ASISTENCIA PROTOCOLAR|MATERIAL PARA INSTAGRAM|POST SIMPLE|CARRUSEL|CHARLAS|SESIONES EDUCATIVAS|ACTIVIDADES APRENDIZAJE|APRENDIZAJE|COPY RRSS|ACTIVIDADES DEPORTIVAS|DEPORTIVA|TALLER|CURSO|EFEMÉRIDE|EFEMERIDE|OTROS/.test(solUpper);
 
             if (esEspecial) {
                 campos.push(['Detalles del Requerimiento', data.Informacion]);
@@ -24378,7 +25143,7 @@
             // los tipos especiales (Obituario, Certificado, Pendón, etc.) usan "Otros" y no
             // tienen Especialidades ni Servicios; el resto es al revés.
             const solUpper = (data.Solicitud || '').toUpperCase();
-            const esEspecial = /OBITUARIO|CERTIFICADO|RECONOCIMIENTO|TEXTILES|PENDÓN|PENDON|CORRECCIÓN|CORRECCION|NOTA DE PRENSA|COBERTURA DE PRENSA|MATERIAL PARA INSTAGRAM|POST SIMPLE|CARRUSEL|CHARLAS|SESIONES EDUCATIVAS|ACTIVIDADES APRENDIZAJE|APRENDIZAJE|COPY RRSS|ACTIVIDADES DEPORTIVAS|DEPORTIVA|TALLER|CURSO|EFEMÉRIDE|EFEMERIDE|OTROS/.test(solUpper);
+            const esEspecial = /OBITUARIO|CERTIFICADO|RECONOCIMIENTO|TEXTILES|PENDÓN|PENDON|CORRECCIÓN|CORRECCION|NOTA DE PRENSA|COBERTURA DE PRENSA|ASISTENCIA PROTOCOLAR|MATERIAL PARA INSTAGRAM|POST SIMPLE|CARRUSEL|CHARLAS|SESIONES EDUCATIVAS|ACTIVIDADES APRENDIZAJE|APRENDIZAJE|COPY RRSS|ACTIVIDADES DEPORTIVAS|DEPORTIVA|TALLER|CURSO|EFEMÉRIDE|EFEMERIDE|OTROS/.test(solUpper);
 
             const campoOtros = document.getElementById('nexusEdit-field-otros');
             const campoEspecialidades = document.getElementById('nexusEdit-field-especialidades');
