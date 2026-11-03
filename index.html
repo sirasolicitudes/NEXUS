@@ -3226,7 +3226,10 @@
             gap: 12px;
             margin-bottom: 8px;
         }
-        .igf-opt-container.igf-opt-6 { grid-template-columns: repeat(3, 1fr); }
+        .igf-opt-container.igf-opt-10 { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .igf-opt-10 .igf-opt-btn { padding: 8px 6px; min-height: 52px; gap: 0; border-radius: 10px; }
+        .igf-opt-10 .igf-opt-num { font-size: 1.15rem; }
+        .igf-opt-10 .igf-opt-sub { font-size: 0.68rem; }
         .igf-opt-btn {
             background: rgba(var(--ig-rgb), 0.10);
             color: var(--color-dark);
@@ -3317,6 +3320,9 @@
         @media (max-width: 600px) {
             .igf-opt-container { gap: 10px; }
             .igf-opt-btn { padding: 12px 8px; min-height: 60px; }
+            .igf-opt-container.igf-opt-10 { gap: 6px; }
+            .igf-opt-10 .igf-opt-btn { padding: 6px 2px; min-height: 46px; }
+            .igf-opt-10 .igf-opt-sub { display: none; }
         }
 
         /* Estilo específico para Actividades Deportivas */
@@ -10000,9 +10006,25 @@
 
                     <div class="form-section">
                         <h3 class="form-section-title">🔢 Número de láminas *</h3>
-                        <div class="igf-opt-container igf-opt-6" id="car-num-container">
+                        <div class="igf-opt-container igf-opt-10" id="car-num-container">
                             <div class="igf-opt-btn" onclick="igfSelNumLaminas(5, this)">
                                 <span class="igf-opt-num">5</span>
+                                <span class="igf-opt-sub">láminas</span>
+                            </div>
+                            <div class="igf-opt-btn" onclick="igfSelNumLaminas(6, this)">
+                                <span class="igf-opt-num">6</span>
+                                <span class="igf-opt-sub">láminas</span>
+                            </div>
+                            <div class="igf-opt-btn" onclick="igfSelNumLaminas(7, this)">
+                                <span class="igf-opt-num">7</span>
+                                <span class="igf-opt-sub">láminas</span>
+                            </div>
+                            <div class="igf-opt-btn" onclick="igfSelNumLaminas(8, this)">
+                                <span class="igf-opt-num">8</span>
+                                <span class="igf-opt-sub">láminas</span>
+                            </div>
+                            <div class="igf-opt-btn" onclick="igfSelNumLaminas(9, this)">
+                                <span class="igf-opt-num">9</span>
                                 <span class="igf-opt-sub">láminas</span>
                             </div>
                             <div class="igf-opt-btn" onclick="igfSelNumLaminas(10, this)">
