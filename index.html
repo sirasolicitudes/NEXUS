@@ -23687,10 +23687,10 @@
             // 3. Extraer información
             //    - fase tomar: oculto
             //    - admin: aparece al iniciar el workflow
-            //    - diseñador/periodista: en sus solicitudes tomadas (y, como antes, en solicitudes ajenas ya asignadas)
+            //    - diseñador/periodista: solo en sus solicitudes ya tomadas
             const btnExtract = document.getElementById('nexusBtnExtract');
             if (btnExtract) {
-                const mostrarExtract = !faseTomar && (wfIniciado || (esDisenadorOPeriodista && tieneResp));
+                const mostrarExtract = !faseTomar && (esAdmin ? wfIniciado : (esDisenadorOPeriodista && esMia && tomada));
                 btnExtract.classList.toggle('hidden', !mostrarExtract);
                 if (mostrarExtract) {
                     btnExtract.disabled = false;
@@ -23714,6 +23714,18 @@
                         btnAsig.innerHTML = '<i class="fas fa-user-plus"></i> Asignar Responsable';
                         btnAsig.title = 'Asignar personal a esta solicitud';
                     }
+                }
+            }
+
+            // Aviso para diseñador/periodista cuando la solicitud no es suya
+            const aviso = document.getElementById('nexusAvisoAsignacion');
+            if (aviso) {
+                const mostrarAviso = esDisenadorOPeriodista && !esMia;
+                aviso.classList.toggle('hidden', !mostrarAviso);
+                if (mostrarAviso) {
+                    aviso.innerHTML = tieneResp
+                        ? '<i class="fas fa-user-lock"></i> Solicitud asignada a ' + nexusEscHtml(data.Responsable)
+                        : '<i class="fas fa-hourglass-half"></i> Solicitud aún sin asignar';
                 }
             }
 
@@ -26981,6 +26993,7 @@
                     <button id="nexusBtnIniciarWorkflow" class="nexus-panel-btn hidden" onclick="nexusIniciarWorkflow()" disabled style="background: linear-gradient(135deg, #10b981, #059669); color: white; grid-column: span 2; font-weight: 700; padding: 12px 14px; font-size: 0.92rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 8px;">
                         <i class="fas fa-play"></i> Iniciar Workflow
                     </button>
+                    <div id="nexusAvisoAsignacion" class="hidden" style="grid-column: span 2; padding: 12px 14px; border-radius: 8px; background: rgba(99, 102, 241, 0.10); border: 1px solid rgba(99, 102, 241, 0.35); color: var(--color-dark); font-weight: 600; font-size: 0.88rem; text-align: center; line-height: 1.4;"></div>
                     <button id="nexusBtnTomarSolicitud" class="nexus-panel-btn hidden" onclick="nexusTomarSolicitud()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; grid-column: span 2; font-weight: 700; padding: 12px 14px; font-size: 0.92rem; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); border-radius: 8px;">
                         <i class="fas fa-hand-paper"></i> Tomar solicitud
                     </button>
