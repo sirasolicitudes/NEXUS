@@ -11221,33 +11221,6 @@
         </div>
     </div>
 
-    <!-- Modal de confirmación: asignar / desasignar / reasignar diseñador -->
-    <div id="nexusAsignModal" class="nx-overlay" style="z-index: 20000;">
-        <div class="nx-modal" style="max-width: 460px;">
-            <div class="nx-head" style="background: linear-gradient(135deg, rgba(74,110,176,0.18) 0%, rgba(74,110,176,0.03) 100%);">
-                <button class="nx-close" onclick="nexusCerrarModalAsignacion()" aria-label="Cerrar">✕</button>
-                <p class="nx-eyebrow">NEXUS · DISEÑADOR</p>
-                <h2 class="nx-title" id="nexusAsignModalTitulo">Asignar diseñador</h2>
-                <p class="nx-sub">Confirma el cambio; se guarda también en Google Sheets.</p>
-            </div>
-            <div class="nx-body">
-                <div class="nx-request-chip">
-                    <span>Solicitud: <b id="nexusAsignModalId">-</b></span>
-                    <span style="margin-left: auto;">Tipo: <b id="nexusAsignModalTipo">-</b></span>
-                </div>
-                <p id="nexusAsignModalMsg" style="font-size: 0.92rem; line-height: 1.6; margin: 0 0 18px 0; color: rgba(242,242,242,0.92);"></p>
-                <div class="nx-foot">
-                    <div class="nx-actions" style="margin-left: auto;">
-                        <button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalAsignacion()">Cancelar</button>
-                        <button class="nx-btn nx-btn-primary" id="nexusAsignModalBtn" onclick="nexusEjecutarAsignacionConfirmada()">
-                            <i class="fas fa-check"></i> Confirmar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal de Selección de Redes para Copy RRSS -->
     <div id="nexusRRSSModal" class="nx-overlay" style="z-index: 20000;">
         <div class="nx-modal" style="max-width: 520px;">
@@ -11574,7 +11547,7 @@
                     var miStaff = window._nexusPersonal[user.uid];
                     if (miStaff) {
                         p.nombre = miStaff.nombre || p.nombre;
-                        p.role = miStaff.rol || 'Diseñador';
+                        p.role = miStaff.rol || p.role; // sin rol guardado: no se inventa uno (queda como Usuario)
                         p.esDisenador = miStaff.esDisenador === true || miStaff.rol === 'Diseñador' || miStaff.rol === 'Admin Principal';
                         p.esPeriodista = miStaff.esPeriodista === true || miStaff.rol === 'Periodista';
                         p.esAudiovisual = miStaff.esAudiovisual === true || miStaff.esPeriodista === true || miStaff.rol === 'Periodista';
@@ -14402,9 +14375,10 @@
                 const horaClean = nxNA((plainData.hora || 'N/A').replace('AM', 'a.m.').replace('PM', 'p.m.'));
 
                 const solicitudData = {
-                    // === 28 CAMPOS EXACTOS DEL GOOGLE SHEET (ESPEJO 1:1) ===
+                    // === 29 CAMPOS EXACTOS DEL GOOGLE SHEET (ESPEJO 1:1) ===
                     Requerimiento: docId,
                     FechaCreacion: ts,
+                    FechaIWorkflow: 'N/A',
                     FechaAsignacion: 'N/A',
                     FechaTomada: 'N/A',
                     HistorialRevisiones: 'N/A',
@@ -22035,12 +22009,12 @@
             return 'theme-general';
         }
 
-        function nexusObtenerEmojiDiseñador(disenador) {
-            if (!disenador || disenador === 'Sin Asignar') {
+        function nexusObtenerEmojiResponsable(responsable) {
+            if (!responsable || responsable === 'Sin Asignar') {
                 return { icon: '👤', bg: '#343a40' };
             }
             if (window._nexusPersonal) {
-                var dNorm = disenador.toLowerCase().trim();
+                var dNorm = responsable.toLowerCase().trim();
                 for (var uid in window._nexusPersonal) {
                     var m = window._nexusPersonal[uid];
                     if (m && m.nombre) {
@@ -22051,7 +22025,7 @@
                     }
                 }
             }
-            var d = disenador.toLowerCase();
+            var d = responsable.toLowerCase();
             if (d.includes('bermina')) return { icon: '🦋', bg: '#fb8500' };
             if (d.includes('jorsy'))   return { icon: '😎', bg: '#2908f1' };
             if (d.includes('xamir'))   return { icon: '🐲', bg: '#572364' };
@@ -22888,7 +22862,7 @@
                 }
 
                 // Círculo del Responsable asignado (Diseñador, Periodista, Audiovisual o Protocolo)
-                var dData = nexusObtenerEmojiDiseñador(s.Responsable);
+                var dData = nexusObtenerEmojiResponsable(s.Responsable);
                 var designerHtml = '<div class="card-circle" style="background:' + dData.bg + ';" title="Responsable: ' + (s.Responsable || 'Sin Asignar') + '">' + dData.icon + '</div>';
 
                 // Círculo de Soporte - Basado en ArchivosDrive en lugar del campo Soportes
@@ -23342,6 +23316,14 @@
                 ['fa-calendar-day', 'Fecha Evento', fechaEvento]
             ];
 
+            if (requestData.FechaIWorkflow && requestData.FechaIWorkflow !== 'N/A' && String(requestData.FechaIWorkflow).trim() !== '') {
+                campos.push(['fa-play-circle', 'Inicio Workflow', requestData.FechaIWorkflow + (requestData.AdminIWorkflow ? ' (' + requestData.AdminIWorkflow + ')' : '')]);
+            }
+
+            if (requestData.FechaTomada && requestData.FechaTomada !== 'N/A' && String(requestData.FechaTomada).trim() !== '') {
+                campos.push(['fa-hand-paper', 'Solicitud tomada', requestData.FechaTomada]);
+            }
+
             let fieldsHtml = '';
             let delayIdx = 0;
             campos.forEach(([icon, label, value]) => {
@@ -23435,8 +23417,11 @@
             // Habilitar botones de acciones
             nexusEnableActionButtons();
 
-            // Mostrar/preparar sección de Asignar Diseñador (solo Admin)
-            nexusActualizarSeccionDisenador(requestData);
+            // Permisos de acciones especiales y de estado según el rol
+            nexusActualizarAccionesPanel();
+
+            // Actualizar botones y visibilidad del workflow (solo Admin)
+            nexusActualizarVisibilidadBotonesWorkflow(requestData);
 
             // Resaltar el botón del estado actual
             document.querySelectorAll('#nexusStatusActions .nexus-panel-btn').forEach(b => b.classList.remove('nexus-status-active'));
@@ -23560,21 +23545,38 @@
         // ============================================================
         // ASIGNAR RESPONSABLE (solo Admin) — Dinámico desde sistema/personal
         // ============================================================
-        function nexusObtenerListaStaffDiseno() {
+        function nexusObtenerListaResponsables() {
             var lista = [];
             var personal = window._nexusPersonal || {};
             Object.keys(personal).forEach(function(uid) {
                 var m = personal[uid];
                 // Miembro activo y que puede recibir asignaciones
-                if (m && m.activo !== false && m.asignable !== false && m.esDisenador !== false) {
+                if (m && m.activo !== false && m.asignable !== false) {
                     lista.push({
-                        name: m.nombre || 'Staff',
+                        name: m.nombre || 'Sin nombre',
                         color: m.color || '#2908f1',
                         icon: m.icono || '👤',
                         rol: m.rol || ''
                     });
                 }
             });
+
+            // Permitir que un Administrador se asigne a sí mismo (si no está ya en la lista)
+            if (typeof NexusSession !== 'undefined' && NexusSession && (typeof nexusEsAdmin === 'function' ? nexusEsAdmin() : (NexusSession.role === 'Admin Principal' || NexusSession.role === 'ADMIN'))) {
+                var miNombre = NexusSession.nombre || (NexusSession.user && NexusSession.user.email) || 'Admin';
+                var yaEsta = lista.some(function(item) {
+                    return item.name.toLowerCase().trim() === miNombre.toLowerCase().trim();
+                });
+                if (!yaEsta) {
+                    lista.unshift({
+                        name: miNombre,
+                        color: NexusSession.color || '#10b981',
+                        icon: NexusSession.icono || '😎',
+                        rol: NexusSession.role || 'Admin'
+                    });
+                }
+            }
+
             if (lista.length === 0) {
                 lista = [
                     { name: 'Jorsy Rengifo', color: '#2908f1', icon: '😎', rol: 'Admin Principal' }
@@ -23610,30 +23612,512 @@
         window.nexusEsStaff = nexusEsStaff;
         window.nexusEsAdminPrincipal = nexusEsAdminPrincipal;
 
-        // Genera los botones de asignación dinámicamente desde el documento de Personal
-        function nexusGenerarBotonesDisenador() {
-            const container = document.getElementById('nexusDesignerGrid');
-            if (!container) return;
-            const header = document.querySelector('#nexusDesignerAssignSection .nexus-panel-section-header');
-            if (header) header.innerHTML = '👥 Asignar Responsable';
+        // ============================================================
+        // WORKFLOW: REVISIÓN Y ASIGNACIÓN (solo Admin)
+        // Control progresivo de acciones, modales de revisión y asignación
+        // ============================================================
+        window._nxWorkflowEnCurso = false;
+        window._nexusWorkflowEditando = false;
 
+        // ¿Esta solicitud la tiene asignada el usuario de la sesión? (el Responsable se guarda con el nombre)
+        function nexusSolicitudEsMia(data) {
+            if (!data || typeof NexusSession === 'undefined' || !NexusSession) return false;
+            const resp = String(data.Responsable || '').trim().toLowerCase();
+            const yo = String(NexusSession.nombre || '').trim().toLowerCase();
+            return !!resp && resp !== 'sin asignar' && resp !== 'n/a' && resp === yo;
+        }
+
+        function nexusSolicitudTomada(data) {
+            return !!(data && data.FechaTomada && data.FechaTomada !== 'N/A' && String(data.FechaTomada).trim() !== '');
+        }
+
+        window.nexusSolicitudEsMia = nexusSolicitudEsMia;
+        window.nexusSolicitudTomada = nexusSolicitudTomada;
+
+        function nexusActualizarVisibilidadBotonesWorkflow(requestData) {
+            const data = requestData || nexusSelectedRequestData;
+            const esAdmin = (typeof nexusEsAdmin === 'function') && nexusEsAdmin();
+            const wfIniciado = !!(data && data.FechaIWorkflow && data.FechaIWorkflow !== 'N/A' && String(data.FechaIWorkflow).trim() !== '');
+            const tieneResp = !!(data && data.Responsable && data.Responsable !== 'Sin Asignar' && String(data.Responsable).trim() !== '');
+            // Diseñador o periodista (sin ser admin): no ven el workflow, solo "Tomar solicitud" y su trabajo
+            const esDisenadorOPeriodista = !esAdmin && ((typeof nexusEsDisenador === 'function' && nexusEsDisenador()) || (typeof nexusEsPeriodista === 'function' && nexusEsPeriodista()));
+            const esMia = nexusSolicitudEsMia(data);
+            const tomada = nexusSolicitudTomada(data);
+
+            // Fase "Tomar solicitud": el responsable (diseñador, periodista o admin autoasignado) aún no la ha tomado.
+            // Mientras tanto solo ve el botón Tomar solicitud y el resto de acciones queda bloqueado.
+            const faseTomar = esMia && !tomada && (wfIniciado || esDisenadorOPeriodista);
+
+            const ocultar = function (id, ocultarFlag) {
+                const b = document.getElementById(id);
+                if (b) b.classList.toggle('hidden', !!ocultarFlag);
+                return b;
+            };
+
+            // 1. Botón Tomar solicitud (ocupa el lugar del de workflow)
+            const btnTomar = ocultar('nexusBtnTomarSolicitud', !faseTomar);
+            if (btnTomar && faseTomar) btnTomar.disabled = false;
+
+            // 2. Botón Iniciar Workflow: solo admin y nunca durante la fase de tomar
+            const btnWf = document.getElementById('nexusBtnIniciarWorkflow');
+            if (btnWf) {
+                if (!esAdmin || faseTomar) {
+                    btnWf.classList.add('hidden');
+                } else {
+                    btnWf.classList.remove('hidden');
+                    if (wfIniciado) {
+                        btnWf.disabled = false;
+                        btnWf.style.background = '#047857';
+                        btnWf.style.opacity = '0.95';
+                        btnWf.style.cursor = 'pointer';
+                        const adminTxt = data.AdminIWorkflow ? ` · ${nexusEscHtml(data.AdminIWorkflow)}` : '';
+                        btnWf.innerHTML = `<i class="fas fa-check-circle"></i> Workflow Iniciado <span style="font-size:0.74rem; font-weight:400; opacity:0.95; display:block; margin-top:2px;">${nexusEscHtml(data.FechaIWorkflow)}${adminTxt}</span>`;
+                        btnWf.title = 'Clic para volver a ver la revisión del workflow';
+                    } else {
+                        btnWf.disabled = false;
+                        btnWf.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                        btnWf.style.opacity = '1';
+                        btnWf.style.cursor = 'pointer';
+                        btnWf.innerHTML = '<i class="fas fa-play"></i> Iniciar Workflow';
+                        btnWf.title = 'Iniciar revisión y flujo de la solicitud';
+                    }
+                }
+            }
+
+            // 3. Extraer información
+            //    - fase tomar: oculto
+            //    - admin: aparece al iniciar el workflow
+            //    - diseñador/periodista: en sus solicitudes tomadas (y, como antes, en solicitudes ajenas ya asignadas)
+            const btnExtract = document.getElementById('nexusBtnExtract');
+            if (btnExtract) {
+                const mostrarExtract = !faseTomar && (wfIniciado || (esDisenadorOPeriodista && tieneResp));
+                btnExtract.classList.toggle('hidden', !mostrarExtract);
+                if (mostrarExtract) {
+                    btnExtract.disabled = false;
+                    btnExtract.style.gridColumn = 'span 2';
+                }
+            }
+
+            // 4. Asignar / Reasignar Responsable (solo admin, no durante la fase de tomar)
+            const btnAsig = document.getElementById('nexusBtnAsignarWorkflow');
+            if (btnAsig) {
+                const mostrarAsig = esAdmin && wfIniciado && !faseTomar;
+                btnAsig.classList.toggle('hidden', !mostrarAsig);
+                if (mostrarAsig) {
+                    btnAsig.disabled = false;
+                    if (tieneResp) {
+                        btnAsig.style.background = 'linear-gradient(135deg, #6366f1, #4f46e5)';
+                        btnAsig.innerHTML = `<i class="fas fa-user-edit"></i> Reasignar Responsable <span style="font-size:0.75rem; font-weight:400; opacity:0.95; display:block; margin-top:2px;">(${nexusEscHtml(data.Responsable)})</span>`;
+                        btnAsig.title = 'Cambiar responsable asignado';
+                    } else {
+                        btnAsig.style.background = 'linear-gradient(135deg, #4f46e5, #4338ca)';
+                        btnAsig.innerHTML = '<i class="fas fa-user-plus"></i> Asignar Responsable';
+                        btnAsig.title = 'Asignar personal a esta solicitud';
+                    }
+                }
+            }
+
+            // 5. Adjuntar / Adjuntar varios: solo el responsable que ya tomó la solicitud
+            const mostrarAdjuntar = esMia && tomada;
+            ['nexusBtnAttach', 'nexusBtnAttachMultiple'].forEach(function (bId) {
+                const b = ocultar(bId, !mostrarAdjuntar);
+                if (b && mostrarAdjuntar) b.disabled = false;
+            });
+
+            // Fases posteriores del proceso: siguen ocultos
+            ['nexusBtnTelegram', 'nexusBtnEmail', 'nexusBtnExtractFinalized'].forEach(function (bId) {
+                const b = document.getElementById(bId);
+                if (b) b.classList.add('hidden');
+            });
+
+            // 6. Post It: solo admin, con el workflow iniciado y fuera de la fase de tomar
+            const btnPostIt = document.getElementById('nexusBtnPostIt');
+            if (btnPostIt) {
+                const mostrarPostIt = esAdmin && wfIniciado && !faseTomar;
+                btnPostIt.classList.toggle('hidden', !mostrarPostIt);
+                if (mostrarPostIt) {
+                    btnPostIt.disabled = false;
+                    btnPostIt.style.gridColumn = 'span 2';
+                }
+            }
+
+            // 7. Ocultar cambio de estado directo (Finalizada / Rechazada) en esta fase
+            const seccionEstado = document.getElementById('nexusStatusActions');
+            if (seccionEstado) seccionEstado.classList.add('hidden');
+        }
+
+        // ============================================================
+        // TOMAR SOLICITUD (responsable: diseñador, periodista o admin autoasignado)
+        // Registra el momento en que empieza a trabajar y desbloquea sus botones.
+        // ============================================================
+        window._nxTomarEnCurso = false;
+        async function nexusTomarSolicitud() {
+            if (window._nxTomarEnCurso) return;
+            const id = nexusSelectedRequestId;
+            if (!id) {
+                showToast({ type: 'warning', title: 'Selecciona una solicitud', message: 'Debes seleccionar una solicitud para tomarla.' });
+                return;
+            }
+            const base = nexusRegistroVivoActual(id);
+            if (!base) {
+                showToast({ type: 'warning', title: 'Solicitud no disponible', message: 'La solicitud no está activa o disponible.' });
+                return;
+            }
+            if (!nexusSolicitudEsMia(base)) {
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el responsable asignado puede tomar esta solicitud.' });
+                return;
+            }
+            if (nexusSolicitudTomada(base)) {
+                nexusUpdatePanelContent(id, Object.assign({}, base));
+                return;
+            }
+
+            const btn = document.getElementById('nexusBtnTomarSolicitud');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tomando...';
+            }
+
+            window._nxTomarEnCurso = true;
+            const ahoraStr = nexusFormatearHoraAMPM(new Date());
+            const miNombre = (NexusSession && (NexusSession.nombre || (NexusSession.user && NexusSession.user.email))) || 'Responsable';
+
+            try {
+                const cambios = { FechaTomada: ahoraStr };
+
+                // 1. Realtime Database
+                if (window.dbRT && window.fbRT) {
+                    const rutaU = base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL';
+                    await window.fbRT.update(window.fbRT.ref(window.dbRT, 'solicitudes_vivas/' + rutaU + '/' + id), cambios);
+                }
+
+                // 2. Memoria local (sin esperar al listener)
+                const aplicar = function (obj) { if (obj) Object.assign(obj, cambios); };
+                aplicar(base);
+                if (Array.isArray(_nexusSolicitudesData)) {
+                    aplicar(_nexusSolicitudesData.find(function (x) { return x && x.id === id; }));
+                }
+                if (nexusSelectedRequestData && nexusSelectedRequestData.id === id) aplicar(nexusSelectedRequestData);
+
+                // 3. Google Sheets en segundo plano
+                if (typeof NEXUS_SCRIPT_URL !== 'undefined' && NEXUS_SCRIPT_URL) {
+                    nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'tomarSolicitud',
+                            id: id,
+                            FechaTomada: ahoraStr,
+                            responsable: miNombre
+                        })
+                    }, 20000, 1).then(function (res) {
+                        if (res && res.success === false) throw new Error(res.error || 'El Sheet rechazó el registro');
+                    }).catch(function (err) {
+                        console.error('[SHEET] Error al enviar Fecha Tomada a Apps Script:', err);
+                        showToast({ type: 'warning', title: 'Tomada, pero el Sheet no se actualizó',
+                            message: 'RTDB quedó bien. ' + ((err && err.message) || err), duration: 6000 });
+                    });
+                }
+
+                showToast({ type: 'success', title: 'Solicitud tomada', message: 'Ya puedes trabajar en ' + id, duration: 3500 });
+
+                // 4. UI: repinta tarjetas y panel (desbloquea los botones)
+                if (typeof nexusRenderizarTarjetasPaginadas === 'function') nexusRenderizarTarjetasPaginadas();
+                if (nexusSelectedRequestId === id) nexusUpdatePanelContent(id, Object.assign({}, base));
+
+            } catch (err) {
+                console.error('[NEXUS] Error al tomar solicitud:', err);
+                if (typeof nexusRegistrarFallaEnvioRTDB === 'function') {
+                    nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusTomarSolicitud', detalles: id });
+                }
+                showToast({ type: 'error', title: 'No se pudo tomar la solicitud', message: (err && err.message) || String(err) });
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-hand-paper"></i> Tomar solicitud';
+                }
+            } finally {
+                window._nxTomarEnCurso = false;
+            }
+        }
+        window.nexusTomarSolicitud = nexusTomarSolicitud;
+
+        async function nexusIniciarWorkflow() {
+            if (window._nxWorkflowEnCurso) return;
+            if (!nexusEsAdmin()) {
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo los administradores pueden iniciar el workflow.' });
+                return;
+            }
+            const id = nexusSelectedRequestId;
+            if (!id) {
+                showToast({ type: 'warning', title: 'Selecciona una solicitud', message: 'Debes seleccionar una solicitud para iniciar su workflow.' });
+                return;
+            }
+            const base = nexusRegistroVivoActual(id);
+            if (!base) {
+                showToast({ type: 'warning', title: 'Solicitud no disponible', message: 'La solicitud no está activa o disponible.' });
+                return;
+            }
+
+            const yaIniciado = !!(base.FechaIWorkflow && base.FechaIWorkflow !== 'N/A' && String(base.FechaIWorkflow).trim() !== '');
+
+            // Si ya estaba iniciado, simplemente reabre el modal de revisión
+            if (yaIniciado) {
+                nexusAbrirModalRevisionWorkflow();
+                return;
+            }
+
+            const btn = document.getElementById('nexusBtnIniciarWorkflow');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando...';
+            }
+
+            window._nxWorkflowEnCurso = true;
+            const ahoraStr = nexusFormatearHoraAMPM(new Date());
+            const adminNombre = (typeof NexusSession !== 'undefined' && NexusSession && (NexusSession.nombre || (NexusSession.user && NexusSession.user.email))) || 'Admin';
+
+            try {
+                const cambios = {
+                    FechaIWorkflow: ahoraStr,
+                    AdminIWorkflow: adminNombre
+                };
+
+                // 1. Guardar en Realtime Database
+                if (window.dbRT && window.fbRT) {
+                    const rutaU = base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL';
+                    await window.fbRT.update(window.fbRT.ref(window.dbRT, 'solicitudes_vivas/' + rutaU + '/' + id), cambios);
+                }
+
+                if (nexusSelectedRequestData && nexusSelectedRequestData.id === id) {
+                    Object.assign(nexusSelectedRequestData, cambios);
+                }
+                Object.assign(base, cambios);
+
+                // 2. Guardar en Google Sheets (NEXUS_Code.gs)
+                if (typeof NEXUS_SCRIPT_URL !== 'undefined' && NEXUS_SCRIPT_URL) {
+                    nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'iniciarWorkflow',
+                            id: id,
+                            FechaIWorkflow: ahoraStr,
+                            admin: adminNombre
+                        })
+                    }, 20000, 1).catch(err => {
+                        console.error('[SHEET] Error al enviar Fecha Iworkflow a Apps Script:', err);
+                    });
+                }
+
+                showToast({
+                    type: 'success',
+                    title: 'Workflow Iniciado',
+                    message: `Solicitud ${id} iniciada correctamente`,
+                    duration: 3500
+                });
+
+                // Actualizar panel lateral
+                if (nexusSelectedRequestId === id) {
+                    nexusUpdatePanelContent(id, base);
+                }
+
+                // Abrir inmediatamente el modal de revisión de workflow
+                nexusAbrirModalRevisionWorkflow();
+
+            } catch (err) {
+                console.error('[NEXUS] Error al iniciar workflow:', err);
+                showToast({
+                    type: 'error',
+                    title: 'Error al iniciar workflow',
+                    message: (err && err.message) || String(err)
+                });
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-play"></i> Iniciar Workflow';
+                }
+            } finally {
+                window._nxWorkflowEnCurso = false;
+            }
+        }
+
+        function nexusAbrirModalRevisionWorkflow() {
+            if (!nexusSelectedRequestId || !nexusSelectedRequestData) return;
+            const data = nexusSelectedRequestData;
+            const tema = (typeof nexusTemaSolicitud === 'function') ? nexusTemaSolicitud(data.Solicitud) : { bg: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))', accent: 'var(--color-primary)', icon: '📋' };
+
+            const header = document.getElementById('nexusWorkflowReviewHeader');
+            const headerIcon = document.getElementById('nexusWorkflowReviewHeaderIcon');
+            const headerTitle = document.getElementById('nexusWorkflowReviewHeaderTitle');
+            if (header) header.style.background = tema.bg;
+            if (headerIcon) headerIcon.textContent = tema.icon;
+            if (headerTitle) headerTitle.textContent = `${nexusSelectedRequestId} · ${data.Solicitud || 'Solicitud'}`;
+
+            let bodyHtml = '';
+            nexusExtractCamposSolicitud(data).forEach(([label, value], i) => {
+                bodyHtml += nexusExtractCampo(label, value, tema.accent, i);
+            });
+
+            if (data.Observaciones && data.Observaciones.trim() !== '') {
+                bodyHtml += `
+                    <div class="nexus-extract-observaciones" style="margin-top: 14px;">
+                        <b>Observaciones del Solicitante</b>
+                        <div>${data.Observaciones.replace(/\n/g, '<br>')}</div>
+                    </div>`;
+            }
+
+            if (data.CorreccionSolicitada) {
+                const cuando = data.CorreccionFecha ? new Date(data.CorreccionFecha) : null;
+                const cuandoTxt = (cuando && !isNaN(cuando.getTime())) ? cuando.toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short' }) : '';
+                bodyHtml += `
+                    <div class="nexus-extract-correccion" style="margin-top: 14px;">
+                        <b><i class="fas fa-bolt"></i> Corrección solicitada${data.CorreccionPor ? ' por ' + nexusEscHtml(data.CorreccionPor) : ''}${cuandoTxt ? ' · ' + nexusEscHtml(cuandoTxt) : ''}</b>
+                        <div>${nexusEscHtml(data.CorreccionTexto || '').replace(/\n/g, '<br>')}</div>
+                    </div>`;
+            }
+
+            bodyHtml += nexusExtractArchivosHTML(data.ArchivosDrive);
+
+            const body = document.getElementById('nexusWorkflowReviewBody');
+            if (body) body.innerHTML = bodyHtml;
+
+            const overlay = document.getElementById('nexusWorkflowReviewOverlay');
+            if (overlay) overlay.classList.add('active');
+        }
+
+        function nexusWorkflowIntentarCerrarRevision() {
+            const warning = document.getElementById('nexusWorkflowWarningOverlay');
+            if (warning) {
+                warning.classList.add('active');
+            } else {
+                nexusWorkflowForzarCerrarRevision();
+            }
+        }
+
+        function nexusWorkflowVolverARevision() {
+            const warning = document.getElementById('nexusWorkflowWarningOverlay');
+            if (warning) warning.classList.remove('active');
+        }
+
+        function nexusWorkflowForzarCerrarRevision() {
+            const warning = document.getElementById('nexusWorkflowWarningOverlay');
+            if (warning) warning.classList.remove('active');
+            const review = document.getElementById('nexusWorkflowReviewOverlay');
+            if (review) review.classList.remove('active');
+            if (nexusSelectedRequestId && nexusSelectedRequestData) {
+                nexusActualizarVisibilidadBotonesWorkflow(nexusSelectedRequestData);
+            }
+        }
+
+        function nexusWorkflowAbrirCorreccion() {
+            window._nexusWorkflowEditando = true;
+            const review = document.getElementById('nexusWorkflowReviewOverlay');
+            if (review) review.classList.remove('active');
+            nexusAbrirEditarSolicitud();
+        }
+
+        function nexusWorkflowAprobadoParaAsignar() {
+            const review = document.getElementById('nexusWorkflowReviewOverlay');
+            if (review) review.classList.remove('active');
+            nexusAbrirModalAsignacionWorkflow();
+        }
+
+        function nexusAbrirModalAsignacionWorkflow() {
+            if (!nexusSelectedRequestId || !nexusSelectedRequestData) {
+                showToast({ type: 'warning', title: 'Sin selección', message: 'Selecciona una solicitud primero.' });
+                return;
+            }
+            const data = nexusSelectedRequestData;
+            const set = function(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; };
+            set('nexusWorkflowAssignId', nexusSelectedRequestId);
+            set('nexusWorkflowAssignTipo', data.Solicitud || 'No especificado');
+
+            nexusWorkflowRenderizarListaAsignacion();
+
+            const overlay = document.getElementById('nexusWorkflowAssignOverlay');
+            if (overlay) overlay.classList.add('active');
+        }
+
+        function nexusCerrarModalAsignacionWorkflow() {
+            const overlay = document.getElementById('nexusWorkflowAssignOverlay');
+            if (overlay) overlay.classList.remove('active');
+            if (nexusSelectedRequestId && nexusSelectedRequestData) {
+                nexusActualizarVisibilidadBotonesWorkflow(nexusSelectedRequestData);
+            }
+        }
+
+        function nexusWorkflowRenderizarListaAsignacion() {
+            const container = document.getElementById('nexusWorkflowAssignLista');
+            if (!container) return;
             container.innerHTML = '';
-            const staff = nexusObtenerListaStaffDiseno();
-            staff.forEach(function(d) {
-                const btn = document.createElement('button');
-                btn.className = 'nexus-panel-btn';
-                btn.id = 'nexusDesignerBtn-' + d.name;
-                btn.style.background = d.color;
-                btn.style.color = '#fff';
-                btn.disabled = false;
-                btn.innerHTML = '<span>' + d.icon + '</span> ' + d.name;
-                btn.onclick = function() { nexusConfirmarAsignacion(d.name); };
-                container.appendChild(btn);
+
+            const staff = nexusObtenerListaResponsables();
+            const respActual = (nexusSelectedRequestData && nexusSelectedRequestData.Responsable && nexusSelectedRequestData.Responsable !== 'Sin Asignar')
+                ? nexusSelectedRequestData.Responsable.trim() : '';
+
+            staff.forEach(function(m) {
+                const esAsignado = (respActual && respActual.toLowerCase() === m.name.toLowerCase());
+                const card = document.createElement('div');
+                card.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 12px 14px;
+                    background: ${esAsignado ? 'rgba(99, 102, 241, 0.16)' : '#1e1e2d'};
+                    border: 1px solid ${esAsignado ? '#6366f1' : '#2d2d3f'};
+                    border-radius: 10px;
+                    transition: all 0.2s ease;
+                    cursor: pointer;
+                `;
+
+                card.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px; min-width: 0;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; background: ${m.color || '#4f46e5'}; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.35);">
+                            ${m.icon || '👤'}
+                        </div>
+                        <div style="min-width: 0;">
+                            <div style="font-weight: 700; color: #f8fafc; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${nexusEscHtml(m.name)}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px; margin-top: 3px;">
+                                <span style="font-size: 0.72rem; padding: 1px 7px; border-radius: 6px; background: rgba(255,255,255,0.08); color: #cbd5e1; font-weight: 600;">
+                                    ${nexusEscHtml(m.rol || '')}
+                                </span>
+                                ${esAsignado ? '<span style="font-size: 0.72rem; color: #818cf8; font-weight: 700;"><i class="fas fa-check-circle"></i> Asignado actualmente</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="nx-btn ${esAsignado ? 'nx-btn-ghost' : 'nx-btn-primary'}" style="flex-shrink: 0; padding: 7px 14px; font-size: 0.85rem; border-radius: 7px; ${esAsignado ? 'border: 1px solid #6366f1; color: #a5b4fc;' : 'background: linear-gradient(135deg, #4f46e5, #4338ca); color: #fff;'}">
+                        ${esAsignado ? '<i class="fas fa-sync-alt"></i> Reasignar' : '<i class="fas fa-user-check"></i> Asignar'}
+                    </button>
+                `;
+
+                card.onclick = function() {
+                    nexusWorkflowEjecutarAsignacion(m.name);
+                };
+
+                container.appendChild(card);
             });
         }
 
-        // Asigna un diseñador a la solicitud seleccionada. Si ya estaba asignado
-        // ese mismo diseñador, lo desasigna (toggle), igual que en SIRA.
+        // Desde el modal "Asignar Responsable" del workflow. Toda la lógica vive en
+        // nexusAsignarResponsable (única ruta de asignación); aquí solo se cierra el modal si salió bien.
+        async function nexusWorkflowEjecutarAsignacion(designerName) {
+            const ok = await nexusAsignarResponsable(designerName);
+            if (ok) nexusCerrarModalAsignacionWorkflow();
+        }
+
+        window.nexusActualizarVisibilidadBotonesWorkflow = nexusActualizarVisibilidadBotonesWorkflow;
+        window.nexusAbrirModalRevisionWorkflow = nexusAbrirModalRevisionWorkflow;
+        window.nexusWorkflowIntentarCerrarRevision = nexusWorkflowIntentarCerrarRevision;
+        window.nexusWorkflowVolverARevision = nexusWorkflowVolverARevision;
+        window.nexusWorkflowForzarCerrarRevision = nexusWorkflowForzarCerrarRevision;
+        window.nexusWorkflowAbrirCorreccion = nexusWorkflowAbrirCorreccion;
+        window.nexusWorkflowAprobadoParaAsignar = nexusWorkflowAprobadoParaAsignar;
+        window.nexusAbrirModalAsignacionWorkflow = nexusAbrirModalAsignacionWorkflow;
+        window.nexusCerrarModalAsignacionWorkflow = nexusCerrarModalAsignacionWorkflow;
+        window.nexusWorkflowEjecutarAsignacion = nexusWorkflowEjecutarAsignacion;
+        window.nexusIniciarWorkflow = nexusIniciarWorkflow;
+
         // Las escrituras a Firestore del staff no se esperaban (fire-and-forget) y si fallaban
         // (permisos, cuota agotada, red) nadie se enteraba. Ahora se avisa en pantalla y consola.
         function nexusAvisarFalloFirestore(err) {
@@ -23658,85 +24142,12 @@
         }
 
         // ============================================================
-        // ASIGNAR / DESASIGNAR DISEÑADOR
-        //  - Se pide confirmación en un modal: evita clics seguidos y da tiempo
-        //    a que Google Sheets registre el cambio antes de cerrar.
+        // ASIGNACIÓN DE RESPONSABLE
         //  - Asignar pasa PENDIENTE -> PROCESANDO; desasignar PROCESANDO -> PENDIENTE.
-        //    Los estados finales no se tocan.
-        //  - Cuando cambia el diseñador (asignar, reasignar o desasignar) se reinician
-        //    los contadores de correcciones: pertenecen al diseñador actual.
-        //  - Solo se escribe RTDB; el Sheet se pone al día con sincronizarVivasSheet (Fase 4).
+        //  - Al cambiar de responsable se reinician los contadores de correcciones.
+        //  - Toda la lógica está en nexusAsignarResponsable (más abajo).
         // ============================================================
         window._nxAsignacionEnCurso = false;
-        window._nxAsigDisenadorPendiente = null;
-
-        function nexusConfirmarAsignacion(designerName) {
-            if (!nexusEsAdmin() || !nexusSelectedRequestId || window._nxAsignacionEnCurso) return;
-            const modal = document.getElementById('nexusAsignModal');
-            if (!modal) { nexusAsignarDisenador(designerName); return; }
-
-            const datos = nexusSelectedRequestData || {};
-            const actual = (datos.Responsable || '').trim();
-            const sinAsignar = (!actual || actual === 'Sin Asignar');
-            const esDesasignacion = (actual === designerName);
-            const esReasignacion = (!sinAsignar && !esDesasignacion);
-            const estatus = (datos.Estatus || 'PENDIENTE').toUpperCase();
-            const esc = function (t) {
-                return String(t).replace(/[&<>"']/g, function (c) {
-                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-                });
-            };
-
-            let titulo, icono, mensaje, boton;
-            if (esDesasignacion) {
-                titulo = 'Desasignar responsable'; icono = 'fa-user-minus'; boton = 'Desasignar';
-                mensaje = '<b>' + esc(designerName) + '</b> dejará de tener esta solicitud.' +
-                    (estatus === 'PROCESANDO' ? ' Volverá a <b>PENDIENTE</b>.' : '') +
-                    ' Se reiniciarán los contadores de correcciones.';
-            } else if (esReasignacion) {
-                titulo = 'Reasignar responsable'; icono = 'fa-user-edit'; boton = 'Reasignar';
-                mensaje = 'La solicitud pasará de <b>' + esc(actual) + '</b> a <b>' + esc(designerName) + '</b>. ' +
-                    'Se guardará la nueva fecha de asignación y se reiniciarán los contadores de correcciones.';
-            } else {
-                titulo = 'Asignar responsable'; icono = 'fa-user-check'; boton = 'Asignar';
-                mensaje = 'Se asignará la solicitud a <b>' + esc(designerName) + '</b>.' +
-                    (estatus === 'PENDIENTE' ? ' Pasará a <b>PROCESANDO</b>.' : '');
-            }
-
-            window._nxAsigDisenadorPendiente = designerName;
-            const set = function (id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; };
-            set('nexusAsignModalTitulo', '<i class="fas ' + icono + '" style="color:#4a6eb0;"></i> ' + titulo);
-            set('nexusAsignModalId', esc(nexusSelectedRequestId || '-'));
-            set('nexusAsignModalTipo', esc(datos.Solicitud || 'No especificado'));
-            set('nexusAsignModalMsg', mensaje);
-            set('nexusAsignModalBtn', '<i class="fas fa-check"></i> ' + boton);
-            const btn = document.getElementById('nexusAsignModalBtn');
-            if (btn) btn.disabled = false;
-            modal.classList.add('active');
-        }
-
-        function nexusCerrarModalAsignacion() {
-            if (window._nxAsignacionEnCurso) return; // no se puede cerrar mientras se guarda
-            const modal = document.getElementById('nexusAsignModal');
-            if (modal) modal.classList.remove('active');
-            window._nxAsigDisenadorPendiente = null;
-        }
-
-        async function nexusEjecutarAsignacionConfirmada() {
-            const nombre = window._nxAsigDisenadorPendiente;
-            if (!nombre || window._nxAsignacionEnCurso) return;
-            const btn = document.getElementById('nexusAsignModalBtn');
-            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...'; }
-            try {
-                await nexusAsignarDisenador(nombre);
-            } finally {
-                window._nxAsignacionEnCurso = false;
-                const modal = document.getElementById('nexusAsignModal');
-                if (modal) modal.classList.remove('active');
-                window._nxAsigDisenadorPendiente = null;
-            }
-        }
-
         // ------------------------------------------------------------
         // Helpers compartidos del bloque 3B (panel admin)
         // ------------------------------------------------------------
@@ -23777,69 +24188,116 @@
             return f.year + '-' + String(f.month).padStart(2, '0') + '-' + String(f.day).padStart(2, '0');
         }
 
-        // Asigna, reasigna o desasigna (toggle si es el mismo) un diseñador. UNA sola escritura
-        // en RTDB: Disenador, FechaAsignacionDisenador, fechaAsignacionKey y Estatus
-        // (asignar/reasignar -> PROCESANDO; desasignar -> PENDIENTE). Al cambiar de diseñador se
-        // reinician los contadores de correcciones, como avisa el modal. El Sheet no se toca
-        // aquí: lo pone al día sincronizarVivasSheet (Fase 4).
-        async function nexusAsignarDisenador(designerName) {
-            if (window._nxAsignacionEnCurso) return;
+        // ============================================================
+        // ÚNICA RUTA DE ASIGNACIÓN DE RESPONSABLE (diseño, periodismo, audiovisual, protocolo...)
+        // Todo pasa por aquí (modal "Asignar Responsable" del workflow).
+        //   1. Una sola escritura multirruta en RTDB (+ contadores KPI).
+        //   2. Memoria local (_nexusSolicitudesData y nexusSelectedRequestData) al instante,
+        //      sin esperar al listener.
+        //   3. Repinta tarjetas y panel lateral.
+        //   4. Sincroniza Google Sheets en segundo plano; si falla, avisa (antes fallaba en silencio).
+        // opciones: { desasignar?: bool, id?: string }. Devuelve true si RTDB quedó guardado.
+        // El guard _nxAsignacionEnCurso vive SOLO aquí: ningún llamador debe activarlo antes.
+        // ============================================================
+        async function nexusAsignarResponsable(nombre, opciones) {
+            opciones = opciones || {};
+            if (window._nxAsignacionEnCurso) return false;
             if (!nexusEsAdmin()) {
-                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el administrador puede asignar diseñadores.' });
-                return;
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el administrador puede asignar responsables.' });
+                return false;
             }
-            const id = nexusSelectedRequestId;
-            if (!id) return;
+            const id = opciones.id || nexusSelectedRequestId;
+            if (!id) return false;
             const base = nexusRegistroVivoActual(id);
             if (!base) {
                 showToast({ type: 'warning', title: 'Solicitud no disponible', message: 'La solicitud ya no está activa.' });
-                return;
+                return false;
             }
 
-            const desasignar = ((base.Responsable || '').trim() === designerName);
+            const desasignar = !!opciones.desasignar;
             const cambios = desasignar
-                ? { Responsable: 'Sin Asignar', FechaAsignacion: 'N/A', fechaAsignacionKey: '', Estatus: 'PENDIENTE' }
-                : { Responsable: designerName, FechaAsignacion: nexusFormatearHoraAMPM(new Date()),
-                    fechaAsignacionKey: nexusHoy(), Estatus: 'PROCESANDO' };
+                ? { Responsable: 'Sin Asignar', FechaAsignacion: 'N/A', fechaAsignacionKey: '', FechaTomada: 'N/A', Estatus: 'PENDIENTE' }
+                : { Responsable: nombre, FechaAsignacion: nexusFormatearHoraAMPM(new Date()),
+                    fechaAsignacionKey: nexusHoy(), FechaTomada: 'N/A', Estatus: 'PROCESANDO' };
+            // El responsable cambió: los contadores de correcciones empiezan de cero.
             cambios.correccionesTexto = 0;
             cambios.correccionesDiseno = 0;
-            cambios.detalleCorrecciones = null; // null borra el nodo
+            cambios.detalleCorrecciones = null; // null borra el nodo en RTDB
 
             window._nxAsignacionEnCurso = true;
             try {
-                const upAsig = {};
-                const rutaAsig = 'solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id + '/';
-                Object.keys(cambios).forEach(function (k) { upAsig[rutaAsig + k] = cambios[k]; });
+                // 1. RTDB
+                const ruta = 'solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id + '/';
+                const up = {};
+                Object.keys(cambios).forEach(function (k) { up[ruta + k] = cambios[k]; });
                 const kpiAntes = nexusKpiClaveEstatus(base.Estatus), kpiDespues = nexusKpiClaveEstatus(cambios.Estatus);
-                if (kpiAntes !== kpiDespues) { nexusKpiSumar(upAsig, kpiAntes, -1); nexusKpiSumar(upAsig, kpiDespues, 1); }
-                await nexusKpiActualizar(upAsig);
+                if (kpiAntes !== kpiDespues) { nexusKpiSumar(up, kpiAntes, -1); nexusKpiSumar(up, kpiDespues, 1); }
+                await nexusKpiActualizar(up);
+
+                // 2. Memoria local (en RTDB null borra el nodo; en memoria se elimina la clave)
+                const aplicar = function (obj) {
+                    if (!obj) return;
+                    Object.assign(obj, cambios);
+                    delete obj.detalleCorrecciones;
+                };
+                aplicar(base);
+                if (Array.isArray(_nexusSolicitudesData)) {
+                    aplicar(_nexusSolicitudesData.find(function (s) { return s && s.id === id; }));
+                }
+                if (nexusSelectedRequestData && nexusSelectedRequestData.id === id) aplicar(nexusSelectedRequestData);
+
+                // 3. UI
+                nexusRenderizarTarjetasPaginadas();
+                if (nexusSelectedRequestId === id) {
+                    nexusUpdatePanelContent(id, Object.assign({}, base));
+                }
                 showToast({
                     type: 'success',
-                    title: desasignar ? 'Diseñador desasignado' : 'Diseñador asignado',
-                    message: desasignar ? 'La solicitud volvió a PENDIENTE.' : designerName + ' · PROCESANDO',
+                    title: desasignar ? 'Responsable desasignado' : 'Responsable asignado',
+                    message: desasignar ? 'La solicitud volvió a PENDIENTE.' : nombre + ' · PROCESANDO',
                     duration: 3500
                 });
-                if (nexusSelectedRequestId === id) {
-                    const local = Object.assign({}, base, cambios);
-                    delete local.detalleCorrecciones;
-                    nexusUpdatePanelContent(id, local);
+
+                // 4. Google Sheets (segundo plano). asignarSolicitud_ también maneja desasignar (asignadoA vacío).
+                if (typeof NEXUS_SCRIPT_URL !== 'undefined' && NEXUS_SCRIPT_URL) {
+                    const adminNombre = (NexusSession && (NexusSession.nombre || (NexusSession.user && NexusSession.user.email))) || 'Admin';
+                    nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'asignarSolicitud',
+                            id: id,
+                            Responsable: desasignar ? '' : nombre,
+                            asignadoA: desasignar ? '' : nombre,
+                            admin: adminNombre
+                        })
+                    }, 20000, 1).then(function (res) {
+                        if (res && res.success === false) throw new Error(res.error || 'El Sheet rechazó la asignación');
+                    }).catch(function (err) {
+                        console.error('[SHEET] Error al sincronizar asignación:', err);
+                        showToast({ type: 'warning', title: 'Asignado, pero el Sheet no se actualizó',
+                            message: 'RTDB quedó bien. ' + ((err && err.message) || err), duration: 6000 });
+                    });
                 }
+                return true;
             } catch (err) {
-                console.error('[NEXUS] Error al asignar diseñador:', err);
-                nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusAsignarDisenador', detalles: id });
-                showToast({ type: 'error', title: 'No se pudo asignar', message: 'Error: ' + (err.message || err) });
+                console.error('[NEXUS] Error al asignar responsable:', err);
+                if (typeof nexusRegistrarFallaEnvioRTDB === 'function') {
+                    nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusAsignarResponsable', detalles: id });
+                }
+                showToast({ type: 'error', title: 'No se pudo asignar', message: 'Error: ' + ((err && err.message) || err) });
+                return false;
             } finally {
                 window._nxAsignacionEnCurso = false;
             }
         }
+        window.nexusAsignarResponsable = nexusAsignarResponsable;
 
-        // Muestra/oculta la sección "Asignar Diseñador" según el rol,
-        // genera los botones y resalta el diseñador ya asignado (si existe).
-        function nexusActualizarSeccionDisenador(requestData) {
+        // Muestra/oculta según el rol los botones de acciones especiales y de estado del panel.
+        function nexusActualizarAccionesPanel() {
             // Finalizar y rechazar son solo del administrador: el diseñador no ve esos botones.
             const seccionEstado = document.getElementById('nexusStatusActions');
             if (seccionEstado) seccionEstado.classList.toggle('hidden', !nexusEsAdmin());
-            const seccion = document.getElementById('nexusDesignerAssignSection');
             const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
             const btnAutorizar = document.getElementById('nexusBtnAutorizarDescarga');
             const btnLogsErrores = document.getElementById('nexusBtnLogsErrores');
@@ -23853,8 +24311,6 @@
                 if (btnLogsErrores) btnLogsErrores.classList.add('hidden');
                 if (btnAnuncios) btnAnuncios.classList.add('hidden');
                 if (btnPersonal) btnPersonal.classList.add('hidden');
-                if (!seccion) return;
-                seccion.classList.add('hidden');
                 return;
             }
 
@@ -23877,22 +24333,6 @@
             if (btnPersonal) {
                 if (nexusEsAdminPrincipal()) btnPersonal.classList.remove('hidden');
                 else btnPersonal.classList.add('hidden');
-            }
-
-            if (!seccion) return;
-            seccion.classList.remove('hidden');
-            nexusGenerarBotonesDisenador();
-
-            document.querySelectorAll('#nexusDesignerGrid .nexus-panel-btn').forEach(function(b) {
-                b.disabled = false;
-                b.classList.remove('nexus-status-active');
-            });
-
-            const asignado = (requestData && requestData.Responsable && requestData.Responsable !== 'Sin Asignar')
-                ? requestData.Responsable.trim() : '';
-            if (asignado) {
-                const btnActivo = document.getElementById('nexusDesignerBtn-' + asignado);
-                if (btnActivo) btnActivo.classList.add('nexus-status-active');
             }
         }
 
@@ -23965,8 +24405,8 @@
             }
 
             const tipo = base.Solicitud || '';
-            const disenador = (base.Responsable || '').trim();
-            if (!esRechazo && (!disenador || disenador === 'Sin Asignar')) {
+            const responsable = (base.Responsable || '').trim();
+            if (!esRechazo && (!responsable || responsable === 'Sin Asignar')) {
                 showToast({ type: 'warning', title: 'Falta responsable', message: 'Asigna a alguien del personal antes de finalizar la solicitud.' });
                 return false;
             }
@@ -24639,13 +25079,10 @@
             });
             document.querySelectorAll('#nexusStatusActions .nexus-panel-btn').forEach(b => b.classList.remove('nexus-status-active'));
 
-            const designerSection = document.getElementById('nexusDesignerAssignSection');
-            if (designerSection) designerSection.classList.add('hidden'); // sin solicitud seleccionada no aplica asignar diseñador
-
             // Botones de "Acciones Especiales" que NO dependen de una solicitud
             // puntual (gestión de links de Instagram del Home, autorizar
             // descargas). Antes solo se mostraban dentro de
-            // nexusActualizarSeccionDisenador(), que solo se llamaba al
+            // nexusActualizarAccionesPanel(), que solo se llamaba al
             // seleccionar una solicitud, así que quedaban inaccesibles si la
             // lista estaba vacía.
             const btnInstagram = document.getElementById('nexusBtnInstagramLinks');
@@ -24733,10 +25170,9 @@
         window.nexusOpenPanelForRequest = nexusOpenPanelForRequest;
         window.nexusEnableActionButtons = nexusEnableActionButtons;
         window.nexusPanelCambiarEstado = nexusPanelCambiarEstado;
-        window.nexusAsignarDisenador = nexusAsignarDisenador;
         window.handleFinalizarEstado = handleFinalizarEstado;
         window.confirmReject = confirmReject;
-        window.nexusActualizarSeccionDisenador = nexusActualizarSeccionDisenador;
+        window.nexusActualizarAccionesPanel = nexusActualizarAccionesPanel;
         window.nexusPanelEliminar = nexusPanelEliminar;
         window.nexusPanelPostIt = nexusPanelPostIt;
         window.nexusHidePostItModal = nexusHidePostItModal;
@@ -25189,6 +25625,12 @@
         function nexusCerrarEditarSolicitud() {
             const overlay = document.getElementById('nexusEditOverlay');
             if (overlay) overlay.classList.remove('active');
+            if (window._nexusWorkflowEditando) {
+                window._nexusWorkflowEditando = false;
+                setTimeout(function() {
+                    if (typeof nexusAbrirModalRevisionWorkflow === 'function') nexusAbrirModalRevisionWorkflow();
+                }, 200);
+            }
         }
 
         // Guarda los cambios editados en Firestore y RTDB
@@ -25326,6 +25768,21 @@
         // Cerrar los modales con la tecla Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                const warningOverlay = document.getElementById('nexusWorkflowWarningOverlay');
+                if (warningOverlay && warningOverlay.classList.contains('active')) {
+                    nexusWorkflowVolverARevision();
+                    return;
+                }
+                const wfReview = document.getElementById('nexusWorkflowReviewOverlay');
+                if (wfReview && wfReview.classList.contains('active')) {
+                    nexusWorkflowIntentarCerrarRevision();
+                    return;
+                }
+                const wfAssign = document.getElementById('nexusWorkflowAssignOverlay');
+                if (wfAssign && wfAssign.classList.contains('active')) {
+                    nexusCerrarModalAsignacionWorkflow();
+                    return;
+                }
                 const overlay = document.getElementById('nexusExtractOverlay');
                 if (overlay && overlay.classList.contains('active')) nexusCerrarExtractModal();
                 const editOverlay = document.getElementById('nexusEditOverlay');
@@ -26517,36 +26974,39 @@
                 </div>
             </div>
 
-            <!-- Asignación de Responsable (solo Admin) -->
-            <div class="nexus-panel-actions hidden" id="nexusDesignerAssignSection">
-                <div class="nexus-panel-section-header">👥 Asignar Responsable</div>
-                <div class="nexus-panel-actions-grid" id="nexusDesignerGrid"></div>
-            </div>
-
-            <!-- Acciones de Archivo -->
+            <!-- Acciones de Archivo / Workflow -->
             <div class="nexus-panel-actions" id="nexusFileActions">
                 <div class="nexus-panel-section-header">📁 ACCIONES</div>
                 <div class="nexus-panel-actions-grid">
-                    <button id="nexusBtnAttach" class="nexus-panel-btn" onclick="nexusPanelAdjuntar()" disabled style="background: var(--color-primary); color: white;">
-                        <i class="fas fa-paperclip"></i> Adjuntar
+                    <button id="nexusBtnIniciarWorkflow" class="nexus-panel-btn hidden" onclick="nexusIniciarWorkflow()" disabled style="background: linear-gradient(135deg, #10b981, #059669); color: white; grid-column: span 2; font-weight: 700; padding: 12px 14px; font-size: 0.92rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border-radius: 8px;">
+                        <i class="fas fa-play"></i> Iniciar Workflow
                     </button>
-                    <button id="nexusBtnAttachMultiple" class="nexus-panel-btn" onclick="nexusPanelAdjuntarVarios()" disabled style="background: var(--color-secondary); color: white;">
-                        <i class="fas fa-folder"></i> Adjuntar Varios
+                    <button id="nexusBtnTomarSolicitud" class="nexus-panel-btn hidden" onclick="nexusTomarSolicitud()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; grid-column: span 2; font-weight: 700; padding: 12px 14px; font-size: 0.92rem; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); border-radius: 8px;">
+                        <i class="fas fa-hand-paper"></i> Tomar solicitud
                     </button>
-                    <button id="nexusBtnTelegram" class="nexus-panel-btn" onclick="nexusPanelTelegram()" disabled style="background: #0799b6; color: white;">
-                        <i class="fas fa-paper-plane"></i> Telegram
-                    </button>
-                    <button id="nexusBtnEmail" class="nexus-panel-btn nexus-panel-btn-soon" onclick="nexusPanelCorreo()" disabled style="background: var(--color-light); color: var(--color-dark);">
-                        <i class="fas fa-envelope"></i> Correo
-                    </button>
-                    <button id="nexusBtnExtract" class="nexus-panel-btn" onclick="nexusPanelExtraer()" disabled style="background: var(--color-secondary); color: white;">
+                    <button id="nexusBtnExtract" class="nexus-panel-btn hidden" onclick="nexusPanelExtraer()" style="background: var(--color-secondary); color: white; grid-column: span 2; font-weight: 700; padding: 11px 14px; font-size: 0.9rem; border-radius: 8px;">
                         <i class="fas fa-file-alt"></i> Extraer información
                     </button>
-                    <button id="nexusBtnExtractFinalized" class="nexus-panel-btn nexus-panel-btn-soon" onclick="nexusPanelExtraerFinalizada()" disabled style="background: var(--color-dark); color: white;">
-                        <i class="fas fa-file-alt"></i> Extraer finalizada
+                    <button id="nexusBtnAsignarWorkflow" class="nexus-panel-btn hidden" onclick="nexusAbrirModalAsignacionWorkflow()" style="background: linear-gradient(135deg, #4f46e5, #4338ca); color: white; grid-column: span 2; font-weight: 700; padding: 11px 14px; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); border-radius: 8px;">
+                        <i class="fas fa-user-plus"></i> Asignar Responsable
                     </button>
-                    <button id="nexusBtnPostIt" class="nexus-panel-btn" onclick="nexusPanelPostIt()" disabled style="background: var(--color-tertiary); color: var(--color-dark);">
+                    <button id="nexusBtnPostIt" class="nexus-panel-btn hidden" onclick="nexusPanelPostIt()" disabled style="background: var(--color-tertiary); color: var(--color-dark); grid-column: span 2;">
                         <i class="fas fa-sticky-note"></i> Post It
+                    </button>
+                    <button id="nexusBtnAttach" class="nexus-panel-btn hidden" onclick="nexusPanelAdjuntar()" disabled style="background: var(--color-primary); color: white;">
+                        <i class="fas fa-paperclip"></i> Adjuntar
+                    </button>
+                    <button id="nexusBtnAttachMultiple" class="nexus-panel-btn hidden" onclick="nexusPanelAdjuntarVarios()" disabled style="background: var(--color-secondary); color: white;">
+                        <i class="fas fa-folder"></i> Adjuntar Varios
+                    </button>
+                    <button id="nexusBtnTelegram" class="nexus-panel-btn hidden" onclick="nexusPanelTelegram()" disabled style="background: #0799b6; color: white;">
+                        <i class="fas fa-paper-plane"></i> Telegram
+                    </button>
+                    <button id="nexusBtnEmail" class="nexus-panel-btn hidden nexus-panel-btn-soon" onclick="nexusPanelCorreo()" disabled style="background: var(--color-light); color: var(--color-dark);">
+                        <i class="fas fa-envelope"></i> Correo
+                    </button>
+                    <button id="nexusBtnExtractFinalized" class="nexus-panel-btn hidden nexus-panel-btn-soon" onclick="nexusPanelExtraerFinalizada()" disabled style="background: var(--color-dark); color: white;">
+                        <i class="fas fa-file-alt"></i> Extraer finalizada
                     </button>
                 </div>
             </div>
@@ -26827,6 +27287,91 @@
                 <button class="nexus-extract-btn nexus-extract-btn-close" onclick="nexusCerrarEditarSolicitud()">
                     Cancelar
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE REVISIÓN DE WORKFLOW (ADMIN)
+         ============================================================ -->
+    <div id="nexusWorkflowReviewOverlay" class="nexus-extract-overlay" onclick="if(event.target===this) nexusWorkflowIntentarCerrarRevision()">
+        <div class="nexus-extract-modal" style="max-width: 680px;">
+            <div id="nexusWorkflowReviewHeader" class="nexus-extract-header">
+                <div id="nexusWorkflowReviewHeaderIcon" class="nexus-extract-header-icon">⚡</div>
+                <div class="nexus-extract-header-text">
+                    <div class="nexus-extract-header-eyebrow">NEXUS • REVISIÓN DE SOLICITUD</div>
+                    <div id="nexusWorkflowReviewHeaderTitle" class="nexus-extract-header-title">—</div>
+                </div>
+                <button class="nexus-extract-close" title="Cerrar" onclick="nexusWorkflowIntentarCerrarRevision()">×</button>
+            </div>
+            <div id="nexusWorkflowReviewBody" class="nexus-extract-body"></div>
+            <div class="nexus-extract-footer" style="display:flex; justify-content:space-between; align-items:center; gap:10px; background:#fafafa; border-top:1px solid #e5e7eb; padding: 14px 22px;">
+                <button type="button" class="nexus-extract-btn" onclick="nexusWorkflowIntentarCerrarRevision()" style="background:#f1f5f9; color:#64748b; font-weight:600;">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="nexus-extract-btn" onclick="nexusWorkflowAbrirCorreccion()" style="background:linear-gradient(135deg, #0284c7, #0369a1); color:white; font-weight:700;">
+                        <i class="fas fa-pen"></i> Corregir solicitud
+                    </button>
+                    <button type="button" class="nexus-extract-btn" onclick="nexusWorkflowAprobadoParaAsignar()" style="background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:700; box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+                        <i class="fas fa-check-circle"></i> Aprobado para asignar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE ADVERTENCIA: TIEMPO DE WORKFLOW EN EJECUCIÓN
+         ============================================================ -->
+    <div id="nexusWorkflowWarningOverlay" class="nx-overlay" style="z-index: 21000;" onclick="if(event.target===this) nexusWorkflowVolverARevision()">
+        <div class="nx-modal" style="max-width: 480px; text-align: center; border-top: 4px solid #f59e0b; box-shadow: 0 25px 50px rgba(0,0,0,0.6);">
+            <div class="nx-head" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.02) 100%); padding: 24px 20px 16px;">
+                <div style="font-size: 46px; margin-bottom: 8px;">⏱️</div>
+                <p class="nx-eyebrow" style="color: #f59e0b; font-weight: 800; letter-spacing: 1.2px;">TIEMPO DE ATENCIÓN EN CURSO</p>
+                <h2 class="nx-title" style="font-size: 1.25rem; color: #fff;">¡Tu tiempo de workflow se está ejecutando!</h2>
+            </div>
+            <div class="nx-body" style="padding: 16px 24px 22px;">
+                <p style="font-size: 0.95rem; line-height: 1.6; color: rgba(242,242,242,0.92); margin: 0 0 22px 0;">
+                    El tiempo de workflow para esta solicitud ya comenzó a correr. <b>Deberías corregir o asignar un responsable</b> para no demorar la atención del requerimiento.
+                </p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button type="button" class="nx-btn nx-btn-primary" onclick="nexusWorkflowVolverARevision()" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700; padding: 10px 18px;">
+                        <i class="fas fa-arrow-left"></i> Continuar revisión
+                    </button>
+                    <button type="button" class="nx-btn nx-btn-ghost" onclick="nexusWorkflowForzarCerrarRevision()" style="color: #cbd5e1; border: 1px solid rgba(255,255,255,0.2); padding: 10px 18px;">
+                        Cerrar de todos modos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL DE ASIGNACIÓN DE RESPONSABLE (WORKFLOW)
+         ============================================================ -->
+    <div id="nexusWorkflowAssignOverlay" class="nx-overlay" style="z-index: 20500;" onclick="if(event.target===this) nexusCerrarModalAsignacionWorkflow()">
+        <div class="nx-modal" style="max-width: 540px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="nx-head" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.04) 100%);">
+                <button class="nx-close" onclick="nexusCerrarModalAsignacionWorkflow()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS • ASIGNACIÓN DE RESPONSABLE</p>
+                <h2 class="nx-title" style="display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-users-cog" style="color: #818cf8;"></i> Asignar Responsable
+                </h2>
+                <p class="nx-sub">Selecciona el miembro del equipo que atenderá esta solicitud.</p>
+                <div class="nx-request-chip" style="margin-top: 10px;">
+                    <span>Solicitud: <b id="nexusWorkflowAssignId">-</b></span>
+                    <span style="margin-left: auto;">Tipo: <b id="nexusWorkflowAssignTipo">-</b></span>
+                </div>
+            </div>
+            <div class="nx-body" style="flex: 1; overflow-y: auto; padding: 18px 20px;">
+                <div id="nexusWorkflowAssignLista" style="display: flex; flex-direction: column; gap: 10px;">
+                    <!-- Se llena dinámicamente con las tarjetas de personal -->
+                </div>
+            </div>
+            <div class="nx-foot" style="padding: 12px 20px; border-top: 1px solid #2d2d3f; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size: 0.78rem; color: #94a3b8;"><i class="fas fa-info-circle"></i> Los Administradores pueden asignarse a sí mismos.</span>
+                <button type="button" class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalAsignacionWorkflow()">Cerrar</button>
             </div>
         </div>
     </div>
@@ -28656,7 +29201,7 @@
                 var color = m.color || '#555';
                 var icono = m.icono || '👤';
                 var nombre = m.nombre || '(sin nombre)';
-                var rol = m.rol || 'Staff';
+                var rol = m.rol || 'Sin rol';
                 var activo = m.activo !== false;
                 var asignable = m.asignable !== false && m.esDisenador !== false;
 
@@ -28761,11 +29306,6 @@
                 showToast({ type: 'success', title: 'Personal actualizado', message: nombre + ' guardado correctamente.', duration: 3500 });
                 nexusPersonalCancelarEdicion();
                 nexusPersonalRenderizarLista();
-
-                // Regenerar botones de asignación en el panel lateral si está abierto
-                if (typeof nexusGenerarBotonesDisenador === 'function') {
-                    nexusGenerarBotonesDisenador();
-                }
             } catch (e) {
                 console.error('[NEXUS Personal] Error al guardar:', e);
                 showToast({ type: 'error', title: 'Error al guardar', message: 'Verifica la conexión e inténtalo de nuevo.', duration: 4000 });
