@@ -6985,6 +6985,51 @@
 .asx-chip { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; background: var(--c, #2908f1); box-shadow: 0 0 0 2px #fff; }
 .asx-chip.more { background: #3b4763; color: #fff; font: 700 11px 'DM Sans', sans-serif; }
 .asx-gname { font: 700 10.5px 'DM Sans', sans-serif; color: #36415d; line-height: 1.15; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 3px; display: block; }
+/* ── Programación unificada (guardias + días libres + pautas) ── */
+.asx-day.pg { cursor: pointer; background: #f1f3fa; box-shadow: inset 0 0 0 1px #dde2f0; color: #3b4763; transition: transform .15s, box-shadow .15s; }
+.asx-day.pg.wkd { background: #cfe0ff; box-shadow: inset 0 0 0 1px #9dbaf5; color: #0a2a6b; }
+.asx-day.pg:hover { transform: scale(1.05); box-shadow: 0 6px 14px rgba(5, 84, 242, .2); z-index: 2; }
+.asx-day.pg.has { background: #a9c6ff; box-shadow: inset 0 0 0 1.5px #4b7fe0; }
+.asx-day.pg.hasp { background: #e4dbff; box-shadow: inset 0 0 0 1.5px #7a5cf0; }
+.asx-day.pg.has.hasp { background: linear-gradient(135deg, #a9c6ff 50%, #e4dbff 50%); }
+.asx-day.pg.lib { background: #ffe9b8; box-shadow: inset 0 0 0 1.5px #e0a92b; }
+.asx-day.pg.mine { background: #a8e8c8; box-shadow: inset 0 0 0 2.5px #14a064; }
+.asx-day.pg.today { box-shadow: inset 0 0 0 3px var(--color-primary); }
+.asx-day.pg.past { opacity: .62; }
+.asx-chip.t-l { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #e0a92b; }
+.asx-chip.t-g { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4b7fe0; }
+.asx-chip.pend { opacity: .5; outline: 2px dashed #b9770e; outline-offset: 1px; }
+.asx-pbadge { display: inline-block; margin-top: 3px; padding: 1px 7px; border-radius: 99px; background: #7a5cf0; color: #fff; font: 700 10.5px 'DM Sans', sans-serif; }
+.asx-segs { display: inline-flex; gap: 4px; background: #e8ecf6; border-radius: 12px; padding: 4px; }
+.asx-seg { border: 0; background: transparent; padding: 7px 14px; border-radius: 9px; font: 700 12.5px 'DM Sans', sans-serif; color: #55607a; cursor: pointer; }
+.asx-seg.on { background: #fff; color: var(--color-primary); box-shadow: 0 2px 8px rgba(16, 30, 70, .14); }
+.asx-lib-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #eef0f6; font-size: 13px; }
+.asx-lib-row:last-child { border-bottom: 0; }
+.asx-lib-act { display: flex; gap: 6px; flex-wrap: wrap; }
+.asx-saldo { font: 800 30px 'Sora', sans-serif; color: var(--color-primary); }
+.asx-tag { display: inline-block; border-radius: 8px; padding: 2px 8px; font: 700 11px 'DM Sans', sans-serif; background: #ffe9b8; color: #8a5a00; }
+.asx-tag.ok { background: #d5f3e4; color: #0d6b41; }
+.asx-prow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid #eef0f6; font-size: 13.5px; }
+.asx-prow.off { opacity: .55; text-decoration: line-through; }
+.asx-pform { margin-top: 14px; padding: 14px; border-radius: 16px; background: #f6f8fd; border: 1px solid #dde4f4; }
+/* Modal del día: encabezado compacto para que el contenido tenga espacio en pantallas bajas */
+.asx-md.compact { max-height: 94vh; }
+.asx-md.compact .asx-md-head { padding: 14px 22px 16px; }
+.asx-md.compact .asx-md-ico { display: none; }
+.asx-md.compact .asx-md-eyebrow { margin-bottom: 8px; padding: 4px 11px; }
+.asx-md.compact .asx-md-head h3 { font-size: 19px; }
+.asx-md.compact .asx-md-body { min-height: 180px; padding: 16px 22px 4px; }
+.asx-md.compact .asx-md-foot { padding-top: 10px; padding-bottom: 14px; }
+.asx-lbl { display: block; text-align: left; font: 700 11.5px 'DM Sans', sans-serif; color: #64708a; margin: 0 0 12px; letter-spacing: .02em; }
+.asx-fld { display: block; width: 100%; box-sizing: border-box; margin: 5px 0 0; padding: 11px 13px; border: 1px solid #cdd6ea; border-radius: 12px; background: #fff; color: #1d2740; font: 500 14px 'DM Sans', sans-serif; height: auto; }
+.asx-fld:focus { outline: 2px solid var(--color-primary); outline-offset: 0; border-color: transparent; }
+select.asx-fld { cursor: pointer; }
+.asx-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+@media (max-width: 520px) { .asx-row2 { grid-template-columns: 1fr; } }
+#pPers .asx-people { max-height: 230px; overflow: auto; padding-right: 4px; }
+.asx-banner { text-align: left; background: #fdecea; color: #8c1d18; border-radius: 12px; padding: 10px 12px; font-size: 12.5px; margin-bottom: 10px; }
+.asx-banner.info { background: #eef3ff; color: #1f3d8f; }
+.asx-warnbox .e { color: #b3261e; font-size: 12.5px; margin-top: 6px; } .asx-warnbox .w { color: #8a5a00; font-size: 12.5px; margin-top: 6px; }
 .asx-side { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: start; }
 .asx-box { background: #fff; border-radius: 20px; padding: 18px 18px 16px; border: 1px solid #cdd6ea; box-shadow: 0 10px 28px rgba(16, 30, 70, .12); }
 .asx-box h4 { font-family: 'Sora', sans-serif; font-size: 15px; margin-bottom: 12px; }
@@ -11393,7 +11438,7 @@
         <section id="asistencia" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Asistencia</h2>
-                <p class="section-subtitle">Jornada laboral, horas extras y guardias del personal</p>
+                <p class="section-subtitle">Jornada laboral, horas extras, guardias, días libres y pautas del personal</p>
             </div>
             <div class="asx-wrap">
                 <div class="asx-top">
@@ -11427,7 +11472,7 @@
 
                 <div class="asx-tabs" role="tablist">
                     <button type="button" class="asx-tab on" data-asx-tab="tarjetero" id="asxTabTarjetero"><i class="fas fa-id-card"></i> <span id="asxTabTarjeteroTxt">Tarjetero</span></button>
-                    <button type="button" class="asx-tab" data-asx-tab="guardias"><i class="fas fa-calendar-check"></i> Guardias</button>
+                    <button type="button" class="asx-tab" data-asx-tab="guardias"><i class="fas fa-calendar-days"></i> Programación</button>
                 </div>
 
                 <div id="asxPaneTarjetero"></div>
@@ -32210,6 +32255,7 @@
            asistencia/{uid}_{AAAA-MM-DD}  → primerLogin, tramos{}, externos{}, ventanas{}, aviso1530
            asistencia_ultima/{uid}        → resumen para el tarjetero (último ingreso/salida)
            guardias/{AAAA-MM-DD}          → uids de guardia del día
+           dias_libres/{uid}_{AAAA-MM-DD} → día libre compensatorio · pautas/{id} → pautas de cobertura (varias por día)
          ============================================================ -->
     <script>
     (function () {
@@ -32780,7 +32826,7 @@
             salirSeccion();
             if (S.offsetUnsub) { try { S.offsetUnsub(); } catch (e) {} S.offsetUnsub = null; }
             S.uid = null; S.sid = null; S.docId = null; S.avisoDia = null; S.sync = false;
-            S.ultima = {}; S.pres = {}; S.miDoc = null; S.guardias = {}; S.guardiasOk = false; S.sel = null;
+            S.ultima = {}; S.pres = {}; S.miDoc = null; S.guardias = {}; S.guardiasOk = false; S.sel = null; S.libres = {}; S.guardiasTodas = {}; S.pautas = {}; S.progOk = false;
             S.alm = null; S.motivoSalida = null; S.almBusy = false; S.almModal = false;
             cerrarDrawer();
         }
@@ -33032,7 +33078,7 @@
             } catch (e) { console.warn('[Asistencia] guardias:', e && e.message); }
         }
         function claveMes(offset) { var m0 = mk(ahora()), y = +m0.slice(0, 4), m = +m0.slice(5) - 1 + offset, d = new Date(Date.UTC(y, m, 1)); return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1); }
-        function pintarGuardias() {
+        function pintarGuardiasViejo() {
             var host = $('asxPaneGuardias'); if (!host || !S.uid) return;
             var admin = esAdmin(), hoy = fk(ahora()), c0 = claveMes(0), c1 = claveMes(1);
             var cuenta = {}; listaPersonal().forEach(function (p) { cuenta[p.uid] = 0; });
@@ -33106,6 +33152,304 @@
             } catch (e) { toast({ type: 'error', title: 'No se pudo guardar', message: String(e && e.message || e) }); }
         }
 
+        // ── Programación de Prensa: guardias + días libres + pautas en UN solo calendario ──
+        // guardias/{fecha}: uids[] · dias_libres/{uid}_{fecha}: compensatorio (solicitado|aprobado|rechazado) · pautas/{id}: varias por día
+        // Saldo de días libres = guardias ya cumplidas (fecha pasada) sin día libre asociado. No se guarda contador.
+        S.libres = {}; S.guardiasTodas = {}; S.pautas = {}; S.progOk = false; S.capa = 'todo';
+        var FORMATOS = ['Nota', 'Foto', 'Video', 'Nota + foto', 'Cobertura completa'];
+        function idNuevo() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+        async function leerCol(nombre, q) {
+            var o = {}; S.errCol = S.errCol || {};
+            try { var Fs = F(); (await Fs.getDocs(q || Fs.collection(dbf(), nombre))).forEach(function (d) { o[d.id] = d.data(); }); delete S.errCol[nombre]; return o; }
+            catch (e) { console.warn('[Programación] ' + nombre + ':', e && e.message); S.errCol[nombre] = String(e && e.message || e); return null; }
+        }
+        async function cargarProg() {
+            try {
+                await fbListo(); var Fs = F();
+                var g = await leerCol('guardias'), l = await leerCol('dias_libres'), p = await leerCol('pautas', Fs.query(Fs.collection(dbf(), 'pautas'), Fs.where('mes', 'in', [claveMes(0), claveMes(1)])));
+                if (g) S.guardiasTodas = g; if (l) S.libres = l; if (p) S.pautas = p; S.progOk = true;
+            } catch (e) { console.warn('[Programación]', e && e.message); }
+        }
+        function guardiaDe(f) { return S.guardias[f] || S.guardiasTodas[f] || null; }
+        function uidsGuardia(f) { var g = guardiaDe(f); return (g && g.uids) || []; }
+        function libresLista() { return Object.keys(S.libres).map(function (k) { var o = S.libres[k]; o._id = k; return o; }); }
+        function libresVigentes(uid) { return libresLista().filter(function (l) { return l.uid === uid && (l.estado === 'solicitado' || l.estado === 'aprobado'); }); }
+        function libresDelDia(f) { return libresLista().filter(function (l) { return l.fecha === f && l.estado !== 'rechazado'; }); }
+        function guardiasCumplidas(uid) { var hoy = fk(ahora()); return Object.keys(S.guardiasTodas).filter(function (f) { var g = S.guardiasTodas[f]; return f < hoy && g.uids && g.uids.indexOf(uid) !== -1; }).sort(); }
+        function guardiasLibresSinUsar(uid) { var u = {}; libresVigentes(uid).forEach(function (l) { u[l.guardiaOrigen] = 1; }); return guardiasCumplidas(uid).filter(function (f) { return !u[f]; }); }
+        function saldoLibres(uid) { return guardiasLibresSinUsar(uid).length; }
+        function pautasLista() { return Object.keys(S.pautas).map(function (k) { var o = S.pautas[k]; o._id = k; return o; }); }
+        function pautaActiva(p) { return p.estado !== 'cancelada'; }
+        function pautasDelDia(f) { return pautasLista().filter(function (p) { return p.fecha === f; }).sort(function (a, b) { return String(a.horaIni || '99').localeCompare(String(b.horaIni || '99')); }); }
+        function rolDe(u) { return String(((window._nexusPersonal || {})[u] || {}).rol || '').trim().toLowerCase(); }
+        function esDiseno(u) { return rolDe(u) === 'diseñador' || rolDe(u) === 'disenador'; }
+        function esAdminRol(u) { var r = rolDe(u); return r === 'admin' || r === 'admin principal'; }
+        // Pautas: puede recibirlas todo el personal EXCEPTO el rol Diseñador (los roles son Admin, Diseño y Prensa).
+        function elegiblePrensa(u) { return !esDiseno(u); }
+        function puedeEnPauta(u) { return elegiblePrensa(u); }
+        function esFinde(f) { var d = dowDe(fechaAMs(f) + 12 * 3600000); return d === 0 || d === 6; }
+        function minDe(h) { if (!h) return null; var a = String(h).split(':'); return (+a[0]) * 60 + (+a[1] || 0); }
+        function horaTxt(h) { if (!h) return ''; var m = minDe(h), hh = Math.floor(m / 60), mm = m % 60; return ((hh + 11) % 12 + 1) + ':' + pad(mm) + (hh >= 12 ? ' p. m.' : ' a. m.'); }
+        function nom1(u) { return persona(u).nombre; }
+        function avisoCarga(cols) { var e = S.errCol || {}, m = cols.filter(function (c) { return e[c]; }); return m.length ? '<div class="asx-banner">No se pudo leer <b>' + m.join(', ') + '</b> de Firestore: ' + esc(e[m[0]]) + '. Revisa las reglas de seguridad de esa colección.</div>' : ''; }
+
+        function pintarGuardias() { pintarProg(); }
+        function pintarProg() {
+            var host = $('asxPaneGuardias'); if (!host || !S.uid) return;
+            var admin = esAdmin(), hoy = fk(ahora()), c0 = claveMes(0), c1 = claveMes(1), capa = S.capa;
+            function ver(k) { return capa === 'todo' || capa === k; }
+            function cal(clave) {
+                var y = +clave.slice(0, 4), m = +clave.slice(5), off = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7, n = new Date(Date.UTC(y, m, 0)).getUTCDate(), h = '', ng = 0, nl = 0, np = 0;
+                for (var d = 1; d <= n; d++) { var ff = clave + '-' + pad(d); if (uidsGuardia(ff).length) ng++; nl += libresDelDia(ff).filter(function (l) { return l.estado === 'aprobado'; }).length; np += pautasDelDia(ff).filter(pautaActiva).length; }
+                h += '<div class="asx-cal"><div class="asx-cal-title"><span>' + MESES[m - 1] + ' ' + y + '</span><small>' + ng + ' guardia(s) · ' + nl + ' libre(s) · ' + np + ' pauta(s)</small></div><div class="asx-cal-grid">';
+                DOW_CAB.forEach(function (x, i) { h += '<div class="asx-dow' + (i > 4 ? ' we' : '') + '">' + x + '</div>'; });
+                for (var b = 0; b < off; b++) h += '<div class="asx-day blank"></div>';
+                for (var dd = 1; dd <= n; dd++) {
+                    var fecha = clave + '-' + pad(dd), we = (off + dd - 1) % 7 > 4;
+                    var gu = ver('g') ? uidsGuardia(fecha) : [], ls = ver('l') ? libresDelDia(fecha) : [], ps = ver('p') ? pautasDelDia(fecha).filter(pautaActiva) : [];
+                    var mine = gu.indexOf(S.uid) !== -1 || ls.some(function (l) { return l.uid === S.uid; }) || ps.some(function (p) { return (p.uids || []).indexOf(S.uid) !== -1; });
+                    var cls = 'asx-day pg' + (we ? ' wkd' : '') + (fecha < hoy ? ' past' : '') + (fecha === hoy ? ' today' : '') + (gu.length ? ' has' : '') + (ls.length ? ' lib' : '') + (ps.length ? ' hasp' : '') + (mine ? ' mine' : '');
+                    var items = gu.map(function (u) { return { u: u, t: 'g' }; }).concat(ls.map(function (l) { return { u: l.uid, t: 'l', pend: l.estado === 'solicitado' }; })), MAXC = 3;
+                    var chips = items.slice(0, items.length > MAXC ? MAXC - 1 : MAXC).map(function (it) { var p = persona(it.u); return '<span class="asx-chip t-' + it.t + (it.pend ? ' pend' : '') + '" title="' + esc(p.nombre + (it.t === 'l' ? ' · día libre' + (it.pend ? ' (pendiente)' : '') : ' · guardia')) + '" style="--c:' + esc(p.color) + '">' + esc(p.icono) + '</span>'; }).join('') + (items.length > MAXC ? '<span class="asx-chip more">+' + (items.length - (MAXC - 1)) + '</span>' : '');
+                    var pill = ps.length ? '<span class="asx-pbadge">📰 ' + ps.length + '</span>' : '';
+                    h += '<button type="button" class="' + cls + '" data-fecha="' + fecha + '" title="' + esc(diaCorto(fecha)) + '"><span>' + dd + '</span><span style="width:100%"><span class="asx-chips">' + chips + '</span>' + pill + '</span></button>';
+                }
+                return h + '</div></div>';
+            }
+            var f0 = hoy, prox = [];
+            Object.keys(S.guardiasTodas).concat(Object.keys(S.guardias)).forEach(function (f) { if (f >= f0 && uidsGuardia(f).indexOf(S.uid) !== -1 && !prox.some(function (x) { return x.f === f && x.t === 'Guardia'; })) prox.push({ f: f, t: 'Guardia' }); });
+            libresVigentes(S.uid).forEach(function (l) { if (l.fecha >= f0) prox.push({ f: l.fecha, t: 'Libre' + (l.estado === 'solicitado' ? ' (pend.)' : '') }); });
+            pautasLista().forEach(function (p) { if (p.fecha >= f0 && pautaActiva(p) && (p.uids || []).indexOf(S.uid) !== -1) prox.push({ f: p.fecha, t: 'Pauta' + (p.horaIni ? ' ' + horaTxt(p.horaIni) : '') }); });
+            prox.sort(function (a, b) { return a.f < b.f ? -1 : a.f > b.f ? 1 : 0; });
+            var pend = libresLista().filter(function (l) { return l.estado === 'solicitado'; }).sort(function (a, b) { return a.fecha < b.fecha ? -1 : 1; });
+            var pendHtml = admin ? '<div class="asx-box"><h4>Solicitudes de día libre</h4>' + (pend.length ? pend.map(function (l) {
+                var p = persona(l.uid);
+                return '<div class="asx-lib-row" style="--c:' + esc(p.color) + '"><span class="asx-mini">' + esc(p.icono) + '</span><div><b>' + esc(p.nombre) + '</b><br><small>' + esc(diaCorto(l.fecha)) + '</small></div><div class="asx-lib-act"><button type="button" class="asx-btn ok" data-lib-act="aprobado" data-lib-id="' + esc(l._id) + '">Aprobar</button><button type="button" class="asx-btn no" data-lib-act="rechazado" data-lib-id="' + esc(l._id) + '">Rechazar</button></div></div>';
+            }).join('') : '<div class="asx-muted">No hay solicitudes pendientes.</div>') + '</div>' : '';
+            var cuentaG = {}, cuentaP = {}; listaPersonal().forEach(function (p) { cuentaG[p.uid] = 0; cuentaP[p.uid] = 0; });
+            Object.keys(S.guardiasTodas).concat(Object.keys(S.guardias)).filter(function (f, i, a) { return a.indexOf(f) === i; }).forEach(function (f) { if (f.slice(0, 7) === c0 || f.slice(0, 7) === c1) uidsGuardia(f).forEach(function (u) { cuentaG[u] = (cuentaG[u] || 0) + 1; }); });
+            pautasLista().forEach(function (p) { if (pautaActiva(p)) (p.uids || []).forEach(function (u) { cuentaP[u] = (cuentaP[u] || 0) + 1; }); });
+            var capas = [['todo', 'Todo'], ['g', 'Guardias'], ['l', 'Días libres'], ['p', 'Pautas']].map(function (c) { return '<button type="button" class="asx-seg' + (capa === c[0] ? ' on' : '') + '" data-prog-capa="' + c[0] + '">' + c[1] + '</button>'; }).join('');
+            host.innerHTML = '<div class="asx-toolbar"><div><div class="asx-h3">Programación de actividades</div><div class="asx-muted">' +
+                (admin ? 'Toca cualquier día para gestionar guardias, días libres y pautas' : 'Toca un día para ver la programación o solicitar un día libre') + '</div></div><div class="asx-segs">' + capas + '</div></div>' +
+                '<div class="asx-guard-layout"><div class="asx-cals">' + cal(c0) + cal(c1) + '</div><div class="asx-side">' +
+                '<div class="asx-box"><h4>Mi programación</h4><div class="asx-saldo">' + saldoLibres(S.uid) + '</div><div class="asx-muted">día(s) libre(s) de saldo por guardias cumplidas</div>' +
+                (prox.length ? '<div class="asx-mine-list" style="margin-top:10px">' + prox.slice(0, 10).map(function (x) { return '<span>' + esc(diaCorto(x.f)) + ' · ' + esc(x.t) + '</span>'; }).join('') + '</div>' : '<div class="asx-muted" style="margin-top:8px">No tienes nada programado.</div>') + '</div>' +
+                pendHtml +
+                '<div class="asx-box"><h4>Carga por persona</h4><div class="asx-load">' + listaPersonal().map(function (p) {
+                    return '<div class="asx-load-row" style="--c:' + esc(p.color) + '"><span class="asx-mini">' + esc(p.icono) + '</span><div><div>' + esc(p.nombre) + '</div><small class="asx-muted">' + (cuentaG[p.uid] || 0) + ' guardia(s)' + (puedeEnPauta(p.uid) || cuentaP[p.uid] ? ' · ' + (cuentaP[p.uid] || 0) + ' pauta(s)' : '') + '</small></div><b title="Días libres de saldo">' + saldoLibres(p.uid) + '</b></div>';
+                }).join('') + '</div><div class="asx-note" style="margin-top:8px">El número de la derecha es el saldo de días libres.</div></div>' +
+                '<div class="asx-box"><div class="asx-legend"><div><i style="background:#a9c6ff;box-shadow:inset 0 0 0 1.5px #4b7fe0"></i>Guardia</div><div><i style="background:#ffe9b8;box-shadow:inset 0 0 0 1.5px #e0a92b"></i>Día libre (punteado = pendiente)</div><div><i style="background:#e4dbff;box-shadow:inset 0 0 0 1.5px #7a5cf0"></i>Con pautas (📰)</div><div><i style="background:#a8e8c8;box-shadow:inset 0 0 0 2.5px #14a064"></i>Algo tuyo</div></div></div></div></div>';
+        }
+
+        async function resolverLibre(id, estado, btn) {
+            if (!esAdmin()) return;
+            try {
+                if (btn) btn.disabled = true;
+                await F().updateDoc(F().doc(dbf(), 'dias_libres', id), { estado: estado, resueltoPor: S.nombre, actualizado: ts() });
+                if (S.libres[id]) S.libres[id].estado = estado;
+                toast({ type: 'success', title: estado === 'aprobado' ? 'Día libre aprobado' : 'Solicitud rechazada', message: 'Se actualizó la solicitud.' });
+                pintarProg();
+            } catch (e) { if (btn) btn.disabled = false; toast({ type: 'error', title: 'No se pudo actualizar', message: String(e && e.message || e) }); }
+        }
+
+        // ── Modal del día: Guardia · Día libre · Pautas ──────────────
+        async function abrirDia(fecha) {
+            if (!S.progOk) await cargarProg();
+            var admin = esAdmin(), hoy = fk(ahora()), editable = fecha >= hoy, adminEd = admin && editable, finde = esFinde(fecha);
+            var libres = libresDelDia(fecha), libPorUid = {}; libres.forEach(function (l) { libPorUid[l.uid] = l; });
+            var mio = libPorUid[S.uid], miSaldo = saldoLibres(S.uid);
+            var c0 = claveMes(0), c1 = claveMes(1), cuenta = {};
+            Object.keys(S.guardiasTodas).concat(Object.keys(S.guardias)).filter(function (f, i, a) { return a.indexOf(f) === i; }).forEach(function (f) { if (f.slice(0, 7) === c0 || f.slice(0, 7) === c1) uidsGuardia(f).forEach(function (u) { cuenta[u] = (cuenta[u] || 0) + 1; }); });
+            var dow = dowDe(fechaAMs(fecha) + 12 * 3600000), otra = dow === 6 ? fk(fechaAMs(fecha) + 36 * 3600000) : dow === 0 ? fk(fechaAMs(fecha) - 12 * 3600000) : null;
+            var selG = uidsGuardia(fecha).slice();
+            var draft = pautasDelDia(fecha).map(function (p) { return { id: p._id, titulo: p.titulo || '', horaIni: p.horaIni || '', horaFin: p.horaFin || '', lugar: p.lugar || '', formato: p.formato || 'Nota', estado: p.estado || 'programada', uids: (p.uids || []).slice(), solicitudId: p.solicitudId || '', _new: false, _del: false, _dirty: false }; });
+            var F0 = function () { return { i: -1, titulo: '', ini: '', fin: '', lugar: '', formato: 'Nota', estado: 'programada', uids: [], extra: [] }; }, f = F0(), ovRef = null;
+
+            function chipsDe(uids) { return uids.map(function (u) { var p = persona(u); return '<span class="asx-chip" title="' + esc(p.nombre) + '" style="--c:' + esc(p.color) + ';width:24px;height:24px;font-size:13px">' + esc(p.icono) + '</span>'; }).join(''); }
+            function filaPersona(p, chk, dis, extraTxt, small) {
+                return '<label class="asx-person' + (chk ? ' sel' : '') + '" style="--c:' + esc(p.color) + (dis ? ';opacity:.5' : '') + '"><span class="asx-mini">' + esc(p.icono) + '</span><span><b>' + esc(p.nombre) + '</b><br><small>' + (extraTxt || esc(p.rol || 'Personal')) + '</small></span><small>' + (small || '') + '</small><input type="checkbox" value="' + esc(p.uid) + '"' + (chk ? ' checked' : '') + (dis ? ' disabled' : '') + '></label>';
+            }
+            // Conjuntos vigentes en el modal (lo que se está editando ahora)
+            function setL() { if (ovRef && adminEd && !finde) return Array.prototype.map.call(ovRef.querySelectorAll('.asx-sec[data-sec="l"] .asx-person input:checked'), function (i) { return i.value; }); return libres.map(function (l) { return l.uid; }); }
+            function setG() { if (ovRef && adminEd && finde) return Array.prototype.map.call(ovRef.querySelectorAll('.asx-sec[data-sec="g"] .asx-person input:checked'), function (i) { return i.value; }); return selG; }
+
+            // Sección Guardia (solo fines de semana)
+            function htmlG() {
+                var pers = listaPersonal().sort(function (a, b) { return (cuenta[a.uid] || 0) - (cuenta[b.uid] || 0) || a.nombre.localeCompare(b.nombre, 'es'); });
+                if (adminEd) return '<div class="asx-muted" style="text-align:left">Ordenado por quien lleva menos guardias en estos dos meses.</div><div class="asx-people">' + pers.map(function (p) { return filaPersona(p, selG.indexOf(p.uid) !== -1, false, '', (cuenta[p.uid] || 0) + ' guardia(s)'); }).join('') + '</div>' +
+                    (otra && otra >= hoy ? '<label class="asx-check"><input type="checkbox" id="asxAmbos"> Aplicar también al ' + (dow === 6 ? 'domingo' : 'sábado') + ' (' + esc(diaCorto(otra)) + ')</label>' : '') +
+                    '<div style="margin-top:12px;text-align:left"><button type="button" class="asx-btn g" id="asxSugerir"><i class="fas fa-wand-magic-sparkles"></i> Sugerir por equidad</button></div>';
+                var g = guardiaDe(fecha);
+                return (selG.length ? '<div class="asx-people">' + selG.map(function (u) { var p = persona(u); return '<div class="asx-person" style="--c:' + esc(p.color) + ';grid-template-columns:34px 1fr"><span class="asx-mini">' + esc(p.icono) + '</span><span><b>' + esc(p.nombre) + '</b><br><small>' + esc(p.rol || 'Personal') + '</small></span></div>'; }).join('') + '</div>' : '<div class="asx-muted">Nadie tiene guardia este día.</div>') + (g && g.asignadoPor ? '<div class="asx-note" style="margin-top:10px">Asignado por ' + esc(g.asignadoPor) + '</div>' : '');
+            }
+            // Sección Día libre (solo días hábiles)
+            function htmlL() {
+                if (adminEd) {
+                    var pers = listaPersonal().sort(function (a, b) { return (saldoLibres(b.uid) + (libPorUid[b.uid] ? 99 : 0)) - (saldoLibres(a.uid) + (libPorUid[a.uid] ? 99 : 0)) || a.nombre.localeCompare(b.nombre, 'es'); });
+                    var hayS = pers.some(function (p) { return saldoLibres(p.uid) > 0; });
+                    return avisoCarga(['guardias', 'dias_libres']) + (hayS || libres.length ? '' : '<div class="asx-banner info">Todavía nadie tiene saldo: un día libre se gana con una guardia ya cumplida (fecha pasada). Las guardias de meses anteriores al cierre pueden haberse borrado.</div>') + '<div class="asx-muted" style="text-align:left;margin-bottom:8px">Solo se puede asignar a quien tiene saldo (guardias cumplidas sin día libre).</div><div class="asx-people">' + pers.map(function (p) {
+                        var l = libPorUid[p.uid], bloq = !l && saldoLibres(p.uid) < 1;
+                        return filaPersona(p, !!l, bloq, esc(p.rol || 'Personal') + (l && l.estado === 'solicitado' ? ' · <span class="asx-tag">pendiente</span>' : ''), saldoLibres(p.uid) + ' de saldo');
+                    }).join('') + '</div>';
+                }
+                var h = avisoCarga(['guardias', 'dias_libres']) + (libres.length ? '<div class="asx-people">' + libres.map(function (l) { var p = persona(l.uid); return '<div class="asx-person" style="--c:' + esc(p.color) + ';grid-template-columns:34px 1fr"><span class="asx-mini">' + esc(p.icono) + '</span><span><b>' + esc(p.nombre) + '</b><br><small><span class="asx-tag' + (l.estado === 'aprobado' ? ' ok' : '') + '">' + (l.estado === 'aprobado' ? 'aprobado' : 'pendiente') + '</span></small></span></div>'; }).join('') + '</div>' : '<div class="asx-muted">Nadie tiene día libre este día.</div>');
+                if (editable) {
+                    if (mio && mio.estado === 'aprobado') h += '<div class="asx-note" style="margin-top:12px">Tu día libre de este día ya está aprobado.</div>';
+                    else if (mio || miSaldo > 0) h += '<label class="asx-check" style="margin-top:12px"><input type="checkbox" id="asxReqL"' + (mio ? ' checked' : '') + '> Solicitar este día libre (te quedan ' + miSaldo + ' de saldo)</label>';
+                    else h += '<div class="asx-note" style="margin-top:12px">No tienes saldo: un día libre se gana al cumplir una guardia.</div>';
+                }
+                return h;
+            }
+            // Sección Pautas
+            function personasForm() {
+                var libSet = setL(), vis = listaPersonal().filter(function (p) { return elegiblePrensa(p.uid) || (puedeEnPauta(p.uid) && (f.extra.indexOf(p.uid) !== -1 || f.uids.indexOf(p.uid) !== -1)); });
+                var otros = listaPersonal().filter(function (p) { return vis.indexOf(p) === -1 && puedeEnPauta(p.uid); });
+                return '<div class="asx-people">' + vis.map(function (p) { var bl = libSet.indexOf(p.uid) !== -1; return filaPersona(p, f.uids.indexOf(p.uid) !== -1, false, esc(p.rol || 'Personal') + (bl ? ' · <span class="asx-tag">día libre</span>' : ''), ''); }).join('') + '</div>' +
+                    (otros.length ? '<select id="pOtra" class="asx-fld" style="margin-top:8px"><option value="">＋ Incluir a otra persona…</option>' + otros.map(function (p) { return '<option value="' + esc(p.uid) + '">' + esc(p.nombre) + '</option>'; }).join('') + '</select>' : '');
+            }
+            function htmlP() {
+                var vivas = draft.map(function (d, i) { return { d: d, i: i }; }).filter(function (x) { return !x.d._del; });
+                var h = avisoCarga(['pautas']) + (vivas.length ? vivas.map(function (x) {
+                    var d = x.d;
+                    return '<div class="asx-prow' + (d.estado === 'cancelada' ? ' off' : '') + '"><div style="min-width:0"><b>' + esc(d.titulo) + '</b> <span class="asx-tag' + (d.estado === 'cubierta' ? ' ok' : '') + '">' + esc(d.estado) + '</span><br><small>' + esc([d.horaIni ? horaTxt(d.horaIni) + (d.horaFin ? ' – ' + horaTxt(d.horaFin) : '') : '', d.lugar, d.formato].filter(Boolean).join(' · ')) + '</small><div style="display:flex;gap:3px;margin-top:5px;flex-wrap:wrap">' + (d.uids.length ? chipsDe(d.uids) : '<small>Sin periodista asignado</small>') + '</div></div>' +
+                        (adminEd ? '<div class="asx-lib-act"><button type="button" class="asx-btn g" data-pedit="' + x.i + '">Editar</button><button type="button" class="asx-btn no" data-pdel="' + x.i + '">Quitar</button></div>' : '') + '</div>';
+                }).join('') : '<div class="asx-muted">No hay pautas este día.</div>');
+                if (!adminEd) return h;
+                return h + '<div class="asx-pform"><div class="asx-h3" style="font-size:15px;margin-bottom:12px;text-align:left">' + (f.i >= 0 ? 'Editar pauta' : 'Nueva pauta') + '</div>' +
+                    '<label class="asx-lbl">Título<input class="asx-fld" id="pTit" placeholder="Evento o cobertura" value="' + esc(f.titulo) + '"></label>' +
+                    '<div class="asx-row2"><label class="asx-lbl">Desde<input class="asx-fld" type="time" id="pIni" value="' + esc(f.ini) + '"></label><label class="asx-lbl">Hasta<input class="asx-fld" type="time" id="pFin" value="' + esc(f.fin) + '"></label></div>' +
+                    '<label class="asx-lbl">Lugar<input class="asx-fld" id="pLug" placeholder="Dirección o sede" value="' + esc(f.lugar) + '"></label>' +
+                    '<div class="asx-row2"><label class="asx-lbl">Formato<select class="asx-fld" id="pFor">' + FORMATOS.map(function (x) { return '<option' + (x === f.formato ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></label>' +
+                    '<label class="asx-lbl">Estado<select class="asx-fld" id="pEst">' + ['programada', 'cubierta', 'cancelada'].map(function (x) { return '<option' + (x === f.estado ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></label></div>' +
+                    '<div class="asx-lbl" style="margin-bottom:6px">Periodistas asignados</div><div id="pPers">' + personasForm() + '</div>' +
+                    '<div id="pWarn" class="asx-warnbox"></div>' +
+                    '<div style="display:flex;gap:8px;margin-top:12px"><button type="button" class="asx-btn p" id="pOk">' + (f.i >= 0 ? 'Actualizar pauta' : 'Agregar pauta') + '</button>' + (f.i >= 0 ? '<button type="button" class="asx-btn g" id="pCancel">Cancelar edición</button>' : '') + '</div></div>';
+            }
+            function leerF(ov) {
+                var q = function (s) { return ov.querySelector(s); }; if (!q('#pTit')) return;
+                f.titulo = q('#pTit').value; f.ini = q('#pIni').value; f.fin = q('#pFin').value; f.lugar = q('#pLug').value; f.formato = q('#pFor').value; f.estado = q('#pEst').value;
+                f.uids = Array.prototype.map.call(ov.querySelectorAll('#pPers .asx-person input:checked'), function (i) { return i.value; });
+            }
+            function advertir(ov) {
+                var err = [], warn = [], libSet = setL(), gSet = setG(), a = minDe(f.ini), b = minDe(f.fin);
+                if (!f.titulo.trim()) err.push('Escribe un título para la pauta.');
+                if (a != null && b != null && b <= a) err.push('La hora final debe ser posterior a la inicial.');
+                if (!f.uids.length) warn.push('Sin periodista asignado todavía.');
+                f.uids.forEach(function (u) {
+                    if (!puedeEnPauta(u)) err.push(nom1(u) + ' no puede recibir pautas (solo periodistas y admins).');
+                    if (libSet.indexOf(u) !== -1) err.push(nom1(u) + ' tiene día libre este día: no se le puede asignar una pauta.');
+                    if (finde && gSet.indexOf(u) === -1) warn.push(nom1(u) + ' no tiene guardia este fin de semana.');
+                    draft.forEach(function (d, i) {
+                        if (d._del || i === f.i || d.estado === 'cancelada' || d.uids.indexOf(u) === -1 || a == null || !d.horaIni) return;
+                        var c = minDe(d.horaIni), e = d.horaFin ? minDe(d.horaFin) : c + 60, fin2 = b != null ? b : a + 60;
+                        if (a < e && c < fin2) warn.push(nom1(u) + ' ya tiene "' + d.titulo + '" en ese horario.');
+                    });
+                });
+                var box = ov.querySelector('#pWarn'); if (box) box.innerHTML = err.map(function (x) { return '<div class="e">⛔ ' + esc(x) + '</div>'; }).join('') + warn.map(function (x) { return '<div class="w">⚠ ' + esc(x) + '</div>'; }).join('');
+                return { err: err, warn: warn };
+            }
+            function repintarP(ov) { var box = ov.querySelector('#asxPBox'); if (box) box.innerHTML = htmlP(); if (adminEd) advertir(ov); }
+
+            var secs = []; if (finde) secs.push(['g', 'Guardia']); else secs.push(['l', 'Día libre']); secs.push(['p', 'Pautas']);
+            var inicial = finde ? 'g' : 'p';
+            var html = '<div class="asx-segs" style="margin-bottom:12px">' + secs.map(function (s) { return '<button type="button" class="asx-seg' + (s[0] === inicial ? ' on' : '') + '" data-sec-btn="' + s[0] + '">' + s[1] + '</button>'; }).join('') + '</div>' +
+                (finde ? '<div class="asx-sec' + (inicial === 'g' ? '' : ' asx-hidden') + '" data-sec="g">' + htmlG() + '</div>' : '<div class="asx-sec' + (inicial === 'l' ? '' : ' asx-hidden') + '" data-sec="l">' + htmlL() + '</div>') +
+                '<div class="asx-sec' + (inicial === 'p' ? '' : ' asx-hidden') + '" data-sec="p"><div id="asxPBox">' + htmlP() + '</div></div>';
+            var puedeGuardar = adminEd || (!finde && editable && !admin && !(mio && mio.estado === 'aprobado') && (mio || miSaldo > 0));
+
+            var r = await modal({
+                icono: '🗓️', eyebrow: 'NEXUS · Programación', titulo: esc(diaCorto(fecha)), html: html, izq: true,
+                alMontar: function (ov) {
+                    ovRef = ov; var md = ov.querySelector('.asx-md'); if (md) { md.style.width = 'min(660px,100%)'; md.classList.add('compact'); }
+                    if (adminEd) advertir(ov);
+                    ov.addEventListener('click', function (e) {
+                        var sb = e.target.closest('[data-sec-btn]');
+                        if (sb) { ov.querySelectorAll('[data-sec-btn]').forEach(function (b) { b.classList.toggle('on', b === sb); }); ov.querySelectorAll('.asx-sec').forEach(function (s) { s.classList.toggle('asx-hidden', s.getAttribute('data-sec') !== sb.getAttribute('data-sec-btn')); }); return; }
+                        if (e.target.closest('#asxSugerir')) { var best = listaPersonal().sort(function (a, b) { return (cuenta[a.uid] || 0) - (cuenta[b.uid] || 0) || a.nombre.localeCompare(b.nombre, 'es'); })[0]; ov.querySelectorAll('.asx-sec[data-sec="g"] .asx-person input').forEach(function (i) { i.checked = !!best && i.value === best.uid; i.closest('.asx-person').classList.toggle('sel', i.checked); }); return; }
+                        var pe = e.target.closest('[data-pedit]');
+                        if (pe) { var d = draft[+pe.getAttribute('data-pedit')]; f = { i: +pe.getAttribute('data-pedit'), titulo: d.titulo, ini: d.horaIni, fin: d.horaFin, lugar: d.lugar, formato: d.formato, estado: d.estado, uids: d.uids.slice(), extra: d.uids.slice() }; repintarP(ov); return; }
+                        var pd = e.target.closest('[data-pdel]');
+                        if (pd) { var k = +pd.getAttribute('data-pdel'); if (draft[k]._new) draft.splice(k, 1); else draft[k]._del = true; f = F0(); repintarP(ov); return; }
+                        if (e.target.closest('#pCancel')) { f = F0(); repintarP(ov); return; }
+                        if (e.target.closest('#pOk')) {
+                            leerF(ov); var adv = advertir(ov); if (adv.err.length) return;
+                            var base = { titulo: f.titulo.trim(), horaIni: f.ini, horaFin: f.fin, lugar: f.lugar.trim(), formato: f.formato, estado: f.estado, uids: f.uids.slice() };
+                            if (f.i >= 0) { Object.assign(draft[f.i], base, { _dirty: true }); } else draft.push(Object.assign({ id: idNuevo(), solicitudId: '', _new: true, _del: false, _dirty: true }, base));
+                            f = F0(); repintarP(ov); return;
+                        }
+                    });
+                    ov.addEventListener('change', function (e) {
+                        var t = e.target;
+                        if (t.matches && t.matches('.asx-person input')) t.closest('.asx-person').classList.toggle('sel', t.checked);
+                        if (!adminEd) return;
+                        if (t.id === 'pOtra') { leerF(ov); if (t.value) { f.extra.push(t.value); f.uids.push(t.value); } repintarP(ov); return; }
+                        if (t.closest && (t.closest('#asxPBox') || t.closest('.asx-sec[data-sec="l"]') || t.closest('.asx-sec[data-sec="g"]'))) { leerF(ov); var pp = ov.querySelector('#pPers'); if (pp && !t.closest('#pPers')) pp.innerHTML = personasForm(); advertir(ov); }
+                    });
+                    ov.addEventListener('input', function (e) { if (adminEd && e.target.closest && e.target.closest('#asxPBox')) { leerF(ov); advertir(ov); } });
+                },
+                leer: function (ov) {
+                    var out = {}, chk = function (s) { return Array.prototype.map.call(ov.querySelectorAll('.asx-sec[data-sec="' + s + '"] .asx-person input:checked'), function (i) { return i.value; }); };
+                    if (adminEd && finde) { out.g = chk('g'); out.ambos = !!(ov.querySelector('#asxAmbos') && ov.querySelector('#asxAmbos').checked); }
+                    if (adminEd && !finde) out.l = chk('l');
+                    if (!admin && ov.querySelector('#asxReqL')) out.req = ov.querySelector('#asxReqL').checked;
+                    out.pendiente = !!(ov.querySelector('#pTit') && ov.querySelector('#pTit').value.trim());
+                    return out;
+                },
+                validar: function (data, k) {
+                    if (k === 'x') return true;
+                    if (data.pendiente) { toast({ type: 'warning', title: 'Pauta sin agregar', message: 'Pulsa "Agregar pauta" (o borra el título) antes de guardar.' }); return false; }
+                    if (adminEd) { var lib = data.l || libres.map(function (l) { return l.uid; }); for (var i = 0; i < draft.length; i++) { var d = draft[i]; if (d._del || d.estado === 'cancelada') continue; for (var j = 0; j < d.uids.length; j++) if (lib.indexOf(d.uids[j]) !== -1) { toast({ type: 'error', title: 'Conflicto', message: nom1(d.uids[j]) + ' tiene día libre y está en la pauta "' + d.titulo + '".' }); return false; } } }
+                    return true;
+                },
+                botones: puedeGuardar ? [{ k: 'x', t: 'Cancelar', c: 'g' }, { k: 'ok', t: 'Guardar', c: 'p' }] : [{ k: 'x', t: 'Cerrar', c: 'p' }]
+            });
+            if (r.k !== 'ok') return;
+            try {
+                var Fs = F(), n = 0, data = r.data;
+                if (adminEd && finde && data.g) {
+                    var fechas = [fecha]; if (data.ambos && otra) fechas.push(otra);
+                    for (var i = 0; i < fechas.length; i++) {
+                        var fg = fechas[i], ref = Fs.doc(dbf(), 'guardias', fg);
+                        if (data.g.length) { var gd = { fecha: fg, mes: fg.slice(0, 7), uids: data.g, asignadoPor: S.nombre, asignadoUid: S.uid }; await Fs.setDoc(ref, Object.assign({}, gd, { actualizado: ts() })); S.guardias[fg] = gd; S.guardiasTodas[fg] = gd; }
+                        else { await Fs.deleteDoc(ref); delete S.guardias[fg]; delete S.guardiasTodas[fg]; }
+                        n++;
+                    }
+                }
+                if (adminEd && !finde && data.l) {
+                    var antes = Object.keys(libPorUid);
+                    for (var a = 0; a < antes.length; a++) if (data.l.indexOf(antes[a]) === -1) { var idq = antes[a] + '_' + fecha; await Fs.deleteDoc(Fs.doc(dbf(), 'dias_libres', idq)); delete S.libres[idq]; n++; }
+                    for (var b = 0; b < data.l.length; b++) {
+                        var u = data.l[b], ex = libPorUid[u], idl = u + '_' + fecha;
+                        if (ex && ex.estado === 'aprobado') continue;
+                        var origen = ex ? ex.guardiaOrigen : guardiasLibresSinUsar(u)[0];
+                        if (!origen) { toast({ type: 'warning', title: 'Sin saldo', message: nom1(u) + ' no tiene guardias cumplidas disponibles.' }); continue; }
+                        var dl = { uid: u, fecha: fecha, mes: fecha.slice(0, 7), tipo: 'compensatorio', guardiaOrigen: origen, estado: 'aprobado', asignadoPor: S.nombre, asignadoUid: S.uid };
+                        await Fs.setDoc(Fs.doc(dbf(), 'dias_libres', idl), Object.assign({}, dl, { actualizado: ts() })); S.libres[idl] = dl; n++;
+                    }
+                }
+                if (!admin && data.req != null) {
+                    var idm = S.uid + '_' + fecha;
+                    if (data.req && !mio) { var org = guardiasLibresSinUsar(S.uid)[0]; if (!org) { toast({ type: 'warning', title: 'Sin saldo', message: 'No tienes guardias cumplidas disponibles.' }); return; }
+                        var dm = { uid: S.uid, fecha: fecha, mes: fecha.slice(0, 7), tipo: 'compensatorio', guardiaOrigen: org, estado: 'solicitado', asignadoPor: S.nombre, asignadoUid: S.uid };
+                        await Fs.setDoc(Fs.doc(dbf(), 'dias_libres', idm), Object.assign({}, dm, { actualizado: ts() })); S.libres[idm] = dm; n++; }
+                    else if (!data.req && mio && mio.estado === 'solicitado') { await Fs.deleteDoc(Fs.doc(dbf(), 'dias_libres', idm)); delete S.libres[idm]; n++; }
+                }
+                if (adminEd) {
+                    for (var k2 = 0; k2 < draft.length; k2++) {
+                        var d2 = draft[k2], rp = Fs.doc(dbf(), 'pautas', d2.id);
+                        if (d2._del) { if (!d2._new) { await Fs.deleteDoc(rp); delete S.pautas[d2.id]; n++; } continue; }
+                        if (!d2._new && !d2._dirty) continue;
+                        var pd2 = { fecha: fecha, mes: fecha.slice(0, 7), horaIni: d2.horaIni, horaFin: d2.horaFin, titulo: d2.titulo, lugar: d2.lugar, formato: d2.formato, uids: d2.uids, solicitudId: d2.solicitudId || '', estado: d2.estado, asignadoPor: S.nombre, asignadoUid: S.uid };
+                        await Fs.setDoc(rp, Object.assign({}, pd2, { actualizado: ts() })); S.pautas[d2.id] = pd2; n++;
+                    }
+                }
+                pintarProg();
+                toast({ type: 'success', title: 'Programación actualizada', message: n ? n + ' cambio(s) guardado(s).' : 'Sin cambios.' });
+            } catch (e) { toast({ type: 'error', title: 'No se pudo guardar', message: String(e && e.message || e) }); }
+        }
+
+
         // ── Eventos de la interfaz ──────────────────────────────────
         document.addEventListener('click', function (e) {
             if (e.target.closest && e.target.closest('#asxAlmBtn')) { tomarAlmuerzo(false); return; }
@@ -33115,11 +33459,13 @@
                 document.querySelectorAll('.asx-tab').forEach(function (b) { b.classList.toggle('on', b === tab); });
                 $('asxPaneTarjetero').classList.toggle('asx-hidden', S.tab !== 'tarjetero');
                 $('asxPaneGuardias').classList.toggle('asx-hidden', S.tab !== 'guardias');
-                if (S.tab === 'guardias') { pintarGuardias(); cargarGuardias().then(pintarGuardias); }
+                if (S.tab === 'guardias') { pintarProg(); Promise.all([cargarGuardias(), cargarProg()]).then(pintarProg); }
                 return;
             }
             var card = e.target.closest && e.target.closest('.asx-card'); if (card) { abrirDrawer(card.getAttribute('data-uid')); return; }
-            var day = e.target.closest && e.target.closest('.asx-day.we'); if (day) { abrirGuardia(day.getAttribute('data-fecha')); return; }
+            var day = e.target.closest && e.target.closest('.asx-day.pg'); if (day) { abrirDia(day.getAttribute('data-fecha')); return; }
+            var capaB = e.target.closest && e.target.closest('[data-prog-capa]'); if (capaB) { S.capa = capaB.getAttribute('data-prog-capa'); pintarProg(); return; }
+            var la = e.target.closest && e.target.closest('[data-lib-act]'); if (la) { resolverLibre(la.getAttribute('data-lib-id'), la.getAttribute('data-lib-act'), la); return; }
             if (e.target.closest && (e.target.closest('#asxDClose') || e.target.id === 'asxBack')) { cerrarDrawer(); return; }
             var ex = e.target.closest && e.target.closest('[data-ext]');
             if (ex) { var inp = ex.parentNode.querySelector('[data-min]'); resolverExterno(ex.getAttribute('data-doc'), ex.getAttribute('data-eid'), ex.getAttribute('data-ext'), inp ? +inp.value : 0); return; }
