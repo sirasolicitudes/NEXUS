@@ -795,7 +795,7 @@
            ============================================================ */
         .dept-tabs {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 16px;
             margin-bottom: 28px;
         }
@@ -1951,6 +1951,7 @@
             overflow: hidden;
             margin: auto;
             background: linear-gradient(180deg, var(--panel) 0%, #0a0f18 100%);
+            color: var(--color-light);
             border: 1px solid var(--border);
             border-radius: 18px;
             box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(56,118,242,0.05);
@@ -7302,6 +7303,24 @@
                         </span>
                         <i class="fas fa-chevron-down dept-btn-chevron"></i>
                     </button>
+                    <button type="button" class="dept-btn" data-dept="favoritos" aria-expanded="false" aria-controls="dept-panel-favoritos" onclick="toggleDepartamento('favoritos')">
+                        <span class="dept-btn-icon"><i class="fas fa-star"></i></span>
+                        <span class="dept-btn-text">
+                            <span class="dept-btn-name">Favoritos</span>
+                            <span class="dept-btn-count"><span class="dept-btn-total">0</span> formularios<span class="dept-btn-fav" hidden><i class="fas fa-star"></i><span class="dept-btn-fav-n">0</span></span></span>
+                        </span>
+                        <i class="fas fa-chevron-down dept-btn-chevron"></i>
+                    </button>
+                </div>
+
+                <!-- Departamento: Favoritos (tarjetas clonadas de los otros departamentos) -->
+                <div class="dept-panel" id="dept-panel-favoritos" data-dept="favoritos" hidden>
+                    <div class="cards-grid" id="favoritos-grid"></div>
+                    <div class="dept-empty" id="favoritos-vacio" hidden>
+                        <i class="fas fa-star"></i>
+                        <strong>Aún no tienes favoritos</strong>
+                        Marca con la estrella hasta 6 formularios y aparecerán aquí.
+                    </div>
                 </div>
 
                 <!-- Departamento: Diseño -->
@@ -11829,7 +11848,6 @@
         // NexusData · única capa de datos. La interfaz no toca Firebase ni GAS.
         // =====================================================================
         window.NexusData = {
-            TIPOS_SIN_DISENADOR: ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Corrección de Video', 'Asistencia Protocolar'],
             _cargando: {},
             mesKey: function (d) {
                 var f = nexusFechaVenezuela(d || new Date());
@@ -11867,10 +11885,11 @@
                         p.role = miStaff.rol || p.role; // sin rol guardado: no se inventa uno (queda como Usuario)
                         p.esDisenador = miStaff.esDisenador === true || miStaff.rol === 'Diseñador' || miStaff.rol === 'Admin Principal';
                         p.esPeriodista = miStaff.esPeriodista === true || miStaff.rol === 'Periodista';
-                        p.esAudiovisual = miStaff.esAudiovisual === true || miStaff.esPeriodista === true || miStaff.rol === 'Periodista';
                         p.color = miStaff.color || null;
                         p.icono = miStaff.icono || null;
                         p.staff = true;
+                        if (miStaff.sexo) p.sexo = miStaff.sexo;
+                        p.fechaNacimiento = miStaff.fechaNacimiento || null;
                         p.favLeidos = true;
                         p.favCol = 'sistema';
                     } else {
@@ -13368,7 +13387,9 @@
             up[ruta + campo] = finales.join(', ');
             local[campo] = finales.join(', ');
 
-            if (replace && tipoCorreccion) {
+            // tipoCorreccion 'simple' (Voz en Off, Limpieza, Corrección de Video): no suma contadores;
+            // la corrección queda solo como marca de tiempo en el historial del Sheet.
+            if (replace && tipoCorreccion && tipoCorreccion !== 'simple') {
                 const conTexto = (tipoCorreccion === 'texto' || tipoCorreccion === 'ambas');
                 const conDiseno = (tipoCorreccion === 'diseno' || tipoCorreccion === 'ambas');
                 if (conTexto) { up[ruta + 'correccionesTexto'] = window.fbRT.increment(1); local.correccionesTexto = (Number(base.correccionesTexto) || 0) + 1; }
@@ -13749,7 +13770,18 @@
             });
 
             // 2. Correos
+            // El personal (Admin, Diseñador, Periodista) envía solicitudes para cualquier unidad:
+            // su correo no se pre-llena ni se bloquea, y se libera si quedó bloqueado antes.
+            const esPersonal = (typeof nexusEsStaff === 'function' && nexusEsStaff()) || NexusSession.staff === true;
             container.querySelectorAll('input[type="email"], input[id*="correo"]').forEach(function(inp) {
+                if (esPersonal) {
+                    if (inp.readOnly && email && inp.value === email) inp.value = '';
+                    inp.readOnly = false;
+                    inp.style.backgroundColor = '';
+                    inp.style.cursor = '';
+                    inp.title = '';
+                    return;
+                }
                 if (email) {
                     inp.value = email;
                     inp.readOnly = true;
@@ -14417,7 +14449,7 @@
             if (NEXUS_DEPTO_POR_FORMULARIO[sinAcentos]) return NEXUS_DEPTO_POR_FORMULARIO[sinAcentos];
             const t = sinAcentos;   // respaldo por palabras clave
             if (t.includes('prensa') || t.includes('copy')) return 'Prensa';
-            if (t.includes('video') || t.includes('audio') || t.includes('audiovisual') || t.includes('voz en off') || t.includes('locucion')) return 'Audiovisual';
+            if (t.includes('video') || t.includes('audio') || t.includes('simple') || t.includes('voz en off') || t.includes('locucion')) return 'Audiovisual';
             if (t.includes('protocolo') || t.includes('protocolar') || t.includes('evento')) return 'Protocolo';
             return 'Diseño';
         }
@@ -17846,7 +17878,7 @@
         //  - Cada cambio de favorito = 1 escritura.
         //  - Al completar los 3 se guarda `favoritosFecha` y quedan bloqueados 7 días.
         // ------------------------------------------------------------
-        const NEXUS_FAV_MAX = 3;
+        const NEXUS_FAV_MAX = 6;
         let _nexusFavCargando = null;
 
         // Deja solo ids válidos, sin repetir, máximo 3
@@ -17999,11 +18031,11 @@
             document.getElementById('nxFavIcono').className = completado ? 'fas fa-star' : 'fas fa-lock';
             document.getElementById('nxFavEyebrow').textContent = completado ? 'Favoritos establecidos' : 'Favoritos bloqueados';
             document.getElementById('nxFavTitulo').textContent = completado
-                ? '¡Seleccionaste tus 3 favoritos!'
+                ? '¡Seleccionaste tus ' + NEXUS_FAV_MAX + ' favoritos!'
                 : 'Aún no puedes modificar tus favoritos';
             document.getElementById('nxFavMensaje').textContent = completado
                 ? 'Quedaron guardados en tu cuenta y siempre aparecerán primero. Los favoritos solo se pueden modificar una vez por semana, así que deberás esperar hasta la siguiente fecha para cambiarlos.'
-                : 'Los favoritos solo se pueden modificar una vez por semana. Tus tres favoritos actuales son:';
+                : 'Los favoritos solo se pueden modificar una vez por semana. Tus favoritos actuales son:';
 
             // Lista de los 3 formularios elegidos (texto seguro con textContent)
             const lista = document.getElementById('nxFavLista');
@@ -18088,7 +18120,7 @@
             } else {
                 // Verificar si ya alcanzó el máximo de favoritos
                 if (favorites.length >= maxFavorites) {
-                    showToast({ type: 'warning', title: 'LÃ­mite de favoritos', message: 'Solo puedes tener mÃ¡ximo 3 formularios como favoritos. Por favor, desmarca uno primero.' });
+                    showToast({ type: 'warning', title: 'Límite de favoritos', message: 'Solo puedes tener máximo ' + maxFavorites + ' formularios como favoritos. Por favor, desmarca uno primero.' });
                     return;
                 }
                 // Agregar a favoritos
@@ -18109,7 +18141,7 @@
         // Actualizar todos los tooltips con el contador de favoritos
         function updateAllTooltips() {
             const favorites = loadFavorites();
-            const maxFavorites = 3;
+            const maxFavorites = NEXUS_FAV_MAX;
             const currentCount = favorites.length;
 
             const tooltips = document.querySelectorAll('.favorite-tooltip');
@@ -18145,6 +18177,7 @@
             ];
 
             document.querySelectorAll('.cards-grid').forEach(function (cardsGrid) {
+                if (cardsGrid.id === 'favoritos-grid') return; // se rellena con clones más abajo
                 const cards = Array.from(cardsGrid.children);
 
                 // Crear mapa de tarjetas por ID
@@ -18178,7 +18211,27 @@
                 regularCards.forEach(card => cardsGrid.appendChild(card));
             });
 
+            nexusRenderFavoritosPanel();
             nexusActualizarDepartamentos();
+        }
+
+        // Panel «Favoritos»: clona las tarjetas favoritas (en el orden en que se marcaron).
+        // Los onclick de las tarjetas son inline, así que los clones funcionan igual que los originales.
+        function nexusRenderFavoritosPanel() {
+            const grid = document.getElementById('favoritos-grid');
+            if (!grid) return;
+            const favorites = loadFavorites();
+            // Los originales mandan: sincroniza su estrella (un clic en un clon no la actualiza solo)
+            document.querySelectorAll('.dept-panel:not(#dept-panel-favoritos) .item[data-form] .favorite-btn').forEach(function (btn) {
+                btn.classList.toggle('active', favorites.includes(btn.closest('.item').getAttribute('data-form')));
+            });
+            grid.innerHTML = '';
+            favorites.forEach(function (formId) {
+                const original = document.querySelector('.dept-panel:not(#dept-panel-favoritos) .item[data-form="' + formId + '"]');
+                if (original) grid.appendChild(original.cloneNode(true));
+            });
+            const vacio = document.getElementById('favoritos-vacio');
+            if (vacio) vacio.hidden = grid.children.length > 0;
         }
 
         // ------------------------------------------------------------
@@ -18211,6 +18264,10 @@
             document.querySelectorAll('.dept-btn').forEach(btn => {
                 const panel = document.getElementById('dept-panel-' + btn.getAttribute('data-dept'));
                 if (!panel) return;
+                if (btn.getAttribute('data-dept') === 'favoritos') {
+                    btn.querySelector('.dept-btn-total').textContent = panel.querySelectorAll('.item[data-form]').length;
+                    return;
+                }
                 const cards = Array.from(panel.querySelectorAll('.item[data-form]'));
                 const favs = cards.filter(c => favorites.includes(c.getAttribute('data-form'))).length;
                 btn.querySelector('.dept-btn-total').textContent = cards.length;
@@ -21192,6 +21249,7 @@
             telefono: null,
             correo: null,
             fechaNacimiento: null,
+            staff: false,      // true si está en sistema/personal (no tiene unidad)
             favoritos: null,   // null = aún no cargados; array = cache de la sesión
             favColeccion: null, // 'usuarios' (usuarios normales) o 'roles_sistema' (admin/diseñador)
             favoritosFecha: null, // Date en que se completaron los 3 favoritos (null si no están completos)
@@ -21216,6 +21274,7 @@
                 this.telefono = null;
                 this.correo = null;
                 this.fechaNacimiento = null;
+                this.staff = false;
                 this.favoritos = null;
                 this.favColeccion = null;
                 this.favoritosFecha = null;
@@ -21876,6 +21935,8 @@
             try { if (typeof nexusDetenerPresenciaRTDB === 'function') await nexusDetenerPresenciaRTDB(); } catch (e) {}
             try { if (window.auth && window.fbAuth) await window.fbAuth.signOut(window.auth); } catch (e) {}
             NexusSession.clear();
+            window._nexusFechaNacCargada = null;
+            if (typeof nexusDetenerGlobosPeriodicos === 'function') nexusDetenerGlobosPeriodicos();
             nexusDetenerListeners();
             nexusKpiDetener();
             nexusDetenerArtesFinalesListener();
@@ -22164,6 +22225,8 @@
                 nexusKpiDetener();
                 nexusDetenerErrorLogsListener();
                 nexusDetenerArtesFinalesListener();
+                if (typeof nexusDetenerGlobosPeriodicos === 'function') nexusDetenerGlobosPeriodicos();
+                window._nexusFechaNacCargada = null;
                 NexusSession.clear();
                 nexusAplicarFavoritosUI();
                 nexusActualizarUIAuth();
@@ -22198,6 +22261,7 @@
                     NexusSession.telefono = p.telefono;
                     NexusSession.correo = p.correo || (user && user.email) || '';
                     NexusSession.fechaNacimiento = p.fechaNacimiento;
+                    NexusSession.staff = p.staff === true;
                     NexusSession.favColeccion = p.favLeidos ? p.favCol : null;
                     NexusSession.favoritosFecha = p.favLeidos ? nexusFavFechaADate(p.favFechaRaw) : null;
                     NexusSession.favoritos = p.favLeidos ? nexusSanitizarFavoritos(p.favRaw) : null;
@@ -23218,7 +23282,7 @@
                 
                 // Contar solo archivos adjuntos del diseñador (ArteFinal), no los del formulario (ArchivosDrive)
                 // ('N/A' es el valor vacío con el que se crea la solicitud: no cuenta como archivo)
-                var archivosAdjuntos = window.nexusUrlsArteFinal(s).length;
+                var archivosAdjuntos = window.nexusPiezasArteFinal(s);
 
                 // Flujo de descarga de artes: solo para usuarios normales y solo si la solicitud está FINALIZADA.
                 //   LISTO -> brilla y abre el modal de descarga | DESCARGADO -> abre el modal de "solicitar de nuevo"
@@ -23360,9 +23424,12 @@
                 var saludoTitulo = esFem ? 'Bienvenida' : 'Bienvenido';
 
                 var badgeHtml = '';
-                if (isStaff) {
-                    var roleIcon = (NexusSession.role === 'Admin Principal') ? 'fa-crown' : (NexusSession.role === 'ADMIN' ? 'fa-user-shield' : 'fa-paint-brush');
-                    badgeHtml = '<span class="user-pill-role"><i class="fas ' + roleIcon + '"></i> ' + NexusSession.role + '</span>';
+                var esPersonalNexus = isStaff || NexusSession.staff === true || NexusSession.role === 'Periodista';
+                if (esPersonalNexus) {
+                    var roleIcon = (NexusSession.role === 'Admin Principal') ? 'fa-crown'
+                        : (NexusSession.role === 'ADMIN' ? 'fa-user-shield'
+                        : (NexusSession.role === 'Periodista' ? 'fa-newspaper' : 'fa-paint-brush'));
+                    badgeHtml = '<span class="user-pill-role"><i class="fas ' + roleIcon + '"></i> ' + (NexusSession.role === 'Usuario' ? 'Personal' : NexusSession.role) + '</span>';
                 } else {
                     var unidad = NexusSession.unidad || 'Sede Administrativa';
                     badgeHtml = '<span class="user-pill-unidad" title="' + unidad + '"><i class="fas fa-hospital-user"></i> ' + unidad + '</span>';
@@ -23837,7 +23904,7 @@
         // Habilitar botones de acciones
         function nexusEnableActionButtons() {
             const actionButtons = [
-                'nexusBtnAttach', 'nexusBtnAttachMultiple',
+                'nexusBtnAttach', 'nexusBtnAttachMultiple', 'nexusBtnAttachLink',
                 'nexusBtnExtract', 'nexusBtnExtractFinalized', 'nexusBtnPostIt',
                 'nexusBtnStatusFin', 'nexusBtnStatusRec',
                 'nexusBtnDelete'
@@ -23951,7 +24018,12 @@
         function nexusActualizarVisibilidadBotonesWorkflow(requestData) {
             const data = requestData || nexusSelectedRequestData;
             const esAdmin = (typeof nexusEsAdmin === 'function') && nexusEsAdmin();
-            const wfIniciado = !!(data && data.FechaIWorkflow && data.FechaIWorkflow !== 'N/A' && String(data.FechaIWorkflow).trim() !== '');
+            const tipoSol = (data && data.Solicitud) || '';
+            const sinWorkflow = nexusTipoSinWorkflow(tipoSol);
+            const soloAsignar = nexusTipoSoloAsignar(tipoSol);
+            const modoAdj = nexusModoAdjunto(tipoSol);
+            // Los tipos «solo asignar» no pasan por revisión: cuentan como workflow ya resuelto para poder asignar y tomar.
+            const wfIniciado = soloAsignar || !!(data && data.FechaIWorkflow && data.FechaIWorkflow !== 'N/A' && String(data.FechaIWorkflow).trim() !== '');
             const tieneResp = !!(data && data.Responsable && data.Responsable !== 'Sin Asignar' && String(data.Responsable).trim() !== '');
             // Diseñador o periodista (sin ser admin): no ven el workflow, solo "Tomar solicitud" y su trabajo
             const esDisenadorOPeriodista = !esAdmin && ((typeof nexusEsDisenador === 'function' && nexusEsDisenador()) || (typeof nexusEsPeriodista === 'function' && nexusEsPeriodista()));
@@ -23975,7 +24047,7 @@
             // 2. Botón Iniciar Workflow: solo admin y nunca durante la fase de tomar
             const btnWf = document.getElementById('nexusBtnIniciarWorkflow');
             if (btnWf) {
-                if (!esAdmin || faseTomar) {
+                if (!esAdmin || faseTomar || sinWorkflow || soloAsignar) {
                     btnWf.classList.add('hidden');
                 } else {
                     btnWf.classList.remove('hidden');
@@ -24044,11 +24116,14 @@
             }
 
             // 5. Adjuntar / Adjuntar varios: solo el responsable que ya tomó la solicitud
-            const mostrarAdjuntar = esMia && tomada;
+            const mostrarAdjuntar = esMia && tomada && modoAdj !== 'ninguno';
             ['nexusBtnAttach', 'nexusBtnAttachMultiple'].forEach(function (bId) {
-                const b = ocultar(bId, !mostrarAdjuntar);
-                if (b && mostrarAdjuntar) b.disabled = false;
+                // Textiles solo usa «Adjuntar link»; los tipos sin entregable no adjuntan nada
+                const b = ocultar(bId, !mostrarAdjuntar || modoAdj === 'link');
+                if (b && mostrarAdjuntar && modoAdj !== 'link') b.disabled = false;
             });
+            const bLink = ocultar('nexusBtnAttachLink', !(mostrarAdjuntar && modoAdj === 'link'));
+            if (bLink && mostrarAdjuntar && modoAdj === 'link') { bLink.disabled = false; bLink.style.gridColumn = 'span 2'; }
 
             // Fases posteriores del proceso: siguen ocultos
             ['nexusBtnTelegram', 'nexusBtnExtractFinalized'].forEach(function (bId) {
@@ -24068,8 +24143,14 @@
             }
 
             // 7. Ocultar cambio de estado directo (Finalizada / Rechazada) en esta fase
+            // Excepción: tipos sin entregable ya tomados/asignados (o solo asignar) se cierran con Finalizar/Rechazar.
             const seccionEstado = document.getElementById('nexusStatusActions');
-            if (seccionEstado) seccionEstado.classList.add('hidden');
+            if (seccionEstado) {
+                // Sin workflow (Copy RRSS): no hay asignación ni toma, el admin cierra directo con Finalizar/Rechazar.
+                const cierreDirecto = esAdmin && modoAdj === 'ninguno' &&
+                    (sinWorkflow || (tieneResp && (soloAsignar || tomada)));
+                seccionEstado.classList.toggle('hidden', !cierreDirecto);
+            }
         }
 
         // ============================================================
@@ -24499,14 +24580,52 @@
         // ------------------------------------------------------------
         const NEXUS_DIAS_VENCIMIENTO_ARTE = 7; // arte sin fecha de evento: vence 7 días después
         const NEXUS_DIAS_VIDA_ARTE_FECHA_AUTOMATICA = 4; // tipos con fecha automática: vence 4 días después de finalización
+        // ---- Reglas por tipo de solicitud (reemplaza a TIPOS_SIN_DISENADOR) ----
+        // Sin workflow: se resuelve fuera del panel (bot de Telegram).
+        const NEXUS_TIPOS_SIN_WORKFLOW = ['Copy RRSS'];
+        // Solo asignar: sin revisión de workflow ni arte; el admin asigna directamente.
+        const NEXUS_TIPOS_SOLO_ASIGNAR = ['Cobertura de Prensa', 'Asistencia Protocolar'];
+        // Sin entregable: el responsable no adjunta nada; el admin cierra con Finalizar (publicada) o Rechazar.
+        const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar'];
+        // Tipos con entregable de audio/video: solo cuentan correcciones (sin especificaciones de diseño).
+        const NEXUS_TIPOS_ARCHIVO_SIMPLE = {
+            'Corrección de Video':    { accept: '.mp4,.mov',         ext: ['mp4', 'mov'],                 label: 'MP4 · MOV' },
+            'Voz en Off':             { accept: '.mp3,.wav,.m4a',    ext: ['mp3', 'wav', 'm4a'],          label: 'MP3 · WAV · M4A' },
+            'Limpieza de Audio/Clip': { accept: '.mp3,.wav,.m4a,.mp4,.mov', ext: ['mp3', 'wav', 'm4a', 'mp4', 'mov'], label: 'MP3 · WAV · M4A · MP4 · MOV' }
+        };
+        const NEXUS_TIPOS_LINK = ['Diseño de Textiles']; // entregable = link de Drive + cantidad de piezas
+        function nexusTipoSinWorkflow(t) { return NEXUS_TIPOS_SIN_WORKFLOW.indexOf(t) !== -1; }
+        function nexusTipoSoloAsignar(t) { return NEXUS_TIPOS_SOLO_ASIGNAR.indexOf(t) !== -1; }
+        function nexusTipoSinEntregable(t) { return NEXUS_TIPOS_SIN_ENTREGABLE.indexOf(t) !== -1; }
+        function nexusTipoArchivoSimple(t) { return Object.prototype.hasOwnProperty.call(NEXUS_TIPOS_ARCHIVO_SIMPLE, t) ? NEXUS_TIPOS_ARCHIVO_SIMPLE[t] : null; }
+        function nexusTipoLink(t) { return NEXUS_TIPOS_LINK.indexOf(t) !== -1; }
+        // Modo de adjunto: 'ninguno' | 'link' | 'simple' | 'diseno'
+        function nexusModoAdjunto(t) {
+            if (nexusTipoSinEntregable(t)) return 'ninguno';
+            if (nexusTipoLink(t)) return 'link';
+            if (nexusTipoArchivoSimple(t)) return 'simple';
+            return 'diseno';
+        }
+        // Piezas que cuenta un arte final: Textiles usa la cantidad escrita bajo el link; el resto, un arte por URL.
+        function nexusPiezasArteFinal(obj) {
+            // Textiles guarda «link\nN» en ArteFinal: la línea numérica bajo el link es la cantidad de piezas.
+            var v = (obj && typeof obj === 'object') ? obj.ArteFinal : obj;
+            var n = 0;
+            String(v == null ? '' : v).split(/[,\n]/).forEach(function (t) { t = t.trim(); if (/^\d+$/.test(t)) n += parseInt(t, 10); });
+            return n > 0 ? n : nexusUrlsArteFinal(obj).length;
+        }
+        window.nexusPiezasArteFinal = nexusPiezasArteFinal;
+        window.nexusTipoSinWorkflow = nexusTipoSinWorkflow; window.nexusTipoSoloAsignar = nexusTipoSoloAsignar;
+        window.nexusTipoSinEntregable = nexusTipoSinEntregable; window.nexusModoAdjunto = nexusModoAdjunto;
         const NEXUS_TIPOS_FECHA_AUTOMATICA = ['Obituario']; // tipos que fijan fecha al mismo día (solo Obituario genera arte)
 
         // URLs reales del arte final. ArteFinal vale 'N/A' mientras no hay arte (así se crea la solicitud),
         // y 'N/A' no es un archivo: se descarta junto con vacíos y otros marcadores nulos.
         function nexusUrlsArteFinal(obj) {
             var v = (obj && typeof obj === 'object') ? obj.ArteFinal : obj;
-            return String(v == null ? '' : v).split(',').map(function (u) { return u.trim(); })
-                .filter(function (u) { return u && !/^(n\/a|n\/p|null|undefined|ninguno|ninguna)$/i.test(u); });
+            // Se separa por coma o salto de línea; una línea solo numérica es la cantidad de piezas (Textiles), no un archivo.
+            return String(v == null ? '' : v).split(/[,\n]/).map(function (u) { return u.trim(); })
+                .filter(function (u) { return u && !/^\d+$/.test(u) && !/^(n\/a|n\/p|null|undefined|ninguno|ninguna)$/i.test(u); });
         }
         window.nexusUrlsArteFinal = nexusUrlsArteFinal;
         function nexusTieneArteFinal(obj) { return nexusUrlsArteFinal(obj).length > 0; }
@@ -24763,6 +24882,7 @@
 
             const tipo = base.Solicitud || '';
             const responsable = (base.Responsable || '').trim();
+            // Todas las solicitudes necesitan responsable para finalizar; solo el rechazo no lo requiere.
             if (!esRechazo && (!responsable || responsable === 'Sin Asignar')) {
                 showToast({ type: 'warning', title: 'Falta responsable', message: 'Asigna a alguien del personal antes de finalizar la solicitud.' });
                 return false;
@@ -25435,7 +25555,7 @@
             }
 
             const actionButtons = [
-                'nexusBtnAttach', 'nexusBtnAttachMultiple', 'nexusBtnTelegram',
+                'nexusBtnAttach', 'nexusBtnAttachMultiple', 'nexusBtnAttachLink', 'nexusBtnTelegram',
                 'nexusBtnExtract', 'nexusBtnExtractFinalized', 'nexusBtnPostIt',
                 'nexusBtnStatusFin', 'nexusBtnStatusRec',
                 'nexusBtnDelete'
@@ -25688,7 +25808,7 @@
             }
 
             const viewerHTML = `
-                <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 12, 30, 0.96); z-index: 10000; display: flex; flex-direction: column; font-family: inherit;">
+                <div id="nexus-image-viewer-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 12, 30, 0.96); z-index: 30500; display: flex; flex-direction: column; font-family: inherit;">
                     <div style="flex-shrink: 0; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); box-shadow: 0 2px 12px rgba(0,0,0,0.3);">
                         <div style="color: #fff;">
                             <div style="font-size: 0.72rem; letter-spacing: 1px; text-transform: uppercase; opacity: 0.85; font-weight: 700;">NEXUS · Visor de Archivos</div>
@@ -26135,6 +26255,11 @@
         // Cerrar los modales con la tecla Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                // Si el visor de imágenes está abierto, Esc cierra solo el visor
+                if (document.getElementById('nexus-image-viewer-overlay')) {
+                    nexusCloseImageViewer();
+                    return;
+                }
                 const warningOverlay = document.getElementById('nexusWorkflowWarningOverlay');
                 if (warningOverlay && warningOverlay.classList.contains('active')) {
                     nexusWorkflowVolverARevision();
@@ -26166,6 +26291,31 @@
         window.nexusAbrirEditarSolicitud = nexusAbrirEditarSolicitud;
         window.nexusCerrarEditarSolicitud = nexusCerrarEditarSolicitud;
         window.nexusGuardarEdicionSolicitud = nexusGuardarEdicionSolicitud;
+
+        // Historial de revisiones del Sheet: cada subida del responsable agrega «Subida_N: fecha y hora»
+        // y, si reemplaza un arte, «(corrección realizada: ...)». Va en segundo plano, como iniciarWorkflow.
+        // tipoCorreccion 'simple' o vacío => «(corrección realizada)» sin detalle.
+        function nexusRegistrarSubidaEnSheet(id, links, esCorreccion, tipoCorreccion, subtipos) {
+            if (typeof NEXUS_SCRIPT_URL === 'undefined' || !NEXUS_SCRIPT_URL) return;
+            nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: 'subidaArte',
+                    id: id,
+                    links: links,
+                    // Siempre reemplaza: sin arte previo la celda vale 'N/A' (no hay nada que conservar) y con corrección
+                    // el arte nuevo sustituye al anterior. Así ArteFinal queda igual que en RTDB.
+                    reemplazar: true,
+                    esCorreccion: !!esCorreccion,
+                    tipoCorreccion: (tipoCorreccion && tipoCorreccion !== 'simple') ? tipoCorreccion : '',
+                    subtipos: subtipos || []
+                })
+            }, 20000, 2).catch(function (err) {
+                console.error('[SHEET] No se pudo registrar la subida en el historial de ' + id + ':', err);
+            });
+        }
+        window.nexusRegistrarSubidaEnSheet = nexusRegistrarSubidaEnSheet;
 
         // Exponer funciones de acciones (nombres solamente, sin implementación)
         window.nexusPanelAdjuntar = function() {
@@ -26363,15 +26513,24 @@
 
             // Mostrar u ocultar caja de correcciones si ya existe ArteFinal previo
             const corrBox = document.getElementById('nxCorreccionBox');
+            const tipoAdj = (nexusSelectedRequestData && nexusSelectedRequestData.Solicitud) || '';
+            const modoAdj = nexusModoAdjunto(tipoAdj);
+            const simpleCfg = nexusTipoArchivoSimple(tipoAdj);
+            window._nxSimple = simpleCfg; // null en diseño
             if (corrBox) {
                 const tieneArtePrevio = window.nexusTieneArteFinal(nexusSelectedRequestData);
-                if (tieneArtePrevio) {
+                // Las correcciones de diseño (texto/diseño + subtipos) solo aplican a Diseño
+                if (tieneArtePrevio && modoAdj === 'diseno') {
                     corrBox.style.display = 'block';
                     nxSeleccionarTipoCorreccion('texto');
                 } else {
                     corrBox.style.display = 'none';
                 }
             }
+            const corrSimple = document.getElementById('nxCorreccionSimple');
+            if (corrSimple) corrSimple.style.display = (modoAdj === 'simple' && window.nexusTieneArteFinal(nexusSelectedRequestData)) ? 'block' : 'none';
+            // Tipos de archivo permitidos según el tipo de solicitud
+            nxInput.accept = simpleCfg ? simpleCfg.accept : '.jpg,.jpeg,.png,.gif,.pdf,.zip,.doc,.docx,.ppt,.pptx,.mp4';
 
             nxInput.multiple = multiple;
             nxInput.value = '';
@@ -26483,6 +26642,14 @@
                 }
             }
 
+            if (window._nxSimple) {
+                const invalidos = [...fileList].filter(f => window._nxSimple.ext.indexOf(f.name.split('.').pop().toLowerCase()) === -1);
+                if (invalidos.length) {
+                    showToast({ type: 'error', title: 'Formato no permitido', message: 'Para este tipo de solicitud solo se aceptan: ' + window._nxSimple.label + '.', duration: 4000 });
+                    return;
+                }
+            }
+
             [...fileList].forEach(file => {
                 const ext = file.name.split('.').pop().toLowerCase();
                 nxQueue.push({ file, ext, id: 'f' + Date.now() + Math.random().toString(16).slice(2), status: 'pending', progress: 0 });
@@ -26573,8 +26740,13 @@
 
         async function nxSubirCola() {
             if (nxUploading) return;
-            if (!nexusEsDisenador()) {
-                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el equipo de diseño puede adjuntar artes.' });
+            const _tipoSub = (nexusSelectedRequestData && nexusSelectedRequestData.Solicitud) || '';
+            const _modoSub = nexusModoAdjunto(_tipoSub);
+            const _puede = _modoSub === 'simple'
+                ? (nexusEsDisenador() || nexusEsPeriodista())
+                : nexusEsDisenador();
+            if (!_puede) {
+                showToast({ type: 'error', title: 'Sin permiso', message: _modoSub === 'simple' ? 'Solo el personal asignado puede adjuntar este entregable.' : 'Solo el equipo de diseño puede adjuntar artes.' });
                 return;
             }
             const id = nexusSelectedRequestId;
@@ -26588,11 +26760,13 @@
             // Si ya había arte, subir uno nuevo es una corrección: reemplaza el anterior y la cuenta.
             const esCorreccion = window.nexusTieneArteFinal(base);
             const tipoEl = document.getElementById('nxTipoCorreccionValue');
-            const tipoCorreccion = esCorreccion ? ((tipoEl && tipoEl.value) || 'texto') : null;
-            const detalle = esCorreccion ? nxObtenerDetalleCorreccion() : null;
+            const esSimple = nexusModoAdjunto(base.Solicitud) === 'simple';
+            // Archivo simple: el reemplazo cuenta una corrección simple, sin tipo ni subtipos
+            const tipoCorreccion = esCorreccion ? (esSimple ? 'simple' : ((tipoEl && tipoEl.value) || 'texto')) : null;
+            const detalle = (esCorreccion && !esSimple) ? nxObtenerDetalleCorreccion() : null;
 
-            // Validación: si es corrección, debe seleccionar al menos un subtipo
-            if (esCorreccion) {
+            // Validación: si es corrección de diseño, debe seleccionar al menos un subtipo
+            if (esCorreccion && !esSimple) {
                 const conTexto = (tipoCorreccion === 'texto' || tipoCorreccion === 'ambas');
                 const conDiseno = (tipoCorreccion === 'diseno' || tipoCorreccion === 'ambas');
                 const tieneTexto = detalle.detalleTexto && detalle.detalleTexto.length > 0;
@@ -26653,15 +26827,120 @@
                 return;
             }
 
+            nexusRegistrarSubidaEnSheet(id, subidos.map(function (x) { return x.fileUrl; }), esCorreccion, tipoCorreccion,
+                detalle ? detalle.detalleTexto.concat(detalle.detalleDiseno) : []);
             showToast({
                 type: 'success',
-                title: esCorreccion ? 'Arte corregido' : 'Arte adjuntado',
+                title: esCorreccion ? (esSimple ? 'Entregable corregido' : 'Arte corregido') : (esSimple ? 'Entregable adjuntado' : 'Arte adjuntado'),
                 message: subidos.length + ' archivo(s) · ID: ' + id,
                 duration: 3500
             });
             nxClose();
         }
         
+        // ============================================================
+        // TEXTILES: ADJUNTAR LINK (carpeta de Drive + número de elementos)
+        // El link queda en ArteFinal y la cantidad en la línea de abajo («link\nN»): sin nodos nuevos, RTDB y Sheet idénticos.
+        // Un segundo link reemplaza al anterior y cuenta como corrección (mismas reglas que Diseño).
+        // Importante: NO se manda nada a la papelera de Drive; el link anterior es una carpeta.
+        // ============================================================
+        window._nxLinkEnCurso = false;
+        function nxLkSeleccionarTipo(tipo) {
+            const h = document.getElementById('nxLkTipoCorreccion'); if (h) h.value = tipo;
+            document.querySelectorAll('#nxLinkOverlay .nx-corr-btn').forEach(b => b.classList.toggle('active', b.dataset.tipo === tipo));
+            const t = (tipo === 'texto' || tipo === 'ambas'), d = (tipo === 'diseno' || tipo === 'ambas');
+            const st = document.getElementById('nxLkSubTexto'), sd = document.getElementById('nxLkSubDiseno');
+            if (st) st.classList.toggle('show', t);
+            if (sd) sd.classList.toggle('show', d);
+            if (!t) document.querySelectorAll('input[name="nxLkDetalleTexto"]').forEach(cb => cb.checked = false);
+            if (!d) document.querySelectorAll('input[name="nxLkDetalleDiseno"]').forEach(cb => cb.checked = false);
+        }
+        function nexusAbrirModalAdjuntarLink() {
+            if (!nexusSelectedRequestId || !nexusSelectedRequestData) {
+                showToast({ type: 'warning', title: 'Sin selección', message: 'Debes seleccionar una solicitud primero', duration: 3000 });
+                return;
+            }
+            const set = function (id, t) { const el = document.getElementById(id); if (el) el.textContent = t; };
+            set('nxLkReqId', nexusSelectedRequestId);
+            set('nxLkReqType', nexusSelectedRequestData.Solicitud || 'No especificado');
+            const u = document.getElementById('nxLkUrl'), n = document.getElementById('nxLkPiezas');
+            if (u) u.value = ''; if (n) n.value = '';
+            document.querySelectorAll('#nxLinkOverlay input[type="checkbox"]').forEach(cb => cb.checked = false);
+            const box = document.getElementById('nxLkCorreccionBox');
+            const previo = window.nexusTieneArteFinal(nexusSelectedRequestData);
+            if (box) box.style.display = previo ? 'block' : 'none';
+            if (previo) nxLkSeleccionarTipo('texto');
+            const ov = document.getElementById('nxLinkOverlay'); if (ov) ov.classList.add('active');
+        }
+        function nexusCerrarModalAdjuntarLink() {
+            const ov = document.getElementById('nxLinkOverlay'); if (ov) ov.classList.remove('active');
+        }
+        async function nexusEnviarLinkTextiles() {
+            if (window._nxLinkEnCurso) return;
+            if (!nexusEsDisenador()) {
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el equipo de diseño puede adjuntar artes.' });
+                return;
+            }
+            const id = nexusSelectedRequestId;
+            const base = id ? nexusRegistroVivoActual(id) : null;
+            if (!base) { showToast({ type: 'warning', title: 'Solicitud no disponible', message: 'La solicitud ya no está activa.' }); return; }
+
+            const link = String((document.getElementById('nxLkUrl') || {}).value || '').trim();
+            const piezas = parseInt((document.getElementById('nxLkPiezas') || {}).value, 10);
+            if (!/^https?:\/\/[^\s]+$/i.test(link)) { showToast({ type: 'error', title: 'Link inválido', message: 'Pega un link completo que empiece por https://' }); return; }
+            if (!(piezas >= 1 && piezas <= 500)) { showToast({ type: 'error', title: 'Falta información', message: 'Indica cuántos elementos hay en la carpeta (entre 1 y 500).' }); return; }
+
+            const esCorreccion = window.nexusTieneArteFinal(base);
+            const tipoCorreccion = esCorreccion ? ((document.getElementById('nxLkTipoCorreccion') || {}).value || 'texto') : null;
+            const val = function (name) { return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(cb => cb.value); };
+            const detalle = esCorreccion ? { detalleTexto: val('nxLkDetalleTexto'), detalleDiseno: val('nxLkDetalleDiseno') } : null;
+            if (esCorreccion) {
+                const conT = (tipoCorreccion === 'texto' || tipoCorreccion === 'ambas');
+                const conD = (tipoCorreccion === 'diseno' || tipoCorreccion === 'ambas');
+                if (conT && detalle.detalleTexto.length === 0) { showToast({ type: 'error', title: 'Falta información', message: 'Para corrección de texto, selecciona al menos un subtipo (Fecha, Dirección o Contenido).' }); return; }
+                if (conD && detalle.detalleDiseno.length === 0) { showToast({ type: 'error', title: 'Falta información', message: 'Para corrección de diseño, selecciona al menos un subtipo (Foto, Elementos o Color).' }); return; }
+            }
+
+            window._nxLinkEnCurso = true;
+            const btn = document.getElementById('nxLkEnviar'); if (btn) btn.disabled = true;
+            try {
+                const ruta = 'solicitudes_vivas/' + nexusSanitizarClaveRTDB(base.Unidad) + '/' + id + '/';
+                const up = {}; const local = Object.assign({}, base);
+                // El link va en ArteFinal y las piezas en la línea de abajo; reemplaza al anterior sin tocar Drive.
+                const valorArte = link + '\n' + piezas;
+                up[ruta + 'ArteFinal'] = valorArte; local.ArteFinal = valorArte;
+                if (esCorreccion) {
+                    const conT = (tipoCorreccion === 'texto' || tipoCorreccion === 'ambas');
+                    const conD = (tipoCorreccion === 'diseno' || tipoCorreccion === 'ambas');
+                    if (conT) { up[ruta + 'correccionesTexto'] = window.fbRT.increment(1); local.correccionesTexto = (Number(base.correccionesTexto) || 0) + 1; }
+                    if (conD) { up[ruta + 'correccionesDiseno'] = window.fbRT.increment(1); local.correccionesDiseno = (Number(base.correccionesDiseno) || 0) + 1; }
+                    const permitidas = ['fecha', 'direccion', 'contenido', 'foto', 'elementos', 'color'];
+                    local.detalleCorrecciones = Object.assign({}, base.detalleCorrecciones || {});
+                    detalle.detalleTexto.concat(detalle.detalleDiseno).forEach(function (k) {
+                        if (permitidas.indexOf(k) === -1) return;
+                        up[ruta + 'detalleCorrecciones/' + k] = window.fbRT.increment(1);
+                        local.detalleCorrecciones[k] = (Number(local.detalleCorrecciones[k]) || 0) + 1;
+                    });
+                }
+                await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
+                nexusRegistrarSubidaEnSheet(id, [link, String(piezas)], esCorreccion, tipoCorreccion,
+                    detalle ? detalle.detalleTexto.concat(detalle.detalleDiseno) : []);
+                if (nexusSelectedRequestId === id) nexusUpdatePanelContent(id, local);
+                showToast({ type: 'success', title: esCorreccion ? 'Link corregido' : 'Link adjuntado', message: piezas + ' elemento(s) · ID: ' + id, duration: 3500 });
+                nexusCerrarModalAdjuntarLink();
+            } catch (err) {
+                nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusEnviarLinkTextiles', detalles: id });
+                showToast({ type: 'error', title: 'No se pudo adjuntar el link', message: (err && err.message ? err.message : 'Error desconocido') + '. Puedes reintentar.' });
+            } finally {
+                window._nxLinkEnCurso = false;
+                if (btn) btn.disabled = false;
+            }
+        }
+        window.nexusAbrirModalAdjuntarLink = nexusAbrirModalAdjuntarLink;
+        window.nexusCerrarModalAdjuntarLink = nexusCerrarModalAdjuntarLink;
+        window.nexusEnviarLinkTextiles = nexusEnviarLinkTextiles;
+        window.nxLkSeleccionarTipo = nxLkSeleccionarTipo;
+
         // ============================================================
         // FUNCIONALIDAD DE POST IT - NEXUS
         // ============================================================
@@ -27366,6 +27645,9 @@
                     <button id="nexusBtnAttachMultiple" class="nexus-panel-btn nx-acc-5 hidden" onclick="nexusPanelAdjuntarVarios()" disabled>
                         <i class="fas fa-folder"></i> Adjuntar Varios
                     </button>
+                    <button id="nexusBtnAttachLink" class="nexus-panel-btn nx-acc-5 hidden" onclick="nexusAbrirModalAdjuntarLink()" disabled>
+                        <i class="fas fa-link"></i> Adjuntar link
+                    </button>
                     <button id="nexusBtnTelegram" class="nexus-panel-btn nx-acc-6 hidden" onclick="nexusPanelTelegram()" disabled>
                         <i class="fas fa-paper-plane"></i> Telegram
                     </button>
@@ -27379,10 +27661,10 @@
             <div class="nexus-panel-actions" id="nexusStatusActions">
                 <div class="nexus-panel-section-header">🔄 Cambiar Estado</div>
                 <button id="nexusBtnStatusFin" class="nexus-panel-btn" onclick="nexusPanelCambiarEstado('FINALIZADA')" disabled style="background: #2d6a4f; color: white;">
-                    <i class="fas fa-check-circle"></i> Finalizada
+                    <i class="fas fa-check-circle"></i> Finalizar
                 </button>
                 <button id="nexusBtnStatusRec" class="nexus-panel-btn" onclick="nexusPanelCambiarEstado('RECHAZADA')" disabled style="background: #e63946; color: white;">
-                    <i class="fas fa-times-circle"></i> Rechazada
+                    <i class="fas fa-times-circle"></i> Rechazar
                 </button>
             </div>
 
@@ -27822,6 +28104,10 @@
         </div>
       </div>
 
+      <div id="nxCorreccionSimple" style="display:none; margin: 12px 0; padding: 10px 14px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; text-align: left; font-size: 0.8rem; color: #b45309;">
+        <i class="fas fa-redo"></i> Ya hay un archivo adjunto. Al subir uno nuevo reemplaza al anterior y cuenta como <b>1 corrección</b>.
+      </div>
+
       <div class="nx-drop" id="nxDrop" onclick="document.getElementById('nxInput').click()">
         <input type="file" id="nxInput" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.zip,.doc,.docx,.ppt,.pptx,.mp4" onclick="event.stopPropagation(); this.value = '';">
         <div class="nx-drop-icon">
@@ -28195,6 +28481,73 @@
                 <h2 class="nx-title" id="nxArteTitle"></h2>
             </div>
             <div class="nx-body" id="nxArteBody" style="text-align: left;"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Adjuntar link (Textiles) -->
+    <div class="nx-overlay" id="nxLinkOverlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 560px;">
+            <div class="nx-head">
+                <button class="nx-close" onclick="nexusCerrarModalAdjuntarLink()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · TEXTILES</p>
+                <h2 class="nx-title">Adjuntar <span>link</span></h2>
+                <p class="nx-sub">Pega el link de la carpeta de Drive con el diseño y cuántos elementos contiene.</p>
+            </div>
+            <div class="nx-body" style="text-align: left;">
+                <div class="nx-request-chip">
+                    <span class="dot"></span>
+                    <span>Solicitud: <b id="nxLkReqId">-</b></span>
+                    <span style="margin-left: auto;">Tipo: <b id="nxLkReqType">-</b></span>
+                </div>
+
+                <div id="nxLkCorreccionBox" style="display:none; margin: 12px 0; padding: 12px 14px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                        <span style="font-size:1.1rem;">⚠️</span>
+                        <span style="font-size:0.85rem; font-weight:600; color:#f59e0b;">Reemplazo de link (Corrección)</span>
+                    </div>
+                    <p style="font-size:0.78rem; color:var(--color-tertiary); margin-bottom:10px; line-height:1.4;">
+                        Esta solicitud ya tiene un link adjunto. Selecciona el tipo de corrección para la auditoría de diseño:
+                    </p>
+                    <input type="hidden" id="nxLkTipoCorreccion" value="texto">
+                    <div class="nx-corr-btns">
+                        <button type="button" class="nx-corr-btn active" data-tipo="texto" onclick="nxLkSeleccionarTipo('texto')"><i class="fas fa-font"></i> Corrección de Texto</button>
+                        <button type="button" class="nx-corr-btn" data-tipo="diseno" onclick="nxLkSeleccionarTipo('diseno')"><i class="fas fa-palette"></i> Corrección de Diseño</button>
+                        <button type="button" class="nx-corr-btn" data-tipo="ambas" onclick="nxLkSeleccionarTipo('ambas')"><i class="fas fa-layer-group"></i> Ambas (Texto y Diseño)</button>
+                    </div>
+                    <div class="nx-corr-sub-wrap">
+                        <div class="nx-corr-sub" id="nxLkSubTexto">
+                            <p class="nx-corr-sub-title"><i class="fas fa-font"></i> Detalle de la corrección de texto</p>
+                            <div class="nx-corr-chip-group">
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleTexto" value="fecha"><span><i class="fas fa-calendar-alt"></i> Fecha</span></label>
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleTexto" value="direccion"><span><i class="fas fa-map-marker-alt"></i> Dirección</span></label>
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleTexto" value="contenido"><span><i class="fas fa-align-left"></i> Contenido</span></label>
+                            </div>
+                        </div>
+                        <div class="nx-corr-sub" id="nxLkSubDiseno">
+                            <p class="nx-corr-sub-title"><i class="fas fa-palette"></i> Detalle de la corrección de diseño</p>
+                            <div class="nx-corr-chip-group">
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleDiseno" value="foto"><span><i class="fas fa-image"></i> Foto</span></label>
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleDiseno" value="elementos"><span><i class="fas fa-shapes"></i> Elementos</span></label>
+                                <label class="nx-corr-chip"><input type="checkbox" name="nxLkDetalleDiseno" value="color"><span><i class="fas fa-fill-drip"></i> Color</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label for="nxLkUrl" style="display:block; font-size:0.82rem; font-weight:600; margin: 10px 0 4px;">Link de Drive</label>
+                <input type="url" id="nxLkUrl" placeholder="https://drive.google.com/drive/folders/..." autocomplete="off" style="width:100%; padding:10px 12px; border:1px solid rgba(128,128,128,0.35); border-radius:8px; font-size:0.9rem; background:transparent; color:inherit; box-sizing:border-box;">
+                <label for="nxLkPiezas" style="display:block; font-size:0.82rem; font-weight:600; margin: 12px 0 4px;">Número de elementos en la carpeta</label>
+                <input type="number" id="nxLkPiezas" min="1" max="500" step="1" inputmode="numeric" placeholder="Ej: 4" style="width:100%; padding:10px 12px; border:1px solid rgba(128,128,128,0.35); border-radius:8px; font-size:0.9rem; background:transparent; color:inherit; box-sizing:border-box;">
+                <p style="font-size:0.74rem; opacity:0.75; margin-top:6px;">Estos elementos cuentan como piezas del responsable.</p>
+
+                <div class="nx-foot">
+                    <span class="nx-count" id="nxLkCount"></span>
+                    <div class="nx-actions">
+                        <button class="nx-btn nx-btn-ghost" onclick="nexusCerrarModalAdjuntarLink()">Cancelar</button>
+                        <button class="nx-btn nx-btn-primary" id="nxLkEnviar" onclick="nexusEnviarLinkTextiles()"><i class="fas fa-link"></i> Adjuntar link</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -29270,6 +29623,22 @@
                         </div>
                     </div>
 
+                    <!-- Sexo y cumpleaños (para la felicitación automática del sistema) -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                        <div>
+                            <label style="font-size:0.78rem; color:#aaa; display:block; margin-bottom:4px;">Sexo *</label>
+                            <select id="nxPersonalSexo" style="width:100%; padding:8px 10px; background:#1e1e2e; border:1px solid #444; border-radius:8px; color:#fff; font-size:0.9rem; box-sizing:border-box;">
+                                <option value="">— Selecciona —</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.78rem; color:#aaa; display:block; margin-bottom:4px;">🎂 Fecha de cumpleaños *</label>
+                            <input id="nxPersonalFechaNac" type="date" min="1900-01-01" style="width:100%; padding:8px 10px; background:#1e1e2e; border:1px solid #444; border-radius:8px; color:#fff; font-size:0.9rem; box-sizing:border-box; color-scheme:dark;">
+                        </div>
+                    </div>
+
                     <!-- Configuración de Asignación y Estado -->
                     <div style="margin-top:12px; padding:10px 14px; background:#181824; border-radius:8px; border:1px solid #333; display:flex; flex-direction:column; gap:8px;">
                         <div style="display:flex; align-items:center; gap:10px;">
@@ -29519,6 +29888,8 @@
             document.getElementById('nxPersonalRol').value = 'Diseñador';
             document.getElementById('nxPersonalColor').value = '#5c2d91';
             document.getElementById('nxPersonalColorHex').value = '#5c2d91';
+            document.getElementById('nxPersonalSexo').value = '';
+            document.getElementById('nxPersonalFechaNac').value = '';
 
             // Buscar primer emoji libre para preseleccionarlo
             var personal = window._nexusPersonal || {};
@@ -29611,6 +29982,11 @@
             var prev = document.getElementById('nxPersonalIconoPreview');
             if (prev) prev.textContent = icono;
 
+            document.getElementById('nxPersonalSexo').value = m.sexo || '';
+            var _fn = String(m.fechaNacimiento || '').split('/');
+            document.getElementById('nxPersonalFechaNac').value = (_fn.length === 3)
+                ? (_fn[2] + '-' + _fn[1].padStart(2, '0') + '-' + _fn[0].padStart(2, '0')) : '';
+
             document.getElementById('nxPersonalAsignable').checked = (m.asignable !== false && m.esDisenador !== false);
             document.getElementById('nxPersonalActivo').checked = m.activo !== false;
             document.getElementById('nxPersonalFormTitulo').textContent = 'Editando: ' + (m.nombre || uid);
@@ -29643,11 +30019,19 @@
             var icono = document.getElementById('nxPersonalIcono').value.trim() || '😎';
             var asignable = document.getElementById('nxPersonalAsignable').checked;
             var activo = document.getElementById('nxPersonalActivo').checked;
+            var sexo = document.getElementById('nxPersonalSexo').value;
+            var fechaNacISO = document.getElementById('nxPersonalFechaNac').value;
 
             var targetUid = uidEdicion || uid;
             if (!targetUid) { showToast({ type: 'warning', title: 'UID requerido', message: 'Pega el UID de Firebase Auth del miembro.', duration: 4000 }); return; }
             if (!nombre) { showToast({ type: 'warning', title: 'Nombre requerido', message: 'Escribe el nombre completo.', duration: 3500 }); return; }
             if (!/^#[0-9a-fA-F]{6}$/.test(color)) { showToast({ type: 'warning', title: 'Color inválido', message: 'Usa formato hexadecimal como #8a4fc7.', duration: 3500 }); return; }
+            if (sexo !== 'Masculino' && sexo !== 'Femenino') { showToast({ type: 'warning', title: 'Sexo requerido', message: 'Selecciona el sexo del miembro.', duration: 3500 }); return; }
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaNacISO)) { showToast({ type: 'warning', title: 'Cumpleaños requerido', message: 'Indica la fecha de cumpleaños del miembro.', duration: 3500 }); return; }
+            var _fv = new Date(fechaNacISO + 'T00:00:00');
+            if (isNaN(_fv.getTime()) || _fv >= new Date() || _fv.getFullYear() < 1900) { showToast({ type: 'warning', title: 'Fecha inválida', message: 'Ingresa una fecha de nacimiento válida.', duration: 3500 }); return; }
+            var _fp = fechaNacISO.split('-');
+            var fechaNacimiento = _fp[2] + '/' + _fp[1] + '/' + _fp[0];   // DD/MM/YYYY, igual que los usuarios
 
             var datos = {
                 nombre: nombre,
@@ -29656,8 +30040,13 @@
                 icono: icono,
                 asignable: asignable,
                 esDisenador: asignable, // compatibilidad hacia atrás
-                activo: activo
+                activo: activo,
+                sexo: sexo,
+                fechaNacimiento: fechaNacimiento
             };
+            // Conservar otros campos que el miembro ya tenga (p. ej. esPeriodista) en vez de pisarlos
+            var _previo = (window._nexusPersonal || {})[targetUid];
+            if (_previo && typeof _previo === 'object') datos = Object.assign({}, _previo, datos);
 
             try {
                 var Store = window.fbStore;
@@ -30422,7 +30811,7 @@
 
         window.nexusVerificarCumpleanios = function() {
             var fechaNac = window._nexusFechaNacCargada || null;
-            if (!fechaNac) return; // Sin fecha de nacimiento registrada
+            if (!fechaNac) { nexusDetenerGlobosPeriodicos(); return; } // Sin fecha de nacimiento registrada
 
             var hoy = nexusFechaVenezuela();
             var partes = fechaNac.split('/');
@@ -30431,7 +30820,7 @@
             var mesNac = parseInt(partes[1], 10);
 
             // ¿Hoy es su cumpleaños?
-            if (hoy.month !== mesNac || hoy.day !== diaNac) return;
+            if (hoy.month !== mesNac || hoy.day !== diaNac) { nexusDetenerGlobosPeriodicos(); return; }
 
             var uid = NexusSession.user && NexusSession.user.uid;
             var storageKey = 'nx_cumple_modal_' + (uid || 'anon') + '_' + hoy.year + '-' + String(hoy.month).padStart(2,'0') + '-' + String(hoy.day).padStart(2,'0');
@@ -31071,9 +31460,27 @@
 
             // Cada 60 segundos lanza una nueva oleada para que el usuario los reviente
             _nexusBalloonsPeriodicTimer = setInterval(function() {
+                // Sin sesión activa no hay cumpleañero: cortar en vez de seguir lanzando globos
+                if (!(window.NexusSession && window.NexusSession.user)) { nexusDetenerGlobosPeriodicos(); return; }
                 nexusLanzarOleadaGlobos(8, container);
             }, 60000);
         }
+
+        // Corta las oleadas periódicas y retira los globos que sigan en pantalla
+        // (se usa al cerrar sesión o cuando la persona logueada no cumple años hoy).
+        function nexusDetenerGlobosPeriodicos() {
+            if (_nexusBalloonsPeriodicTimer) {
+                clearInterval(_nexusBalloonsPeriodicTimer);
+                _nexusBalloonsPeriodicTimer = null;
+            }
+            var c = document.getElementById('nx-balloon-container');
+            if (c) c.innerHTML = '';
+            var ov = document.getElementById('nx-cumple-overlay');
+            if (ov && ov.classList.contains('nx-cumple-visible') && typeof nexusCerrarModalCumpleanios === 'function') {
+                nexusCerrarModalCumpleanios();
+            }
+        }
+        window.nexusDetenerGlobosPeriodicos = nexusDetenerGlobosPeriodicos;
 
         // ── Control de audio exclusivo del modal de Cumpleaños ──
         // Suena únicamente mientras el modal está abierto. Si la pista termina,
