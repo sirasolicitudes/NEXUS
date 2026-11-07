@@ -5741,7 +5741,7 @@
             }
         }
         /* ============================================================
-           AUTH MODALS — Iniciar SesiÃ³n + Registrarse
+           AUTH MODALS — Iniciar Sesión + Registrarse
            Glassmorphism dark style, consistent with NEXUS design system
            ============================================================ */
 
@@ -6484,7 +6484,7 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* 3 CÃ­rculos Flotantes Superiores */
+        /* 3 Círculos Flotantes Superiores */
         .card-top-circles {
             display: flex;
             justify-content: center;
@@ -6647,7 +6647,7 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
 
-        /* Bloques de InformaciÃ³n (TÃ­tulos y Valores) */
+        /* Bloques de Información (Títulos y Valores) */
         .card-info-group {
             margin-bottom: 12px;
             width: 100%;
@@ -6671,34 +6671,34 @@
         }
 
         /* ============================================================
-           COLORES Y DEGRADADOS TEMÃTICOS (EXTRAÃDOS DE INDEX.HTML)
+           COLORES Y DEGRADADOS TEMÁTICOS (EXTRAÍDOS DE INDEX.HTML)
            ============================================================ */
-        /* Obituario: Negro sÃ³lido con bordes blancos */
+        /* Obituario: Negro sólido con bordes blancos */
         .theme-obituario {
             background: #000000 !important;
             border: 2px solid #ffffff !important;
         }
-        /* EfemÃ©rides: Degradado naranja */
+        /* Efemérides: Degradado naranja */
         .theme-efemerides {
             background: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #f1c40f 100%) !important;
             border-color: #d35400 !important;
         }
-        /* Certificado: Azul marino a petrÃ³leo */
+        /* Certificado: Azul marino a petróleo */
         .theme-certificado {
             background: linear-gradient(135deg, #4a6eb0 0%, #114c5f 100%) !important;
             border-color: #114c5f !important;
         }
-        /* Textiles: MarrÃ³n cuero */
+        /* Textiles: Marrón cuero */
         .theme-textiles {
             background: linear-gradient(135deg, #8B4513 0%, #CD853F 100%) !important;
             border-color: #8B4513 !important;
         }
-        /* PendÃ³n: PÃºrpura Ocean */
+        /* Pendón: Púrpura Ocean */
         .theme-pendon {
             background: linear-gradient(135deg, #6B4EE6 0%, #9B7BFF 100%) !important;
             border-color: #6B4EE6 !important;
         }
-        /* CorrecciÃ³n Nota de Prensa: Verde esmeralda */
+        /* Corrección Nota de Prensa: Verde esmeralda */
         .theme-correccion-nota-prensa {
             background: linear-gradient(135deg, #2d6a4f 0%, #40916c 50%, #52b788 100%) !important;
             border-color: #2d6a4f !important;
@@ -6720,22 +6720,22 @@
             background: linear-gradient(135deg, #553F42 0%, #D47974 50%, #F6D69D 100%) !important;
             border-color: #553F42 !important;
         }
-        /* Aprendizaje (Charlas): Rojo carmesÃ­ */
+        /* Aprendizaje (Charlas): Rojo carmesí */
         .theme-charlas {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 50%, #ec7063 100%) !important;
             border-color: #c0392b !important;
         }
-        /* Deportivas: Verde petrÃ³leo */
+        /* Deportivas: Verde petróleo */
         .theme-deportivas {
             background: linear-gradient(135deg, #005f73 0%, #0a9396 50%, #94d2bd 100%) !important;
             border-color: #005f73 !important;
         }
-        /* Otros: Azul elÃ©ctrico */
+        /* Otros: Azul eléctrico */
         .theme-otros {
             background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
             border-color: #2196f3 !important;
         }
-        /* General / Jornadas MÃ©dicas */
+        /* General / Jornadas Médicas */
         .theme-general {
             background: linear-gradient(135deg, #0799b6 0%, #4a6eb0 100%) !important;
             border-color: #0799b6 !important;
@@ -6816,7 +6816,7 @@
             background: linear-gradient(135deg, #ad00ad 0%, #d600d6 50%, #ff6ec7 100%) !important;
             border-color: #ad00ad !important;
         }
-        /* Estado finalizado/rechazado atenÃºa sutilmente la tarjeta */
+        /* Estado finalizado/rechazado atenúa sutilmente la tarjeta */
         .theme-finalizada { opacity: 0.88; }
         .theme-rechazada  { opacity: 0.85; filter: grayscale(15%); }
 
@@ -6948,7 +6948,7 @@
             }
         }
 
-        /* Controles de PaginaciÃ³n */
+        /* Controles de Paginación */
         .solicitudes-pagination {
             display: flex;
             justify-content: space-between;
@@ -7058,6 +7058,200 @@
         .nx-cons-box h3 { font-family: 'Sora', sans-serif; font-size: 1.4rem; color: var(--color-dark); margin: 0 0 8px; }
         .nx-cons-box p { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: #64708a; margin: 0; }
     </style>
+    <style id="nxs-style">
+/* ============================================================
+   NEXUS · Estadísticas — lienzo oscuro incrustado en la sección clara. Prefijo nxs-
+   ============================================================ */
+#estadisticas .estadisticas-container { max-width: 1440px; }
+.nxs {
+    --nxs-bg: #06090D; --nxs-p1: #0D1420; --nxs-p2: #101A2B; --nxs-bd: rgba(172, 195, 242, .14);
+    --nxs-tx: #E6ECF8; --nxs-mu: #93A4C6; --nxs-ok: #3DDC97; --nxs-bad: #FF5C6C; --nxs-az: #3876F2; --nxs-azc: #ACC3F2;
+    position: relative; isolation: isolate; color: var(--nxs-tx); font-family: 'DM Sans', system-ui, sans-serif;
+    font-variant-numeric: tabular-nums; background-color: var(--nxs-bg); border-radius: 22px; padding: 22px;
+    border: 1px solid var(--nxs-bd); box-shadow: 0 18px 50px rgba(6, 9, 13, .35); overflow: hidden;
+    background-image:
+        radial-gradient(900px 420px at 85% -10%, rgba(5, 84, 242, .20), transparent 60%),
+        linear-gradient(rgba(172, 195, 242, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(172, 195, 242, .045) 1px, transparent 1px);
+    background-size: auto, 38px 38px, 38px 38px;
+}
+.nxs *, .nxs *::before, .nxs *::after { box-sizing: border-box; }
+.nxs h3, .nxs h4, .nxs h5, .nxs p { margin: 0; }
+
+/* Barra de control */
+.nxs-topbar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+.nxs-eyebrow { display: block; font: 600 .7rem/1 'DM Sans', sans-serif; letter-spacing: .18em; color: var(--nxs-azc); margin-bottom: 8px; }
+.nxs-mes { font: 800 1.9rem/1.05 'Sora', 'DM Sans', sans-serif; color: #fff; letter-spacing: -.01em; }
+.nxs-corte { display: inline-block; margin-top: 6px; font-size: .85rem; color: var(--nxs-mu); }
+.nxs-top-r { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.nxs-upd { font-size: .8rem; color: var(--nxs-mu); }
+.nxs-pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--nxs-bd); background: var(--nxs-p2); }
+.nxs-pill-warn { color: #FFD58A; border-color: rgba(245, 180, 84, .4); background: rgba(245, 180, 84, .1); }
+.nxs-btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 600 .85rem 'DM Sans', sans-serif; color: var(--nxs-tx); background: var(--nxs-p2); border: 1px solid var(--nxs-bd); border-radius: 12px; padding: 9px 14px; transition: border-color .2s, background .2s, box-shadow .2s; }
+.nxs-btn:hover { border-color: rgba(56, 118, 242, .7); box-shadow: 0 0 0 3px rgba(56, 118, 242, .15); }
+.nxs-btn:focus-visible, .nxs-leg:focus-visible, .nxs-seg button:focus-visible { outline: 2px solid var(--nxs-azc); outline-offset: 2px; }
+.nxs-btn-p { background: var(--nxs-az); border-color: var(--nxs-az); color: #fff; }
+
+/* KPIs */
+.nxs-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.nxs-kpi { position: relative; background: linear-gradient(180deg, var(--nxs-p2), var(--nxs-p1)); border: 1px solid var(--nxs-bd); border-radius: 16px; padding: 16px 16px 14px; min-width: 0; overflow: hidden; }
+.nxs-kpi::before { content: ''; position: absolute; left: 0; top: 0; width: 34px; height: 2px; background: var(--nxs-c); box-shadow: 0 0 10px var(--nxs-c); }
+.nxs-kpi::after { content: ''; position: absolute; right: 0; bottom: 0; width: 14px; height: 14px; border-right: 2px solid var(--nxs-c); border-bottom: 2px solid var(--nxs-c); opacity: .55; border-bottom-right-radius: 6px; }
+.nxs-kpi-h { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.nxs-kpi-ic { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; color: var(--nxs-c); background: color-mix(in srgb, var(--nxs-c) 15%, transparent); font-size: .8rem; flex: none; }
+.nxs-kpi-t { font-size: .82rem; font-weight: 600; color: var(--nxs-mu); line-height: 1.2; }
+.nxs-kpi-v { font: 800 2rem/1.05 'Sora', 'DM Sans', sans-serif; color: #fff; letter-spacing: -.02em; text-shadow: 0 0 22px color-mix(in srgb, var(--nxs-c) 45%, transparent); overflow-wrap: anywhere; }
+.nxs-kpi-s { margin-top: 6px; font-size: .76rem; line-height: 1.35; color: var(--nxs-mu); min-height: 2.05em; }
+.nxs-kpi-d { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 700; padding: 4px 9px; border-radius: 999px; cursor: help; }
+.nxs-kpi-d em { font-style: normal; font-weight: 500; opacity: .75; font-size: .7rem; white-space: nowrap; }
+.nxs-kpi-d { white-space: nowrap; max-width: 100%; }
+.nxs-d-ok { color: var(--nxs-ok); background: rgba(61, 220, 151, .12); }
+.nxs-d-bad { color: var(--nxs-bad); background: rgba(255, 92, 108, .12); }
+.nxs-d-n { color: var(--nxs-mu); background: rgba(147, 164, 198, .12); }
+
+/* Tarjetas de bloque */
+.nxs-card { background: linear-gradient(180deg, var(--nxs-p2), var(--nxs-p1)); border: 1px solid var(--nxs-bd); border-radius: 18px; padding: 20px; margin-bottom: 18px; position: relative; min-width: 0; }
+.nxs-card::before { content: ''; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-left: 2px solid var(--nxs-az); border-top: 2px solid var(--nxs-az); border-top-left-radius: 8px; opacity: .8; }
+.nxs-ch { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.nxs-ch h4 { font: 700 1.15rem/1.2 'Sora', 'DM Sans', sans-serif; color: #fff; }
+.nxs-ch p { margin-top: 4px; font-size: .84rem; color: var(--nxs-mu); }
+.nxs-sem-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.nxs-mini { border: 1px solid var(--nxs-bd); border-left: 3px solid var(--nxs-c); background: rgba(6, 9, 13, .35); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.nxs-mini span { font-size: .8rem; color: var(--nxs-mu); font-weight: 600; }
+.nxs-mini b { font: 800 1.7rem/1.1 'Sora', 'DM Sans', sans-serif; color: var(--nxs-c); }
+.nxs-mini em { font-style: normal; font-size: .72rem; color: var(--nxs-mu); }
+.nxs-legs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.nxs-leg { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 600 .8rem 'DM Sans', sans-serif; color: var(--nxs-tx); background: transparent; border: 1px solid var(--nxs-bd); border-radius: 999px; padding: 5px 11px; transition: opacity .2s, border-color .2s; }
+.nxs-leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.nxs-leg:hover { border-color: rgba(172, 195, 242, .45); }
+.nxs-leg.nxs-off { opacity: .45; text-decoration: line-through; }
+.nxs-seg { display: inline-flex; background: rgba(6, 9, 13, .5); border: 1px solid var(--nxs-bd); border-radius: 12px; padding: 3px; }
+.nxs-seg button { cursor: pointer; font: 600 .8rem 'DM Sans', sans-serif; color: var(--nxs-mu); background: transparent; border: 0; border-radius: 9px; padding: 7px 13px; }
+.nxs-seg button.nxs-on { background: var(--nxs-az); color: #fff; }
+.nxs-note { display: flex; gap: 8px; align-items: center; font-size: .82rem; color: var(--nxs-azc); background: rgba(56, 118, 242, .1); border: 1px solid rgba(56, 118, 242, .25); border-radius: 10px; padding: 9px 12px; margin-bottom: 14px; }
+.nxs-evo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.nxs-evo-c { min-width: 0; border: 1px solid var(--nxs-bd); border-radius: 14px; padding: 14px 14px 12px; background: rgba(6, 9, 13, .3); }
+.nxs-evo-c h5 { display: flex; align-items: center; gap: 8px; font: 700 .95rem 'DM Sans', sans-serif; color: #fff; margin-bottom: 8px; }
+.nxs-evo-c h5 i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.nxs-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--nxs-bd); }
+.nxs-foot span { display: flex; flex-direction: column; gap: 2px; font-size: .78rem; }
+.nxs-foot em { font-style: normal; color: var(--nxs-mu); font-size: .72rem; }
+.nxs-foot b { font-weight: 700; color: #fff; }
+.nxs-foot .nxs-t-ok { color: var(--nxs-ok); } .nxs-foot .nxs-t-bad { color: var(--nxs-bad); } .nxs-foot .nxs-t-n { color: var(--nxs-azc); }
+
+/* Gráficos SVG */
+.nxs-chart { position: relative; width: 100%; min-height: 200px; }
+.nxs-svg { display: block; max-width: 100%; touch-action: pan-y; overflow: visible; }
+.nxs-grid { stroke: rgba(172, 195, 242, .10); stroke-width: 1; }
+.nxs-tick { fill: #93A4C6; font: 500 11px 'DM Sans', sans-serif; }
+.nxs-hoy { stroke: rgba(172, 195, 242, .55); stroke-width: 1; stroke-dasharray: 3 4; }
+.nxs-hoytxt { fill: #ACC3F2; font: 700 10px 'DM Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.nxs-cursor { stroke: rgba(230, 236, 248, .5); stroke-width: 1; }
+.nxs-hoverband { fill: #ACC3F2; }
+.nxs-glow { filter: drop-shadow(0 0 5px currentColor); }
+.nxs-bar { filter: drop-shadow(0 0 4px currentColor); }
+.nxs-tip { position: absolute; top: 8px; z-index: 5; display: none; min-width: 150px; max-width: 260px; pointer-events: none; background: rgba(6, 9, 13, .96); border: 1px solid var(--nxs-bd); border-radius: 12px; padding: 10px 12px; font-size: .78rem; box-shadow: 0 10px 30px rgba(0, 0, 0, .45); }
+.nxs-tip b { display: block; margin-bottom: 6px; color: #fff; font-size: .8rem; }
+.nxs-tip div { display: flex; align-items: center; gap: 8px; color: var(--nxs-mu); padding: 2px 0; }
+.nxs-tip div i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+.nxs-tip div span { margin-left: auto; padding-left: 14px; color: #fff; font-weight: 700; }
+.nxs-tip .nxs-tipd { border-top: 1px dashed var(--nxs-bd); margin-top: 4px; padding-top: 5px; }
+
+/* Estados */
+.nxs-empty { color: var(--nxs-mu); padding: 22px; text-align: center; }
+.nxs-blkerr { color: #FFB3BA; background: rgba(255, 92, 108, .1); border: 1px solid rgba(255, 92, 108, .3); border-radius: 12px; padding: 14px 16px; font-size: .88rem; }
+.nxs-errbox { text-align: center; padding: 46px 20px; }
+.nxs-errbox i { font-size: 2.4rem; color: var(--nxs-bad); margin-bottom: 14px; display: block; }
+.nxs-errbox h4 { font: 700 1.15rem 'Sora', 'DM Sans', sans-serif; color: #fff; margin-bottom: 6px; }
+.nxs-errbox p { color: var(--nxs-mu); margin-bottom: 18px; font-size: .9rem; }
+.nxs-sk { border-radius: 16px; background: linear-gradient(90deg, rgba(172, 195, 242, .05), rgba(172, 195, 242, .12), rgba(172, 195, 242, .05)); background-size: 200% 100%; }
+.nxs-sk-top { height: 56px; margin-bottom: 18px; width: 42%; }
+.nxs-sk-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.nxs-sk-kpi { height: 150px; }
+.nxs-sk-big { height: 300px; margin-bottom: 18px; }
+
+/* Etapa 2 */
+.nxs-h5 { display: flex; align-items: center; gap: 8px; font: 700 .95rem 'DM Sans', sans-serif; color: #fff; margin: 18px 0 10px; }
+.nxs-sub .nxs-h5 { margin-top: 0; }
+.nxs-h5 i { width: 10px; height: 10px; border-radius: 3px; background: var(--nxs-c, transparent); display: none; }
+.nxs-h5[style] i { display: inline-block; }
+.nxs-scroll { overflow-x: auto; }
+.nxs-heat { display: grid; grid-template-columns: 96px repeat(24, minmax(22px, 1fr)); gap: 3px; min-width: 720px; }
+.nxs-heat-h { text-align: center; font-size: .66rem; color: var(--nxs-mu); }
+.nxs-heat-l { font-size: .76rem; color: var(--nxs-mu); display: flex; align-items: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nxs-dot2 { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; flex: none; box-shadow: 0 0 6px currentColor; }
+.nxs-hc { height: 26px; border-radius: 5px; display: grid; place-items: center; font-size: .66rem; font-weight: 700; color: #fff; background: color-mix(in srgb, var(--nxs-hc) var(--a), rgba(172, 195, 242, .06)); }
+.nxs-emo { display: inline-block; margin-right: 8px; font-size: 1.15em; line-height: 1; flex: none; }
+.nxs-seg.nxs-seg-w { max-width: 100%; overflow-x: auto; }
+.nxs-mini-g { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.nxs-pcs { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.nxs-pc { border: 1px solid var(--nxs-bd); border-top: 3px solid var(--nxs-c); background: rgba(6, 9, 13, .35); border-radius: 14px; padding: 14px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.nxs-pc-h { display: flex; align-items: center; font: 700 1rem 'Sora', 'DM Sans', sans-serif; color: #fff; min-width: 0; }
+.nxs-pc-h span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nxs-pc-k { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nxs-pc-k div { background: rgba(172, 195, 242, .06); border-radius: 10px; padding: 8px 6px; text-align: center; }
+.nxs-pc-k span { display: block; font-size: .68rem; color: var(--nxs-mu); font-weight: 600; }
+.nxs-pc-k b { font: 800 1.2rem/1.25 'Sora', 'DM Sans', sans-serif; color: #fff; }
+.nxs-pc-t { display: grid; gap: 8px; }
+.nxs-pc-t > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 10px; padding: 8px 10px; border-left: 3px solid var(--nxs-c); background: rgba(172, 195, 242, .05); border-radius: 8px; }
+.nxs-pc-t span { font-size: .78rem; color: var(--nxs-mu); font-weight: 600; }
+.nxs-pc-t b { font: 800 1.05rem 'Sora', 'DM Sans', sans-serif; color: #fff; text-align: right; }
+.nxs-pc-t em { grid-column: 1 / -1; font-style: normal; font-size: .7rem; color: var(--nxs-mu); margin-top: 2px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.nxs-pc h6 { margin: 0; font: 700 .74rem 'DM Sans', sans-serif; color: var(--nxs-mu); letter-spacing: .06em; text-transform: uppercase; }
+.nxs-pc .nxs-hb-np { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto; }
+@media (max-width: 520px) { .nxs-pcs, .nxs-mini-g { grid-template-columns: minmax(0, 1fr); } }
+.nxs-chip { display: inline-block; font-size: .76rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.nxs-hb { display: grid; grid-template-columns: 22px minmax(0, 1.1fr) minmax(0, 2fr) auto; gap: 10px; align-items: center; padding: 6px 0; font-size: .84rem; }
+.nxs-hb-np { grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr) auto; }
+.nxs-hb-p { color: var(--nxs-mu); font-size: .74rem; text-align: center; }
+.nxs-hb-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nxs-tx); }
+.nxs-hb b { color: #fff; font-weight: 700; white-space: nowrap; }
+.nxs-hb-t { display: block; height: 8px; border-radius: 99px; background: rgba(172, 195, 242, .08); overflow: hidden; }
+.nxs-hb-t i { display: block; height: 100%; border-radius: 99px; background: var(--nxs-c); box-shadow: 0 0 8px var(--nxs-c); }
+.nxs-tops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.nxs-sub { min-width: 0; border: 1px solid var(--nxs-bd); border-radius: 14px; padding: 14px; background: rgba(6, 9, 13, .3); }
+.nxs-tm, .nxs-k4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.nxs-k4 { margin-bottom: 16px; }
+.nxs-tmt { height: 6px; border-radius: 99px; background: rgba(172, 195, 242, .1); margin: 6px 0 2px; overflow: hidden; }
+.nxs-tmt i { display: block; height: 100%; background: var(--nxs-c); box-shadow: 0 0 8px var(--nxs-c); border-radius: 99px; }
+.nxs-tbl { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 520px; }
+.nxs-tbl th { text-align: left; color: var(--nxs-mu); font-weight: 600; font-size: .76rem; padding: 8px 10px; border-bottom: 1px solid var(--nxs-bd); }
+.nxs-tbl td { padding: 10px; border-bottom: 1px solid rgba(172, 195, 242, .07); }
+.nxs-tbl .n { text-align: right; } .nxs-tbl td.n { font-weight: 700; color: #fff; }
+.nxs-tdb { width: 22%; }
+.nxs-arr-g { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.nxs-old { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--nxs-bd); font-size: .84rem; }
+.nxs-old b { color: #fff; } .nxs-old span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--nxs-mu); } .nxs-old em { font-style: normal; font-weight: 700; color: var(--nxs-bad); }
+@media (max-width: 1200px) { .nxs-tops { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .nxs-tm, .nxs-k4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .nxs-arr-g { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .nxs-tops, .nxs-tm, .nxs-k4 { grid-template-columns: minmax(0, 1fr); } }
+
+/* Animaciones solo si el usuario no pidió reducirlas */
+@media (prefers-reduced-motion: no-preference) {
+    .nxs-sk { animation: nxs-sh 1.4s linear infinite; }
+    @keyframes nxs-sh { to { background-position: -200% 0; } }
+    .nxs-bar { transform-box: fill-box; transform-origin: bottom; animation: nxs-grow .55s cubic-bezier(.2, .8, .2, 1) both; animation-delay: var(--nxs-d, 0ms); }
+    @keyframes nxs-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    .nxs-kpi { animation: nxs-in .45s ease both; }
+    @keyframes nxs-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+/* Responsive: 6 columnas en escritorio, 2 en tablet, 1 en móvil */
+@media (max-width: 1200px) { .nxs-kpis, .nxs-sk-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) {
+    .nxs-kpis, .nxs-sk-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .nxs-evo-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+    .nxs { padding: 14px; border-radius: 16px; }
+    .nxs-kpis, .nxs-sk-row, .nxs-sem-kpis { grid-template-columns: minmax(0, 1fr); }
+    .nxs-mes { font-size: 1.5rem; }
+    .nxs-card { padding: 14px; }
+    .nxs-kpi-v { font-size: 1.75rem; }
+    .nxs-top-r { width: 100%; }
+}
+
+    </style>
     <style>
 /* ============================================================
    NEXUS · ASISTENCIA (estilos aislados con prefijo asx-)
@@ -7103,6 +7297,32 @@
 .asx-stat { background: #f5f7fc; border-radius: 16px; padding: 14px 16px; }
 .asx-stat span { display: block; font-size: 11.5px; color: #64708a; font-weight: 600; margin-bottom: 5px; }
 .asx-stat b { font-family: 'Sora', sans-serif; font-size: 19px; font-weight: 700; }
+
+/* Horario bajo acuerdo (horarios especiales) */
+.asx-bar-cap { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #64708a; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.asx-he { margin-top: 16px; padding-top: 14px; border-top: 1px dashed #d3daea; }
+.asx-he .asx-bar i { background: linear-gradient(90deg, #6d4aff, #a78bfa); }
+.asx-he-pill { font: 700 11.5px 'DM Sans', sans-serif; text-transform: none; letter-spacing: 0; background: #efeaff; color: #5a35d6; padding: 4px 10px; border-radius: 99px; }
+.asx-he-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.asx-he-card { background: #fff; border-radius: 20px; padding: 18px; box-shadow: 0 6px 20px rgba(6, 9, 13, .06); border: 2px solid transparent; display: flex; flex-direction: column; gap: 12px; }
+.asx-he-card.off { opacity: .6; }
+.asx-he-top { display: flex; align-items: center; gap: 12px; }
+.asx-he-top .asx-mini { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; background: var(--c, #2908f1); flex: none; }
+.asx-he-top b { display: block; font-size: 15px; } .asx-he-top small { color: #7b86a0; font-size: 12px; }
+.asx-he-time { font: 700 22px 'Sora', sans-serif; color: #5a35d6; }
+.asx-he-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.asx-he-meta span { background: #f1f3f9; color: #4b5568; border-radius: 99px; padding: 4px 10px; font-size: 11.5px; font-weight: 600; }
+.asx-he-note { font-size: 12.5px; color: #64708a; line-height: 1.5; }
+.asx-he-acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+.asx-form { display: grid; gap: 12px; }
+.asx-form label { display: grid; gap: 5px; font-size: 12px; font-weight: 700; color: #55607a; }
+.asx-form input, .asx-form select { font: 600 14px 'DM Sans', sans-serif; padding: 10px 12px; border: 1.5px solid #d3daea; border-radius: 12px; background: #fff; color: #1d2433; width: 100%; box-sizing: border-box; }
+.asx-form input:focus, .asx-form select:focus { outline: none; border-color: var(--color-primary); }
+.asx-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.asx-form .dias { display: flex; gap: 6px; flex-wrap: wrap; }
+.asx-form .dias label { display: inline-flex; grid-template-columns: none; align-items: center; gap: 6px; background: #f1f3f9; padding: 7px 11px; border-radius: 99px; cursor: pointer; font-size: 12.5px; }
+.asx-form .dias input { width: 15px; height: 15px; padding: 0; accent-color: var(--color-primary); }
+#heErr { color: #c0293b; font-size: 12.5px; font-weight: 600; min-height: 16px; }
 .asx-bar-wrap { display: flex; flex-direction: column; gap: 8px; }
 .asx-bar { position: relative; height: 12px; border-radius: 99px; background: #e4e9f5; overflow: hidden; }
 .asx-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, #0554f2, #3876F2); transition: width .6s ease; }
@@ -7400,6 +7620,28 @@ select.asx-fld { cursor: pointer; }
 .pgx-ym.has::after { content: ''; position: absolute; bottom: 3px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: #4b7fe0; }
 .pgx-ym.on.has::after { background: #fff; }
 .pgx-ym:disabled { opacity: .35; cursor: default; }
+
+/* Vista anual: 12 mini-calendarios + conmutador Mes / Año */
+.pgx-vista { display: inline-flex; gap: 2px; background: #f5f7fc; border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
+.pgx-vb { border: 0; background: transparent; color: var(--mute); font: 700 12.5px 'DM Sans', sans-serif; padding: 7px 14px; border-radius: 9px; cursor: pointer; }
+.pgx-vb.on { background: var(--color-primary); color: #fff; box-shadow: 0 4px 10px rgba(5, 84, 242, .25); }
+.pgx-yeargrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.pgx-mini { border: 1px solid var(--line); background: #fafbfe; border-radius: 16px; padding: 10px 10px 12px; }
+.pgx-mini-t { display: block; width: 100%; border: 0; background: transparent; text-align: left; font: 700 14px 'Sora', sans-serif; color: var(--ink); padding: 2px 4px 8px; cursor: pointer; }
+.pgx-mini-t:hover, .pgx-mini-t.cur { color: var(--color-primary); }
+.pgx-mg { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+.pgx-md-h { text-align: center; font: 800 9.5px 'DM Sans', sans-serif; color: var(--mute); padding-bottom: 2px; }
+.pgx-md-h.we { color: var(--color-primary); }
+.pgx-md { position: relative; aspect-ratio: 1; border: 1px solid transparent; border-radius: 8px; background: var(--dc); color: var(--ink); font: 700 10.5px 'DM Sans', sans-serif; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.pgx-md.wk { background: var(--wk); }
+.pgx-md.past { opacity: .55; }
+.pgx-md:hover { transform: scale(1.12); z-index: 2; box-shadow: 0 4px 10px rgba(5, 84, 242, .25); }
+.pgx-md.g { background: var(--g); border-color: var(--gl); }
+.pgx-md.l { background: var(--lib); border-color: var(--libl); }
+.pgx-md.l.pend { opacity: .6; }
+.pgx-md.p::after { content: ''; position: absolute; right: 2px; bottom: 2px; width: 5px; height: 5px; border-radius: 50%; background: var(--pal); }
+.pgx-md.mine { box-shadow: inset 0 0 0 1.5px var(--mine); }
+.pgx-md.today { background: var(--color-primary); color: #fff; border-color: var(--color-primary); opacity: 1; }
 @media (max-width: 620px) { .pgx-year { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
 @media (max-width: 420px) { .pgx-capas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .pgx-me { background: linear-gradient(135deg, #0554F2, #3876F2); color: #fff; border: 0; }
@@ -7679,7 +7921,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Vida Saludable -->
                         <div class="item ue-item" data-form="vida-saludable">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/vidasaludable.png" alt="Vida Saludable con IPASME" width="332" height="378">
+                                <img src="assets/images/vidasaludable.png" loading="lazy" decoding="async" alt="Vida Saludable con IPASME" width="332" height="378">
                                 <div class="item-overlay">
                                     <div class="item_title_main">Vida Saludable con IPASME</div>
                                     <div class="button-container">
@@ -7696,7 +7938,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Jornada de Atención Médica Integral -->
                         <div class="item ue-item" data-form="integral">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/integral.png" alt="Jornada de Atención Médica Integral" width="332" height="378">
+                                <img src="assets/images/integral.png" loading="lazy" decoding="async" alt="Jornada de Atención Médica Integral" width="332" height="378">
                                 <div class="item-overlay">
                                     <div class="item_title_main">Jornada de Atención Médica Integral</div>
                                     <div class="button-container">
@@ -7713,7 +7955,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Jornada Conjunta -->
                         <div class="item ue-item" data-form="conjunta">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/conjunta.png" alt="Jornada Conjunta" width="332" height="378">
+                                <img src="assets/images/conjunta.png" loading="lazy" decoding="async" alt="Jornada Conjunta" width="332" height="378">
                                 <div class="item-overlay">
                                     <div class="item_title_main">Jornada Conjunta</div>
                                     <div class="button-container">
@@ -7730,7 +7972,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Captación Quirúrgica -->
                         <div class="item cq-item" data-form="captacion">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/cqx.png" alt="Captación Quirúrgica" width="332" height="378">
+                                <img src="assets/images/cqx.png" loading="lazy" decoding="async" alt="Captación Quirúrgica" width="332" height="378">
                                 <div class="item-overlay cq-overlay">
                                     <div class="item_title_main">Captación Quirúrgica</div>
                                     <div class="button-container">
@@ -7747,7 +7989,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Captación Quirúrgica Pediátrica -->
                         <div class="item cqp-item" data-form="captacion-pediatrica">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/cqpe.png" alt="Captación Quirúrgica Pediátrica" width="332" height="378">
+                                <img src="assets/images/cqpe.png" loading="lazy" decoding="async" alt="Captación Quirúrgica Pediátrica" width="332" height="378">
                                 <div class="item-overlay cqp-overlay">
                                     <div class="item_title_main">Captación Quirúrgica Pediátrica</div>
                                     <div class="button-container">
@@ -7764,7 +8006,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Captación Quirúrgica Oftalmológica -->
                         <div class="item cqof-item" data-form="captacion-oftalmologica">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/cqxof.png" alt="Captación Quirúrgica Oftalmológica" width="332" height="378">
+                                <img src="assets/images/cqxof.png" loading="lazy" decoding="async" alt="Captación Quirúrgica Oftalmológica" width="332" height="378">
                                 <div class="item-overlay cqof-overlay">
                                     <div class="item_title_main">Captación Quirúrgica Oftalmológica</div>
                                     <div class="button-container">
@@ -7781,7 +8023,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Jornada de Vacunación -->
                         <div class="item vacunacion-item" data-form="vacunacion">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/vacunacion.png" alt="Jornada de Vacunación" width="332" height="378">
+                                <img src="assets/images/vacunacion.png" loading="lazy" decoding="async" alt="Jornada de Vacunación" width="332" height="378">
                                 <div class="item-overlay vacunacion-overlay">
                                     <div class="item_title_main">Jornada de Vacunación</div>
                                     <div class="button-container">
@@ -7798,7 +8040,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Efemérides -->
                         <div class="item efemerides-item" data-form="efemerides">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/efemerides.png" alt="Efemérides" width="332" height="378">
+                                <img src="assets/images/efemerides.png" loading="lazy" decoding="async" alt="Efemérides" width="332" height="378">
                                 <div class="item-overlay efemerides-overlay">
                                     <div class="item_title_main">Efemérides</div>
                                     <div class="button-container">
@@ -7815,7 +8057,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Obituario -->
                         <div class="item obituario-item" data-form="obituario">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/obituario.png" alt="Obituario" width="332" height="378">
+                                <img src="assets/images/obituario.png" loading="lazy" decoding="async" alt="Obituario" width="332" height="378">
                                 <div class="item-overlay obituario-overlay">
                                     <div class="item_title_main">Obituario</div>
                                     <div class="button-container">
@@ -7832,7 +8074,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Cumpleaños -->
                         <div class="item cumpleanos-item" data-form="cumpleanos">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/cumple.png" alt="Cumpleaños" width="332" height="378">
+                                <img src="assets/images/cumple.png" loading="lazy" decoding="async" alt="Cumpleaños" width="332" height="378">
                                 <div class="item-overlay cumpleanos-overlay">
                                     <div class="item_title_main">Cumpleaños</div>
                                     <div class="button-container">
@@ -7849,7 +8091,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Certificado o Reconocimiento -->
                         <div class="item certificado-item" data-form="certificado">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/certi.png" alt="Certificado o Reconocimiento" width="332" height="378">
+                                <img src="assets/images/certi.png" loading="lazy" decoding="async" alt="Certificado o Reconocimiento" width="332" height="378">
                                 <div class="item-overlay certificado-overlay">
                                     <div class="item_title_main">Certificado o Reconocimiento</div>
                                     <div class="button-container">
@@ -7866,7 +8108,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Actividades de Aprendizaje -->
                         <div class="item aprendizaje-item" data-form="aprendizaje">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/aprendizaje.png" alt="Actividades de Aprendizaje" width="332" height="378">
+                                <img src="assets/images/aprendizaje.png" loading="lazy" decoding="async" alt="Actividades de Aprendizaje" width="332" height="378">
                                 <div class="item-overlay aprendizaje-overlay">
                                     <div class="item_title_main">Actividades de Aprendizaje</div>
                                     <div class="button-container">
@@ -7883,7 +8125,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Actividades Deportivas -->
                         <div class="item deportivas-item" data-form="deportivas">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/deportivas.png" alt="Actividades Deportivas" width="332" height="378">
+                                <img src="assets/images/deportivas.png" loading="lazy" decoding="async" alt="Actividades Deportivas" width="332" height="378">
                                 <div class="item-overlay deportivas-overlay">
                                     <div class="item_title_main">Actividades Deportivas</div>
                                     <div class="button-container">
@@ -7900,7 +8142,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Diseño de Textiles -->
                         <div class="item textiles-item" data-form="textiles">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/textiles.png" alt="Diseño de Textiles" width="332" height="378">
+                                <img src="assets/images/textiles.png" loading="lazy" decoding="async" alt="Diseño de Textiles" width="332" height="378">
                                 <div class="item-overlay textiles-overlay">
                                     <div class="item_title_main">Diseño de Textiles</div>
                                     <div class="button-container">
@@ -7917,7 +8159,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Diseño de Pendón -->
                         <div class="item pendon-item" data-form="pendon">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/pendon.png" alt="Diseño de Pendón" width="332" height="378">
+                                <img src="assets/images/pendon.png" loading="lazy" decoding="async" alt="Diseño de Pendón" width="332" height="378">
                                 <div class="item-overlay pendon-overlay">
                                     <div class="item_title_main">Diseño de Pendón</div>
                                     <div class="button-container">
@@ -7934,7 +8176,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Post Simple -->
                         <div class="item postsimple-item" data-form="postsimple">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/postsimple.png" alt="Post Simple" width="332" height="378">
+                                <img src="assets/images/postsimple.png" loading="lazy" decoding="async" alt="Post Simple" width="332" height="378">
                                 <div class="item-overlay postsimple-overlay">
                                     <div class="item_title_main">Post Simple</div>
                                     <div class="button-container">
@@ -7951,7 +8193,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Carrusel -->
                         <div class="item carrusel-item" data-form="carrusel">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/carrusel.png" alt="Carrusel" width="332" height="378">
+                                <img src="assets/images/carrusel.png" loading="lazy" decoding="async" alt="Carrusel" width="332" height="378">
                                 <div class="item-overlay carrusel-overlay">
                                     <div class="item_title_main">Carrusel</div>
                                     <div class="button-container">
@@ -7968,7 +8210,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Otros -->
                         <div class="item otros-item" data-form="otros">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/otros.png" alt="Otros" width="332" height="378">
+                                <img src="assets/images/otros.png" loading="lazy" decoding="async" alt="Otros" width="332" height="378">
                                 <div class="item-overlay otros-overlay">
                                     <div class="item_title_main">Otros</div>
                                     <div class="button-container">
@@ -7990,7 +8232,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Corrección de Video -->
                         <div class="item correccion-video-item" data-form="correccion-video">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/correccionvideo.png" alt="Corrección de Video" width="332" height="378">
+                                <img src="assets/images/correccionvideo.png" loading="lazy" decoding="async" alt="Corrección de Video" width="332" height="378">
                                 <div class="item-overlay correccion-video-overlay">
                                     <div class="item_title_main">Corrección de Video</div>
                                     <div class="button-container">
@@ -8007,7 +8249,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Voz en Off -->
                         <div class="item voz-off-item" data-form="voz-off">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/vozenoff.png" alt="Voz en Off" width="332" height="378">
+                                <img src="assets/images/vozenoff.png" loading="lazy" decoding="async" alt="Voz en Off" width="332" height="378">
                                 <div class="item-overlay voz-off-overlay">
                                     <div class="item_title_main">Voz en Off</div>
                                     <div class="button-container">
@@ -8024,7 +8266,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Limpieza de Audio/Clip -->
                         <div class="item limpieza-audio-clip-item" data-form="limpieza-audio-clip">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/limpiezaaudioclip.png" alt="Limpieza de Audio/Clip" width="332" height="378">
+                                <img src="assets/images/limpiezaaudioclip.png" loading="lazy" decoding="async" alt="Limpieza de Audio/Clip" width="332" height="378">
                                 <div class="item-overlay limpieza-audio-clip-overlay">
                                     <div class="item_title_main">Limpieza de Audio/Clip</div>
                                     <div class="button-container">
@@ -8046,7 +8288,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Corrección de Nota de Prensa -->
                         <div class="item correccion-nota-prensa-item" data-form="correccion-nota-prensa">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/prensa.png" alt="Corrección de Nota de Prensa" width="332" height="378">
+                                <img src="assets/images/prensa.png" loading="lazy" decoding="async" alt="Corrección de Nota de Prensa" width="332" height="378">
                                 <div class="item-overlay correccion-nota-prensa-overlay">
                                     <div class="item_title_main">Corrección de Nota de Prensa</div>
                                     <div class="button-container">
@@ -8063,7 +8305,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Copy RRSS -->
                         <div class="item copy-rrss-item" data-form="copy-rrss">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/rrss.png" alt="Copy RRSS" width="332" height="378">
+                                <img src="assets/images/rrss.png" loading="lazy" decoding="async" alt="Copy RRSS" width="332" height="378">
                                 <div class="item-overlay copy-rrss-overlay">
                                     <div class="item_title_main">Copy RRSS</div>
                                     <div class="button-container">
@@ -8080,7 +8322,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Cobertura de Prensa -->
                         <div class="item cobertura-prensa-item" data-form="cobertura-prensa">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/cobertura.png" alt="Cobertura de Prensa" width="332" height="378">
+                                <img src="assets/images/cobertura.png" loading="lazy" decoding="async" alt="Cobertura de Prensa" width="332" height="378">
                                 <div class="item-overlay cobertura-prensa-overlay">
                                     <div class="item_title_main">Cobertura de Prensa</div>
                                     <div class="button-container">
@@ -8102,7 +8344,7 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Asistencia Protocolar -->
                         <div class="item asistencia-protocolar-item" data-form="asistencia-protocolar">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/protocolo.png" alt="Asistencia Protocolar" width="332" height="378">
+                                <img src="assets/images/protocolo.png" loading="lazy" decoding="async" alt="Asistencia Protocolar" width="332" height="378">
                                 <div class="item-overlay asistencia-protocolar-overlay">
                                     <div class="item_title_main">Asistencia Protocolar</div>
                                     <div class="button-container">
@@ -11601,17 +11843,17 @@ select.asx-fld { cursor: pointer; }
                     </div>
                 </div>
 
-                <!-- Barra de PaginaciÃ³n (MÃ¡x 50 por pÃ¡gina) -->
+                <!-- Barra de Paginación (Máx 50 por página) -->
                 <div class="solicitudes-pagination" id="solicitudesPagination">
                     <div class="pagination-info">
                         Mostrando <span id="pagStart">0</span> - <span id="pagEnd">0</span> de <span id="pagTotal">0</span>
                     </div>
                     <div class="pagination-btns">
-                        <button type="button" id="btnPagFirst" onclick="nexusChangePage('first')" class="pag-btn" disabled title="Primera pÃ¡gina"><i class="fas fa-angle-double-left"></i></button>
+                        <button type="button" id="btnPagFirst" onclick="nexusChangePage('first')" class="pag-btn" disabled title="Primera página"><i class="fas fa-angle-double-left"></i></button>
                         <button type="button" id="btnPagPrev" onclick="nexusChangePage('prev')" class="pag-btn" disabled title="Anterior"><i class="fas fa-angle-left"></i></button>
                         <span class="pag-current" id="pagIndicator">1 / 1</span>
                         <button type="button" id="btnPagNext" onclick="nexusChangePage('next')" class="pag-btn" disabled title="Siguiente"><i class="fas fa-angle-right"></i></button>
-                        <button type="button" id="btnPagLast" onclick="nexusChangePage('last')" class="pag-btn" disabled title="Ãšltima pÃ¡gina"><i class="fas fa-angle-double-right"></i></button>
+                        <button type="button" id="btnPagLast" onclick="nexusChangePage('last')" class="pag-btn" disabled title="Última página"><i class="fas fa-angle-double-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -11702,7 +11944,7 @@ select.asx-fld { cursor: pointer; }
             </div>
         </section>
 
-        <!-- Estadisticas Section (en construcción) -->
+        <!-- Estadisticas Section (panel de estadísticas; NEXUS_STATS_ENABLED=false muestra el aviso de construcción) -->
         <section id="estadisticas" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Estadísticas</h2>
@@ -11715,11 +11957,14 @@ select.asx-fld { cursor: pointer; }
                         <span id="nxd-btn-maint-label">🛠️ Mantenimiento <span id="nxd-maint-status" style="color:#e63946; font-weight:700;">● OFF</span></span>
                     </button>
                 </div>
-                <div class="nx-cons-box">
-                    <i class="fas fa-person-digging" aria-hidden="true"></i>
-                    <h3>En construcción</h3>
-                    <p>Muy pronto tendrás aquí las nuevas estadísticas de NEXUS.</p>
+                <div id="nxs-placeholder" class="hidden">
+                    <div class="nx-cons-box">
+                        <i class="fas fa-person-digging" aria-hidden="true"></i>
+                        <h3>En construcción</h3>
+                        <p>Muy pronto tendrás aquí las nuevas estadísticas de NEXUS.</p>
+                    </div>
                 </div>
+                <div id="nxs-root" class="hidden" aria-live="polite"></div>
             </div>
         </section>
 
@@ -11768,9 +12013,17 @@ select.asx-fld { cursor: pointer; }
                             <div class="asx-stat"><span>Sesiones</span><b class="asx-num" id="asxMiSes">0</b></div>
                         </div>
                         <div id="asxAlm" class="asx-hidden"></div>
+                        <div class="asx-bar-cap asx-hidden" id="asxLegalCap"><span>Horario legal</span></div>
                         <div class="asx-bar-wrap">
                             <div class="asx-bar"><i id="asxBar" style="width:0%"></i></div>
                             <div class="asx-bar-info"><span>7:30 a. m.</span><span id="asxBarTxt">—</span><span>3:30 p. m.</span></div>
+                        </div>
+                        <div class="asx-he asx-hidden" id="asxHe">
+                            <div class="asx-bar-wrap">
+                                <div class="asx-bar-cap"><span>Horario bajo acuerdo</span><span class="asx-he-pill" id="asxHeRango">—</span></div>
+                                <div class="asx-bar"><i id="asxHeBar" style="width:0%"></i></div>
+                                <div class="asx-bar-info"><span id="asxHeIni">—</span><span id="asxHeTxt">—</span><span id="asxHeFin">—</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -11778,10 +12031,12 @@ select.asx-fld { cursor: pointer; }
                 <div class="asx-tabs" role="tablist">
                     <button type="button" class="asx-tab on" data-asx-tab="tarjetero" id="asxTabTarjetero"><i class="fas fa-id-card"></i> <span id="asxTabTarjeteroTxt">Tarjetero</span></button>
                     <button type="button" class="asx-tab" data-asx-tab="guardias"><i class="fas fa-calendar-days"></i> Programación</button>
+                    <button type="button" class="asx-tab asx-hidden" data-asx-tab="horarios" id="asxTabHorarios"><i class="fas fa-user-clock"></i> Horarios especiales</button>
                 </div>
 
                 <div id="asxPaneTarjetero"></div>
                 <div id="asxPaneGuardias" class="asx-hidden"></div>
+                <div id="asxPaneHorarios" class="asx-hidden"></div>
             </div>
 
             <!-- Detalle de la persona -->
@@ -15184,8 +15439,7 @@ select.asx-fld { cursor: pointer; }
                 if (window.dbRT && window.fbRT) {
                     const upNueva = {};
                     upNueva['solicitudes_vivas/' + (solicitudData.Unidad ? nexusSanitizarClaveRTDB(solicitudData.Unidad) : 'GENERAL') + '/' + docId] = solicitudData;
-                    nexusKpiSumar(upNueva, 'pendientes', 1);
-                    await nexusKpiActualizar(upNueva);
+                    await window.fbRT.update(window.fbRT.ref(window.dbRT), upNueva);
                 }
 
                 nexusGuardarSolicitudEnSheet(solicitudData).catch(err => {
@@ -15478,7 +15732,7 @@ select.asx-fld { cursor: pointer; }
             // Validar tamaño
             const maxSize = 512 * 1024 * 1024; // 512MB
             if (file.size > maxSize) {
-                showToast({ type: 'error', title: 'LÃ­mite de tamaÃ±o', message: 'El video excede el tamaÃ±o mÃ¡ximo de 512MB' });
+                showToast({ type: 'error', title: 'Límite de tamaño', message: 'El video excede el tamaño máximo de 512MB' });
                 input.value = '';
                 return;
             }
@@ -15560,7 +15814,7 @@ select.asx-fld { cursor: pointer; }
 
             // Validar que sea una imagen
             if (!file.type.startsWith('image/')) {
-                showToast({ type: 'warning', title: 'Tipo de archivo invÃ¡lido', message: 'Por favor, selecciona solo archivos de imagen.' });
+                showToast({ type: 'warning', title: 'Tipo de archivo inválido', message: 'Por favor, selecciona solo archivos de imagen.' });
                 input.value = '';
                 return;
             }
@@ -15568,7 +15822,7 @@ select.asx-fld { cursor: pointer; }
             // Validar tamaño máximo (5MB)
             const maxSize = 5 * 1024 * 1024; // 5MB en bytes
             if (file.size > maxSize) {
-                showToast({ type: 'error', title: 'LÃ­mite de tamaÃ±o', message: 'El archivo excede los 5MB permitidos.' });
+                showToast({ type: 'error', title: 'Límite de tamaño', message: 'El archivo excede los 5MB permitidos.' });
                 input.value = '';
                 return;
             }
@@ -18190,6 +18444,23 @@ select.asx-fld { cursor: pointer; }
                 }
             }
             
+            // Estadísticas es solo para el personal (Admin, Diseñador, Periodista)
+            if (sectionId === 'estadisticas') {
+                const esStaffEst = (typeof nexusEsStaff === 'function') ? nexusEsStaff() : false;
+                if (!esStaffEst) {
+                    showToast({
+                        type: 'error',
+                        title: 'Acceso Restringido',
+                        message: 'Las estadísticas son exclusivas para el personal de NEXUS.',
+                        duration: 4000
+                    });
+                    return;
+                }
+            }
+
+            // Estadísticas: se detiene el refresco automático al salir de la pestaña
+            if (sectionId !== 'estadisticas' && typeof NexusStats !== 'undefined') NexusStats.pausar();
+
             // Cerrar menú móvil si está abierto
             closeMenu();
 
@@ -18231,9 +18502,10 @@ select.asx-fld { cursor: pointer; }
                     behavior: 'smooth'
                 });
 
-                // Pestaña de estadísticas en construcción: solo se refresca el botón de mantenimiento (admin)
+                // Pestaña de estadísticas: se refresca el botón de mantenimiento (admin) y se abre el panel
                 if (sectionId === 'estadisticas') {
                     if (typeof nexusUpdateMaintenanceUI === 'function') nexusUpdateMaintenanceUI();
+                    if (typeof NexusStats !== 'undefined') NexusStats.abrir();
                 }
             }
 
@@ -20560,7 +20832,7 @@ select.asx-fld { cursor: pointer; }
                     showNexusConfirmationModal(formData);
                 });
 
-                // Agregar evento al botÃ³n de confirmaciÃ³n del modal
+                // Agregar evento al botón de confirmación del modal
                 const confirmBtn = document.getElementById('nexusBtnConfirm');
                 if (confirmBtn) {
                     confirmBtn.addEventListener('click', async function() {
@@ -21329,7 +21601,7 @@ select.asx-fld { cursor: pointer; }
 
                     // Validación especial para tipo de pendón
                     if (!selectedPendonTipo) {
-                        showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe seleccionar el tamaÃ±o del pendÃ³n' });
+                        showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe seleccionar el tamaño del pendón' });
                         return;
                     }
 
@@ -21337,7 +21609,7 @@ select.asx-fld { cursor: pointer; }
                     if (selectedPendonTipo === 'Otros tamaños') {
                         const medidas = document.getElementById('pendon-medidas')?.value?.trim();
                         if (!medidas) {
-                            showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe especificar las medidas del pendÃ³n' });
+                            showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe especificar las medidas del pendón' });
                             document.getElementById('pendon-medidas').classList.add('field-error');
                             return;
                         }
@@ -21346,7 +21618,7 @@ select.asx-fld { cursor: pointer; }
                     // Validación especial para descripción
                     const descripcion = document.getElementById('pendon-descripcion')?.value?.trim();
                     if (!descripcion) {
-                        showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe proporcionar una descripciÃ³n del pendÃ³n' });
+                        showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe proporcionar una descripción del pendón' });
                         document.getElementById('pendon-descripcion').classList.add('field-error');
                         return;
                     }
@@ -21521,11 +21793,11 @@ select.asx-fld { cursor: pointer; }
 
                     // Validación especial para región y unidad
                     if (!selectedCopyRRSSRegion) {
-                        showToast({ type: 'warning', title: 'UbicaciÃ³n requerida', message: 'Debe seleccionar una regiÃ³n' });
+                        showToast({ type: 'warning', title: 'Ubicación requerida', message: 'Debe seleccionar una región' });
                         return;
                     }
                     if (!selectedCopyRRSSUnidad) {
-                        showToast({ type: 'warning', title: 'UbicaciÃ³n requerida', message: 'Debe seleccionar una unidad' });
+                        showToast({ type: 'warning', title: 'Ubicación requerida', message: 'Debe seleccionar una unidad' });
                         return;
                     }
 
@@ -21595,7 +21867,7 @@ select.asx-fld { cursor: pointer; }
                     if (selectedOtrosDireccion) {
                         const institucion = document.getElementById('otros-institucion')?.value?.trim();
                         if (!institucion) {
-                            showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe proporcionar el nombre de la instituciÃ³n' });
+                            showToast({ type: 'warning', title: 'Campo requerido', message: 'Debe proporcionar el nombre de la institución' });
                             document.getElementById('otros-institucion').classList.add('field-error');
                             return;
                         }
@@ -21730,6 +22002,7 @@ select.asx-fld { cursor: pointer; }
         var _nxPresenciaTimer = null;                       // vigilante de inactividad (setInterval)
         var _nxPresenciaUltimoGesto = Date.now();           // marca de tiempo de la última actividad
         var _nxPresenciaListenersGesto = false;
+        var _nxCerrandoPorInactividad = false;              // evita lanzar varios cierres de sesión seguidos mientras el primero termina
         var _nxPresenciaOffline = false;                    // estaba sin declarar: nexusDetenerPresenciaRTDB lanzaba ReferenceError
         var NEXUS_INACTIVIDAD_REVISION_MS = 15 * 1000;      // cada cuánto se revisa la inactividad
 
@@ -21808,8 +22081,14 @@ select.asx-fld { cursor: pointer; }
                 _nxPresenciaCortarListeners();
             }
             if (inactivo >= NEXUS_INACTIVIDAD_SESION_MS) {
+                // Un solo cierre: si el primero tarda (red lenta tras mucho rato inactivo), el vigilante de 15 s no debe
+                // encolar más cierres, porque se ejecutarían después y sacarían al usuario cuando vuelva a entrar.
+                if (_nxCerrandoPorInactividad) return;
+                _nxCerrandoPorInactividad = true;
+                clearInterval(_nxPresenciaTimer); _nxPresenciaTimer = null;
                 console.log('[NEXUS] Inactividad prolongada, cerrando sesión...');
-                if (typeof nexusLogout === 'function') nexusLogout();
+                var fin = function () { _nxCerrandoPorInactividad = false; };
+                try { Promise.resolve(typeof nexusLogout === 'function' ? nexusLogout() : null).then(fin, fin); } catch (e) { fin(); }
             }
         }
 
@@ -21924,7 +22203,7 @@ select.asx-fld { cursor: pointer; }
                     });
                 }
                 // En cada inicio de sesión se reinicia la marca de tiempo y se rearma el vigilante.
-                _nxPresenciaUltimoGesto = Date.now();
+                _nxPresenciaUltimoGesto = Date.now(); _nxCerrandoPorInactividad = false;
                 _nxPresenciaProgramarInactividad();
                 console.log('[NEXUS] nexusIniciarPresenciaRTDB: control de inactividad activado');
             } catch (e) {
@@ -22689,6 +22968,7 @@ select.asx-fld { cursor: pointer; }
                     nexusAplicarFavoritosUI();
                     nexusActualizarUIAuth();
                     if (typeof nexusUpdateMaintenanceUI === 'function') nexusUpdateMaintenanceUI();
+                    _nxPresenciaUltimoGesto = Date.now(); _nxCerrandoPorInactividad = false;   // sesión nueva: la cuenta de inactividad arranca de cero
                     if (typeof nexusIniciarPresenciaRTDB === 'function') nexusIniciarPresenciaRTDB();
                     if (typeof nexusRevisarAvisosRechazo === 'function') nexusRevisarAvisosRechazo();
                     if (typeof nexusVerificarCumpleanios === 'function') setTimeout(nexusVerificarCumpleanios, 800);
@@ -22847,6 +23127,11 @@ select.asx-fld { cursor: pointer; }
                 NexusSession.esDisenador === true || NexusSession.esPeriodista === true;
         }
         window.nexusEsPersonalPanel = nexusEsPersonalPanel;
+
+        // Token de sesión de Firebase para que el Apps Script valide quién pide las estadísticas / KPI.
+        window.nexusIdToken = async function () {
+            try { var u = window.auth && window.auth.currentUser; return u ? await u.getIdToken() : ''; } catch (_) { return ''; }
+        };
 
         function nexusCargarSolicitudesVivas() {
 
@@ -23029,6 +23314,7 @@ select.asx-fld { cursor: pointer; }
                 }
 
                 nexusOrdenarYRenderizar(list);
+                nexusKpiProgramar();   // cualquier cambio en las solicitudes: refresca los KPI desde la hoja
             };
 
             _nexusSolicitudesCargando = (_nexusSolicitudesData.length === 0);
@@ -23420,72 +23706,51 @@ select.asx-fld { cursor: pointer; }
         }
 
         // ============================================================
-        // KPI DE SOLICITUDES (sistema nuevo) · nodo RTDB kpi_solicitudes
-        //   kpi_solicitudes = { pendientes, procesando, finalizadas, rechazadas, actualizadoEn }
-        // Refleja lo que EXISTE ahora, sin histórico (sin histórico). La purga del
-        // cierre mensual lo reinicia: finalizadas y rechazadas vuelven a 0 y quedan las vivas que sobreviven.
-        // Es la ÚNICA fuente de las 5 tarjetas (Total = suma de los 4 números). El panel solo lo lee.
-        // Cada cambio de estado ajusta el nodo con increment() DENTRO de la misma escritura atómica
-        // que cambia la solicitud (nexusKpiSumar + nexusKpiActualizar), así nunca queda a medias.
-        // Red de seguridad: el trigger horario de GAS (reconciliarPendientesSheetTrigger) lo compara con
-        // RTDB y con la hoja y lo corrige.
+        // KPI DE SOLICITUDES · se leen de la hoja (Export (F), claves sol.*) con la acción getKpiSolicitudes.
+        // Reflejan lo que EXISTE ahora en la hoja; no se escribe nada en RTDB para esto.
+        // Se refrescan al entrar, en cada cambio de solicitudes_vivas (propio o de otro usuario) y cada 30 s.
         // ============================================================
-        var NEXUS_KPI_RUTA = 'kpi_solicitudes';
-        var _nexusKpiUnsub = null;
         var _nexusKpiDatos = null;   // null = aún sin datos (o sin permiso): las tarjetas muestran «—»
 
-        // Estatus de una solicitud viva -> contador que le corresponde (null si no cuenta como viva).
-        function nexusKpiClaveEstatus(est) {
-            est = String(est || 'PENDIENTE').toUpperCase();
-            if (est === 'PENDIENTE') return 'pendientes';
-            if (est === 'PROCESANDO' || est === 'EN PROCESO') return 'procesando';
-            return null;
-        }
+        var _nexusKpiTimer = null, _nexusKpiReintentos = [], _nexusKpiPidiendo = false, _nexusKpiRepetir = false;
+        var NEXUS_KPI_SONDEO_MS = 30000;
 
-        // Agrega a un update multirruta `up` el ajuste de un contador.
-        // campo: 'pendientes' | 'procesando' | 'finalizadas' | 'rechazadas'.
-        function nexusKpiSumar(up, campo, delta) {
-            if (!campo || !delta) return;
-            up[NEXUS_KPI_RUTA + '/' + campo] = window.fbRT.increment(delta);
-        }
-
-        // Ejecuta el update multirruta. Si RTDB lo rechaza por permisos y el update incluía contadores
-        // (p. ej. reglas aún sin publicar), reintenta SIN ellos: nunca se bloquea crear, asignar o cerrar
-        // una solicitud por culpa del KPI; el trigger horario lo corrige.
-        async function nexusKpiActualizar(up) {
-            var raiz = window.fbRT.ref(window.dbRT);
+        async function nexusKpiPedir() {
+            if (!nexusEsPersonalPanel()) return;
+            if (_nexusKpiPidiendo) { _nexusKpiRepetir = true; return; }
+            _nexusKpiPidiendo = true;
             try {
-                await window.fbRT.update(raiz, up);
+                var tk = await window.nexusIdToken();
+                var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'getKpiSolicitudes', idToken: tk })
+                }, 20000, 1);
+                if (!res || res.success === false) throw new Error((res && res.error) || 'Respuesta vacía');
+                var d = res.data || res;
+                _nexusKpiDatos = { pendientes: d.pendientes, procesando: d.procesando, finalizadas: d.finalizadas, rechazadas: d.rechazadas };
+                nexusKpiRender();
             } catch (err) {
-                var sinKpi = {}, habiaKpi = false;
-                Object.keys(up).forEach(function (k) {
-                    if (k.indexOf(NEXUS_KPI_RUTA + '/') === 0) habiaKpi = true; else sinKpi[k] = up[k];
-                });
-                var denegado = /permission|PERMISSION_DENIED/i.test(String((err && (err.code || err.message)) || ''));
-                if (!habiaKpi || !denegado) throw err;
-                console.warn('[NEXUS] kpi_solicitudes rechazado por reglas; se guarda sin contadores:', err && err.message);
-                await window.fbRT.update(raiz, sinKpi);
+                console.warn('[NEXUS] KPI de solicitudes (hoja) no disponible:', err && err.message);   // se conserva el último valor
+            } finally {
+                _nexusKpiPidiendo = false;
+                if (_nexusKpiRepetir) { _nexusKpiRepetir = false; nexusKpiPedir(); }
             }
         }
 
-        // Escucha en vivo el nodo completo (diminuto). Solo Staff.
-        function nexusKpiEscuchar() {
-            if (typeof _nexusKpiUnsub === 'function') return;
-            if (!window.dbRT || !window.fbRT) return;
-            _nexusKpiUnsub = window.fbRT.onValue(
-                window.fbRT.ref(window.dbRT, NEXUS_KPI_RUTA),
-                function (snap) {
-                    _nexusKpiDatos = snap.exists() ? (snap.val() || {}) : {};
-                    nexusKpiRender();
-                },
-                function (err) {
-                    console.warn('[NEXUS] KPI de solicitudes no disponible:', err && err.message);
-                    _nexusKpiUnsub = null;
-                    _nexusKpiDatos = null;
-                    nexusKpiRender();
-                }
-            );
+        // Hubo un cambio (propio o de otro usuario): consulta a los 2, 6 y 12 s para dar tiempo a que la hoja y sus fórmulas se actualicen.
+        function nexusKpiProgramar() {
+            if (!nexusEsPersonalPanel()) return;
+            _nexusKpiReintentos.forEach(clearTimeout);
+            _nexusKpiReintentos = [2000, 6000, 12000].map(function (ms) { return setTimeout(nexusKpiPedir, ms); });
         }
+
+        // Arranca la consulta inicial y un sondeo de respaldo cada 30 s (solo con la pestaña visible).
+        function nexusKpiEscuchar() {
+            if (!nexusEsPersonalPanel() || _nexusKpiTimer) return;
+            nexusKpiPedir();
+            _nexusKpiTimer = setInterval(function () { if (!document.hidden) nexusKpiPedir(); }, NEXUS_KPI_SONDEO_MS);
+        }
+        document.addEventListener('visibilitychange', function () { if (!document.hidden && _nexusKpiTimer) nexusKpiPedir(); });
 
         // Pinta las 5 tarjetas desde el nodo.
         function nexusKpiRender() {
@@ -23500,8 +23765,10 @@ select.asx-fld { cursor: pointer; }
 
         // Detiene el listener (logout / cambio de sesión)
         function nexusKpiDetener() {
-            if (typeof _nexusKpiUnsub === 'function') _nexusKpiUnsub();
-            _nexusKpiUnsub = null;
+            if (_nexusKpiTimer) clearInterval(_nexusKpiTimer);
+            _nexusKpiTimer = null;
+            _nexusKpiReintentos.forEach(clearTimeout);
+            _nexusKpiReintentos = [];
             _nexusKpiDatos = null;
         }
 
@@ -23925,7 +24192,7 @@ select.asx-fld { cursor: pointer; }
                         '<button class="btn-secondary" onclick="nexusLogout()"><i class="fas fa-sign-out-alt"></i> Salir</button>';
                 }
 
-                // Renderizar MenÃº de NavegaciÃ³n segÃºn el Rol
+                // Renderizar Menú de Navegación según el Rol
                 if (mainNavUl) {
                     var menuHtml = '';
                     if (isStaff) {
@@ -23954,7 +24221,7 @@ select.asx-fld { cursor: pointer; }
                     if (typeof nexusActualizarAvisoArtesFinales === 'function') nexusActualizarAvisoArtesFinales();
                 }
 
-                // Cargar solicitudes vivas en tiempo real al tener sesiÃ³n
+                // Cargar solicitudes vivas en tiempo real al tener sesión
                 // (el listener de solicitudes ya no se abre al iniciar sesión: lo abre showSection
                 // al entrar a Solicitudes y se corta al salir, para cuidar la cuota de RTDB)
                 if (typeof nexusEnSeccionSolicitudes === 'function' && nexusEnSeccionSolicitudes() &&
@@ -25278,9 +25545,7 @@ select.asx-fld { cursor: pointer; }
                 const ruta = 'solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id + '/';
                 const up = {};
                 Object.keys(cambios).forEach(function (k) { up[ruta + k] = cambios[k]; });
-                const kpiAntes = nexusKpiClaveEstatus(base.Estatus), kpiDespues = nexusKpiClaveEstatus(cambios.Estatus);
-                if (kpiAntes !== kpiDespues) { nexusKpiSumar(up, kpiAntes, -1); nexusKpiSumar(up, kpiDespues, 1); }
-                await nexusKpiActualizar(up);
+                await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
 
                 // 2. Memoria local (en RTDB null borra el nodo; en memoria se elimina la clave)
                 const aplicar = function (obj) {
@@ -25497,11 +25762,9 @@ select.asx-fld { cursor: pointer; }
             up['solicitudes_finalizadas_mes/' + mes + '/' + id] =
                 Object.assign(nexusSinUndefined(nexusLimpiarNodoArchivado(registro)), { sheetPendiente: true });
             if (esRechazo && registro.UsuarioUid) up['avisos_rechazo/' + registro.UsuarioUid + '/' + id] = mes;
-            nexusKpiSumar(up, nexusKpiClaveEstatus(base.Estatus), -1);
-            nexusKpiSumar(up, esRechazo ? 'rechazadas' : 'finalizadas', 1);
 
             try {
-                await nexusKpiActualizar(up);
+                await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
             } catch (err) {
                 console.error('[NEXUS] Error al ' + (esRechazo ? 'rechazar' : 'finalizar') + ' solicitud:', err);
                 nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nexusCerrarSolicitud', tipoSolicitud: tipo, detalles: id + ' · ' + estatus });
@@ -25525,6 +25788,7 @@ select.asx-fld { cursor: pointer; }
             delete payloadSheet.UsuarioUid;
             payloadSheet.admin = cerradoPor;   // quién cierra (el script lo escribe en «Fecha Finalización»); Usuario es el solicitante
             nexusActualizarSolicitudFinalizadaEnSheet(payloadSheet).then(function (res) {
+                nexusKpiProgramar();   // la hoja ya tiene el cierre: refresca los KPI
                 if (res && res.success) {
                     return window.fbRT.update(
                         window.fbRT.ref(window.dbRT, 'solicitudes_finalizadas_mes/' + mes + '/' + id),
@@ -25823,8 +26087,7 @@ select.asx-fld { cursor: pointer; }
                 nexusUpdateProgress(85, 'Eliminando la solicitud...');
                 const upElim = {};
                 upElim['solicitudes_vivas/' + (base.Unidad ? nexusSanitizarClaveRTDB(base.Unidad) : 'GENERAL') + '/' + id] = null;
-                nexusKpiSumar(upElim, nexusKpiClaveEstatus(base.Estatus), -1);
-                await nexusKpiActualizar(upElim);
+                await window.fbRT.update(window.fbRT.ref(window.dbRT), upElim);
                 nexusUpdateProgress(100, 'Solicitud eliminada', 'step3');
 
                 // Segundo plano: quitar la fila del Sheet.
@@ -30017,9 +30280,7 @@ select.asx-fld { cursor: pointer; }
                     var up = {};
                     up['solicitudes_finalizadas_mes/' + mes + '/' + id] = null;
                     up['solicitudes_vivas/' + NexusData.unidadKey(reg.Unidad) + '/' + id] = vivo;
-                    nexusKpiSumar(up, String(reg.Estatus || '').toUpperCase().indexOf('RECHAZ') === 0 ? 'rechazadas' : 'finalizadas', -1);
-                    nexusKpiSumar(up, 'procesando', 1);
-                    await nexusKpiActualizar(up);
+                    await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
 
                     toast('success', 'Corrección enviada', 'Tu solicitud volvió al equipo de diseño.', 4000);
                     if (typeof nexusQuitarArteDescargado === 'function') nexusQuitarArteDescargado(id);   // el documento se borra de artes_finales
@@ -33362,6 +33623,7 @@ select.asx-fld { cursor: pointer; }
            asistencia/{uid}_{AAAA-MM-DD}  → primerLogin, tramos{}, externos{}, ventanas{}, aviso1530
            asistencia_ultima/{uid}        → resumen para el tarjetero (último ingreso/salida)
            guardias/{AAAA-MM-DD}          → uids de guardia del día
+           horarios_especiales/{uid}     → acuerdo de horario (ini/fin en minutos desde 00:00, horas, dias[0-6], desde, hasta, motivo, activo)
            dias_libres/{uid}_{AAAA-MM-DD} → día libre compensatorio · pautas/{id} → pautas de cobertura (varias por día)
          ============================================================ -->
     <script>
@@ -33383,7 +33645,7 @@ select.asx-fld { cursor: pointer; }
         var S = {
             uid: null, nombre: '', docId: null, sid: null, lastHB: 0, avisoDia: null,
             offset: 0, sync: false, iniciando: false,
-            tab: 'tarjetero', enSeccion: false,
+            tab: 'tarjetero', enSeccion: false, he: {},
             ultima: {}, pres: {}, guardias: {}, guardiasOk: false,
             miDoc: null, miFecha: null, sel: null, selDocs: [],
             unsubSec: [], timers: {}, tickN: 0, offsetUnsub: null, renderPend: false, alm: null, almBusy: false, almModal: false, motivoSalida: null
@@ -33676,9 +33938,17 @@ select.asx-fld { cursor: pointer; }
             try { if (refU) await Fs.setDoc(refU, { frasesVistas: vistas }, { merge: true }); } catch (e) {}
             return FRASES[idx];
         }
+        // Saludo según la hora de Caracas: madrugadas 12:00 a. m.–5:59 a. m. · días 6:00 a. m.–11:59 a. m. · tardes 12:00 p. m.–6:29 p. m. · noches 6:30 p. m.–11:59 p. m.
+        function saludoHora(ms) {
+            var d = new Date(ms + TZ_OFF), m = d.getUTCHours() * 60 + d.getUTCMinutes();
+            if (m < 360)  return { txt: 'Buenas madrugadas', ico: '🌌', cierre: '¡Mucho ánimo en esta madrugada!' };
+            if (m < 720)  return { txt: 'Buenos días',       ico: '🌅', cierre: '¡Que sea un gran día!' };
+            if (m < 1110) return { txt: 'Buenas tardes',     ico: '☀️', cierre: '¡Que sea una gran tarde!' };
+            return              { txt: 'Buenas noches',     ico: '🌙', cierre: '¡Que sea una gran noche!' };
+        }
         // cruce = true: venía conectado desde antes de las 7:30 a. m. y arranca su jornada nueva; false: primer ingreso del día
         async function mostrarPrimerIngreso(cruce) {
-            var t = ahora(), nom = esc((S.nombre || '').split(' ')[0]);
+            var t = ahora(), nom = esc((S.nombre || '').split(' ')[0]), sal = saludoHora(t);
             var frase = ''; try { frase = await fraseNueva(); } catch (e) {}
             try { if (window.confetti) window.confetti({ particleCount: 70, spread: 70, origin: { y: .3 } }); } catch (e) {}
             var cita = frase ? '<div class="asx-md-frase"><small>Frase del día</small>' + esc(frase) + '</div>' : '';
@@ -33687,11 +33957,11 @@ select.asx-fld { cursor: pointer; }
                   '<div>Son las <b>7:30 a. m.</b>: estás iniciando tu <b>nueva jornada laboral</b>. ¡Te deseamos una excelente jornada!</div>' +
                   '<div class="asx-md-split"><div class="a"><small>Antes de las 7:30</small><b>Extras del día anterior</b></div><div class="n"><small>Desde las 7:30</small><b>Tu nueva jornada</b></div></div>' + cita
                 : '<div class="asx-md-time"><small>Primer ingreso</small><b>' + esc(hora(t)) + '</b></div>' +
-                  '<div>Te deseamos una <b>excelente jornada laboral</b>. ¡Que sea un gran día!</div>' + cita +
+                  '<div>Te deseamos una <b>excelente jornada laboral</b>. ' + sal.cierre + '</div>' + cita +
                   '<div class="asx-md-note">Tu jornada ordinaria va de 7:30 a. m. a 3:30 p. m.</div>';
             return modal({
-                icono: '🌅', eyebrow: cruce ? 'NEXUS · Nueva jornada' : 'NEXUS · Primer ingreso',
-                titulo: '¡Buenos días' + (nom ? ', ' + nom : '') + '!',
+                icono: sal.ico, eyebrow: cruce ? 'NEXUS · Nueva jornada' : 'NEXUS · Primer ingreso',
+                titulo: '¡' + sal.txt + (nom ? ', ' + nom : '') + '!',
                 html: cuerpo,
                 botones: [{ k: 'ok', t: 'Empezar mi jornada', c: 'p' }]
             });
@@ -33983,6 +34253,14 @@ select.asx-fld { cursor: pointer; }
             pintarReloj(); pintarMi(); suscribirMiDoc();
             var Fs = F(), RT = window.fbRT;
             S.unsubSec.forEach(function (u) { try { u(); } catch (e) {} }); S.unsubSec = [];
+            var tabHe = $('asxTabHorarios'); if (tabHe) tabHe.classList.toggle('asx-hidden', !admin);
+            S.heErr = false;
+            if (admin) S.unsubSec.push(Fs.onSnapshot(Fs.collection(dbf(), 'horarios_especiales'), function (snap) {
+                var m = {}; snap.forEach(function (d) { m[d.id] = d.data(); }); S.he = m; pintarMi(); pintarHorarios();
+            }, function (e) { console.warn('[Asistencia] horarios:', e && e.message); S.heErr = true; pintarHorarios(); }));
+            else S.unsubSec.push(Fs.onSnapshot(Fs.doc(dbf(), 'horarios_especiales', S.uid), function (snap) {
+                var m = {}; if (snap.exists()) m[S.uid] = snap.data(); S.he = m; pintarMi();
+            }, function (e) { console.warn('[Asistencia] horarios:', e && e.message); }));
             if (admin) {
                 S.unsubSec.push(Fs.onSnapshot(Fs.collection(dbf(), 'asistencia_ultima'), function (snap) {
                     var m = {}; snap.forEach(function (d) { m[d.id] = d.data(); }); S.ultima = m; pintarTarjetero();
@@ -34000,6 +34278,108 @@ select.asx-fld { cursor: pointer; }
             cargarGuardias().then(function () { pintarGuardias(); pintarMi(); });
         }
 
+
+        // ── Horarios especiales (acuerdos): una barra adicional; el horario legal, el almuerzo y los avisos no cambian ──
+        function heVigente(uid, t) {
+            var a = S.he[uid]; if (!a || a.activo === false || typeof a.ini !== 'number' || typeof a.fin !== 'number') return null;
+            var f = fk(t); if (a.desde && f < a.desde) return null; if (a.hasta && f > a.hasta) return null;
+            var dias = (a.dias && a.dias.length) ? a.dias : [1, 2, 3, 4, 5];
+            return dias.indexOf(dowDe(t)) === -1 ? null : a;
+        }
+        function minTxt(m) { var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'p. m.' : 'a. m.', h12 = h % 12 === 0 ? 12 : h % 12; return h12 + ':' + pad(mm) + ' ' + ap; }
+        function pintarHe(r, t) {
+            var box = $('asxHe'), cap = $('asxLegalCap'); if (!box) return;
+            var a = heVigente(S.uid, t);
+            box.classList.toggle('asx-hidden', !a); if (cap) cap.classList.toggle('asx-hidden', !a);
+            if (!a) return;
+            var ini = inicioDia(t) + a.ini * 60000, fin = inicioDia(t) + a.fin * 60000, p = Math.max(0, Math.min(1, (t - ini) / (fin - ini)));
+            $('asxHeRango').textContent = minTxt(a.ini) + ' – ' + minTxt(a.fin);
+            $('asxHeIni').textContent = minTxt(a.ini); $('asxHeFin').textContent = minTxt(a.fin);
+            $('asxHeBar').style.width = (p * 100).toFixed(1) + '%';
+            $('asxHeTxt').textContent = t < ini ? 'Tu horario acordado inicia a las ' + minTxt(a.ini)
+                : t < fin ? 'Faltan ' + dur(fin - t) + ' para las ' + minTxt(a.fin)
+                : 'Horario acordado cumplido';
+        }
+        var DIAS_HE = [['L', 1], ['M', 2], ['M', 3], ['J', 4], ['V', 5], ['S', 6], ['D', 0]];
+        function diasTxt(d) {
+            d = (d && d.length) ? d.slice().sort(function (x, y) { return ((x + 6) % 7) - ((y + 6) % 7); }) : [1, 2, 3, 4, 5];
+            var N = { 1: 'Lun', 2: 'Mar', 3: 'Mié', 4: 'Jue', 5: 'Vie', 6: 'Sáb', 0: 'Dom' };
+            if (d.join() === '1,2,3,4,5') return 'Lunes a viernes';
+            return d.map(function (x) { return N[x]; }).join(', ');
+        }
+        function pintarHorarios() {
+            var host = $('asxPaneHorarios'); if (!host || !esAdmin()) return;
+            var lista = Object.keys(S.he).map(function (u) { return Object.assign({ uid: u }, S.he[u]); }).filter(function (a) { return typeof a.ini === 'number'; })
+                .sort(function (a, b) { return persona(a.uid).nombre.localeCompare(persona(b.uid).nombre, 'es'); });
+            var h = '<div class="asx-toolbar"><div><div class="asx-h3">Horarios especiales</div><div class="asx-muted">Acuerdos de horario del personal. Siempre deben cumplir sus horas; el horario legal (7:30 a. m. – 3:30 p. m.), el almuerzo y los avisos siguen vigentes.</div></div>' +
+                '<button type="button" class="asx-btn p" data-he-new><i class="fas fa-plus"></i> Nuevo acuerdo</button></div>';
+            if (S.heErr) h += '<div class="asx-banner">No se pudo leer <b>horarios_especiales</b>. Revisa que las reglas de Firestore para esa colección estén publicadas.</div>';
+            if (!lista.length) h += '<div class="asx-empty">Todavía no hay horarios especiales. Crea un acuerdo con “Nuevo acuerdo”.</div>';
+            else h += '<div class="asx-he-grid">' + lista.map(function (a) {
+                var pr = persona(a.uid), vig = (a.desde || a.hasta) ? (a.desde ? 'desde ' + a.desde : '') + (a.desde && a.hasta ? ' ' : '') + (a.hasta ? 'hasta ' + a.hasta : '') : 'Sin fecha de fin';
+                return '<div class="asx-he-card' + (a.activo === false ? ' off' : '') + '"><div class="asx-he-top"><span class="asx-mini" style="--c:' + esc(pr.color) + '">' + esc(pr.icono) + '</span><div><b>' + esc(pr.nombre) + '</b><small>' + esc(pr.rol || 'Personal') + '</small></div></div>' +
+                    '<div class="asx-he-time">' + minTxt(a.ini) + ' – ' + minTxt(a.fin) + '</div>' +
+                    '<div class="asx-he-meta"><span>' + esc(diasTxt(a.dias)) + '</span><span>' + (a.horas || 8) + ' h de jornada</span><span>' + esc(vig) + '</span><span>' + (a.activo === false ? 'Pausado' : 'Activo') + '</span></div>' +
+                    (a.motivo ? '<div class="asx-he-note">' + esc(a.motivo) + '</div>' : '') +
+                    '<div class="asx-he-acts"><button type="button" class="asx-btn g" data-he-edit="' + esc(a.uid) + '"><i class="fas fa-pen"></i> Editar</button>' +
+                    '<button type="button" class="asx-btn g" data-he-toggle="' + esc(a.uid) + '">' + (a.activo === false ? 'Activar' : 'Pausar') + '</button>' +
+                    '<button type="button" class="asx-btn no" data-he-del="' + esc(a.uid) + '"><i class="fas fa-trash"></i></button></div></div>';
+            }).join('') + '</div>';
+            host.innerHTML = h;
+        }
+        function hmTxt(m) { return pad(Math.floor(m / 60)) + ':' + pad(m % 60); }
+        function hmMin(v) { var x = String(v || '').split(':'); return x.length === 2 ? (+x[0]) * 60 + (+x[1]) : NaN; }
+        async function formHe(uid) {
+            var a = uid ? S.he[uid] : null, ps = listaPersonal(), dias = (a && a.dias && a.dias.length) ? a.dias : [1, 2, 3, 4, 5];
+            var opts = ps.filter(function (x) { return uid ? x.uid === uid : !S.he[x.uid]; }).map(function (x) { return '<option value="' + esc(x.uid) + '"' + (x.uid === uid ? ' selected' : '') + '>' + esc(x.nombre) + (x.rol ? ' · ' + esc(x.rol) : '') + '</option>'; }).join('');
+            if (!opts) { try { toast({ type: 'info', title: 'Sin personal disponible', message: 'Todo el personal ya tiene un acuerdo. Edita uno existente.', duration: 4000 }); } catch (e) {} return; }
+            var html = '<div class="asx-form">' +
+                '<label>Persona<select id="heU"' + (uid ? ' disabled' : '') + '>' + opts + '</select></label>' +
+                '<div class="row2"><label>Hora de entrada<input type="time" id="heI" value="' + (a ? hmTxt(a.ini) : '09:00') + '"></label><label>Hora de salida<input type="time" id="heF" value="' + (a ? hmTxt(a.fin) : '17:00') + '"></label></div>' +
+                '<label>Horas a cumplir al día<input type="number" id="heH" min="1" max="12" step="0.5" value="' + (a ? (a.horas || 8) : 8) + '"></label>' +
+                '<div><div style="font-size:12px;font-weight:700;color:#55607a;margin-bottom:6px">Días que aplica</div><div class="dias">' + DIAS_HE.map(function (d) { return '<label><input type="checkbox" data-hed="' + d[1] + '"' + (dias.indexOf(d[1]) !== -1 ? ' checked' : '') + '>' + d[0] + '</label>'; }).join('') + '</div></div>' +
+                '<div class="row2"><label>Vigente desde (opcional)<input type="date" id="heD" value="' + esc(a && a.desde || '') + '"></label><label>Vigente hasta (opcional)<input type="date" id="heT" value="' + esc(a && a.hasta || '') + '"></label></div>' +
+                '<label>Motivo o nota (opcional)<input type="text" id="heM" maxlength="160" placeholder="Ej.: acuerdo con coordinación" value="' + esc(a && a.motivo || '') + '"></label>' +
+                '<div id="heErr"></div></div>';
+            var res = await modal({
+                icono: '🕘', eyebrow: 'NEXUS · Horarios especiales', titulo: uid ? 'Editar acuerdo' : 'Nuevo acuerdo', html: html, izq: true,
+                botones: [{ k: 'no', t: 'Cancelar', c: 'g' }, { k: 'ok', t: 'Guardar acuerdo', c: 'p' }],
+                leer: function (ov) {
+                    return { uid: ov.querySelector('#heU').value, ini: hmMin(ov.querySelector('#heI').value), fin: hmMin(ov.querySelector('#heF').value), horas: parseFloat(ov.querySelector('#heH').value),
+                        dias: [].slice.call(ov.querySelectorAll('[data-hed]')).filter(function (c) { return c.checked; }).map(function (c) { return +c.getAttribute('data-hed'); }),
+                        desde: ov.querySelector('#heD').value, hasta: ov.querySelector('#heT').value, motivo: ov.querySelector('#heM').value.trim() };
+                },
+                validar: function (d, k) {
+                    if (k !== 'ok') return true;
+                    var er = document.getElementById('heErr'), msg = '';
+                    if (!d.uid) msg = 'Elige a la persona.';
+                    else if (isNaN(d.ini) || isNaN(d.fin)) msg = 'Indica la hora de entrada y de salida.';
+                    else if (d.fin <= d.ini) msg = 'La salida debe ser después de la entrada.';
+                    else if (!(d.horas >= 1 && d.horas <= 12)) msg = 'Las horas a cumplir deben estar entre 1 y 12.';
+                    else if ((d.fin - d.ini) < d.horas * 60) msg = 'Entre la entrada y la salida solo hay ' + dur((d.fin - d.ini) * 60000) + ', y deben cumplirse ' + dur(d.horas * 3600000) + '.';
+                    else if (!d.dias.length) msg = 'Marca al menos un día.';
+                    else if (d.desde && d.hasta && d.hasta < d.desde) msg = 'La fecha final no puede ser anterior a la inicial.';
+                    if (er) er.textContent = msg; return !msg;
+                }
+            });
+            if (!res || res.k !== 'ok') return;
+            var d = res.data, Fs = F();
+            try {
+                await Fs.setDoc(Fs.doc(dbf(), 'horarios_especiales', d.uid), { uid: d.uid, ini: d.ini, fin: d.fin, horas: d.horas, dias: d.dias, desde: d.desde || '', hasta: d.hasta || '', motivo: d.motivo, activo: a ? a.activo !== false : true, por: S.nombre, actualizado: ts() });
+                try { toast({ type: 'success', title: 'Acuerdo guardado', message: 'El horario especial de ' + persona(d.uid).nombre + ' quedó registrado.', duration: 3500 }); } catch (e) {}
+            } catch (e) { console.warn('[Asistencia] horario especial:', e && e.message); try { toast({ type: 'error', title: 'No se pudo guardar', message: 'Revisa tu conexión y las reglas de Firestore.', duration: 5000 }); } catch (e2) {} }
+        }
+        async function accionHe(uid, act) {
+            var Fs = F(), a = S.he[uid]; if (!a) return;
+            try {
+                if (act === 'toggle') await Fs.updateDoc(Fs.doc(dbf(), 'horarios_especiales', uid), { activo: a.activo === false, actualizado: ts(), por: S.nombre });
+                else {
+                    var r = await modal({ icono: '🗑️', eyebrow: 'NEXUS · Horarios especiales', titulo: '¿Eliminar este acuerdo?', html: 'Se quitará el horario especial de <b>' + esc(persona(uid).nombre) + '</b>. Volverá a verse solo el horario legal.', botones: [{ k: 'no', t: 'Cancelar', c: 'g' }, { k: 'ok', t: 'Eliminar', c: 'p' }] });
+                    if (r && r.k === 'ok') await Fs.deleteDoc(Fs.doc(dbf(), 'horarios_especiales', uid));
+                }
+            } catch (e) { console.warn('[Asistencia] horario especial:', e && e.message); }
+        }
+
         // ── Pintar: Mi jornada ──────────────────────────────────────
         function pintarMi() {
             if (!S.uid || !$('asxState')) return;
@@ -34013,6 +34393,7 @@ select.asx-fld { cursor: pointer; }
             $('asxMiOrd').textContent = dur(r.ord);
             $('asxMiExt').textContent = dur(r.ext + r.fds);
             $('asxMiSes').textContent = String(r.tramos.length);
+            pintarHe(r, t);
             var d0 = inicioJornada(t), lab = dowLab(t) >= 1 && dowLab(t) <= 5, bar = $('asxBar'), txt = $('asxBarTxt');
             if (!lab) { bar.style.width = '0%'; txt.textContent = tipo === 'fds' ? 'Estás de guardia' : 'Fin de semana'; return; }
             var p = Math.max(0, Math.min(1, (t - d0) / JORNADA));
@@ -34262,7 +34643,7 @@ select.asx-fld { cursor: pointer; }
         // ── Programación de Prensa: guardias + días libres + pautas en UN solo calendario ──
         // guardias/{fecha}: uids[] · dias_libres/{uid}_{fecha}: compensatorio (solicitado|aprobado|rechazado) · pautas/{id}: varias por día
         // Saldo de días libres = guardias ya cumplidas (fecha pasada) sin día libre asociado. No se guarda contador.
-        S.libres = {}; S.guardiasTodas = {}; S.pautas = {}; S.pautasAnios = {}; S.progOk = false; S.capa = 'todo'; S.mes = 0; S.eqQ = ''; S.eqSort = 'carga'; S.eqAll = false;
+        S.libres = {}; S.guardiasTodas = {}; S.pautas = {}; S.pautasAnios = {}; S.progOk = false; S.vista = 'mes'; S.capa = 'todo'; S.mes = 0; S.eqQ = ''; S.eqSort = 'carga'; S.eqAll = false;
         var FORMATOS = ['Nota', 'Foto', 'Video', 'Nota + foto', 'Cobertura completa'];
         function idNuevo() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
         async function leerCol(nombre, q) {
@@ -34395,12 +34776,40 @@ select.asx-fld { cursor: pointer; }
             var capas = [['todo', 'Todo', ''], ['g', 'Guardias', '#4b7fe0'], ['l', 'Días libres', '#e0a92b'], ['p', 'Pautas', '#7a5cf0']].map(function (c) { return '<button type="button" class="pgx-seg' + (capa === c[0] ? ' on' : '') + '" data-prog-capa="' + c[0] + '">' + (c[2] ? '<i style="background:' + c[2] + '"></i>' : '') + c[1] + '</button>'; }).join('');
             var tercer = admin ? '<div class="pgx-hs"><b>' + pend.length + '</b>solicitud(es) pendiente(s)</div>' : '<div class="pgx-hs"><b>' + np + '</b>pauta(s) del mes</div>';
             var sortOpts = [['carga', 'Más carga'], ['az', 'A – Z'], ['saldo', 'Mayor saldo']].map(function (o) { return '<option value="' + o[0] + '"' + ((S.eqSort || 'carga') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
+            // ── Vista Mes / Año ──
+            var anio = S.vista === 'anio';
+            var vistaTog = '<div class="pgx-vista" role="group" aria-label="Vista del calendario"><button type="button" class="pgx-vb' + (anio ? '' : ' on') + '" data-pgx-vista="mes">Mes</button><button type="button" class="pgx-vb' + (anio ? ' on' : '') + '" data-pgx-vista="anio">Año</button></div>';
+            var ngY = 0, nlY = 0, npY = 0, minis = '';
+            if (anio) {
+                MESES.forEach(function (nm, i) {
+                    var cl = y + '-' + pad(i + 1), offM = (new Date(Date.UTC(y, i, 1)).getUTCDay() + 6) % 7, nd = new Date(Date.UTC(y, i + 1, 0)).getUTCDate();
+                    var o2 = (y - y0n) * 12 + (i + 1 - m0n), hh = '<div class="pgx-mini"><button type="button" class="pgx-mini-t' + (o2 === mesIdx ? ' cur' : '') + '" data-pgx-ir="' + o2 + '" data-pgx-zoom="1" title="Abrir ' + nm + ' ' + y + '">' + nm + '</button><div class="pgx-mg">';
+                    DOW_CAB.forEach(function (x, k) { hh += '<span class="pgx-md-h' + (k > 4 ? ' we' : '') + '">' + x + '</span>'; });
+                    for (var bb = 0; bb < offM; bb++) hh += '<span></span>';
+                    for (var d2 = 1; d2 <= nd; d2++) {
+                        var fe = cl + '-' + pad(d2), we2 = (offM + d2 - 1) % 7 > 4;
+                        var g0 = uidsGuardia(fe), l0 = libresDelDia(fe), p0 = pautasDelDia(fe).filter(pautaActiva);
+                        if (g0.length) ngY++; nlY += l0.filter(function (l) { return l.estado === 'aprobado'; }).length; npY += p0.length;
+                        var g1 = ver('g') ? g0 : [], l1 = ver('l') ? l0 : [], p1 = ver('p') ? p0 : [];
+                        var mn = g1.indexOf(S.uid) !== -1 || l1.some(function (l) { return l.uid === S.uid; }) || p1.some(function (q) { return (q.uids || []).indexOf(S.uid) !== -1; });
+                        var lp = l1.length && !g1.length && l1.every(function (l) { return l.estado === 'solicitado'; });
+                        var cx = 'pgx-md' + (we2 ? ' wk' : '') + (fe < hoy ? ' past' : '') + (fe === hoy ? ' today' : '') + (g1.length ? ' g' : '') + (l1.length && !g1.length ? ' l' : '') + (lp ? ' pend' : '') + (p1.length ? ' p' : '') + (mn ? ' mine' : '');
+                        var tt = diaCorto(fe) + (g1.length ? ' · ' + g1.map(function (u) { return persona(u).nombre; }).join(', ') : '') + (l1.length ? ' · libre: ' + l1.map(function (l) { return persona(l.uid).nombre; }).join(', ') : '') + (p1.length ? ' · ' + p1.length + ' pauta(s)' : '');
+                        hh += '<button type="button" class="' + cx + '" data-fecha="' + fe + '" title="' + esc(tt) + '">' + d2 + '</button>';
+                    }
+                    minis += hh + '</div></div>';
+                });
+            }
+            var navH = anio
+                ? '<div class="pgx-mnav"><button type="button" class="pgx-ib" data-pgx-mes="-12" aria-label="Año anterior"' + (y <= y0n ? ' disabled' : '') + '>‹</button><div class="pgx-mtitle">' + y + '</div><button type="button" class="pgx-ib" data-pgx-mes="12" aria-label="Año siguiente"' + (y >= y0n + 1 ? ' disabled' : '') + '>›</button>' + (mesIdx !== 0 ? '<button type="button" class="pgx-hoy" data-pgx-mes="0">Hoy</button>' : '') + '</div>'
+                : '<div class="pgx-mnav"><button type="button" class="pgx-ib" data-pgx-mes="-1" aria-label="Mes anterior"' + (mesIdx <= bnd.min ? ' disabled' : '') + '>‹</button><div class="pgx-mtitle">' + MESES[m - 1] + ' ' + y + '</div><button type="button" class="pgx-ib" data-pgx-mes="1" aria-label="Mes siguiente"' + (mesIdx >= bnd.max ? ' disabled' : '') + '>›</button>' + (mesIdx !== 0 ? '<button type="button" class="pgx-hoy" data-pgx-mes="0">Hoy</button>' : '') + '</div>';
+            var cG = anio ? ngY : ng, cL = anio ? nlY : nl, cP = anio ? npY : np, cSfx = anio ? ' del año' : '';
             host.innerHTML = '<div class="pgx">' +
                 '<div class="pgx-hero"><div><div class="pgx-eyebrow">Programación</div><div class="pgx-title">Programación de actividades</div><div class="pgx-sub">' + (admin ? 'Toca cualquier día para gestionar guardias, días libres y pautas' : 'Toca un día para ver la programación o solicitar un día libre') + '</div>' +
                 '<div class="pgx-hstats"><div class="pgx-hs"><b>' + ng + '</b>guardia(s) del mes</div><div class="pgx-hs"><b>' + nl + '</b>libre(s) aprobado(s)</div>' + tercer + '</div></div></div>' +
-                '<div class="pgx-main"><section class="pgx-card"><div class="pgx-chead"><div class="pgx-mnav"><button type="button" class="pgx-ib" data-pgx-mes="-1" aria-label="Mes anterior"' + (mesIdx <= bnd.min ? ' disabled' : '') + '>‹</button><div class="pgx-mtitle">' + MESES[m - 1] + ' ' + y + '</div><button type="button" class="pgx-ib" data-pgx-mes="1" aria-label="Mes siguiente"' + (mesIdx >= bnd.max ? ' disabled' : '') + '>›</button>' + (mesIdx !== 0 ? '<button type="button" class="pgx-hoy" data-pgx-mes="0">Hoy</button>' : '') + '</div>' +
-                '<div class="pgx-counts"><span><b>' + ng + '</b> guardia(s)</span><span><b>' + nl + '</b> libre(s)</span><span><b>' + np + '</b> pauta(s)</span></div></div>' +
-                yearStrip + '<div class="pgx-grid">' + calH + '</div>' +
+                '<div class="pgx-main"><section class="pgx-card"><div class="pgx-chead">' + navH + vistaTog + '<div class="pgx-counts"><span><b>' + cG + '</b> guardia(s)' + cSfx + '</span><span><b>' + cL + '</b> libre(s)' + cSfx + '</span><span><b>' + cP + '</b> pauta(s)' + cSfx + '</span></div></div>' +
+
+                (anio ? '<div class="pgx-yeargrid">' + minis + '</div>' : yearStrip + '<div class="pgx-grid">' + calH + '</div>') +
                 '<div class="pgx-legend"><span><i style="background:#aac7ff;box-shadow:inset 0 0 0 1.5px #2a62d4"></i>Guardia</span><span><i style="background:#ffd98f;box-shadow:inset 0 0 0 1.5px #e0a92b"></i>Día libre (atenuado = pendiente)</span><span><i style="background:#7a5cf0"></i>Con pautas (📰)</span><span><i style="box-shadow:inset 0 0 0 2px #14a064"></i>Algo tuyo</span></div></section>' +
                 '<aside class="pgx-side"><div class="pgx-capas" role="group" aria-label="Qué mostrar en el calendario">' + capas + '</div><section class="pgx-card pgx-me"><div class="pgx-h">Mi programación</div><div class="pgx-big">' + saldoLibres(S.uid) + '</div><small>día(s) libre(s) de saldo por guardias cumplidas</small>' +
                 (prox.length ? '<div class="pgx-next">' + prox.slice(0, 6).map(function (x) { return '<div><span>' + esc(diaCorto(x.f)) + '</span><span>' + esc(x.t) + '</span></div>'; }).join('') + '</div>' : '<small style="margin-top:12px">No tienes nada programado.</small>') + '</section>' + pendHtml + '</aside></div>' +
@@ -34619,19 +35028,26 @@ select.asx-fld { cursor: pointer; }
         // ── Eventos de la interfaz ──────────────────────────────────
         document.addEventListener('click', function (e) {
             if (e.target.closest && e.target.closest('#asxAlmBtn')) { tomarAlmuerzo(false); return; }
+            var heN = e.target.closest && e.target.closest('[data-he-new]'); if (heN) { formHe(null); return; }
+            var heE = e.target.closest && e.target.closest('[data-he-edit]'); if (heE) { formHe(heE.getAttribute('data-he-edit')); return; }
+            var heT = e.target.closest && e.target.closest('[data-he-toggle]'); if (heT) { accionHe(heT.getAttribute('data-he-toggle'), 'toggle'); return; }
+            var heD = e.target.closest && e.target.closest('[data-he-del]'); if (heD) { accionHe(heD.getAttribute('data-he-del'), 'del'); return; }
             var tab = e.target.closest && e.target.closest('[data-asx-tab]');
             if (tab) {
                 S.tab = tab.getAttribute('data-asx-tab');
                 document.querySelectorAll('.asx-tab').forEach(function (b) { b.classList.toggle('on', b === tab); });
                 $('asxPaneTarjetero').classList.toggle('asx-hidden', S.tab !== 'tarjetero');
                 $('asxPaneGuardias').classList.toggle('asx-hidden', S.tab !== 'guardias');
+                $('asxPaneHorarios').classList.toggle('asx-hidden', S.tab !== 'horarios');
+                if (S.tab === 'horarios') pintarHorarios();
                 if (S.tab === 'guardias') { pintarProg(); Promise.all([cargarGuardias(), cargarProg()]).then(pintarProg); }
                 return;
             }
             var card = e.target.closest && e.target.closest('.asx-card'); if (card) { abrirDrawer(card.getAttribute('data-uid')); return; }
             var day = e.target.closest && e.target.closest('.pgx-day:not(.blank)'); if (day) { abrirDia(day.getAttribute('data-fecha')); return; }
             var capaB = e.target.closest && e.target.closest('[data-prog-capa]'); if (capaB) { S.capa = capaB.getAttribute('data-prog-capa'); pintarProg(); return; }
-            var irB = e.target.closest && e.target.closest('[data-pgx-ir]'); if (irB) { if (!irB.disabled) { S.mes = +irB.getAttribute('data-pgx-ir'); irMes(); } return; }
+            var vB = e.target.closest && e.target.closest('[data-pgx-vista]'); if (vB) { S.vista = vB.getAttribute('data-pgx-vista'); pintarProg(); return; }
+            var irB = e.target.closest && e.target.closest('[data-pgx-ir]'); if (irB) { if (!irB.disabled) { if (irB.hasAttribute('data-pgx-zoom')) S.vista = 'mes'; S.mes = +irB.getAttribute('data-pgx-ir'); irMes(); } return; }
             var mesB = e.target.closest && e.target.closest('[data-pgx-mes]'); if (mesB) { var dm = +mesB.getAttribute('data-pgx-mes'), bn = mesBounds(); S.mes = dm === 0 ? 0 : Math.max(bn.min, Math.min(bn.max, (S.mes || 0) + dm)); irMes(); return; }
             var allB = e.target.closest && e.target.closest('[data-pgx-all]'); if (allB) { S.eqAll = !S.eqAll; pintarEquipo(); return; }
             var la = e.target.closest && e.target.closest('[data-lib-act]'); if (la) { resolverLibre(la.getAttribute('data-lib-id'), la.getAttribute('data-lib-act'), la); return; }
@@ -34681,7 +35097,9 @@ select.asx-fld { cursor: pointer; }
         };
         var _out = window.nexusLogout;
         window.nexusLogout = async function () {
-            try { await antesDeSalir(); } catch (e) {}
+            // Si la red está lenta (típico tras mucho rato inactivo), no se espera más de 4 s: un cierre colgado
+            // terminaría después y sacaría al usuario justo cuando vuelva a entrar.
+            try { await Promise.race([antesDeSalir(), new Promise(function (r) { setTimeout(r, 4000); })]); } catch (e) {}
             detener();
             return _out.apply(this, arguments);
         };
@@ -34700,6 +35118,837 @@ select.asx-fld { cursor: pointer; }
     })();
     </script>
 
+
+    <script>
+/* ============================================================
+   NEXUS · Estadísticas (front) — etapas 1 y 2: control, KPIs, semana, evolución, calor, flujo, asignaciones, tiempos, tops, comparativas, responsables y arrastre
+   Lee { f, pas } de la acción getEstadisticas (Apps Script). Gráficos en SVG propio, sin librerías externas.
+   Prefijo de clases e IDs: nxs- (nxe- ya lo usa el selector de emojis).
+   ============================================================ */
+// Bandera de despliegue: en false se muestra el aviso "en construcción" de siempre.
+window.NEXUS_STATS_ENABLED = true;
+
+(function () {
+    'use strict';
+
+    var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    var DOW = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    var C_REC = '#3876F2', C_FIN = '#3DDC97', C_RECH = '#FF5C6C', C_PREV = '#8FA3C7', C_AMB = '#F5B454';
+    var C_RESP = ['#F5B454', '#B58CFF', '#4DD4E8', '#FF9F7A', '#C6E86B', '#F08BC8', '#7FD1AE', '#E3C26B', '#9AA8FF', '#FFB3B3'];
+    var REFRESCO_MS = 90000, UI_MS = 15000;
+
+    var S = {
+        raw: null, M: null, timer: null, cargando: false, errorCarga: null, ultimoOk: 0, ultimoIntento: 0,
+        modoEvo: 'dia', calorDia: -1, ocultas: {}, charts: [], ro: null, rzT: null, kv: {}, falloLogueado: false, cuentas: 0
+    };
+    var nf = new Intl.NumberFormat('es-VE');
+
+    // ---------- utilidades ----------
+    function $(id) { return document.getElementById(id); }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function reducido() { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } }
+    function esStaff() { return (typeof nexusEsStaff === 'function') ? !!nexusEsStaff() : false; }
+    function fmtN(n) { return n == null ? '---' : nf.format(Math.round(n * 10) / 10); }
+    function fmtDec(n, d) { return n == null ? '---' : Number(n).toLocaleString('es-VE', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+    function fmtPct(n) { return n == null ? '---' : fmtDec(n * 100, 1) + '%'; }
+    function fmtTiempo(h) {
+        if (h == null) return '---';
+        if (h < 1) return Math.max(1, Math.round(h * 60)) + ' min';
+        if (h < 48) { var hh = Math.floor(h), mm = Math.round((h - hh) * 60); if (mm === 60) { hh++; mm = 0; } return hh + ' h' + (mm ? ' ' + mm + ' min' : ''); }
+        var d = Math.floor(h / 24), r = Math.round(h - d * 24); if (r === 24) { d++; r = 0; }
+        return d + ' d' + (r ? ' ' + r + ' h' : '');
+    }
+    function mesInfo(code) { code = Number(code); if (!code) return null; return { y: Math.floor(code / 100), m: code % 100 }; }
+    function nombreMes(code) { var i = mesInfo(code); if (!i) return ''; var n = MESES[i.m - 1] || ''; return n.charAt(0).toUpperCase() + n.slice(1) + ' ' + i.y; }
+    function serialADate(n) { return new Date((n - 25569) * 86400000); }          // usar siempre getUTC*
+    function serialDeUTC(y, m, d) { return Date.UTC(y, m - 1, d) / 86400000 + 25569; }
+    function dd(n) { return (n < 10 ? '0' : '') + n; }
+    function suma(a, hasta) { var s = 0, n = hasta == null ? a.length : Math.min(hasta, a.length); for (var i = 0; i < n; i++) s += (a[i] || 0); return s; }
+    // Color del responsable = el de su perfil de personal (window._nexusPersonal), enlazado por nombre.
+    function normNom(t) { return String(t == null ? '' : t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+    function aclarar(hex) {      // los colores muy oscuros se pierden sobre el lienzo oscuro: se aclaran lo justo
+        var m = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(hex || '').trim()); if (!m) return null;
+        var h = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1], r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+        var lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        if (lum < 0.42) { var t = Math.min(0.55, (0.42 - lum) * 1.5); r = Math.round(r + (255 - r) * t); g = Math.round(g + (255 - g) * t); b = Math.round(b + (255 - b) * t); }
+        return '#' + [r, g, b].map(function (v) { return (v < 16 ? '0' : '') + v.toString(16); }).join('');
+    }
+    function perfilResp(nombre, campo) {      // valor del perfil de personal (color o icono), enlazado por nombre
+        var per = window._nexusPersonal || {}, n = normNom(nombre), exacto = null, primero = [], pn = n.split(' ')[0];
+        Object.keys(per).forEach(function (u) {
+            var m = per[u]; if (!m || !m.nombre || !m[campo]) return;
+            var mn = normNom(m.nombre);
+            if (mn === n) exacto = m[campo]; else if (pn && mn.split(' ')[0] === pn) primero.push(m[campo]);
+        });
+        return exacto || (primero.length === 1 ? primero[0] : null);
+    }
+    function colorResp(nombre, idx) { return aclarar(perfilResp(nombre, 'color')) || C_RESP[(idx || 0) % C_RESP.length]; }
+    // Marca visual del responsable: su emoji de perfil; si no tiene, el punto de color de siempre.
+    function marcaResp(nombre, idx) {
+        var ic = perfilResp(nombre, 'icono'), c = colorResp(nombre, idx);
+        if (ic) return '<span class="nxs-emo" aria-hidden="true">' + esc(ic) + '</span>';
+        return '<i class="nxs-dot2" style="background:' + c + ';color:' + c + '"></i>';
+    }
+    function acumulada(a, hasta) { var s = 0, o = []; for (var i = 0; i < a.length; i++) { if (a[i] == null || (hasta != null && i >= hasta)) { o.push(null); } else { s += a[i]; o.push(s); } } return o; }
+
+    // ---------- modelo ----------
+    function envolver(o) {
+        o = o || {};
+        return {
+            tiene: function (k) { return o[k] !== undefined && o[k] !== ''; },
+            num: function (k) { var v = o[k]; if (v === undefined || v === '') return null; var n = Number(String(v).replace(',', '.')); return isFinite(n) ? n : null; },
+            csv: function (k) {
+                var v = o[k]; if (v === undefined) return [];
+                return String(v).split(',').map(function (x) { x = x.trim(); if (x === '') return null; var n = Number(x.replace(',', '.')); return isFinite(n) ? n : null; });
+            },
+            lista: function (k) { var v = o[k]; if (v === undefined || v === '') return []; return String(v).split('¦').map(function (x) { return x.trim(); }).filter(Boolean); }
+        };
+    }
+    function modelo(raw) {
+        var F = envolver(raw.f), P = envolver(raw.pas);
+        return { F: F, P: P, hayPas: P.tiene('meta.mes') && (F.num('meta.mes') == null || P.num('meta.mes') < F.num('meta.mes')) };
+    }
+
+    // ---------- KPIs ----------
+    function variacion(act, prev) { if (act == null || prev == null || prev === 0) return null; return (act - prev) / prev; }
+    function calcularKpis(M) {
+        var F = M.F, P = M.P, corte = F.num('meta.diaCorte') || 0, pas = M.hayPas;
+        var pr = pas ? suma(P.csv('serie.recibidas'), corte) : null;
+        var pf = pas ? suma(P.csv('serie.finalizadas'), corte) : null;
+        var pj = pas ? suma(P.csv('serie.rechazadas'), corte) : null;
+        return [
+            { id: 'rec', etiqueta: 'Recibidas', icono: 'fa-inbox', color: C_REC, valor: F.num('kpi.recibidas'), fmt: fmtN,
+              sub: 'Hoy ' + fmtN(F.num('kpi.hoy')) + ' · promedio diario ' + fmtDec(F.num('kpi.promDiario'), 1), delta: variacion(F.num('kpi.recibidas'), pr), malo: 'sube', ant: pas ? 'mismo tramo del mes anterior: ' + fmtN(pr) : null },
+            { id: 'fin', etiqueta: 'Finalizadas', icono: 'fa-circle-check', color: C_FIN, valor: F.num('kpi.finalizadas'), fmt: fmtN,
+              sub: 'Cerradas con éxito en el mes', delta: variacion(F.num('kpi.finalizadas'), pf), malo: 'baja', ant: pas ? 'mismo tramo del mes anterior: ' + fmtN(pf) : null },
+            { id: 'rech', etiqueta: 'Rechazadas', icono: 'fa-ban', color: C_RECH, valor: F.num('kpi.rechazadas'), fmt: fmtN,
+              sub: 'Solicitudes descartadas', delta: variacion(F.num('kpi.rechazadas'), pj), malo: 'sube', ant: pas ? 'mismo tramo del mes anterior: ' + fmtN(pj) : null },
+            { id: 'tasa', etiqueta: 'Tasa de cierre', icono: 'fa-bullseye', color: C_AMB, valor: F.num('kpi.tasaCierre'), fmt: fmtPct,
+              sub: F.num('kpi.tasaCierre') == null ? 'Sin solicitudes recibidas este mes' : '(finalizadas + rechazadas) ÷ recibidas', delta: variacion(F.num('kpi.tasaCierre'), P.num('kpi.tasaCierre')), malo: 'baja', ant: pas ? 'mes anterior completo: ' + fmtPct(P.num('kpi.tasaCierre')) : null },
+            { id: 'tmed', etiqueta: 'Tiempo mediano total', icono: 'fa-hourglass-half', color: '#4DD4E8', valor: F.num('tiempo.total.med'), fmt: fmtTiempo, tiempo: true,
+              sub: F.num('tiempo.total.med') == null ? 'Sin finalizadas con fechas legibles este mes' : 'Creación → finalización · ' + fmtN(F.num('tiempo.total.n')) + ' finalizadas', delta: variacion(F.num('tiempo.total.med'), P.num('tiempo.total.med')), malo: 'sube', ant: pas ? 'mes anterior: ' + fmtTiempo(P.num('tiempo.total.med')) : null },
+            { id: 'arr', etiqueta: 'Arrastre abierto', icono: 'fa-layer-group', color: '#B58CFF', valor: F.num('arr.abiertas'), fmt: fmtN,
+              sub: 'Abiertas ahora · al inicio del mes: ' + fmtN(F.num('arr.inicial')), delta: variacion(F.num('arr.abiertas'), P.num('arr.abiertas')), malo: 'sube', ant: pas ? 'al cierre del mes anterior: ' + fmtN(P.num('arr.abiertas')) : null }
+        ];
+    }
+
+    // ---------- semana ----------
+    function calcularSemana(M) {
+        var F = M.F, P = M.P, ini = F.num('sem.inicio');
+        if (ini == null) return null;
+        ini = Math.round(ini);
+        var recF = F.csv('sem.dia.recibidas'), finF = F.csv('sem.dia.finalizadas');
+        var nombresF = F.lista('resp.nombres'), mesF = mesInfo(F.num('meta.mes'));
+        var inicioMesF = mesF ? serialDeUTC(mesF.y, mesF.m, 1) : -Infinity;
+        var mesP = M.hayPas ? mesInfo(P.num('meta.mes')) : null;
+        var recP = P.csv('serie.recibidas'), finP = P.csv('serie.finalizadas'), nombresP = P.lista('resp.nombres');
+        var respMap = {}, orden = [];
+        function resp(n) { if (!respMap[n]) { respMap[n] = [null, null, null, null, null, null, null]; orden.push(n); } return respMap[n]; }
+        nombresF.forEach(function (n) { resp(n); });
+        var dias = [], tomadosPas = 0;
+        for (var k = 0; k < 7; k++) {
+            var s = ini + k, d = serialADate(s), diaMes = d.getUTCDate();
+            var dePas = s < inicioMesF && mesP && mesP.y === d.getUTCFullYear() && mesP.m === d.getUTCMonth() + 1;
+            var rec, fin;
+            if (dePas) {
+                tomadosPas++;
+                rec = recP[diaMes - 1] == null ? null : recP[diaMes - 1];
+                fin = finP[diaMes - 1] == null ? null : finP[diaMes - 1];
+                nombresP.forEach(function (n, j) { var v = P.csv('resp.diaAsig.' + (j + 1))[diaMes - 1]; if (v != null) resp(n)[k] = v; });
+            } else {
+                rec = recF[k] == null ? null : recF[k];
+                fin = finF[k] == null ? null : finF[k];
+                nombresF.forEach(function (n, j) { var v = F.csv('sem.resp.' + (j + 1))[k]; if (v != null) resp(n)[k] = v; });
+            }
+            dias.push({ s: s, etiqueta: DOW[d.getUTCDay()] + ' ' + dd(diaMes) + '/' + dd(d.getUTCMonth() + 1), rec: rec, fin: fin });
+        }
+        var series = [
+            { clave: 'rec', name: 'Recibidas', color: C_REC, data: dias.map(function (x) { return x.rec; }) },
+            { clave: 'fin', name: 'Finalizadas', color: C_FIN, data: dias.map(function (x) { return x.fin; }) }
+        ];
+        var iColor = 0;
+        orden.forEach(function (n) {
+            var arr = respMap[n];
+            if (suma(arr) > 0) { series.push({ clave: 'r:' + n, name: n, color: colorResp(n, iColor), data: arr }); iColor++; }
+        });
+        var tr = suma(series[0].data), tf = suma(series[1].data);
+        return { dias: dias, series: series, rec: tr, fin: tf, ef: tr > 0 ? tf / tr : null, inicio: dias[0].etiqueta, fin_: dias[6].etiqueta, tomadosPas: tomadosPas };
+    }
+
+    // ---------- evolución ----------
+    function calcularEvo(M) {
+        var F = M.F, P = M.P;
+        var dias = F.num('meta.dias') || 30, corte = F.num('meta.diaCorte') || dias;
+        var diasP = M.hayPas ? (P.num('meta.dias') || 31) : 0;
+        var n = Math.max(dias, diasP);
+        function pad(a, len) { var o = a.slice(0, len); while (o.length < len) o.push(null); return o; }
+        function serie(clave) {
+            var cur = pad(F.csv('serie.' + clave), n).map(function (v, i) { return i < corte && i < dias ? (v == null ? 0 : v) : null; });
+            var prev = M.hayPas ? pad(P.csv('serie.' + clave), n).map(function (v, i) { return i < diasP ? (v == null ? 0 : v) : null; }) : null;
+            return { cur: cur, prev: prev };
+        }
+        return { n: n, dias: dias, corte: corte, mesAct: nombreMes(F.num('meta.mes')), mesPrev: M.hayPas ? nombreMes(P.num('meta.mes')) : '', rec: serie('recibidas'), fin: serie('finalizadas') };
+    }
+
+    // ============================================================
+    // GRÁFICOS SVG
+    // ============================================================
+    function paso(max) {
+        if (!(max > 0)) return { top: 4, step: 1 };
+        var raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw))), nn = raw / mag;
+        var step = (nn <= 1 ? 1 : nn <= 2 ? 2 : nn <= 5 ? 5 : 10) * mag;
+        if (step < 1) step = 1;
+        return { top: Math.ceil(max / step) * step, step: step };
+    }
+    function anchoDe(host) { return Math.max(280, Math.floor(host.clientWidth || 600)); }
+
+    function ejeY(l, r, t, b, W, top, step, y) {
+        var o = '';
+        for (var v = 0; v <= top + 0.0001; v += step) {
+            var yy = y(v);
+            o += '<line class="nxs-grid" x1="' + l + '" x2="' + (W - r) + '" y1="' + yy + '" y2="' + yy + '"/>' +
+                '<text class="nxs-tick" x="' + (l - 8) + '" y="' + (yy + 4) + '" text-anchor="end">' + fmtN(v) + '</text>';
+        }
+        return o;
+    }
+    function posTooltip(tip, wrap, px) {
+        tip.style.display = 'block';
+        var w = tip.offsetWidth, W = wrap.clientWidth, left = px + 14;
+        if (left + w > W - 4) left = px - w - 14;
+        if (left < 4) left = 4;
+        tip.style.left = left + 'px';
+    }
+
+    function graficoBarras(host, cfg) {
+        var W = anchoDe(host), H = cfg.alto || 280, l = 38, r = 10, t = 14, b = 30;
+        var vis = cfg.series.filter(function (s) { return !S.ocultas[s.clave]; });
+        var max = 0;
+        vis.forEach(function (s) { s.data.forEach(function (v) { if (v != null && v > max) max = v; }); });
+        var sc = paso(max), pw = W - l - r, ph = H - t - b, n = cfg.labels.length;
+        var y = function (v) { return t + ph - (v / sc.top) * ph; };
+        var gw = pw / n, nvis = Math.max(1, vis.length);
+        var bw = Math.max(3, Math.min(26, (gw * 0.78) / nvis)), gap = Math.min(3, bw * 0.15);
+        var svg = ejeY(l, r, t, b, W, sc.top, sc.step, y);
+        var lonEt = 0; cfg.labels.forEach(function (q) { var e = String(q); if (gw < 50) e = e.split(' ')[0]; else if (gw < 76) e = e.split('/')[0]; if (e.length > lonEt) lonEt = e.length; });
+        var cadaEt = Math.max(1, Math.ceil((lonEt * 6.6 + 8) / gw));      // evita que las etiquetas se pisen cuando hay muchas barras
+        for (var i = 0; i < n; i++) {
+            var cx = l + gw * i + gw / 2, x0 = cx - (nvis * bw + (nvis - 1) * gap) / 2;
+            var et = String(cfg.labels[i]); if (gw < 50) et = et.split(' ')[0]; else if (gw < 76) et = et.split('/')[0];   // en pantallas angostas: "Sáb 07" en vez de "Sáb 07/11"
+            if (i % cadaEt === 0) svg += '<text class="nxs-tick" x="' + cx + '" y="' + (H - 9) + '" text-anchor="middle">' + esc(et) + '</text>';
+            svg += '<rect class="nxs-hoverband" data-g="' + i + '" x="' + (l + gw * i + 2) + '" y="' + t + '" width="' + (gw - 4) + '" height="' + ph + '" rx="6" opacity="0"/>';
+            vis.forEach(function (s, j) {
+                var v = s.data[i];
+                if (v == null) return;                       // día futuro: sin barra
+                var hh = Math.max(v > 0 ? 2 : 0, (v / sc.top) * ph);
+                svg += '<rect class="nxs-bar" style="--nxs-d:' + (i * 40 + j * 20) + 'ms;fill:' + s.color + ';color:' + s.color + '" x="' + (x0 + j * (bw + gap)) + '" y="' + (t + ph - hh) + '" width="' + bw + '" height="' + hh + '" rx="3"/>';
+            });
+        }
+        host.innerHTML = '<svg class="nxs-svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(cfg.aria) + '">' + svg + '<rect class="nxs-capture" x="' + l + '" y="' + t + '" width="' + pw + '" height="' + ph + '" fill="transparent"/></svg><div class="nxs-tip" role="presentation"></div>';
+        var cap = host.querySelector('.nxs-capture'), tip = host.querySelector('.nxs-tip'), bands = host.querySelectorAll('.nxs-hoverband');
+        function fuera() { tip.style.display = 'none'; for (var q = 0; q < bands.length; q++) bands[q].setAttribute('opacity', '0'); }
+        cap.addEventListener('pointermove', function (ev) {
+            var bx = host.getBoundingClientRect(), px = ev.clientX - bx.left;
+            var i = Math.min(n - 1, Math.max(0, Math.floor((px - l) / gw)));
+            for (var q = 0; q < bands.length; q++) bands[q].setAttribute('opacity', q === i ? '0.07' : '0');
+            var h = '<b>' + esc(cfg.titulos ? cfg.titulos[i] : cfg.labels[i]) + '</b>';
+            vis.forEach(function (s) { h += '<div><i style="background:' + s.color + '"></i>' + esc(s.name) + '<span>' + (s.data[i] == null ? '---' : fmtN(s.data[i])) + '</span></div>'; });
+            tip.innerHTML = h; posTooltip(tip, host, px);
+        });
+        cap.addEventListener('pointerleave', fuera);
+        return { destruir: function () { host.innerHTML = ''; } };
+    }
+
+    // Curva suave que no se pasa de los datos (interpolación monótona): nunca baja de cero ni inventa picos.
+    function trazoSuave(p) {
+        var n = p.length, i;
+        if (n < 3) return p.map(function (q, k) { return (k ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' ');
+        var dx = [], m = [], t = [];
+        for (i = 0; i < n - 1; i++) { dx[i] = p[i + 1][0] - p[i][0]; m[i] = (p[i + 1][1] - p[i][1]) / dx[i]; }
+        t[0] = m[0]; t[n - 1] = m[n - 2];
+        for (i = 1; i < n - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+        for (i = 0; i < n - 1; i++) {
+            if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; continue; }
+            var a = t[i] / m[i], b = t[i + 1] / m[i], q2 = a * a + b * b;
+            if (q2 > 9) { var k2 = 3 / Math.sqrt(q2); t[i] = k2 * a * m[i]; t[i + 1] = k2 * b * m[i]; }
+        }
+        var d = 'M' + p[0][0].toFixed(1) + ' ' + p[0][1].toFixed(1);
+        for (i = 0; i < n - 1; i++) {
+            var h = dx[i] / 3;
+            d += ' C' + (p[i][0] + h).toFixed(1) + ' ' + (p[i][1] + t[i] * h).toFixed(1) + ' ' + (p[i + 1][0] - h).toFixed(1) + ' ' + (p[i + 1][1] - t[i + 1] * h).toFixed(1) + ' ' + p[i + 1][0].toFixed(1) + ' ' + p[i + 1][1].toFixed(1);
+        }
+        return d;
+    }
+
+    var _uid = 0;
+    function graficoLinea(host, cfg) {
+        var W = anchoDe(host), H = cfg.alto || 270, l = 40, r = 14, t = 20, b = 28, n = cfg.n, uid = 'nxsg' + (++_uid);
+        var max = 0;
+        cfg.series.forEach(function (s) { s.data.forEach(function (v) { if (v != null && v > max) max = v; }); });
+        if (cfg.proyeccion && cfg.proyeccion.valor > max) max = cfg.proyeccion.valor;
+        var sc = paso(max), pw = W - l - r, ph = H - t - b;
+        var x = function (i) { return n > 1 ? l + (i * pw) / (n - 1) : l; };
+        var y = function (v) { return t + ph - (v / sc.top) * ph; };
+        var svg = '<defs>';
+        cfg.series.forEach(function (s, k) {
+            svg += '<linearGradient id="' + uid + k + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + s.color + '" stop-opacity="' + (s.fillOp || 0.3) + '"/><stop offset="1" stop-color="' + s.color + '" stop-opacity="0"/></linearGradient>';
+        });
+        svg += '</defs>' + ejeY(l, r, t, b, W, sc.top, sc.step, y);
+        var cada = n > 20 ? 5 : 1;
+        for (var i = 0; i < n; i++) {
+            var dia = i + 1;
+            if (cfg.tick) { var tl = cfg.tick(i); if (tl != null) svg += '<text class="nxs-tick" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + esc(tl) + '</text>'; continue; }
+            if (dia === 1 || dia % cada === 0 || (dia === n && (n % cada === 0 || n % cada >= 3))) svg += '<text class="nxs-tick" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + dia + '</text>';
+        }
+        cfg.series.forEach(function (s, k) {
+            var seg = [], cur = [];
+            s.data.forEach(function (v, i) { if (v == null) { if (cur.length) { seg.push(cur); cur = []; } } else cur.push([x(i), y(v)]); });
+            if (cur.length) seg.push(cur);
+            seg.forEach(function (pts) {
+                var d = cfg.suave ? trazoSuave(pts) : pts.map(function (p, q) { return (q ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+                if (pts.length > 1) svg += '<path d="' + d + ' L' + pts[pts.length - 1][0].toFixed(1) + ' ' + (t + ph) + ' L' + pts[0][0].toFixed(1) + ' ' + (t + ph) + ' Z" fill="url(#' + uid + k + ')" stroke="none"/>';
+                svg += '<path class="nxs-line' + (s.dash ? '' : ' nxs-glow') + '" d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="' + (s.dash ? 1.8 : 2.4) + '" stroke-linejoin="round" stroke-linecap="round"' + (s.dash ? ' stroke-dasharray="5 5"' : '') + ' style="color:' + s.color + '"/>';
+                if (pts.length === 1) svg += '<circle cx="' + pts[0][0] + '" cy="' + pts[0][1] + '" r="3" fill="' + s.color + '"/>';
+            });
+        });
+        if (cfg.proyeccion) {
+            var pr = cfg.proyeccion;
+            svg += '<path d="M' + x(pr.desde).toFixed(1) + ' ' + y(pr.base).toFixed(1) + ' L' + x(pr.hasta).toFixed(1) + ' ' + y(pr.valor).toFixed(1) + '" fill="none" stroke="' + pr.color + '" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round" opacity="0.8"/>' +
+                '<text class="nxs-tick" x="' + (x(pr.hasta) - 4) + '" y="' + (y(pr.valor) - 8) + '" text-anchor="end" fill="' + pr.color + '">Proyección ' + fmtN(pr.valor) + '</text>';
+        }
+        if (cfg.hoy != null) {
+            svg += '<line class="nxs-hoy" x1="' + x(cfg.hoy) + '" x2="' + x(cfg.hoy) + '" y1="' + t + '" y2="' + (t + ph) + '"/><text class="nxs-hoytxt" x="' + x(cfg.hoy) + '" y="' + (t - 6) + '" text-anchor="middle">Hoy</text>';
+        }
+        svg += '<g class="nxs-cur" style="display:none"><line class="nxs-cursor" y1="' + t + '" y2="' + (t + ph) + '"/>';
+        cfg.series.forEach(function (s, k) { svg += '<circle class="nxs-dot" data-s="' + k + '" r="4.5" fill="' + s.color + '" stroke="#0D1420" stroke-width="2"/>'; });
+        svg += '</g>';
+        host.innerHTML = '<svg class="nxs-svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(cfg.aria) + '">' + svg + '<rect class="nxs-capture" x="' + l + '" y="' + t + '" width="' + pw + '" height="' + ph + '" fill="transparent"/></svg><div class="nxs-tip" role="presentation"></div>';
+        var cap = host.querySelector('.nxs-capture'), tip = host.querySelector('.nxs-tip'), cur = host.querySelector('.nxs-cur'), cursor = host.querySelector('.nxs-cursor'), dots = host.querySelectorAll('.nxs-dot');
+        var ctl = {
+            mostrar: function (i) {
+                cur.style.display = ''; cursor.setAttribute('x1', x(i)); cursor.setAttribute('x2', x(i));
+                for (var q = 0; q < dots.length; q++) {
+                    var v = cfg.series[q].data[i];
+                    if (v == null) dots[q].style.display = 'none'; else { dots[q].style.display = ''; dots[q].setAttribute('cx', x(i)); dots[q].setAttribute('cy', y(v)); }
+                }
+                tip.innerHTML = cfg.tooltip(i); posTooltip(tip, host, x(i));
+            },
+            ocultar: function () { cur.style.display = 'none'; tip.style.display = 'none'; },
+            destruir: function () { host.innerHTML = ''; }
+        };
+        cap.addEventListener('pointermove', function (ev) {
+            var bx = host.getBoundingClientRect(), i = Math.round(((ev.clientX - bx.left) - l) / (pw / Math.max(1, n - 1)));
+            i = Math.min(n - 1, Math.max(0, i));
+            if (cfg.sync) cfg.sync(i, ctl); else ctl.mostrar(i);
+        });
+        cap.addEventListener('pointerleave', function () { if (cfg.syncFuera) cfg.syncFuera(); else ctl.ocultar(); });
+        return ctl;
+    }
+
+    // ============================================================
+    // BLOQUES
+    // ============================================================
+    function bloqueError(titulo, e) {
+        try { console.error('[NEXUS Estadísticas] ' + titulo + ':', e); } catch (_) {}
+        return '<div class="nxs-blkerr"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> No se pudo dibujar «' + esc(titulo) + '». El resto del panel sigue funcionando.</div>';
+    }
+    function seguro(titulo, host, fn) {
+        if (!host) return;
+        try { fn(host); } catch (e) { host.innerHTML = bloqueError(titulo, e); }
+    }
+
+    function animarNumero(el, clave, a, fmt) {
+        var prev = S.kv[clave];
+        S.kv[clave] = a;
+        if (a == null || reducido() || prev === a) { el.textContent = fmt(a); return; }
+        var desde = prev == null ? 0 : prev, t0 = performance.now(), dur = 700;
+        (function paso_(t) {
+            var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+            el.textContent = fmt(desde + (a - desde) * e);
+            if (p < 1) requestAnimationFrame(paso_); else el.textContent = fmt(a);
+        })(t0);
+    }
+
+    function pintarBarra() {
+        var el = $('nxs-top'); if (!el) return;
+        var M = S.M, mes = M ? nombreMes(M.F.num('meta.mes')) : '', corte = M ? M.F.num('meta.diaCorte') : null, dias = M ? M.F.num('meta.dias') : null;
+        var aviso = '';
+        if (M) {
+            var inval = M.F.num('meta.fechasInvalidas'), cuadre = M.F.num('arr.cuadre');
+            if (inval > 0) aviso += '<span class="nxs-pill nxs-pill-warn"><i class="fas fa-triangle-exclamation"></i> ' + fmtN(inval) + ' solicitudes con fecha de creación ilegible</span>';
+            if (cuadre != null && cuadre !== 0) aviso += '<span class="nxs-pill nxs-pill-warn"><i class="fas fa-scale-unbalanced"></i> El arrastre no cuadra (' + fmtN(cuadre) + ')</span>';
+        }
+        if (S.errorCarga && M) aviso += '<span class="nxs-pill nxs-pill-warn"><i class="fas fa-wifi"></i> No se pudo actualizar; se muestran los últimos datos</span>';
+        el.innerHTML =
+            '<div class="nxs-top-l"><span class="nxs-eyebrow">' + (mes ? 'MES EN CURSO' : 'NEXUS') + '</span><h3 class="nxs-mes">' + esc(mes || 'Estadísticas') + '</h3>' +
+            (corte ? '<span class="nxs-corte">Corte: día ' + corte + ' de ' + dias + '</span>' : '') + '</div>' +
+            '<div class="nxs-top-r">' + aviso +
+            '<span class="nxs-upd" id="nxs-upd"></span>' +
+            '<button type="button" class="nxs-btn" id="nxs-refrescar" aria-label="Actualizar estadísticas"><i class="fas fa-rotate' + (S.cargando ? ' fa-spin' : '') + '" aria-hidden="true"></i><span>Actualizar</span></button></div>';
+        var b = $('nxs-refrescar'); if (b) b.onclick = function () { NexusStats.refrescar(); };
+        pintarUpd();
+    }
+    function pintarUpd() {
+        var el = $('nxs-upd'); if (!el) return;
+        if (!S.ultimoOk) { el.textContent = ''; return; }
+        var s = Math.round((Date.now() - S.ultimoOk) / 1000);
+        el.textContent = 'Actualizado ' + (s < 10 ? 'ahora' : s < 60 ? 'hace ' + s + ' s' : 'hace ' + Math.round(s / 60) + ' min');
+    }
+
+    function pintarKpis(host) {
+        var k = calcularKpis(S.M);
+        host.innerHTML = k.map(function (c) {
+            var d = c.delta, cls = 'nxs-d-n', txt = '---', ico = 'fa-minus';
+            if (d != null) {
+                var arriba = d > 0.0005, abajo = d < -0.0005;
+                ico = arriba ? 'fa-arrow-trend-up' : abajo ? 'fa-arrow-trend-down' : 'fa-minus';
+                txt = (arriba ? '+' : abajo ? '−' : '') + fmtDec(Math.abs(d) * 100, 1) + '%';
+                if (arriba || abajo) cls = ((arriba && c.malo === 'sube') || (abajo && c.malo === 'baja')) ? 'nxs-d-bad' : 'nxs-d-ok';
+            }
+            return '<article class="nxs-kpi" style="--nxs-c:' + c.color + '"><div class="nxs-kpi-h"><span class="nxs-kpi-ic"><i class="fas ' + c.icono + '" aria-hidden="true"></i></span><span class="nxs-kpi-t">' + esc(c.etiqueta) + '</span></div>' +
+                '<div class="nxs-kpi-v" data-k="' + c.id + '">' + esc(c.fmt(c.valor)) + '</div><div class="nxs-kpi-s">' + esc(c.sub) + '</div>' +
+                '<div class="nxs-kpi-d ' + cls + '" title="' + esc(c.ant || 'Sin datos del mes anterior todavía') + '"><i class="fas ' + ico + '" aria-hidden="true"></i><span>' + txt + '</span><em>' + (S.M.hayPas ? 'vs mes ant.' : 'aún sin mes anterior') + '</em></div></article>';
+        }).join('');
+        k.forEach(function (c) { var el = host.querySelector('[data-k="' + c.id + '"]'); if (el && c.valor != null) animarNumero(el, 'kpi.' + c.id, c.valor, c.fmt); });
+    }
+
+    function pintarSemana(host) {
+        var W = calcularSemana(S.M);
+        if (!W) { host.innerHTML = '<div class="nxs-empty">No hay datos de la semana todavía.</div>'; return; }
+        var leyenda = W.series.map(function (s) {
+            var off = S.ocultas['sem:' + s.clave];
+            return '<button type="button" class="nxs-leg' + (off ? ' nxs-off' : '') + '" data-clave="' + esc(s.clave) + '" aria-pressed="' + (!off) + '">' + (s.clave.indexOf('r:') === 0 ? marcaResp(s.name, 0) : '<i style="background:' + s.color + '"></i>') + esc(s.name) + '</button>';
+        }).join('');
+        host.innerHTML =
+            '<div class="nxs-ch"><div><h4>Rendimiento semanal</h4><p>' + esc(W.inicio) + ' → ' + esc(W.fin_) + ' · semana de sábado a viernes</p></div></div>' +
+            '<div class="nxs-sem-kpis">' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_REC + '"><span>Recibidas esta semana</span><b id="nxs-sr">' + fmtN(W.rec) + '</b></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_FIN + '"><span>Finalizadas esta semana</span><b id="nxs-sf">' + fmtN(W.fin) + '</b></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_AMB + '"><span>Eficiencia semanal</span><b id="nxs-se">' + fmtPct(W.ef) + '</b><em>finalizadas ÷ recibidas' + (W.ef != null && W.ef > 1 ? ' · se está atendiendo arrastre' : '') + '</em></div></div>' +
+            '<div class="nxs-legs">' + leyenda + '</div><div class="nxs-chart" id="nxs-ch-sem"></div>';
+        animarNumero($('nxs-sr'), 'sem.rec', W.rec, fmtN); animarNumero($('nxs-sf'), 'sem.fin', W.fin, fmtN);
+        host.querySelectorAll('.nxs-leg').forEach(function (b) {
+            b.onclick = function () { var c = 'sem:' + b.getAttribute('data-clave'); S.ocultas[c] = !S.ocultas[c]; pintarSemana(host); };
+        });
+        var series = W.series.map(function (s) { return { clave: 'sem:' + s.clave, name: s.name, color: s.color, data: s.data }; });
+        var ch = $('nxs-ch-sem');
+        var aria = 'Rendimiento semanal de ' + W.inicio + ' a ' + W.fin_ + '. Recibidas ' + W.rec + ', finalizadas ' + W.fin + (W.ef != null ? ', eficiencia ' + fmtPct(W.ef) : '') + '.';
+        S.charts = S.charts.filter(function (c) { return c.id !== 'sem'; });
+        var dib = function () { graficoBarras(ch, { labels: W.dias.map(function (d) { return d.etiqueta; }), series: series, aria: aria, alto: 280 }); };
+        dib();
+        S.charts.push({ id: 'sem', redibujar: function () { dib(); } });
+    }
+
+    function pintarEvolucion(host) {
+        var E = calcularEvo(S.M), acum = S.modoEvo === 'acum';
+        var titulo = E.mesPrev ? E.mesPrev + ' vs ' + E.mesAct : E.mesAct;
+        host.innerHTML =
+            '<div class="nxs-ch"><div><h4>Evolución diaria</h4><p>' + esc(titulo) + '</p></div>' +
+            '<div class="nxs-seg" role="group" aria-label="Tipo de vista"><button type="button" data-m="dia" class="' + (!acum ? 'nxs-on' : '') + '" aria-pressed="' + (!acum) + '">Diario</button><button type="button" data-m="acum" class="' + (acum ? 'nxs-on' : '') + '" aria-pressed="' + acum + '">Acumulado</button></div></div>' +
+            (S.M.hayPas ? '' : '<div class="nxs-note"><i class="fas fa-circle-info"></i> Aún no hay datos del mes anterior: la comparación aparecerá después del primer cierre mensual.</div>') +
+            '<div class="nxs-evo-grid"><div class="nxs-evo-c"><h5><i style="background:' + C_REC + '"></i>Recibidas</h5><div class="nxs-chart" id="nxs-ch-rec"></div><div class="nxs-foot" id="nxs-ft-rec"></div></div>' +
+            '<div class="nxs-evo-c"><h5><i style="background:' + C_FIN + '"></i>Finalizadas</h5><div class="nxs-chart" id="nxs-ch-fin"></div><div class="nxs-foot" id="nxs-ft-fin"></div></div></div>';
+        host.querySelectorAll('.nxs-seg button').forEach(function (b) { b.onclick = function () { S.modoEvo = b.getAttribute('data-m'); pintarEvolucion(host); }; });
+        S.charts = S.charts.filter(function (c) { return c.id !== 'evo'; });
+        var ctls = [];
+        function dibujar() {
+            ctls.forEach(function (c) { c.destruir(); }); ctls = [];
+            [['rec', 'Recibidas', C_REC, E.rec], ['fin', 'Finalizadas', C_FIN, E.fin]].forEach(function (cfg) {
+                var clave = cfg[0], nombre = cfg[1], color = cfg[2], d = cfg[3];
+                var cur = acum ? acumulada(d.cur) : d.cur, prev = d.prev ? (acum ? acumulada(d.prev) : d.prev) : null;
+                var total = suma(d.cur), totalPrev = d.prev ? suma(d.prev, E.corte) : null;
+                var proy = null;
+                if (acum && E.corte > 0 && E.corte < E.dias) proy = { desde: E.corte - 1, base: cur[E.corte - 1], hasta: E.dias - 1, valor: Math.round(total / E.corte * E.dias), color: color };
+                var series = [];
+                if (prev) series.push({ name: E.mesPrev, color: C_PREV, data: prev, dash: true, fillOp: 0.07 });
+                series.push({ name: E.mesAct, color: color, data: cur, fillOp: 0.32 });
+                var ia = series.length - 1;
+                var aria = nombre + ' por día, ' + titulo + (acum ? ', acumulado' : '') + '. Total a hoy ' + total + (totalPrev != null ? ' frente a ' + totalPrev + ' en el mismo tramo del mes anterior' : '') + '.';
+                var host_ = $('nxs-ch-' + clave);
+                var ctl = graficoLinea(host_, {
+                    n: E.n, series: series, hoy: E.corte < E.dias ? E.corte - 1 : null, proyeccion: proy, aria: aria, alto: 270,
+                    tooltip: function (i) {
+                        var h = '<b>Día ' + (i + 1) + '</b>';
+                        series.forEach(function (s) { h += '<div><i style="background:' + s.color + '"></i>' + esc(s.name) + '<span>' + (s.data[i] == null ? '---' : fmtN(s.data[i])) + '</span></div>'; });
+                        if (prev && cur[i] != null && prev[i] != null) { var df = cur[i] - prev[i]; h += '<div class="nxs-tipd">Diferencia<span>' + (df > 0 ? '+' : df < 0 ? '−' : '') + fmtN(Math.abs(df)) + '</span></div>'; }
+                        return h;
+                    },
+                    sync: function (i, self) { ctls.forEach(function (c) { c.mostrar(i); }); },
+                    syncFuera: function () { ctls.forEach(function (c) { c.ocultar(); }); }
+                });
+                ctls.push(ctl);
+                // pie
+                var mejor = null; d.cur.forEach(function (v, i) { if (v != null && (mejor == null || v > d.cur[mejor])) mejor = i; });
+                var v = variacion(total, totalPrev), pie = '<span><em>Total a hoy</em><b>' + fmtN(total) + '</b></span>';
+                if (totalPrev != null) pie += '<span><em>Mismo tramo mes anterior</em><b>' + fmtN(totalPrev) + '</b></span><span><em>Variación</em><b class="' + (v == null ? '' : (v >= 0 ? (clave === 'rec' ? 'nxs-t-n' : 'nxs-t-ok') : (clave === 'rec' ? 'nxs-t-n' : 'nxs-t-bad'))) + '">' + (v == null ? '---' : (v > 0 ? '+' : v < 0 ? '−' : '') + fmtDec(Math.abs(v) * 100, 1) + '%') + '</b></span>';
+                if (mejor != null && d.cur[mejor] > 0) pie += '<span><em>Mejor día</em><b>Día ' + (mejor + 1) + ' · ' + fmtN(d.cur[mejor]) + '</b></span>';
+                if (proy) pie += '<span><em>Proyección a fin de mes</em><b>' + fmtN(proy.valor) + '</b></span>';
+                $('nxs-ft-' + clave).innerHTML = pie;
+                void ia;
+            });
+        }
+        dibujar();
+        S.charts.push({ id: 'evo', redibujar: dibujar });
+    }
+
+    // ============================================================
+    // ETAPA 2 — bloques 5 a 10 (mapa de calor, flujo, asignaciones, tiempos, tops, comparativas, responsables, arrastre)
+    // ============================================================
+    var DIAS_ES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    function hh2(h) { return (h < 10 ? '0' : '') + h; }
+    function cabecera(titulo, sub) { return '<div class="nxs-ch"><div><h4>' + esc(titulo) + '</h4>' + (sub ? '<p>' + esc(sub) + '</p>' : '') + '</div></div>'; }
+    function chip(d, malo) {
+        var cls = 'nxs-d-n', txt = '---';
+        if (d != null) {
+            var up = d > 0.0005, dn = d < -0.0005;
+            txt = (up ? '+' : dn ? '−' : '') + fmtDec(Math.abs(d) * 100, 1) + '%';
+            if (up || dn) cls = ((up && malo === 'sube') || (dn && malo === 'baja')) ? 'nxs-d-bad' : 'nxs-d-ok';
+        }
+        return '<span class="nxs-chip ' + cls + '">' + txt + '</span>';
+    }
+    function filaHB(pos, nombre, valor, max, color, texto) {
+        var w = max > 0 && valor != null ? Math.max(2, Math.round(valor / max * 100)) : 0;
+        return '<div class="nxs-hb' + (pos === '' ? ' nxs-hb-np' : '') + '" style="--nxs-c:' + color + '">' + (pos === '' ? '' : '<span class="nxs-hb-p">' + esc(pos) + '</span>') + '<span class="nxs-hb-n" title="' + esc(nombre) + '">' + esc(nombre) + '</span>' +
+            '<span class="nxs-hb-t"><i style="width:' + w + '%"></i></span><b>' + esc(texto != null ? texto : fmtN(valor)) + '</b></div>';
+    }
+    function celdaCalor(v, max, color, tit) {
+        var a = (v == null || !(max > 0)) ? 0 : Math.min(1, v / max);
+        return '<div class="nxs-hc" style="--a:' + (a * 100).toFixed(0) + '%;--nxs-hc:' + color + '" title="' + esc(tit) + '">' + (v ? v : '') + '</div>';
+    }
+    function cabHoras() {
+        var o = '<div></div>';
+        for (var h = 0; h < 24; h++) o += '<div class="nxs-heat-h">' + (h % 3 === 0 ? hh2(h) : '') + '</div>';
+        return o;
+    }
+
+    // 5a. Recibidas por hora del día: curva suave, con selector de día de la semana
+    function pintarCalor(host) {
+        var F = S.M.F, porDia = [], total = [], sumaDia = [], sel = S.calorDia, d, h;
+        for (h = 0; h < 24; h++) total.push(0);
+        for (d = 1; d <= 7; d++) {
+            var a = F.csv('heat.' + d), fila = [], sd = 0;
+            for (h = 0; h < 24; h++) { var v = a[h] == null ? 0 : a[h]; fila.push(v); total[h] += v; sd += v; }
+            porDia.push(fila); sumaDia.push(sd);
+        }
+        var datos = sel >= 0 ? porDia[sel] : total, totSel = suma(datos), tot = suma(total), pico = null, mejorDia = null;
+        datos.forEach(function (v, i) { if (v > 0 && (pico == null || v > datos[pico])) pico = i; });
+        sumaDia.forEach(function (v, i) { if (v > 0 && (mejorDia == null || v > sumaDia[mejorDia])) mejorDia = i; });
+        var sub = totSel > 0 && pico != null
+            ? (sel >= 0 ? DIAS_ES[sel] + ' · ' : '') + 'hora pico ' + hh2(pico) + ':00 (' + datos[pico] + (datos[pico] === 1 ? ' solicitud' : ' solicitudes') + ') · ' + fmtN(totSel) + (sel >= 0 ? ' ese día de la semana' : ' en el mes')
+            : (tot > 0 ? 'Sin solicitudes ' + (sel >= 0 ? 'los ' + DIAS_ES[sel].toLowerCase() : 'en el mes') : 'Sin solicitudes recibidas en el mes');
+        var opts = [['-1', 'Todos']].concat(['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map(function (n, i) { return [String(i), n]; }));
+        var seg = '<div class="nxs-seg nxs-seg-w" role="group" aria-label="Día de la semana">' + opts.map(function (o) {
+            var on = String(sel) === o[0];
+            return '<button type="button" data-d="' + o[0] + '" class="' + (on ? 'nxs-on' : '') + '" aria-pressed="' + on + '">' + o[1] + '</button>';
+        }).join('') + '</div>';
+        var minis = '<div class="nxs-mini-g">' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_REC + '"><span>Hora pico</span><b>' + (pico == null ? '---' : hh2(pico) + ':00') + '</b><em>' + (pico == null ? 'sin datos' : fmtN(datos[pico]) + (datos[pico] === 1 ? ' solicitud' : ' solicitudes') + ' en esa hora') + '</em></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_AMB + '"><span>Día más activo</span><b>' + (mejorDia == null ? '---' : DIAS_ES[mejorDia]) + '</b><em>' + (mejorDia == null ? 'sin datos' : fmtN(sumaDia[mejorDia]) + ' en el mes') + '</em></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_FIN + '"><span>' + (sel >= 0 ? 'Total · ' + DIAS_ES[sel] : 'Total del mes') + '</span><b>' + fmtN(totSel) + '</b><em>' + (sel >= 0 && tot > 0 ? fmtPct(totSel / tot) + ' del total del mes' : 'solicitudes recibidas') + '</em></div></div>';
+        host.innerHTML = '<div class="nxs-ch"><div><h4>Recibidas por día y hora</h4><p>' + esc(sub) + '</p></div>' + seg + '</div>' + minis + '<div class="nxs-chart" id="nxs-ch-calor"></div>';
+        host.querySelectorAll('.nxs-seg button').forEach(function (b) { b.onclick = function () { S.calorDia = Number(b.getAttribute('data-d')); pintarCalor(host); }; });
+        S.charts = S.charts.filter(function (c) { return c.id !== 'calor'; });
+        var ch = $('nxs-ch-calor');
+        if (totSel === 0) { ch.innerHTML = '<div class="nxs-empty">No hay solicitudes recibidas para mostrar.</div>'; return; }
+        var series = [{ name: sel >= 0 ? DIAS_ES[sel] : 'Todos los días', color: C_REC, data: datos, fillOp: 0.38 }];
+        var aria = 'Solicitudes recibidas por hora del día (' + (sel >= 0 ? DIAS_ES[sel] : 'todos los días') + '). ' + sub;
+        var dib = function () {
+            graficoLinea(ch, {
+                n: 24, series: series, suave: true, alto: 280, aria: aria,
+                tick: function (i) { return i % 3 === 0 ? hh2(i) : null; },
+                tooltip: function (i) {
+                    return '<b>' + hh2(i) + ':00 – ' + hh2(i) + ':59</b><div><i style="background:' + C_REC + '"></i>Recibidas<span>' + fmtN(datos[i]) + '</span></div>' +
+                        '<div>Del total<span>' + (totSel > 0 ? fmtPct(datos[i] / totSel) : '---') + '</span></div>';
+                }
+            });
+        };
+        dib();
+        S.charts.push({ id: 'calor', redibujar: dib });
+    }
+
+    // 5b. Recibidas vs finalizadas vs rechazadas por día
+    function pintarFlujo(host) {
+        var F = S.M.F, dias = F.num('meta.dias') || 30, corte = F.num('meta.diaCorte') || dias;
+        function ser(k) { var a = F.csv('serie.' + k), o = []; for (var i = 0; i < dias; i++) o.push(i < corte ? (a[i] == null ? 0 : a[i]) : null); return o; }
+        var defs = [['rec', 'Recibidas', C_REC, ser('recibidas')], ['fin', 'Finalizadas', C_FIN, ser('finalizadas')], ['rech', 'Rechazadas', C_RECH, ser('rechazadas')]];
+        var leyenda = defs.map(function (s) {
+            var off = S.ocultas['dia:' + s[0]];
+            return '<button type="button" class="nxs-leg' + (off ? ' nxs-off' : '') + '" data-clave="' + s[0] + '" aria-pressed="' + (!off) + '"><i style="background:' + s[2] + '"></i>' + s[1] + ' · ' + fmtN(suma(s[3])) + '</button>';
+        }).join('');
+        host.innerHTML = cabecera('Recibidas vs finalizadas vs rechazadas', 'Día a día del mes en curso') + '<div class="nxs-legs">' + leyenda + '</div><div class="nxs-chart" id="nxs-ch-flujo"></div>';
+        host.querySelectorAll('.nxs-leg').forEach(function (b) { b.onclick = function () { var c = 'dia:' + b.getAttribute('data-clave'); S.ocultas[c] = !S.ocultas[c]; pintarFlujo(host); }; });
+        var labels = [], titulos = []; for (var i = 1; i <= dias; i++) { labels.push(String(i)); titulos.push('Día ' + i); }
+        var series = defs.map(function (s) { return { clave: 'dia:' + s[0], name: s[1], color: s[2], data: s[3] }; });
+        var aria = 'Recibidas ' + suma(defs[0][3]) + ', finalizadas ' + suma(defs[1][3]) + ' y rechazadas ' + suma(defs[2][3]) + ' por día en el mes en curso.';
+        var dib = function () { graficoBarras($('nxs-ch-flujo'), { labels: labels, titulos: titulos, series: series, aria: aria, alto: 280 }); };
+        dib();
+        S.charts = S.charts.filter(function (c) { return c.id !== 'flujo'; }); S.charts.push({ id: 'flujo', redibujar: dib });
+    }
+
+    // 6a. Asignaciones por hora + matriz responsable × hora
+    function pintarAsig(host) {
+        var F = S.M.F, a = F.csv('hora.asignaciones'), nombres = F.lista('resp.nombres'), tot = suma(a), pico = null;
+        a.forEach(function (v, h) { if (v != null && v > 0 && (pico == null || v > a[pico])) pico = h; });
+        var sub = tot > 0 && pico != null ? 'Hora pico: ' + hh2(pico) + ':00 (' + a[pico] + ' asignaciones) · ' + fmtN(tot) + ' en el mes' : 'Sin asignaciones en el mes';
+        var mat = '', max = 0, filas = [];
+        nombres.forEach(function (n, i) { var r = F.csv('resp.horaAsig.' + (i + 1)); filas.push(r); r.forEach(function (v) { if (v != null && v > max) max = v; }); });
+        if (nombres.length) {
+            mat = '<h5 class="nxs-h5">Asignaciones por responsable y hora</h5><div class="nxs-scroll"><div class="nxs-heat" role="img" aria-label="Matriz de asignaciones por responsable y hora">' + cabHoras();
+            nombres.forEach(function (n, i) {
+                var cr = colorResp(n, i);
+                mat += '<div class="nxs-heat-l" title="' + esc(n) + '">' + marcaResp(n, i) + esc(n) + '</div>';
+                for (var h = 0; h < 24; h++) mat += celdaCalor(filas[i][h], max, cr, n + ' · ' + hh2(h) + ':00 · ' + (filas[i][h] || 0) + ' asignaciones');
+            });
+            mat += '</div></div>';
+        }
+        host.innerHTML = cabecera('Asignaciones por hora', sub) + '<div class="nxs-chart" id="nxs-ch-asig"></div>' + mat;
+        var labels = []; for (var h = 0; h < 24; h++) labels.push(hh2(h) + ':00');
+        var data = []; for (var k = 0; k < 24; k++) data.push(a[k] == null ? 0 : a[k]);
+        var series = [{ clave: 'asig', name: 'Asignaciones', color: C_AMB, data: data }];
+        var dib = function () { graficoBarras($('nxs-ch-asig'), { labels: labels, series: series, aria: 'Asignaciones por hora. ' + sub, alto: 240 }); };
+        dib();
+        S.charts = S.charts.filter(function (c) { return c.id !== 'asig'; }); S.charts.push({ id: 'asig', redibujar: dib });
+    }
+
+    // 6b. Tiempos de respuesta por tramo y por tipo de solicitud
+    function pintarTiempos(host) {
+        var F = S.M.F, P = S.M.P, pas = S.M.hayPas;
+        var tr = [['resp', 'Respuesta', 'Creación → asignación'], ['espera', 'Espera', 'Asignación → tomada'], ['ejec', 'Ejecución', 'Tomada → finalización'], ['total', 'Total', 'Creación → finalización']];
+        var cards = tr.map(function (t) {
+            var med = F.num('tiempo.' + t[0] + '.med'), p90 = F.num('tiempo.' + t[0] + '.p90'), n = F.num('tiempo.' + t[0] + '.n');
+            var w = med != null && p90 > 0 ? Math.max(3, Math.min(100, med / p90 * 100)) : 0;
+            return '<div class="nxs-mini nxs-tmc" style="--nxs-c:' + (t[0] === 'total' ? '#4DD4E8' : C_AMB) + '"><span>' + t[1] + ' · ' + t[2] + '</span><b>' + fmtTiempo(med) + '</b>' +
+                '<div class="nxs-tmt" title="Mediana frente al percentil 90"><i style="width:' + w + '%"></i></div>' +
+                '<em>P90: ' + fmtTiempo(p90) + ' · ' + fmtN(n) + ' casos</em>' +
+                '<div>' + chip(pas ? variacion(med, P.num('tiempo.' + t[0] + '.med')) : null, 'sube') + ' <em>vs mes ant.</em></div></div>';
+        }).join('');
+        var nom = F.lista('tiempo.tipo.nombres'), med = F.csv('tiempo.tipo.med'), nn = F.csv('tiempo.tipo.n'), mx = 0;
+        med.forEach(function (v) { if (v != null && v > mx) mx = v; });
+        var tipo = nom.length ? nom.map(function (n, i) { return filaHB('', n, med[i], mx, '#4DD4E8', fmtTiempo(med[i]) + ' · ' + fmtN(nn[i]) + ' casos'); }).join('') : '<div class="nxs-empty">Sin finalizadas en el mes.</div>';
+        host.innerHTML = cabecera('Tiempos de respuesta', 'Mediana por tramo; la barra llega hasta el percentil 90') + '<div class="nxs-tm">' + cards + '</div>' +
+            '<h5 class="nxs-h5">Tiempo mediano total por tipo de solicitud</h5>' + tipo;
+    }
+
+    // 7. Top 5
+    function pintarTops(host) {
+        var F = S.M.F;
+        var defs = [['unidades', 'Unidades', C_REC], ['solicitudes', 'Solicitudes', '#4DD4E8'], ['especialidades', 'Especialidades', C_FIN], ['servicios', 'Servicios', C_AMB], ['patologias', 'Patologías', '#FF9F7A'], ['vacunas', 'Vacunas', '#B58CFF']];
+        var o = defs.map(function (d) {
+            var nom = F.lista('top.' + d[0] + '.nombres'), val = F.csv('top.' + d[0] + '.valores'), mx = val.length ? Math.max.apply(null, val.map(function (v) { return v || 0; })) : 0;
+            var filas = nom.length ? nom.map(function (n, i) { return filaHB(i + 1, n, val[i], mx, d[2]); }).join('') : '<div class="nxs-empty">Sin datos.</div>';
+            return '<div class="nxs-sub"><h5 class="nxs-h5" style="--nxs-c:' + d[2] + '"><i></i>' + d[1] + '</h5>' + filas + '</div>';
+        }).join('');
+        host.innerHTML = cabecera('Top 5 del mes', 'Lo más solicitado por categoría') + '<div class="nxs-tops">' + o + '</div>';
+    }
+
+    // 8. Comparativas mes anterior vs actual
+    function pintarComp(host) {
+        var F = S.M.F, P = S.M.P, pas = S.M.hayPas, corte = F.num('meta.diaCorte') || 0;
+        function tramo(k) { return pas ? suma(P.csv('serie.' + k), corte) : null; }
+        var R = [
+            ['Recibidas', F.num('kpi.recibidas'), tramo('recibidas'), fmtN, 'sube'],
+            ['Finalizadas', F.num('kpi.finalizadas'), tramo('finalizadas'), fmtN, 'baja'],
+            ['Rechazadas', F.num('kpi.rechazadas'), tramo('rechazadas'), fmtN, 'sube'],
+            ['Tasa de cierre', F.num('kpi.tasaCierre'), pas ? P.num('kpi.tasaCierre') : null, fmtPct, 'baja'],
+            ['Promedio diario de recibidas', F.num('kpi.promDiario'), pas ? P.num('kpi.promDiario') : null, function (n) { return fmtDec(n, 1); }, 'sube'],
+            ['Tiempo mediano de respuesta', F.num('tiempo.resp.med'), pas ? P.num('tiempo.resp.med') : null, fmtTiempo, 'sube'],
+            ['Tiempo mediano de ejecución', F.num('tiempo.ejec.med'), pas ? P.num('tiempo.ejec.med') : null, fmtTiempo, 'sube'],
+            ['Tiempo mediano total', F.num('tiempo.total.med'), pas ? P.num('tiempo.total.med') : null, fmtTiempo, 'sube'],
+            ['Arrastre abierto', F.num('arr.abiertas'), pas ? P.num('arr.abiertas') : null, fmtN, 'sube']
+        ];
+        var mp = pas ? nombreMes(P.num('meta.mes')) : 'Mes anterior';
+        var filas = R.map(function (r) { return '<tr><td>' + r[0] + '</td><td class="n">' + (r[2] == null ? '---' : r[3](r[2])) + '</td><td class="n">' + (r[1] == null ? '---' : r[3](r[1])) + '</td><td class="n">' + chip(variacion(r[1], r[2]), r[4]) + '</td></tr>'; }).join('');
+        host.innerHTML = cabecera('Comparativas', 'Los conteos comparan el mismo tramo del mes anterior; tasas y tiempos, el mes completo') +
+            (pas ? '' : '<div class="nxs-note"><i class="fas fa-circle-info"></i> Aún no hay datos del mes anterior: las comparativas aparecerán después del primer cierre mensual.</div>') +
+            '<div class="nxs-scroll"><table class="nxs-tbl"><thead><tr><th>Indicador</th><th class="n">' + esc(mp) + '</th><th class="n">' + esc(nombreMes(F.num('meta.mes'))) + '</th><th class="n">Variación</th></tr></thead><tbody>' + filas + '</tbody></table></div>';
+    }
+
+    // 9. Carga de responsables (D5: baja < 0,8 · normal 0,8–1,2 · alta > 1,2 = asignadas actuales ÷ finalizadas previas)
+    function pintarResp(host) {
+        var F = S.M.F, P = S.M.P, pas = S.M.hayPas;
+        var nom = F.lista('resp.nombres'), asi = F.csv('resp.asignadas'), fin = F.csv('resp.finalizadas'), cur = F.csv('resp.enCurso');
+        var nomP = pas ? P.lista('resp.nombres') : [], finP = pas ? P.csv('resp.finalizadas') : [];
+        if (!nom.length) { host.innerHTML = cabecera('Carga de responsables') + '<div class="nxs-empty">Todavía no hay solicitudes asignadas este mes.</div>'; return; }
+        var mx = 0; asi.forEach(function (v) { if (v > mx) mx = v; });
+        // D5: el mes en curso va a medias, así que se compara con las finalizadas del mes anterior prorrateadas al mismo día de corte.
+        var corteR = F.num('meta.diaCorte') || 0, diasR = F.num('meta.dias') || 30, frac = (corteR > 0 && diasR > 0) ? Math.min(1, corteR / diasR) : 1;
+        var filas = nom.map(function (n, i) {
+            var ip = nomP.indexOf(n), prev = ip >= 0 ? finP[ip] : null, carga = '<span class="nxs-chip nxs-d-n" title="Sin finalizadas previas con las que comparar">---</span>';
+            if (pas && prev > 0 && asi[i] != null) {
+                var prevAj = prev * frac, r = asi[i] / prevAj, cls = r < 0.8 ? 'nxs-d-n' : r <= 1.2 ? 'nxs-d-ok' : 'nxs-d-bad', et = r < 0.8 ? 'Baja' : r <= 1.2 ? 'Normal' : 'Alta';
+                carga = '<span class="nxs-chip ' + cls + '" title="Asignadas ' + asi[i] + ' ÷ finalizadas del mes anterior prorrateadas al día ' + corteR + ' (' + fmtDec(prevAj, 1) + ' de ' + prev + ')">' + et + ' · ' + fmtDec(r, 2) + '</span>';
+            }
+            var cr = colorResp(n, i);
+            return '<tr><td>' + marcaResp(n, i) + esc(n) + '</td><td class="n">' + fmtN(asi[i]) + '</td><td class="nxs-tdb"><span class="nxs-hb-t" style="--nxs-c:' + cr + '"><i style="width:' + (mx > 0 ? Math.round((asi[i] || 0) / mx * 100) : 0) + '%"></i></span></td><td class="n">' + fmtN(fin[i]) + '</td><td class="n">' + fmtN(cur[i]) + '</td><td class="n">' + carga + '</td></tr>';
+        }).join('');
+        host.innerHTML = cabecera('Carga de responsables', 'Carga = asignadas del mes ÷ finalizadas del mes anterior prorrateadas al día de corte') +
+            (pas ? '' : '<div class="nxs-note"><i class="fas fa-circle-info"></i> La carga se calcula con las finalizadas del mes anterior; aparecerá después del primer cierre mensual.</div>') +
+            '<div class="nxs-scroll"><table class="nxs-tbl"><thead><tr><th>Responsable</th><th class="n">Asignadas</th><th></th><th class="n">Finalizadas</th><th class="n">En curso</th><th class="n">Carga</th></tr></thead><tbody>' + filas + '</tbody></table></div>';
+    }
+
+    // 9b. Rendimiento personal por responsable: tiempos propios y tipos de solicitud que más atiende
+    function pintarRend(host) {
+        var F = S.M.F, nom = F.lista('resp.nombres');
+        if (!nom.length) { host.innerHTML = cabecera('Rendimiento por responsable') + '<div class="nxs-empty">Todavía no hay solicitudes asignadas este mes.</div>'; return; }
+        if (!F.tiene('resp.tResp.med')) {
+            host.innerHTML = cabecera('Rendimiento por responsable') + '<div class="nxs-note"><i class="fas fa-circle-info"></i> Faltan los datos personales en Export (F): ejecuta estadisticasInstalar() en Apps Script y espera unos segundos.</div>';
+            return;
+        }
+        var asi = F.csv('resp.asignadas'), fin = F.csv('resp.finalizadas'), cur = F.csv('resp.enCurso');
+        var tR = F.csv('resp.tResp.med'), nR = F.csv('resp.tResp.n'), tE = F.csv('resp.tEjec.med'), nE = F.csv('resp.tEjec.n'), tT = F.csv('resp.tTotal.med'), nT = F.csv('resp.tTotal.n');
+        var eqR = F.num('tiempo.espera.med'), eqE = F.num('tiempo.ejec.med');
+        var orden = nom.map(function (n, i) { return i; }).sort(function (a, b) { return ((asi[b] || 0) - (asi[a] || 0)) || nom[a].localeCompare(nom[b], 'es'); });
+        function fila(titulo, med, n, sub, eq) {
+            var chipEq = (eq != null && med != null) ? chip(variacion(med, eq), 'sube') + '<span style="font-weight:500">vs equipo (' + fmtTiempo(eq) + ')</span>' : '';
+            return '<div><span>' + titulo + '</span><b>' + fmtTiempo(med) + '</b><em>' + sub + ' · ' + fmtN(n || 0) + (n === 1 ? ' caso' : ' casos') + (chipEq ? ' ' + chipEq : '') + '</em></div>';
+        }
+        var cards = orden.map(function (i, pos) {
+            var cr = colorResp(nom[i], i);
+            var tn = F.lista('resp.tipos.' + (i + 1) + '.nombres'), tv = F.csv('resp.tipos.' + (i + 1) + '.valores'), mx = tv.length ? Math.max.apply(null, tv.map(function (v) { return v || 0; })) : 0;
+            var tipos = tn.length ? tn.map(function (n, k) { return filaHB('', n, tv[k], mx, cr, fmtN(tv[k])); }).join('') : '<div class="nxs-empty" style="padding:8px">Sin asignaciones este mes.</div>';
+            return '<article class="nxs-pc" style="--nxs-c:' + cr + '">' +
+                '<div class="nxs-pc-h">' + marcaResp(nom[i], i) + '<span title="' + esc(nom[i]) + '">' + esc(nom[i]) + '</span></div>' +
+                '<div class="nxs-pc-k"><div><span>Asignadas</span><b>' + fmtN(asi[i]) + '</b></div><div><span>Finalizadas</span><b>' + fmtN(fin[i]) + '</b></div><div><span>En curso</span><b>' + fmtN(cur[i]) + '</b></div></div>' +
+                '<div class="nxs-pc-t">' +
+                    fila('Tiempo de respuesta', tR[i], nR[i], 'asignación → tomada', eqR) +
+                    fila('Tiempo de ejecución', tE[i], nE[i], 'tomada → finalización', eqE) +
+                    fila('Tiempo total', tT[i], nT[i], 'asignación → finalización', null) +
+                '</div>' +
+                '<h6>Tipos que más atiende · solicitudes</h6><div>' + tipos + '</div></article>';
+        }).join('');
+        host.innerHTML = cabecera('Rendimiento por responsable', 'Medianas del mes. «vs equipo»: verde = más rápido que la mediana del equipo, rojo = más lento') + '<div class="nxs-pcs">' + cards + '</div>';
+    }
+
+    // 10. Arrastre y salud del flujo
+    function pintarArr(host) {
+        var F = S.M.F, cuadre = F.num('arr.cuadre'), edad = F.csv('arr.edad'), et = ['0–7 días', '8–15 días', '16–30 días', 'Más de 30 días'], cl = [C_FIN, C_REC, C_AMB, C_RECH];
+        var mx = 0; edad.forEach(function (v) { if (v > mx) mx = v; });
+        var ids = F.lista('arr.antiguas.ids'), uni = F.lista('arr.antiguas.unidades'), dias = F.csv('arr.antiguas.dias');
+        var ant = ids.length ? ids.map(function (id, i) { return '<div class="nxs-old"><b>' + esc(id) + '</b><span title="' + esc(uni[i] || '') + '">' + esc(uni[i] || '---') + '</span><em>' + (dias[i] == null ? '---' : fmtN(dias[i]) + ' d') + '</em></div>'; }).join('') : '<div class="nxs-empty">No hay solicitudes abiertas.</div>';
+        host.innerHTML = cabecera('Arrastre y salud del flujo', 'Solicitudes que pasan de un mes a otro') +
+            '<div class="nxs-k4">' +
+            '<div class="nxs-mini" style="--nxs-c:#B58CFF"><span>Al inicio del mes</span><b>' + fmtN(F.num('arr.inicial')) + '</b></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_REC + '"><span>Abiertas ahora</span><b>' + fmtN(F.num('arr.abiertas')) + '</b></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + C_RECH + '"><span>Vencidas</span><b>' + fmtN(F.num('arr.vencidas')) + '</b><em>Con fecha de evento anterior a hoy</em></div>' +
+            '<div class="nxs-mini" style="--nxs-c:' + (cuadre === 0 ? C_FIN : C_RECH) + '"><span>Cuadre</span><b>' + (cuadre === 0 ? 'OK' : fmtN(cuadre)) + '</b><em>inicial + recibidas − cerradas − abiertas</em></div></div>' +
+            '<div class="nxs-arr-g"><div class="nxs-sub"><h5 class="nxs-h5">Antigüedad de las abiertas</h5>' + et.map(function (t, i) { return filaHB('', t, edad[i], mx, cl[i]); }).join('') + '</div>' +
+            '<div class="nxs-sub"><h5 class="nxs-h5">Las 5 más antiguas</h5>' + ant + '</div></div>';
+    }
+
+    // ============================================================
+    // ESTRUCTURA, CARGA Y CICLO DE VIDA
+    // ============================================================
+    function esqueleto() {
+        return '<div class="nxs-skel" aria-hidden="true"><div class="nxs-sk nxs-sk-top"></div><div class="nxs-sk-row">' + '<div class="nxs-sk nxs-sk-kpi"></div>'.repeat(6) + '</div><div class="nxs-sk nxs-sk-big"></div><div class="nxs-sk nxs-sk-big"></div></div>';
+    }
+    function armarCaparazon() {
+        var r = $('nxs-root'); if (!r || r.getAttribute('data-ok') === '1') return r;
+        r.setAttribute('data-ok', '1');
+        r.innerHTML = '<div class="nxs"><div class="nxs-hud nxs-topbar" id="nxs-top"></div><div id="nxs-body"></div></div>';
+        return r;
+    }
+    function pintarTodo() {
+        var body = $('nxs-body'); if (!body) return;
+        pintarBarra();
+        if (!S.M) {
+            if (S.errorCarga) {
+                body.innerHTML = '<div class="nxs-errbox" role="alert"><i class="fas fa-plug-circle-exclamation" aria-hidden="true"></i><h4>No se pudieron cargar las estadísticas</h4><p>' + esc(S.errorCarga) + '</p><button type="button" class="nxs-btn nxs-btn-p" id="nxs-reintentar">Reintentar</button></div>';
+                var b = $('nxs-reintentar'); if (b) b.onclick = function () { NexusStats.refrescar(); };
+            } else body.innerHTML = esqueleto();
+            return;
+        }
+        if (!body.querySelector('.nxs-kpis')) {
+            body.innerHTML = '<div class="nxs-kpis" id="nxs-kpis" aria-label="Indicadores del mes"></div>' +
+                '<section class="nxs-card" id="nxs-sem" aria-label="Rendimiento semanal"></section>' +
+                '<section class="nxs-card" id="nxs-evo" aria-label="Evolución diaria"></section>' +
+                '<section class="nxs-card" id="nxs-calor" aria-label="Recibidas por día y hora"></section>' +
+                '<section class="nxs-card" id="nxs-flujo" aria-label="Recibidas, finalizadas y rechazadas"></section>' +
+                '<section class="nxs-card" id="nxs-asig" aria-label="Asignaciones por hora"></section>' +
+                '<section class="nxs-card" id="nxs-tiempos" aria-label="Tiempos de respuesta"></section>' +
+                '<section class="nxs-card" id="nxs-tops" aria-label="Top 5 del mes"></section>' +
+                '<section class="nxs-card" id="nxs-comp" aria-label="Comparativas"></section>' +
+                '<section class="nxs-card" id="nxs-resp" aria-label="Carga de responsables"></section>' +
+                '<section class="nxs-card" id="nxs-rend" aria-label="Rendimiento por responsable"></section>' +
+                '<section class="nxs-card" id="nxs-arr" aria-label="Arrastre y salud del flujo"></section>';
+        }
+        seguro('Indicadores del mes', $('nxs-kpis'), pintarKpis);
+        seguro('Rendimiento semanal', $('nxs-sem'), pintarSemana);
+        seguro('Evolución diaria', $('nxs-evo'), pintarEvolucion);
+        seguro('Recibidas por día y hora', $('nxs-calor'), pintarCalor);
+        seguro('Recibidas vs finalizadas vs rechazadas', $('nxs-flujo'), pintarFlujo);
+        seguro('Asignaciones por hora', $('nxs-asig'), pintarAsig);
+        seguro('Tiempos de respuesta', $('nxs-tiempos'), pintarTiempos);
+        seguro('Top 5 del mes', $('nxs-tops'), pintarTops);
+        seguro('Comparativas', $('nxs-comp'), pintarComp);
+        seguro('Carga de responsables', $('nxs-resp'), pintarResp);
+        seguro('Rendimiento por responsable', $('nxs-rend'), pintarRend);
+        seguro('Arrastre y salud del flujo', $('nxs-arr'), pintarArr);
+    }
+
+    async function cargar() {
+        if (S.cargando) return;
+        S.cargando = true; S.ultimoIntento = Date.now(); pintarBarra();
+        try {
+            var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getEstadisticas', idToken: await window.nexusIdToken() })
+            }, 25000, 2);
+            if (!res || res.success === false) throw new Error((res && res.error) || 'Respuesta vacía del servidor');
+            var data = res.data || res;
+            if (!data || !data.f || !data.f['meta.mes']) throw new Error('La pestaña Export (F) está vacía o sin calcular.');
+            S.raw = data; S.M = modelo(data); S.errorCarga = null; S.ultimoOk = Date.now(); S.falloLogueado = false;
+        } catch (err) {
+            S.errorCarga = (err && err.message) ? err.message : 'Error de red';
+            if (!S.falloLogueado) {
+                S.falloLogueado = true;
+                try { if (typeof nexusRegistrarFallaEnvioRTDB === 'function') nexusRegistrarFallaEnvioRTDB(err, { operacion: 'Estadísticas: lectura de getEstadisticas' }); } catch (_) {}
+            }
+        } finally {
+            S.cargando = false;
+            pintarTodo();
+        }
+    }
+
+    function seccionActiva() { var s = $('estadisticas'); return !!(s && s.classList.contains('active')); }
+    function observar() {
+        if (S.ro || typeof ResizeObserver === 'undefined') return;
+        var el = $('nxs-root'); if (!el) return;
+        var w0 = el.clientWidth;
+        S.ro = new ResizeObserver(function () {
+            var w = el.clientWidth; if (Math.abs(w - w0) < 2) return; w0 = w;
+            clearTimeout(S.rzT);
+            S.rzT = setTimeout(function () { if (!S.M || !seccionActiva()) return; S.charts.forEach(function (c) { try { c.redibujar(); } catch (e) { console.error(e); } }); }, 140);
+        });
+        S.ro.observe(el);
+    }
+
+    var NexusStats = {
+        abrir: function () {
+            var ph = $('nxs-placeholder'), root = $('nxs-root');
+            if (!root) return;
+            if (!window.NEXUS_STATS_ENABLED) { if (ph) ph.classList.remove('hidden'); root.classList.add('hidden'); return; }
+            if (ph) ph.classList.add('hidden'); root.classList.remove('hidden');
+            if (!esStaff()) { root.innerHTML = '<div class="nxs-errbox"><i class="fas fa-lock" aria-hidden="true"></i><h4>Acceso restringido</h4><p>Las estadísticas son solo para el personal de NEXUS.</p></div>'; root.removeAttribute('data-ok'); return; }
+            var sub = document.querySelector('#estadisticas .section-subtitle'); if (sub) sub.textContent = 'Panel de control de solicitudes';
+            armarCaparazon(); observar(); pintarTodo();
+            if (!S.M || Date.now() - S.ultimoOk > 20000) cargar();
+            if (!S.timer) {
+                S.timer = setInterval(function () {
+                    if (!seccionActiva() || document.hidden) return;
+                    pintarUpd();
+                    if (Date.now() - S.ultimoIntento >= REFRESCO_MS) cargar();
+                }, UI_MS);
+            }
+        },
+        pausar: function () {
+            if (S.timer) { clearInterval(S.timer); S.timer = null; }
+            clearTimeout(S.rzT);
+        },
+        refrescar: function () { cargar(); },
+        _estado: S
+    };
+    window.NexusStats = NexusStats;
+})();
+
+    </script>
 
     <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
          [PRUEBA-TEMPORAL] INICIO — CÓDIGO DE PRUEBA, NO ES PARTE DEL SISTEMA. ELIMINAR AL TERMINAR.
