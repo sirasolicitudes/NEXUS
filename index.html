@@ -6367,33 +6367,6 @@
             color: white;
             box-shadow: 0 0 18px rgba(5, 84, 242, 0.3);
         }
-
-        /* Botón de mantenimiento (pestaña Estadísticas, solo ADMIN) */
-        #nxd-btn-maint {
-            display: none; /* visible solo para ADMIN vía JS */
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            border: 1.5px solid rgba(172, 195, 242, 0.3);
-            color: var(--color-dark);
-            padding: 7px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        #nxd-btn-maint:hover {
-            background: rgba(230, 57, 70, 0.1);
-            border-color: #e63946;
-            color: #e63946;
-        }
-        #nxd-btn-maint.maint-on {
-            background: rgba(230, 57, 70, 0.12);
-            border-color: #e63946;
-            color: #e63946;
-        }
     </style>
     <!-- ============================================================
          ESTILOS: TARJETAS VERTICALES DE SOLICITUDES NEXUS (5 POR FILA)
@@ -7089,6 +7062,7 @@
 .nxs-pill-warn { color: #FFD58A; border-color: rgba(245, 180, 84, .4); background: rgba(245, 180, 84, .1); }
 .nxs-btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font: 600 .85rem 'DM Sans', sans-serif; color: var(--nxs-tx); background: var(--nxs-p2); border: 1px solid var(--nxs-bd); border-radius: 12px; padding: 9px 14px; transition: border-color .2s, background .2s, box-shadow .2s; }
 .nxs-btn:hover { border-color: rgba(56, 118, 242, .7); box-shadow: 0 0 0 3px rgba(56, 118, 242, .15); }
+.nxs-btn:disabled, .nxs-btn:disabled:hover { opacity: .65; cursor: not-allowed; border-color: var(--nxs-bd); box-shadow: none; }
 .nxs-btn:focus-visible, .nxs-leg:focus-visible, .nxs-seg button:focus-visible { outline: 2px solid var(--nxs-azc); outline-offset: 2px; }
 .nxs-btn-p { background: var(--nxs-az); border-color: var(--nxs-az); color: #fff; }
 
@@ -11944,19 +11918,13 @@ select.asx-fld { cursor: pointer; }
             </div>
         </section>
 
-        <!-- Estadisticas Section (panel de estadísticas; NEXUS_STATS_ENABLED=false muestra el aviso de construcción) -->
+        <!-- Estadisticas Section (panel de control de solicitudes; NEXUS_STATS_ENABLED=false muestra el aviso de construcción) -->
         <section id="estadisticas" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Estadísticas</h2>
-                <p class="section-subtitle">Estamos preparando las nuevas estadísticas</p>
+                <p class="section-subtitle">Indicadores y métricas del desempeño de las solicitudes y el personal</p>
             </div>
             <div class="estadisticas-container">
-                <div class="nx-cons-toolbar">
-                    <button id="nxd-btn-maint" onclick="nexusToggleMantenimiento()" title="Activar / Desactivar modo mantenimiento">
-                        <i class="fas fa-tools"></i>
-                        <span id="nxd-btn-maint-label">🛠️ Mantenimiento <span id="nxd-maint-status" style="color:#e63946; font-weight:700;">● OFF</span></span>
-                    </button>
-                </div>
                 <div id="nxs-placeholder" class="hidden">
                     <div class="nx-cons-box">
                         <i class="fas fa-person-digging" aria-hidden="true"></i>
@@ -18502,7 +18470,7 @@ select.asx-fld { cursor: pointer; }
                     behavior: 'smooth'
                 });
 
-                // Pestaña de estadísticas: se refresca el botón de mantenimiento (admin) y se abre el panel
+                // Pestaña de estadísticas: se abre el panel
                 if (sectionId === 'estadisticas') {
                     if (typeof nexusUpdateMaintenanceUI === 'function') nexusUpdateMaintenanceUI();
                     if (typeof NexusStats !== 'undefined') NexusStats.abrir();
@@ -22692,8 +22660,6 @@ select.asx-fld { cursor: pointer; }
         function nexusUpdateMaintenanceUI() {
             var overlay = document.getElementById('nx-maint-overlay');
             var adminBanner = document.getElementById('nxAdminMaintBanner');
-            var btnMaint = document.getElementById('nxd-btn-maint');
-            var statusSpan = document.getElementById('nxd-maint-status');
             var panelMaintLabel = document.getElementById('nexusMaintStatusLabel');
             var panelBtnMant = document.getElementById('nexusBtnMantenimiento');
 
@@ -22750,24 +22716,6 @@ select.asx-fld { cursor: pointer; }
             if (panelMaintLabel) {
                 panelMaintLabel.textContent = nexusMaintActive ? '● ON' : '● OFF';
                 panelMaintLabel.style.color  = nexusMaintActive ? '#2ecc71' : '#e63946';
-            }
-
-            // 4. Botón de mantenimiento en la pestaña Estadísticas
-            if (btnMaint) {
-                btnMaint.style.display = esAdmin ? 'inline-flex' : 'none';
-                if (nexusMaintActive) {
-                    btnMaint.classList.add('maint-on');
-                    if (statusSpan) {
-                        statusSpan.textContent = '● ON';
-                        statusSpan.style.color = '#2ecc71';
-                    }
-                } else {
-                    btnMaint.classList.remove('maint-on');
-                    if (statusSpan) {
-                        statusSpan.textContent = '● OFF';
-                        statusSpan.style.color = '#e63946';
-                    }
-                }
             }
         }
 
@@ -31203,6 +31151,7 @@ select.asx-fld { cursor: pointer; }
             tabs.onclick = function (e) {
                 var b = e.target.closest ? e.target.closest('.nxp-tab') : null;
                 if (!b) return;
+                e.stopPropagation(); // el re-render quita el botón del DOM y el listener global cerraría el selector
                 _nxpCat = b.getAttribute('data-cat');
                 nexusPersonalLlenarEmojis(uidActual);
             };
@@ -31539,6 +31488,7 @@ select.asx-fld { cursor: pointer; }
             var drop = document.getElementById('nxPersonalEmojiDropdown');
             var trigger = document.getElementById('nxPersonalEmojiTrigger');
             if (drop && drop.style.display === 'block') {
+                if (e.target && e.target.isConnected === false) return; // nodo reemplazado al cambiar de categoría
                 if (!drop.contains(e.target) && trigger && !trigger.contains(e.target)) {
                     drop.style.display = 'none';
                 }
@@ -35135,10 +35085,10 @@ window.NEXUS_STATS_ENABLED = true;
     var DOW = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     var C_REC = '#3876F2', C_FIN = '#3DDC97', C_RECH = '#FF5C6C', C_PREV = '#8FA3C7', C_AMB = '#F5B454';
     var C_RESP = ['#F5B454', '#B58CFF', '#4DD4E8', '#FF9F7A', '#C6E86B', '#F08BC8', '#7FD1AE', '#E3C26B', '#9AA8FF', '#FFB3B3'];
-    var REFRESCO_MS = 90000, UI_MS = 15000;
+    var REFRESCO_MS = 300000, UI_MS = 15000;   // el servidor guarda las estadísticas 1 hora; este sondeo solo recoge lo que otros actualicen
 
     var S = {
-        raw: null, M: null, timer: null, cargando: false, errorCarga: null, ultimoOk: 0, ultimoIntento: 0,
+        raw: null, M: null, timer: null, cargando: false, errorCarga: null, ultimoOk: 0, ultimoIntento: 0, lockHasta: 0, lockPor: "", calcEn: 0,
         modoEvo: 'dia', calorDia: -1, ocultas: {}, charts: [], ro: null, rzT: null, kv: {}, falloLogueado: false, cuentas: 0
     };
     var nf = new Intl.NumberFormat('es-VE');
@@ -35471,7 +35421,7 @@ window.NEXUS_STATS_ENABLED = true;
     function pintarBarra() {
         var el = $('nxs-top'); if (!el) return;
         var M = S.M, mes = M ? nombreMes(M.F.num('meta.mes')) : '', corte = M ? M.F.num('meta.diaCorte') : null, dias = M ? M.F.num('meta.dias') : null;
-        var aviso = '';
+        var aviso = '', bloq = S.lockHasta > Date.now();
         if (M) {
             var inval = M.F.num('meta.fechasInvalidas'), cuadre = M.F.num('arr.cuadre');
             if (inval > 0) aviso += '<span class="nxs-pill nxs-pill-warn"><i class="fas fa-triangle-exclamation"></i> ' + fmtN(inval) + ' solicitudes con fecha de creación ilegible</span>';
@@ -35483,15 +35433,18 @@ window.NEXUS_STATS_ENABLED = true;
             (corte ? '<span class="nxs-corte">Corte: día ' + corte + ' de ' + dias + '</span>' : '') + '</div>' +
             '<div class="nxs-top-r">' + aviso +
             '<span class="nxs-upd" id="nxs-upd"></span>' +
-            '<button type="button" class="nxs-btn" id="nxs-refrescar" aria-label="Actualizar estadísticas"><i class="fas fa-rotate' + (S.cargando ? ' fa-spin' : '') + '" aria-hidden="true"></i><span>Actualizar</span></button></div>';
+            '<button type="button" class="nxs-btn" id="nxs-refrescar" aria-label="Actualizar estadísticas"' + (bloq ? ' disabled title="Ya se actualizó; podrás volver a actualizar cuando pase la hora"' : '') + '><i class="fas fa-' + (bloq ? 'lock' : 'rotate') + (S.cargando ? ' fa-spin' : '') + '" aria-hidden="true"></i><span>' + (bloq ? 'Actualizado por ' + esc(S.lockPor || 'el personal') : 'Actualizar') + '</span></button></div>';
         var b = $('nxs-refrescar'); if (b) b.onclick = function () { NexusStats.refrescar(); };
         pintarUpd();
     }
     function pintarUpd() {
         var el = $('nxs-upd'); if (!el) return;
         if (!S.ultimoOk) { el.textContent = ''; return; }
-        var s = Math.round((Date.now() - S.ultimoOk) / 1000);
-        el.textContent = 'Actualizado ' + (s < 10 ? 'ahora' : s < 60 ? 'hace ' + s + ' s' : 'hace ' + Math.round(s / 60) + ' min');
+        if (S.lockHasta && Date.now() >= S.lockHasta) { S.lockHasta = 0; S.lockPor = ''; pintarBarra(); return; }   // terminó la hora: el botón vuelve a estar disponible
+        var s = Math.max(0, Math.round((Date.now() - (S.calcEn || S.ultimoOk)) / 1000));
+        var t = 'Actualizado ' + (s < 10 ? 'ahora' : s < 60 ? 'hace ' + s + ' s' : s < 3600 ? 'hace ' + Math.round(s / 60) + ' min' : 'hace ' + Math.floor(s / 3600) + ' h');
+        if (S.lockHasta > Date.now()) t += ' · se podrá actualizar en ' + Math.max(1, Math.ceil((S.lockHasta - Date.now()) / 60000)) + ' min';
+        el.textContent = t;
     }
 
     function pintarKpis(host) {
@@ -35884,17 +35837,22 @@ window.NEXUS_STATS_ENABLED = true;
         seguro('Arrastre y salud del flujo', $('nxs-arr'), pintarArr);
     }
 
-    async function cargar() {
+    async function cargar(forzar) {
         if (S.cargando) return;
         S.cargando = true; S.ultimoIntento = Date.now(); pintarBarra();
         try {
             var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
-                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getEstadisticas', idToken: await window.nexusIdToken() })
+                method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getEstadisticas', forzar: forzar === true, idToken: await window.nexusIdToken() })
             }, 25000, 2);
             if (!res || res.success === false) throw new Error((res && res.error) || 'Respuesta vacía del servidor');
             var data = res.data || res;
             if (!data || !data.f || !data.f['meta.mes']) throw new Error('La pestaña Export (F) está vacía o sin calcular.');
             S.raw = data; S.M = modelo(data); S.errorCarga = null; S.ultimoOk = Date.now(); S.falloLogueado = false;
+            // Estado global del botón (lo decide el servidor): se convierte a hora local con la diferencia de relojes
+            var inf = data.info || {};
+            S.lockHasta = (inf.bloqueado && inf.hasta) ? Date.now() + (inf.hasta - inf.ahora) : 0;
+            S.lockPor = inf.por || '';
+            S.calcEn = inf.calculadoEn ? Date.now() - (inf.ahora - inf.calculadoEn) : S.ultimoOk;
         } catch (err) {
             S.errorCarga = (err && err.message) ? err.message : 'Error de red';
             if (!S.falloLogueado) {
@@ -35927,7 +35885,7 @@ window.NEXUS_STATS_ENABLED = true;
             if (!window.NEXUS_STATS_ENABLED) { if (ph) ph.classList.remove('hidden'); root.classList.add('hidden'); return; }
             if (ph) ph.classList.add('hidden'); root.classList.remove('hidden');
             if (!esStaff()) { root.innerHTML = '<div class="nxs-errbox"><i class="fas fa-lock" aria-hidden="true"></i><h4>Acceso restringido</h4><p>Las estadísticas son solo para el personal de NEXUS.</p></div>'; root.removeAttribute('data-ok'); return; }
-            var sub = document.querySelector('#estadisticas .section-subtitle'); if (sub) sub.textContent = 'Panel de control de solicitudes';
+            var sub = document.querySelector('#estadisticas .section-subtitle'); if (sub) sub.textContent = 'Indicadores y métricas del desempeño de las solicitudes y el personal';
             armarCaparazon(); observar(); pintarTodo();
             if (!S.M || Date.now() - S.ultimoOk > 20000) cargar();
             if (!S.timer) {
@@ -35942,7 +35900,7 @@ window.NEXUS_STATS_ENABLED = true;
             if (S.timer) { clearInterval(S.timer); S.timer = null; }
             clearTimeout(S.rzT);
         },
-        refrescar: function () { cargar(); },
+        refrescar: function () { cargar(true); },
         _estado: S
     };
     window.NexusStats = NexusStats;
