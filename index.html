@@ -8262,9 +8262,9 @@ select.asx-fld { cursor: pointer; }
                         <!-- Tarjeta: Corrección de Nota de Prensa -->
                         <div class="item correccion-nota-prensa-item" data-form="correccion-nota-prensa">
                             <div class="item-image-wrapper">
-                                <img src="assets/images/prensa.png" loading="lazy" decoding="async" alt="Corrección de Nota de Prensa" width="332" height="378">
+                                <img src="assets/images/prensa.png" loading="lazy" decoding="async" alt="Nota de Prensa" width="332" height="378">
                                 <div class="item-overlay correccion-nota-prensa-overlay">
-                                    <div class="item_title_main">Corrección de Nota de Prensa</div>
+                                    <div class="item_title_main">Nota de Prensa</div>
                                     <div class="button-container">
                                         <button class="favorite-btn" onclick="toggleFavorite(this, 'correccion-nota-prensa')">
                                             <i class="fas fa-star"></i>
@@ -10050,13 +10050,13 @@ select.asx-fld { cursor: pointer; }
                 </div>
             </div>
             <div class="section-header">
-                <h2 class="section-title">Corrección Nota de Prensa</h2>
+                <h2 class="section-title">Nota de Prensa</h2>
                 <p class="section-subtitle">Escriba su nota o adjunte el documento original, con soportes fotográficos, para corrección</p>
             </div>
             <div class="formularios-container">
                 <form id="correccion-nota-prensa-formulario" class="medical-form">
                     <!-- Campo oculto para guardar el tipo de formulario -->
-                    <input type="hidden" id="correccion-nota-prensa-form-type" name="form-type" value="Corrección Nota de Prensa">
+                    <input type="hidden" id="correccion-nota-prensa-form-type" name="form-type" value="Nota de Prensa">
 
                     <div class="form-section">
                         <div style="background: linear-gradient(135deg, #2d6a4f 0%, #40916c 50%, #52b788 100%); border: 2px solid #2d6a4f; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
@@ -11790,7 +11790,7 @@ select.asx-fld { cursor: pointer; }
                             <button type="button" class="solbusc-tipo-item" data-tipo="Carrusel" onclick="nexusFiltrarPorTipo('Carrusel')">Carrusel</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Certificado o Reconocimiento" onclick="nexusFiltrarPorTipo('Certificado o Reconocimiento')">Certificado o Reconocimiento</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Copy RRSS" onclick="nexusFiltrarPorTipo('Copy RRSS')">Copy RRSS</button>
-                            <button type="button" class="solbusc-tipo-item" data-tipo="Corrección Nota de Prensa" onclick="nexusFiltrarPorTipo('Corrección Nota de Prensa')">Corrección Nota de Prensa</button>
+                            <button type="button" class="solbusc-tipo-item" data-tipo="Nota de Prensa" onclick="nexusFiltrarPorTipo('Nota de Prensa')">Nota de Prensa</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Cobertura de Prensa" onclick="nexusFiltrarPorTipo('Cobertura de Prensa')">Cobertura de Prensa</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Asistencia Protocolar" onclick="nexusFiltrarPorTipo('Asistencia Protocolar')">Asistencia Protocolar</button>
                             <button type="button" class="solbusc-tipo-item" data-tipo="Corrección de Video" onclick="nexusFiltrarPorTipo('Corrección de Video')">Corrección de Video</button>
@@ -20461,7 +20461,7 @@ select.asx-fld { cursor: pointer; }
             };
 
             // Tipo de formulario
-            const formType = document.getElementById('correccion-nota-prensa-form-type')?.value || 'Corrección Nota de Prensa';
+            const formType = document.getElementById('correccion-nota-prensa-form-type')?.value || 'Nota de Prensa';
             formData.general.push({ label: 'Tipo de Formulario', value: formType });
 
             // Título de la nota
@@ -25373,7 +25373,7 @@ select.asx-fld { cursor: pointer; }
         // Solo asignar: sin revisión de workflow ni arte; el admin asigna directamente.
         const NEXUS_TIPOS_SOLO_ASIGNAR = ['Cobertura de Prensa', 'Asistencia Protocolar'];
         // Sin entregable: el responsable no adjunta nada; el admin cierra con Finalizar (publicada) o Rechazar.
-        const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar'];
+        const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Nota de Prensa', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar'];
         // Tipos con entregable de audio/video: solo cuentan correcciones (sin especificaciones de diseño).
         const NEXUS_TIPOS_ARCHIVO_SIMPLE = {
             'Corrección de Video':    { accept: '.mp4,.mov',         ext: ['mp4', 'mov'],                 label: 'MP4 · MOV' },
@@ -33831,7 +33831,18 @@ select.asx-fld { cursor: pointer; }
         function aplicaAlmuerzo(t, uid) { var dow = dowDe(t); return (dow >= 1 && dow <= 5) || esGuardia(uid, fk(t)); }
         function almDe(a) {
             if (!a) return null;
-            return { estado: a.estado || '', ini: tms(a.ini), regreso: tms(a.regreso), aplazado: tms(a.aplazado), min: (a.min == null ? null : a.min), exceso: a.exceso || 0, tarde: !!a.tarde };
+            return { estado: a.estado || '', ini: tms(a.ini), regreso: tms(a.regreso), aplazado: tms(a.aplazado), min: (a.min == null ? null : a.min), exceso: a.exceso || 0, tarde: !!a.tarde, noRegreso: !!a.noRegreso, fin: tms(a.fin) };
+        }
+        // Fin de la jornada (3:30 p. m.) de una fecha laboral AAAA-MM-DD
+        function finJornadaDe(f) { return fechaAMs(f) + ORD_FIN; }
+        // Almuerzo tomado que no tuvo regreso dentro de la jornada: no volvió a entrar en el resto de la jornada,
+        // así que su registro de almuerzo llega hasta las 3:30 p. m. Devuelve { fin, min } o null si aún está a tiempo / no aplica.
+        function almSinRegreso(a, f) {
+            if (!a || a.estado !== 'tomado' || !a.ini || a.regreso) return null;
+            var fin = a.fin || (f ? finJornadaDe(f) : 0);
+            if (!fin || (!a.noRegreso && ahora() < fin)) return null;
+            fin = Math.max(fin, a.ini);
+            return { fin: fin, min: Math.max(0, Math.round((fin - a.ini) / 60000)) };
         }
         // Activo / Almorzando / Inactivo (Almorzando dura solo la hora de almuerzo; después pasa a Inactivo · no regresó)
         function estadoPersona(uid) {
@@ -33973,7 +33984,7 @@ select.asx-fld { cursor: pointer; }
             var ref = Fs.doc(db, 'asistencia', id), refU = Fs.doc(db, 'asistencia_ultima', S.uid);
             S.sid = 's' + t.toString(36) + Math.random().toString(36).slice(2, 5);
             var tramo = { ini: ts(), ultima: ts(), disp: dispositivo() };
-            var primer = null, snap = null, snapU = null, regreso = null;
+            var primer = null, snap = null, snapU = null, regreso = null, sinReg = null;
             S.alm = null; S.primerNuevo = false;
             try { snap = await Fs.getDoc(ref); } catch (e) {}
             try { snapU = await Fs.getDoc(refU); } catch (e) {}
@@ -33984,13 +33995,21 @@ select.asx-fld { cursor: pointer; }
                 if (a0) {
                     S.alm = Object.assign({ fecha: fecha }, a0);
                     if (a0.estado === 'tomado' && !a0.regreso) {      // vuelve a iniciar sesión después de almorzar
-                        var minF = a0.ini ? Math.max(0, Math.round((t - a0.ini) / 60000)) : 0;
-                        regreso = { min: minF, exceso: Math.max(0, minF - 60) };
-                        S.alm.regreso = t; S.alm.min = regreso.min; S.alm.exceso = regreso.exceso;
+                        var finJ = a0.fin || finJornadaDe(fecha);
+                        if (a0.noRegreso || t >= finJ) {              // entra cuando la jornada ya terminó: no cuenta como regreso del almuerzo
+                            var finR = Math.max(finJ, a0.ini || 0);
+                            sinReg = { fin: finR, min: a0.ini ? Math.max(0, Math.round((finR - a0.ini) / 60000)) : 0, yaGuardado: !!a0.noRegreso };
+                            S.alm.noRegreso = true; S.alm.fin = sinReg.fin; S.alm.min = sinReg.min; S.alm.exceso = 0;
+                        } else {
+                            var minF = a0.ini ? Math.max(0, Math.round((t - a0.ini) / 60000)) : 0;
+                            regreso = { min: minF, exceso: Math.max(0, minF - 60) };
+                            S.alm.regreso = t; S.alm.min = regreso.min; S.alm.exceso = regreso.exceso;
+                        }
                     }
                 }
                 var up = {}; up['tramos.' + S.sid] = tramo; up.nombre = S.nombre;
                 if (regreso) { up['almuerzo.regreso'] = ts(); up['almuerzo.min'] = regreso.min; up['almuerzo.exceso'] = regreso.exceso; }
+                if (sinReg && !sinReg.yaGuardado) { up['almuerzo.noRegreso'] = true; up['almuerzo.fin'] = sinReg.fin; up['almuerzo.min'] = sinReg.min; up['almuerzo.exceso'] = 0; }
                 if (!primer && !madrugada) { up.primerLogin = ts(); S.primerNuevo = true; }      // el doc lo creó el aviso antes del primer ingreso (en la madrugada no cuenta)
                 await Fs.updateDoc(ref, up);
             } else {
@@ -34002,6 +34021,7 @@ select.asx-fld { cursor: pointer; }
             var datU = { uid: S.uid, nombre: S.nombre, fecha: fecha, ini: ts(), ultima: ts(), fin: null, motivo: null, sid: S.sid };
             if (primer || !madrugada) datU.primerLogin = primer || ts();
             if (regreso) datU.almuerzo = { regreso: ts(), min: regreso.min, exceso: regreso.exceso };
+            else if (sinReg) datU.almuerzo = { noRegreso: true, fin: sinReg.fin, min: sinReg.min, exceso: 0 };
             await Fs.setDoc(refU, datU, { merge: true });
             return snapU && snapU.exists() ? snapU.data() : null;
         }
@@ -34171,6 +34191,10 @@ select.asx-fld { cursor: pointer; }
             if (!S.uid || !S.docId || S.almBusy) return;
             var t0 = ahora();
             if (!aplicaAlmuerzo(t0, S.uid) || t0 < inicioDia(t0) + ALM_INI) return;
+            if (t0 >= inicioDia(t0) + ORD_FIN) {      // fuera de la jornada (después de las 3:30 p. m.) no se puede tomar
+                toast({ type: 'warning', title: 'Almuerzo no disponible', message: 'La jornada terminó a las 3:30 p. m.; el almuerzo ya no se puede tomar.' });
+                pintarAlm(); return;
+            }
             if (!confirmado) {
                 var c = await modal({
                     icono: '🍽️', eyebrow: 'NEXUS · Almuerzo', titulo: '¿Tomar tu almuerzo ahora?',
@@ -34182,6 +34206,10 @@ select.asx-fld { cursor: pointer; }
             S.almBusy = true;
             try {
                 var t = ahora(), fecha = S.docId.slice(-10), previo = S.alm && S.alm.fecha === fecha ? S.alm : null;
+                if (t >= inicioDia(t) + ORD_FIN) {    // se pasó de las 3:30 p. m. mientras confirmaba
+                    toast({ type: 'warning', title: 'Almuerzo no disponible', message: 'La jornada terminó a las 3:30 p. m.; el almuerzo ya no se puede tomar.' });
+                    pintarAlm(); return;
+                }
                 var campos = { estado: 'tomado', ini: ts(), tarde: t >= inicioDia(t) + ALM_FIN };
                 await guardarAlm(campos, { fecha: fecha, estado: 'tomado', ini: ts(), regreso: null });
                 S.alm = { fecha: fecha, estado: 'tomado', ini: t, regreso: 0, aplazado: previo ? previo.aplazado : 0, min: null, exceso: 0, tarde: campos.tarde };
@@ -34206,9 +34234,15 @@ select.asx-fld { cursor: pointer; }
             if (S.sync && aplicaAlmuerzo(t, S.uid)) {
                 if (a && a.estado === 'tomado') {
                     cls = 'ok';
+                    var srP = almSinRegreso(a, fl(t));
                     h = '<span><b>Almuerzo tomado</b> a las ' + esc(hora(a.ini)) +
-                        (a.regreso ? ' · regresaste a las ' + esc(hora(a.regreso)) + (a.min != null ? ' (' + a.min + ' min)' : '') + (a.exceso > 0 ? ' · ' + a.exceso + ' min por encima de la hora, solo queda registrado' : '') : '') +
+                        (a.regreso ? ' · regresaste a las ' + esc(hora(a.regreso)) + (a.min != null ? ' (' + a.min + ' min)' : '') + (a.exceso > 0 ? ' · ' + a.exceso + ' min por encima de la hora, solo queda registrado' : '') : (srP ? ' · no regresaste al sistema el resto de la jornada, tu almuerzo queda registrado hasta las ' + esc(hora(srP.fin)) : '')) +
                         '. Cuenta dentro de tu jornada.</span>';
+                } else if (t >= d0 + ORD_FIN) {
+                    // La jornada terminó (3:30 p. m.): el almuerzo ya no se puede tomar y el botón queda desactivado
+                    cls = 'warn';
+                    h = '<span><b>La jornada terminó y el almuerzo ya no se puede tomar.</b> ' + (a && a.estado === 'aplazado' ? 'Quedó aplazado' : 'No lo marcaste') + ': en el historial figura «' + (a && a.estado === 'aplazado' ? 'Aplazó el almuerzo y no lo marcó en el sistema' : 'No marcó en el sistema') + ', pero pudo haberlo tomado».</span>' +
+                        '<button type="button" class="asx-btn p" id="asxAlmBtn" disabled aria-disabled="true" title="El almuerzo solo se puede tomar dentro de la jornada" style="opacity:.45;cursor:not-allowed;pointer-events:none"><i class="fas fa-utensils"></i> Almuerzo no disponible</button>';
                 } else if (t >= d0 + ALM_INI) {
                     pend = true; cls = 'warn';
                     h = '<span>' + (a && a.estado === 'aplazado'
@@ -34227,12 +34261,15 @@ select.asx-fld { cursor: pointer; }
         function almLinea(d, r, uid) {
             var a = r.almuerzo, t = ahora(), txt = '';
             if (a && a.estado === 'tomado') {
-                txt = hora(a.ini) + (a.regreso ? ' → ' + hora(a.regreso) : ' · sin regreso registrado');
+                var sr = almSinRegreso(a, d.fecha);
+                if (a.regreso) txt = hora(a.ini) + ' → ' + hora(a.regreso);
+                else if (sr) txt = hora(a.ini) + ' → ' + hora(sr.fin) + ' · no regresó al sistema el resto de la jornada';
+                else txt = hora(a.ini) + ' · sin regreso registrado';
                 if (a.regreso && a.min != null) txt += ' · ' + a.min + ' min fuera' + (a.exceso > 0 ? ' (+' + a.exceso + ' min de exceso)' : '');
                 if (a.aplazado) txt += ' · aplazado';
             } else if (d.fecha && r.total > 0) {
                 var dow = dowDe(fechaAMs(d.fecha) + 12 * 3600000), aplica = (dow >= 1 && dow <= 5) || esGuardia(uid, d.fecha);
-                var cerrado = d.fecha < fl(t) || t >= inicioDia(t) + ALM_FIN;
+                var cerrado = t >= finJornadaDe(d.fecha);       // el almuerzo se puede marcar hasta que termina la jornada (3:30 p. m.)
                 if (aplica && cerrado) txt = (a && a.estado === 'aplazado' ? 'Aplazó el almuerzo y no lo marcó en el sistema' : 'No marcó en el sistema') + ', pero pudo haberlo tomado';
             }
             return txt ? '<div><span>Almuerzo</span><span>' + esc(txt) + '</span></div>' : '';
@@ -34566,13 +34603,14 @@ select.asx-fld { cursor: pointer; }
                 var foot = !u ? 'Aún no ha iniciado sesión' : (on ? 'Sesión iniciada ' + hace(ini) : 'Última actividad ' + hace(fin));
                 if (es.k === 'tg') foot = 'Jornada por Telegram' + (es.ini ? ' desde las ' + hora(es.ini) : '') + (es.sol ? ' · atendiendo ' + es.sol : '');
                 else if (es.k === 'alm') foot = 'Almorzando desde las ' + hora(es.ini);
-                else if (es.noRegreso) foot = 'No regresó del almuerzo (salió a las ' + hora(es.ini) + ')';
                 var aU = u && u.almuerzo && u.almuerzo.fecha === hoy ? u.almuerzo : null, alm = '—';
+                var srU = aU ? almSinRegreso(almDe(aU), hoy) : null;
+                if (es.noRegreso) foot = srU ? 'No regresó al sistema el resto de la jornada (almuerzo hasta las ' + hora(srU.fin) + ')' : 'No regresó del almuerzo (salió a las ' + hora(es.ini) + ')';
                 if (aU && aU.estado === 'tomado') {
                     var aIni = tms(aU.ini), aReg = tms(aU.regreso);
-                    alm = aReg ? hora(aIni) + ' → ' + hora(aReg) + ' · ' + (aU.min != null ? aU.min : Math.round((aReg - aIni) / 60000)) + ' min' : (es.k === 'alm' ? 'Desde ' + hora(aIni) : 'No regresó');
-                } else if (aU && aU.estado === 'aplazado') alm = 'Aplazado';
-                else if (hoyU && aplicaAlmuerzo(ahora(), p.uid) && ahora() >= inicioDia(ahora()) + ALM_FIN) alm = 'Sin marcar';
+                    alm = aReg ? hora(aIni) + ' → ' + hora(aReg) + ' · ' + (aU.min != null ? aU.min : Math.round((aReg - aIni) / 60000)) + ' min' : (es.k === 'alm' ? 'Desde ' + hora(aIni) : (srU ? hora(aIni) + ' → ' + hora(srU.fin) + ' · no regresó' : 'No regresó'));
+                } else if (aU && aU.estado === 'aplazado') alm = ahora() >= finJornadaDe(hoy) ? 'Aplazado, sin marcar' : 'Aplazado';
+                else if (hoyU && aplicaAlmuerzo(ahora(), p.uid) && ahora() >= finJornadaDe(hoy)) alm = 'Sin marcar';
                 return '<button type="button" class="asx-card' + (me ? ' is-me' : '') + '" data-uid="' + esc(p.uid) + '" style="--c:' + esc(p.color) + '">' +
                     '<div class="asx-card-band"></div>' +
                     '<div class="asx-card-head"><span class="asx-av">' + NXE.img(p.icono) + '</span><div class="asx-who"><div class="asx-name">' + esc(p.nombre) + (me ? '<span class="asx-tag-me">Tú</span>' : '') + '</div><div class="asx-role">' + esc(p.rol || 'Personal') + '</div></div></div>' +
@@ -36095,6 +36133,155 @@ window.NEXUS_STATS_ENABLED = true;
 
     </script>
 
+    <!-- Botón «Colocar dirección exacta de la unidad»: rellena el campo de dirección de los formularios con la dirección
+         que el sistema tiene registrada para la unidad seleccionada (fuente: UNIDAD MÉDICA - Direcciones Act Nov 2026).
+         Las unidades que no figuran en DIRECCIONES_UNIDADES avisan que no tienen dirección registrada. -->
+    <script>
+    (function () {
+        var DIRECCIONES_UNIDADES = {
+        "Don Simón Rodríguez": "Av. Universidad, con Av. Fuerzas Armadas, Edificio IPASME, al lado de la iglesia Sagrado Corazón de Jesús, parroquia La Candelaria, municipio Libertador, Distrito Capital.",
+        "C.N.E.D. Dr. Julio de Armas": "Av. Andrés Eloy Blanco, esquina de Puente Yánez a Puente República, parroquia La Candelaria, municipio Libertador, Distrito Capital.",
+        "Centro de Salud para El Buen Vivir Dr. Salvador Allende": "Esquina de Cruz a Balconcito, Edificio Ministerio del Poder Popular para la Educación, piso 1, municipio Libertador, parroquia Altagracia, Distrito Capital.",
+        "Maracay": "Edificio IPASME, Urbanización La Floresta, Av. José María Vargas con calle Los Pinos, parroquia Las Delicias, municipio Girardot, estado Aragua.",
+        "La Victoria": "Calle Guillermo Oviedo con calle La Candelaria Sur, Nro. 02, diagonal a la casa del abuelo, parroquia La Victoria, municipio José Félix Ribas, estado Aragua.",
+        "Valencia": "Av. Michelena, C.C. Atlas, frente a la Inspectoría de Tránsito, Zona Industrial, antes del Estadio, parroquia Valencia, municipio Valencia, estado Carabobo.",
+        "Puerto Cabello": "Edificio IPASME, Av. Bolívar cruce con Av. Crisóstomo Falcón, parroquia Fraternidad, municipio Puerto Cabello, estado Carabobo",
+        "Guatire": "Edificio Pacairigua, calle Bolívar con calle Anzoátegui, parroquia Guatire, municipio Zamora, estado Miranda.",
+        "Ocumare del Tuy": "Edificio IPASME, sector El Calvario, 1ra calle 23 de Enero, prolongación Los Jabillos, parroquia Ocumare del Tuy, municipio Lander, estado Miranda.",
+        "Caucagua": "Carretera Nacional, vía Oriente, sector Cerro Grande, al lado de la Ruta del Sol, municipio Acevedo, parroquia Caucagua, estado Miranda.",
+        "Carrizal": "Av. Principal de Carrizal, José Manuel Álvarez, C.C Bell, sede IPASME, parroquia Carrizal, municipio Carrizal, estado Miranda.",
+        "La Guaira": "Av. Soublette, Edificio Centro Soublette, sector El Cardonal, parroquia La Guaira, municipio Vargas, estado La Guaira.",
+        "Cabimas": "Edificio IPASME, Urb. Buena Vista, Av. Carnevali, calle Siete, parroquia Cabimas, municipio Cabimas, estado Zulia.",
+        "Maracaibo": "Edificio IPASME, Av. Cecilio Acosta, Calle 67, municipio Maracaibo, estado Zulia.",
+        "Machiques": "Edificio IPASME, Av. Campo Elías con Av. Junín, Nro. 8-134 detrás del comando de la Guardia Nacional, parroquia Machiques, municipio Machiques de Perijá, estado Zulia.",
+        "San Carlos del Zulia": "Unidad Médica San Carlos del Zulia, sector 20 de mayo, calle 11 No 8-134, detrás del Comando de la Guardia Nacional Bolivariana, Santa Bárbara de Zulia, municipio Colón, estado Zulia.",
+        "El Moján": "Av. 2, entre calles 20 y 21, frente al comando de la Guardia Nacional Bolivariana, parroquia San Rafael de El Moján, municipio Mara, subregión Guajira, estado Zulia.",
+        "Barquisimeto": "Edificio IPASME, Av. Libertador, entre calles 30 y 31, parroquia Barquisimeto, municipio Iribarren, estado Lara.",
+        "El Tocuyo": "Edificio IPASME, Urb. Daniel Carias, calle 7 Bujanda con carrera 5, parroquia Bolívar, municipio Morán, estado Lara.",
+        "Carora": "Edificio IPASME, calle Coromoto, entre Av. Francisco de Miranda y calle Carabobo, parroquia Carora, municipio Torres, estado Lara.",
+        "San Felipe": "Edificio IPASME, Av. La Paz, entre calles 9 y 12, parroquia San Felipe, municipio San Felipe, estado Yaracuy.",
+        "Nirgua": "Edificio IPASME, calle La Planta, entre Av. 5 y 6, sector El Kiosco, diagonal a la Comandancia de la Policía, parroquia Nirgua, municipio Nirgua, estado Yaracuy.",
+        "Punto Fijo": "Edificio IPASME, sector Menca de Leoni, calle Inca, parroquia Punto Fijo, municipio Curirubana, estado Falcón.",
+        "Coro": "Final Av. Buchivacoa con Av. Rafael Gallardo, parroquia Santa Ana de Coro, municipio Miranda.",
+        "Buchivacoa": "Carretera Falcón-Zulia, sector Zamurito, entrada a San Pedro, municipio Buchivacoa, parroquia Capatárida, estado Falcón.",
+        "Puerto Cumarebo": "Unidad Médica IPASME Puerto Cumarebo, Calle Principal de la Urbanización La Cañada, municipio Zamora, parroquia Puerto Cumarebo, estado Falcón.",
+        "El Vigía": "Edificio IPASME, sector Primero de Mayo, Av. Ppal. parroquia El Vigía, municipio Alberto Adriani, estado Mérida.",
+        "Mérida": "Av. 16 de septiembre, Urb. Santa Elena, calle principal, sector Buena Vista, Edificio 5 (IPASME), parroquia Domingo Peña, estado Mérida.",
+        "Tovar": "Edificio IPASME, Av. Táchira con carrera 4ta, Nro. 8-13, sector Jesús Obrero, parroquia El Llano, municipio Tovar, estado Mérida.",
+        "La Grita": "Edificio IPASME, Carretera Siete, entre calles 2 y 3, frente a la Plaza Jáuregui, municipio Jáuregui, parroquia La Grita, estado Táchira.",
+        "Rubio": "Final de la Av. Manuel Pulido Méndez, frente al Hospital Padre Justo, parroquia Rubio, municipio Junín, estado Táchira.",
+        "San Cristóbal": "Edificio IPASME, carrera 2 entre calles 13 y 14, sector La Ermita, parroquia San Juan Bautista, municipio San Cristóbal, estado Táchira.",
+        "San Juan de Colón": "Urbanización La Floresta, Carrera 1-A, entre calles 3 y 4, parroquia Colón, municipio Ayacucho, estado Táchira",
+        "Ureña": "Carrera 5 con calle 10, Nro. 8-85, Rómulo Gallegos, parroquia Ureña, municipio Pedro María Ureña, estado Táchira.",
+        "Boconó": "Edificio IPASME, Av. Cementerio, sector La Sabanita, parroquia Boconó, municipio Boconó, estado Trujillo.",
+        "Trujillo": "Av. Diego García de Paredes, vía San Jacinto, parroquia Trujillo, municipio Trujillo, estado Trujillo",
+        "Valera": "Urbanización Mirabel, Av. Independencia, al lado del C.C. La Bandera, sector Plata III, Quinta Elena, parroquia Valera, municipio Valera, estado Trujillo.",
+        "Anaco": "Edificio IPASME, carretera Negra, vía Los Pilones, municipio Anaco, parroquia Anaco, estado Anzoátegui.",
+        "Barcelona": "Edificio IPASME, Av. Fraternidad vía Polígono de Tiro, a pocos metros de la Av. Intercomunal, parroquia El Carmen, municipio Simón Bolívar, estado Anzoátegui.",
+        "Cantaura": "Edificio IPASME, Av. Bolívar, cruce con calle Hospital, sector El Bolsillo, municipio Pedro María Freites, parroquia Cantaura, estado Anzoátegui.",
+        "El Tigre": "Edificio IPASME, Av. Intercomunal El Tigre- El Tigrito, parroquia Edmundo Barrios, municipio Simón Rodríguez, estado Anzoátegui.",
+        "Isidora Agnes, Ciudad Bolívar": "Edificio IPASME, Av. Norte, detrás del Hospital Universitario Ruiz y Páez, parroquia Catedral, municipio Heres, estado Bolívar.",
+        "Guasipati": "Urbanización Kamacotto, calle Juncal con calle El Carapo, Edificio IPASME, sector alto Perú municipio Roscio, parroquia Guasipati, estado Bolívar.",
+        "Profª Mirelva Martínez, San Félix": "Edificio IPASME Av. Gumilla con Av. Antonio de Berrios, parroquia Dalla Costa, municipio Caroní, estado Bolívar.",
+        "Upata": "Edificio IPASME, calle Italia, sector Bicentenario, parroquia Upata, municipio Piar, estado Bolívar.",
+        "Maturín": "Av. Rómulo Gallegos con calle Siete, Urbanización Brisas del Aeropuerto, sector La Floresta, parroquia Maturín, municipio Maturín, estado Monagas.",
+        "Punta de Mata": "Edificio IPASME, final de la Av. Bolívar, frente a la escuela de la Guardia Nacional Bolivariana, parroquia Punta de Mata, municipio Ezequiel Zamora, estado Monagas.",
+        "Cumaná": "Edificio IPASME, Av. Carúpano, vía El Peñón, al lado de la Urbanización Gran Mariscal, parroquia Cumaná, municipio Sucre, estado Sucre.",
+        "Cumanacoa": "Edificio IPASME, calle principal Andrés Eloy Blanco con calle Bolívar, municipio Montes, parroquia Cumanacoa, estado Sucre.",
+        "Carúpano": "Edif. IPASME, Av. Carúpano, vía El Peñón, al lado de la Urb. Gran Mariscal, parroquia Valentín Valiente, municipio Sucre, estado Sucre.",
+        "Güiria": "Av. Miranda, al lado del liceo Domingo Badaraco Bermúdez, estado Sucre.",
+        "Tucupita": "Edificio IPASME, Av. Guásima con calle 5 de julio, frente al Liceo Néstor Luis Pérez, parroquia Tucupita, municipio Tucupita, estado Delta Amacuro.",
+        "Casacoima": "Av. Bolívar, al lado del Centro Comercial MP, municipio Casacoima, parroquia Manuel Piar, estado Delta Amacuro.",
+        "La Asunción": "Av. Simón Bolívar (antigua Av. Constitución) entre el Palacio de Justicia y el Colegio de Abogados, parroquia La Asunción, municipio Arismendi, estado Nueva Esparta.",
+        "Puerto Ayacucho": "Edificio IPASME, urbanización Monseñor Segundo García, calle principal, parroquia Fernando Girón Tovar, municipio Atures, estado Amazonas.",
+        "Altagracia de Orituco": "Edificio IPASME, calle Chapaiguana con calle Sixto Sosa, municipio José Tadeo Monagas, parroquia Altagracia de Orituco, estado Guárico.",
+        "Calabozo": "Urbanización Misión Arriba, carrera seis, al lado del Seguro Social, municipio Francisco de Miranda, parroquia Calabozo, estado Guárico.",
+        "San Juan de los Morros": "Edificio IPASME, Av. Monseñor Sendrea, parroquia San Juan de los Morros, municipio Juan Germán Roscio, estado Guárico.",
+        "Valle de la Pascua": "Calle Santa Esmeralda con calle Esperanza, sector Vipedi, parroquia Valle de la Pascua, municipio Leonardo Infante, estado Guárico.",
+        "Zaraza": "Edificio IPASME, final calle Comercio, salida hacia Tucupido, municipio Pedro Zaraza, parroquia Zaraza, estado Guárico.",
+        "San Carlos de Cojedes": "Av. Bolívar Norte, entrada a San Carlos, en sentido Caracas-Acarigua, municipio Ezequiel Zamora, parroquia San Carlos de Cojedes, estado Cojedes.",
+        "Tinaquillo": "Edificio IPASME, sector Buenas Aires, vía Las Mercedes, calle principal, urbanización Los Nevados, parroquia Tinaquillo, municipio Tinaquillo, estado Cojedes.",
+        "San Fernando de Apure": "Edificio IPASME, Urb. Terrón Duro, final calle Ayacucho, parroquia San Fernando de Apure, municipio San Fernando, estado Apure.",
+        "Guasdualito": "Edificio IPASME, Carretera General Salón, entre calle Sucre y Cedeño, municipio Páez, parroquia Guasdualito, estado Apure.",
+        "Barinas": "Edificio IPASME, Av. Industrial con Av. Rómulo Gallegos, parroquia Barinas, municipio Barinas, estado Barinas.",
+        "Santa Bárbara de Barinas": "Edificio IPASME, prolongación calle 26, entre calles 7 y 8, municipio Ezequiel Zamora, parroquia Santa Bárbara de Barinas, estado Barinas.",
+        "Acarigua": "Edificio IPASME, calle Anteprimera, Barrio El Trapiche, detrás del Estadio Julio Hernández, parroquia Acarigua, municipio Páez, estado Portuguesa.",
+        "Guanare": "Edificio IPASME, Av. Limonero, al lado del Hospital Miguel Oraa, Urb. Rodríguez Ortiz, parroquia Guanare, municipio Guanare, estado Portuguesa."
+};
+
+        // PENDIENTE: faltan las direcciones de estas unidades, por eso su botón queda desactivado hasta que se agreguen
+        // a DIRECCIONES_UNIDADES: Sede Administrativa, Gerencia de CRDT, CIFAP, C.E.I.A. Dr. Manuel Montero, Fondo Editorial,
+        // Gerencia de Cultura, Deporte y Recreación, Dirección de Comunicaciones y Relaciones Públicas, Club Villas Ipasmar y Hotel Valle Grande.
+
+        // Campos de dirección donde se agrega el botón
+        var CAMPOS = ['direccion-exacta', 'captacion-direccion-exacta', 'pediatrica-direccion-exacta', 'oftalmologica-direccion-exacta',
+            'vacunacion-direccion-exacta', 'aprendizaje-direccion-exacta', 'deportivas-direccion-exacta', 'otros-direccion-exacta',
+            'cobertura-prensa-direccion', 'asp-direccion'];
+
+        function norm(s) {
+            return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+        }
+        var INDICE = {};
+        Object.keys(DIRECCIONES_UNIDADES).forEach(function (k) { INDICE[norm(k)] = DIRECCIONES_UNIDADES[k]; });
+
+        function aviso(tipo, titulo, mensaje) {
+            if (typeof showToast === 'function') showToast({ type: tipo, title: titulo, message: mensaje });
+            else alert(titulo + ': ' + mensaje);
+        }
+
+        function unidadSeleccionada(input) {
+            var form = input.closest('form');
+            var btn = form && form.querySelector('.unidad-btn.selected');
+            return btn ? btn.textContent.replace(/🔒/g, '').replace(/\s+/g, ' ').trim() : '';
+        }
+
+        function colocarDireccion(input) {
+            var unidad = unidadSeleccionada(input);
+            if (!unidad) { aviso('warning', 'Selecciona una unidad', 'Primero elige la región y la unidad para poder colocar su dirección.'); return; }
+            var dir = INDICE[norm(unidad)];
+            if (!dir) { aviso('warning', 'Unidad sin dirección', 'La unidad «' + unidad + '» aún no tiene una dirección registrada en el sistema. Escríbela manualmente.'); return; }
+            if (input.value.trim() && input.value.trim() !== dir && !window.confirm('El campo ya tiene texto. ¿Reemplazarlo por la dirección de ' + unidad + '?')) return;
+            input.value = dir;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            aviso('success', 'Dirección colocada', 'Se colocó la dirección de ' + unidad + '.');
+        }
+
+        // Desactiva el botón cuando la unidad seleccionada no tiene dirección registrada (con aviso en el propio botón)
+        function actualizarBotones() {
+            CAMPOS.forEach(function (id) {
+                var input = document.getElementById(id), b = document.getElementById(id + '-btn-dir-unidad');
+                if (!input || !b) return;
+                var unidad = unidadSeleccionada(input), falta = !!unidad && !INDICE[norm(unidad)];
+                b.disabled = falta;
+                b.style.opacity = falta ? '.5' : '1';
+                b.style.cursor = falta ? 'not-allowed' : 'pointer';
+                b.innerHTML = falta ? '📍 Colocar dirección exacta de la unidad <span style="font-weight:400;">· Faltan las direcciones de esta unidad</span>' : '📍 Colocar dirección exacta de la unidad';
+                b.title = falta ? 'Faltan las direcciones de esta unidad; por ahora escríbela manualmente.' : '';
+            });
+        }
+        var pendiente = false;
+        function programar() { if (pendiente) return; pendiente = true; setTimeout(function () { pendiente = false; actualizarBotones(); }, 0); }
+
+        function agregarBotones() {
+            CAMPOS.forEach(function (id) {
+                var input = document.getElementById(id);
+                if (!input || document.getElementById(id + '-btn-dir-unidad')) return;
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.id = id + '-btn-dir-unidad';
+                b.innerHTML = '📍 Colocar dirección exacta de la unidad';
+                b.style.cssText = 'margin-top:8px;padding:8px 12px;border-radius:8px;border:1px solid rgba(128,128,128,.55);background:rgba(128,128,128,.12);color:inherit;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;';
+                b.addEventListener('click', function () { colocarDireccion(input); });
+                input.insertAdjacentElement('afterend', b);
+            });
+            actualizarBotones();
+            new MutationObserver(programar).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', agregarBotones); else agregarBotones();
+    })();
+    </script>
+
     <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
          [PRUEBA-TEMPORAL] INICIO — CÓDIGO DE PRUEBA, NO ES PARTE DEL SISTEMA. ELIMINAR AL TERMINAR.
          Es el modal #nexusPruebaModal + su <script>, hasta el comentario FIN. Pasos completos de retiro: ver la
@@ -36110,13 +36297,42 @@ window.NEXUS_STATS_ENABLED = true;
                 <h2 class="nx-title"><i class="fas fa-flask"></i> Datos de prueba</h2>
             </div>
             <div class="nx-body">
-                <p style="font-size: 0.88rem; color: rgba(242,242,242,0.78); line-height: 1.6; margin: 0 0 10px;">
-                    Crea <b>2 solicitudes de cada tipo</b> a nombre del único usuario básico registrado, con imágenes de internet,
-                    notas de prensa / guiones / programas escritos y adjuntos, y fechas de creación y de evento repartidas
-                    <b>del día 1 del mes hasta hoy</b>. Escribe en datos reales (Firebase, hoja y Drive) pero <b>no avisa a Telegram</b>.
+                <p style="font-size: 0.88rem; color: rgba(242,242,242,0.78); line-height: 1.6; margin: 0 0 12px;">
+                    Crea de <b>10 a 50 solicitudes</b> de los tipos que marques, a nombre del único usuario básico registrado, con imágenes de internet,
+                    notas de prensa / guiones / programas escritos y adjuntos. La fecha de creación se reparte <b>entre inicio y fin</b> y la de
+                    evento / finalización en su propio rango. Escribe en datos reales (Firebase, hoja y Drive). Las de tipo
+                    <b>Copy RRSS</b> envían su mensaje al grupo de Telegram de Prensa; el resto no avisa.
                 </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 0 0 12px;">
+                    <label style="font-size: 0.76rem; color: rgba(242,242,242,0.7); display: flex; flex-direction: column; gap: 4px;">Cantidad (10 a 50)
+                        <input id="nexusPruebaCantidad" type="number" min="10" max="50" step="1" value="10" style="color-scheme: dark; padding: 8px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.3); background: rgba(172,195,242,0.08); color: #f2f2f2; font: inherit;">
+                    </label>
+                    <label style="font-size: 0.76rem; color: rgba(242,242,242,0.7); display: flex; flex-direction: column; gap: 4px;">Fecha de inicio
+                        <input id="nexusPruebaDesde" type="date" style="color-scheme: dark; padding: 8px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.3); background: rgba(172,195,242,0.08); color: #f2f2f2; font: inherit;">
+                    </label>
+                    <label style="font-size: 0.76rem; color: rgba(242,242,242,0.7); display: flex; flex-direction: column; gap: 4px;">Fecha de fin
+                        <input id="nexusPruebaHasta" type="date" style="color-scheme: dark; padding: 8px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.3); background: rgba(172,195,242,0.08); color: #f2f2f2; font: inherit;">
+                    </label>
+                </div>
+                <p style="font-size: 0.76rem; color: rgba(242,242,242,0.7); margin: 0 0 6px;">Fecha de evento / finalización <span style="opacity:.7">(para los tipos que la llevan; puede ser futura. Si la dejas vacía usa el rango de creación)</span></p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px;">
+                    <label style="font-size: 0.76rem; color: rgba(242,242,242,0.7); display: flex; flex-direction: column; gap: 4px;">Desde
+                        <input id="nexusPruebaEvDesde" type="date" style="color-scheme: dark; padding: 8px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.3); background: rgba(172,195,242,0.08); color: #f2f2f2; font: inherit;">
+                    </label>
+                    <label style="font-size: 0.76rem; color: rgba(242,242,242,0.7); display: flex; flex-direction: column; gap: 4px;">Hasta
+                        <input id="nexusPruebaEvHasta" type="date" style="color-scheme: dark; padding: 8px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.3); background: rgba(172,195,242,0.08); color: #f2f2f2; font: inherit;">
+                    </label>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px;">
+                    <span style="font-size: 0.76rem; color: rgba(242,242,242,0.7);">Tipos de solicitud <b id="nexusPruebaTiposCont" style="color:#f2f2f2;"></b></span>
+                    <span style="font-size: 0.76rem;">
+                        <a href="#" onclick="nexusPruebaMarcarTipos(true); return false;" style="color:#acc3f2;">Todos</a> ·
+                        <a href="#" onclick="nexusPruebaMarcarTipos(false); return false;" style="color:#acc3f2;">Ninguno</a>
+                    </span>
+                </div>
+                <div id="nexusPruebaTipos" style="max-height: 190px; overflow-y: auto; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(172,195,242,0.25); background: rgba(172,195,242,0.05); margin: 0 0 12px; font-size: 0.8rem; color: rgba(242,242,242,0.85);">Cargando tipos…</div>
                 <p style="font-size: 0.8rem; color: rgba(242,242,242,0.55); line-height: 1.5; margin: 0 0 14px;">
-                    Es seguro repetirlo: lo que ya existe se omite. «Eliminar pruebas» borra solo lo que creó esta función.
+                    Es seguro repetirlo con los mismos valores: lo que ya existe se omite (y no se reenvía a Telegram). «Eliminar pruebas» borra solo lo que creó esta función.
                 </p>
                 <div style="height: 8px; border-radius: 999px; background: rgba(172,195,242,0.15); overflow: hidden;">
                     <div id="nexusPruebaBarra" style="height: 100%; width: 0%; background: var(--ok); transition: width .3s;"></div>
@@ -36143,8 +36359,10 @@ window.NEXUS_STATS_ENABLED = true;
         }
         function bloquear(si) {
             ocupado = si;
-            ['nexusPruebaBtnGenerar', 'nexusPruebaBtnEliminar'].forEach(function (id) { if ($(id)) $(id).disabled = si; });
+            ['nexusPruebaBtnGenerar', 'nexusPruebaBtnEliminar', 'nexusPruebaCantidad', 'nexusPruebaDesde', 'nexusPruebaHasta', 'nexusPruebaEvDesde', 'nexusPruebaEvHasta'].forEach(function (id) { if ($(id)) $(id).disabled = si; });
+            var cs = document.querySelectorAll('#nexusPruebaTipos input[type=checkbox]'); for (var i = 0; i < cs.length; i++) cs[i].disabled = si;
         }
+        function fechaLocal(d) { var p = function (n) { return (n < 10 ? '0' : '') + n; }; return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); }
         function resetBorrar() {
             if (confirmandoBorrado) { clearTimeout(confirmandoBorrado); confirmandoBorrado = null; }
             var b = $('nexusPruebaBtnEliminar'); if (b) b.innerHTML = '<i class="fas fa-trash"></i> Eliminar pruebas';
@@ -36158,12 +36376,51 @@ window.NEXUS_STATS_ENABLED = true;
         window.nexusAbrirModalDatosPrueba = function () {
             if (!esAdminPrincipal()) return;
             resetBorrar(); estado('', 0); bloquear(false);
+            var hoy = fechaLocal(new Date()), ini = hoy.slice(0, 8) + '01';
+                        if (!$('nexusPruebaHasta').value) $('nexusPruebaHasta').value = hoy;
+            if (!$('nexusPruebaDesde').value) $('nexusPruebaDesde').value = ini;
             $('nexusPruebaModal').classList.add('active');
+            cargarTipos();
         };
         window.nexusCerrarModalDatosPrueba = function () {
             if (ocupado) return;
             resetBorrar();
             $('nexusPruebaModal').classList.remove('active');
+        };
+
+        // Tipos de solicitud (agrupados por departamento): se piden una sola vez al backend
+        var tiposCargados = false;
+        function esc2(t) { return String(t).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); }
+        function contarTipos() {
+            var cs = document.querySelectorAll('#nexusPruebaTipos input[type=checkbox]'), n = 0;
+            for (var i = 0; i < cs.length; i++) if (cs[i].checked) n++;
+            if ($('nexusPruebaTiposCont')) $('nexusPruebaTiposCont').textContent = '(' + n + ' de ' + cs.length + ')';
+            return n;
+        }
+        async function cargarTipos() {
+            if (tiposCargados) { contarTipos(); return; }
+            var box = $('nexusPruebaTipos'); if (!box) return;
+            try {
+                var d = await llamar('listarTiposPrueba', {});
+                var grupos = {}, orden = [];
+                (d.tipos || []).forEach(function (t) { var g = t.departamento || 'Otros'; if (!grupos[g]) { grupos[g] = []; orden.push(g); } grupos[g].push(t.tipo); });
+                box.innerHTML = orden.map(function (g) {
+                    return '<div style="margin: 0 0 8px;"><div style="font-size:0.7rem; letter-spacing:.06em; text-transform:uppercase; color:#acc3f2; margin:0 0 3px;">' + esc2(g) + '</div>' +
+                        grupos[g].map(function (n) {
+                            return '<label style="display:flex; align-items:center; gap:8px; padding:2px 0; cursor:pointer;"><input type="checkbox" checked value="' + esc2(n) + '" onchange="nexusPruebaContarTipos()"> ' + esc2(n) + '</label>';
+                        }).join('') + '</div>';
+                }).join('') || 'No hay tipos disponibles.';
+                tiposCargados = !!(d.tipos && d.tipos.length);
+                contarTipos();
+            } catch (err) {
+                box.textContent = 'No se pudieron cargar los tipos: ' + (err && err.message || err) + ' (se generarán todos).';
+            }
+        }
+        window.nexusPruebaContarTipos = contarTipos;
+        window.nexusPruebaMarcarTipos = function (si) {
+            if (ocupado) return;
+            var cs = document.querySelectorAll('#nexusPruebaTipos input[type=checkbox]'); for (var i = 0; i < cs.length; i++) cs[i].checked = si;
+            contarTipos();
         };
 
         async function llamar(accion, extra) {
@@ -36178,20 +36435,35 @@ window.NEXUS_STATS_ENABLED = true;
 
         window.nexusPruebaGenerar = async function () {
             if (ocupado || !esAdminPrincipal()) return;
+            var cantidad = parseInt($('nexusPruebaCantidad').value, 10), desde = $('nexusPruebaDesde').value, hasta = $('nexusPruebaHasta').value;
+            if (!(cantidad >= 10 && cantidad <= 50)) { estado('La cantidad debe ser un número entre 10 y 50.', 0); return; }
+            if (!desde || !hasta) { estado('Elige la fecha de inicio y la de fin.', 0); return; }
+            if (desde > hasta) { estado('La fecha de inicio no puede ser posterior a la de fin.', 0); return; }
+            var evDesde = $('nexusPruebaEvDesde').value, evHasta = $('nexusPruebaEvHasta').value;
+            if ((evDesde && !evHasta) || (!evDesde && evHasta)) { estado('Para el rango de evento / finalización completa las dos fechas (o deja ambas vacías).', 0); return; }
+            if (evDesde && evDesde > evHasta) { estado('En el rango de evento / finalización, «Desde» no puede ser posterior a «Hasta».', 0); return; }
+            var tipos = [], cs = document.querySelectorAll('#nexusPruebaTipos input[type=checkbox]');
+            for (var i = 0; i < cs.length; i++) if (cs[i].checked) tipos.push(cs[i].value);
+            if (cs.length && !tipos.length) { estado('Marca al menos un tipo de solicitud.', 0); return; }
+            var opciones = { cantidad: cantidad, desde: desde, hasta: hasta };       // se repiten idénticas en cada lote para que el plan sea el mismo
+            if (evDesde) { opciones.eventoDesde = evDesde; opciones.eventoHasta = evHasta; }
+            if (tipos.length) opciones.tipos = tipos;
             resetBorrar(); bloquear(true);
-            var creadas = 0, existentes = 0, errores = [], total = 0, aviso = '';
+            var creadas = 0, existentes = 0, errores = [], total = 0, aviso = '', tgOk = 0, tgFalla = 0, tgMotivo = '';
             try {
                 var lote = 0, totalLotes = 1;
                 while (lote < totalLotes) {
                     estado('Creando solicitudes… lote ' + (lote + 1) + ' de ' + totalLotes + '\n(descarga imágenes y crea documentos; puede tardar unos segundos por lote)', (lote / totalLotes) * 100);
-                    var d = await llamar('generarSolicitudesPrueba', { lote: lote });
+                    var d = await llamar('generarSolicitudesPrueba', Object.assign({ lote: lote }, opciones));
                     totalLotes = d.totalLotes || 1; total = d.total || total;
                     creadas += d.creadas || 0; existentes += d.existentes || 0; aviso = d.aviso || aviso;
                     (d.errores || []).forEach(function (e) { errores.push(e); });
+                    if (d.telegram) { tgOk += d.telegram.enviados || 0; tgFalla += d.telegram.fallidos || 0; if (d.telegram.motivo) tgMotivo = d.telegram.motivo; }
                     lote++;
                 }
                 estado('Listo: ' + creadas + ' creadas' + (existentes ? ', ' + existentes + ' ya existían' : '') + ' de ' + total + '.' +
                     (errores.length ? '\n' + errores.length + ' con error (vuelve a pulsar «Generar» para reintentarlas): ' + errores.slice(0, 3).map(function (e) { return e.tipo + ' — ' + e.error; }).join(' | ') : '') +
+                    ((tgOk || tgFalla) ? '\nTelegram (Copy RRSS): ' + tgOk + ' enviado(s)' + (tgFalla ? ', ' + tgFalla + ' sin enviar (' + tgMotivo + ')' : '') + '.' : '') +
                     (aviso ? '\n' + aviso : ''), 100);
                 if (typeof showToast === 'function') showToast({ type: errores.length ? 'warning' : 'success', title: 'Datos de prueba', message: creadas + ' solicitudes creadas' + (errores.length ? ' (' + errores.length + ' con error)' : '') + '.' });
             } catch (err) {
