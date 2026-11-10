@@ -3566,6 +3566,23 @@
             border-color: #7f1d2d !important;
         }
 
+        /* Cláusula de responsabilidad (Cobertura de Prensa): casilla opcional al final del formulario */
+        .cobp-clausula {
+            display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; cursor: pointer;
+            border: 2px solid #d5dbe6; border-radius: 12px; background: #f8fafc;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .cobp-clausula:hover { border-color: #a4243b; }
+        .cobp-clausula input[type="checkbox"] { width: 20px; height: 20px; margin: 2px 0 0; flex: 0 0 auto; accent-color: #a4243b; cursor: pointer; }
+        .cobp-clausula-texto { font-size: 0.92rem; line-height: 1.55; color: #1f2d4d; text-align: left; }
+        .cobp-clausula:has(input:checked) { border-color: #a4243b; background: #fdf0f2; }
+        .cobp-clausula-nota { display: block; margin-top: 8px; font-size: 0.8rem; color: #666; }
+        /* Tarjeta de una Cobertura de Prensa que incluye la cláusula (el solicitante pide alojamiento, alimentación y transporte para el equipo) */
+        .solicitud-card-mockup.card-clausula {
+            border: 3px solid #ffd666 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35), 0 0 0 2px rgba(255,214,102,0.55), 0 0 20px rgba(255,214,102,0.5);
+        }
+
         #cobertura-prensa-form .btn-primary {
             background: #a4243b;
             box-shadow: 0 4px 15px rgba(164, 36, 59, 0.3);
@@ -10552,6 +10569,15 @@ select.asx-fld { cursor: pointer; }
                         </div>
                     </div>
 
+                    <div class="form-section">
+                        <h3 class="form-section-title">🤝 Cláusula de Responsabilidad</h3>
+                        <label class="cobp-clausula" for="cobertura-prensa-clausula">
+                            <input type="checkbox" id="cobertura-prensa-clausula">
+                            <span class="cobp-clausula-texto" id="cobertura-prensa-clausula-texto">La directiva de la unidad se compromete a suministrar alojamiento, alimentación y transporte al equipo designado por la Directora de Comunicaciones y Relaciones Públicas, Licda. Dubraska Moya, para trasladarlo desde la capital hasta la unidad en el interior del país con motivo de la cobertura del evento.</span>
+                        </label>
+                        <small class="cobp-clausula-nota">Opcional. De lo contrario, no marque esta cláusula de responsabilidad.</small>
+                    </div>
+
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="showSection('formularios')">Volver</button>
                         <button type="submit" class="btn-primary">Enviar Solicitud</button>
@@ -14920,6 +14946,7 @@ select.asx-fld { cursor: pointer; }
                 videoAdjuntoNombre: '',
                 vocero: '',
                 productosCobertura: '',
+                clausulaResponsabilidad: '',
                 datosInteres: '',
                 textoNota: '',
                 documentoAdjuntoNombre: '',
@@ -15011,6 +15038,8 @@ select.asx-fld { cursor: pointer; }
                         plainData.productosCobertura = item.value;
                     } else if (item.label.includes('Datos de Interés')) {
                         plainData.datosInteres = item.value;
+                    } else if (item.label.includes('Cláusula de Responsabilidad')) {
+                        plainData.clausulaResponsabilidad = item.value;
                     } else if (item.label.includes('Texto de la Nota') || item.label.includes('Texto del Guión')) {
                         plainData.textoNota = item.value;
                     } else if (item.label.includes('Título de la Nota') || item.label.includes('Título del Guión')) {
@@ -15386,6 +15415,7 @@ select.asx-fld { cursor: pointer; }
                     if (plainData.vocero) otrosDatos.push(`• Vocero: ${plainData.vocero}`);
                     if (plainData.productosCobertura) otrosDatos.push(`• Productos de la Cobertura: ${plainData.productosCobertura}`);
                     if (plainData.datosInteres) otrosDatos.push(`• Datos de Interés: ${plainData.datosInteres}`);
+                    if (plainData.clausulaResponsabilidad) otrosDatos.push(`• Cláusula de Responsabilidad: ${plainData.clausulaResponsabilidad}`);
                     if (plainData.aforo) otrosDatos.push(`• Aforo: ${plainData.aforo}`);
                     if (plainData.preside) otrosDatos.push(`• Preside la Actividad: ${plainData.preside}`);
                     (plainData.docsTexto || []).forEach(d => otrosDatos.push(`• ${d.nombre}: Redactado en formulario (convertido a Google Doc en Drive)`));
@@ -17548,6 +17578,11 @@ select.asx-fld { cursor: pointer; }
                 .map(b => b.getAttribute('data-producto'));
             if (productos.length) formData.general.push({ label: 'Productos de la Cobertura', value: productos.join(', ') });
             if (val('cobertura-prensa-datos')) formData.general.push({ label: 'Datos de Interés', value: val('cobertura-prensa-datos') });
+            // Cláusula opcional: si se marca, el texto completo viaja con la solicitud (se guarda en su contenido)
+            if (document.getElementById('cobertura-prensa-clausula')?.checked) {
+                const txtCl = (document.getElementById('cobertura-prensa-clausula-texto')?.textContent || '').trim();
+                if (txtCl) formData.general.push({ label: 'Cláusula de Responsabilidad', value: txtCl });
+            }
 
             const fecha = val('cobertura-prensa-fecha');
             const hora = val('cobertura-prensa-hora-inicio');
@@ -19306,6 +19341,9 @@ select.asx-fld { cursor: pointer; }
             }
             if (plainData.datosInteres) {
                 generalSectionContent += `<div class="nexus-preview-item stacked"><span class="nexus-preview-label">Datos de Interés</span><span class="nexus-preview-value" style="white-space: pre-wrap; max-height: 220px; overflow-y: auto; display: block;">${_esc(plainData.datosInteres)}</span></div>`;
+            }
+            if (plainData.clausulaResponsabilidad) {
+                generalSectionContent += `<div class="nexus-preview-item stacked"><span class="nexus-preview-label">Cláusula de Responsabilidad</span><span class="nexus-preview-value" style="white-space: pre-wrap; display: block;">${_esc(plainData.clausulaResponsabilidad)}</span></div>`;
             }
             if (plainData.textoNota) {
                 const _txtNota = (typeof nexusEscHtml === 'function') ? nexusEscHtml(plainData.textoNota) : plainData.textoNota.replace(/</g, '&lt;');
@@ -24027,6 +24065,11 @@ select.asx-fld { cursor: pointer; }
                 var enCorreccion = !!s.CorreccionSolicitada && estatus !== 'FINALIZADA' && estatus !== 'RECHAZADA';
                 if (enCorreccion) themeClass += ' card-correccion';
 
+                // Cobertura de Prensa con la cláusula marcada: la unidad pide alojamiento, alimentación y transporte para el equipo.
+                // Se detecta por el texto guardado en el contenido de la solicitud (no requiere columna nueva).
+                var conClausula = solicitudLower.includes('cobertura de prensa') && String(s.Informacion || '').indexOf('Cláusula de Responsabilidad') !== -1;
+                if (conClausula) themeClass += ' card-clausula';
+
                 // Revisión del arte (solo personal, solicitud abierta). El estado sale del último evento de HistorialRevisiones:
                 //  - 'correccion': el admin pidió corrección y aún no se sube el arte corregido (onda naranja, todo el personal)
                 //  - 'subida':     se subió arte (nuevo o corregido) y el admin no lo ha aprobado ni pedido otra corrección (onda turquesa, solo admin)
@@ -24092,6 +24135,8 @@ select.asx-fld { cursor: pointer; }
                 } else {
                     cardAttrs = ' style="cursor: default;"' + (arteFlujo === 'SOLICITADA' ? ' title="Esperando la autorización del administrador"' : '');
                 }
+
+                if (conClausula && cardAttrs.indexOf('title=') === -1) cardAttrs += ' title="La unidad se compromete a suministrar alojamiento, alimentación y transporte al equipo"';
 
                 html += 
                     '<div class="solicitud-card-mockup ' + themeClass + '"' + cardAttrs + '>' +
