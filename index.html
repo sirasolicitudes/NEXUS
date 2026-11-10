@@ -3478,6 +3478,7 @@
             pointer-events: none;
         }
         .igf-file-info .mi-icon { font-size: 1.6rem; line-height: 1; }
+        .igf-file-info .mi-thumb { width: 52px; height: 40px; object-fit: cover; border-radius: 6px; background: rgba(0,0,0,0.06); box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
         .igf-file-info .mi-name {
             max-width: 100%;
             font-size: 0.7rem;
@@ -11890,7 +11891,7 @@ select.asx-fld { cursor: pointer; }
                     <i class="fas fa-calendar-check"></i>
                     <div>
                         <p>Tu arte estará disponible para <strong>descarga o corrección</strong> hasta la <strong>fecha del evento</strong>.</p>
-                        <p>Los <strong>obituarios</strong> estarán disponibles por <strong>4 días</strong> desde que se finalizan.</p>
+                        <p>Los <strong>obituarios</strong>, las <strong>notas de prensa</strong> y las <strong>correcciones de video</strong> estarán disponibles por <strong>4 días</strong> desde que se finalizan.</p>
                     </div>
                 </div>
                 <div class="solicitudes-cards-grid" id="artesFinalesGrid">
@@ -12228,6 +12229,55 @@ select.asx-fld { cursor: pointer; }
                         <button class="nx-btn nx-btn-ghost" onclick="closeNexusRRSSModal()">Cancelar</button>
                         <button class="nx-btn nx-btn-primary" onclick="confirmRRSSSelection()">
                             <i class="fas fa-check"></i> Finalizar y Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Correcciones para Corrección de Video: explicación breve + correcciones por minuto -->
+    <style>
+        #nexusCVModal .nx-cv-grid { display: grid; grid-template-columns: 30px 92px minmax(0, 1fr); gap: 8px; align-items: center; }
+        #nexusCVModal .nx-cv-th { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-tertiary); padding: 0 2px 2px; }
+        #nexusCVModal .nx-cv-n { text-align: center; font-size: 0.8rem; font-weight: 700; color: #9cd2d3; }
+        #nexusCVModal .nx-cv-in, #nexusCVModal .nx-cv-expl { width: 100%; box-sizing: border-box; padding: 9px 11px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel-2); color: var(--color-light); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; }
+        #nexusCVModal .nx-cv-expl { padding: 12px 14px; border-radius: 10px; resize: vertical; }
+        #nexusCVModal .nx-cv-in:focus, #nexusCVModal .nx-cv-expl:focus { outline: none; border-color: #9cd2d3; }
+        #nexusCVModal .nx-cv-in.nx-cv-err { border-color: #e5484d; }
+        @media (max-width: 480px) { #nexusCVModal .nx-cv-grid { grid-template-columns: 24px 74px minmax(0, 1fr); gap: 6px; } }
+    </style>
+    <div id="nexusCVModal" class="nx-overlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 640px;">
+            <div class="nx-head" style="background: linear-gradient(135deg, rgba(156, 210, 211, 0.18) 0%, rgba(74, 110, 176, 0.03) 100%);">
+                <button class="nx-close" onclick="closeNexusCVModal()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · CORRECCIÓN DE VIDEO</p>
+                <h2 class="nx-title"><i class="fas fa-film" style="color: #9cd2d3;"></i> Correcciones del video</h2>
+                <p class="nx-sub">Anote qué debe corregirse y en qué minuto. Al finalizar se genera un documento que el solicitante podrá descargar.</p>
+            </div>
+            <div class="nx-body">
+                <div class="nx-request-chip" style="border-color: rgba(156, 210, 211, 0.3); background: rgba(156, 210, 211, 0.08); color: #9cd2d3;">
+                    <span>Solicitud: <b id="nexusCVRequestId" style="color: #9cd2d3;">-</b></span>
+                </div>
+
+                <label for="nexusCVExplicacion" style="display:block; font-size:0.85rem; color: var(--color-tertiary); margin-bottom:8px;">
+                    <i class="fas fa-align-left"></i> Explicación breve
+                </label>
+                <textarea id="nexusCVExplicacion" class="nx-cv-expl" rows="4" maxlength="600" placeholder="Resumen general de lo que debe corregirse en el video..." style="margin-bottom: 18px;"></textarea>
+
+                <label style="display:block; font-size:0.85rem; color: var(--color-tertiary); margin-bottom:10px;">
+                    <i class="fas fa-clock"></i> Correcciones por minuto
+                </label>
+                <div class="nx-cv-grid" style="margin-bottom: 6px;">
+                    <span class="nx-cv-th"></span><span class="nx-cv-th">Minuto</span><span class="nx-cv-th">Corrección</span>
+                </div>
+                <div id="nexusCVRows" class="nx-cv-grid" style="margin-bottom: 16px;"></div>
+
+                <div class="nx-foot">
+                    <div class="nx-actions" style="margin-left: auto;">
+                        <button class="nx-btn nx-btn-ghost" onclick="closeNexusCVModal()">Cancelar</button>
+                        <button class="nx-btn nx-btn-primary" id="nexusCVConfirmBtn" onclick="nexusCVConfirmar()">
+                            <i class="fas fa-check"></i> Finalizar y generar documento
                         </button>
                     </div>
                 </div>
@@ -13970,7 +14020,7 @@ select.asx-fld { cursor: pointer; }
         //  - Con replace + tipoCorreccion ('texto' | 'diseno' | 'ambas') suma 1 a los contadores de
         //    correcciones y a cada subtipo marcado (fecha, direccion, contenido, foto, elementos, color).
         // Lanza error si no se pudo guardar; devuelve true si todo salió bien.
-        async function nexusActualizarUrlFirebase(solicitudId, fileUrl, folderType = "SOLICITUDES", replace = false, tipoCorreccion = null, detalleCorreccion = null, lineaHistorial = null) {
+        async function nexusActualizarUrlFirebase(solicitudId, fileUrl, folderType = "SOLICITUDES", replace = false, tipoCorreccion = null, detalleCorreccion = null, lineaHistorial = null, linkPublicacion = null) {
             const base = nexusRegistroVivoActual(solicitudId);
             if (!base) throw new Error('La solicitud ya no está activa.');
 
@@ -13978,14 +14028,17 @@ select.asx-fld { cursor: pointer; }
             // 'N/A' es el valor vacío de la solicitud recién creada: no es una URL y no debe acumularse.
             const lista = function (t) { return String(t || '').split(',').map(function (u) { return u.trim(); }).filter(function (u) { return u && !/^(n\/a|n\/p|null|undefined|ninguno|ninguna)$/i.test(u); }); };
             const nuevas = lista(fileUrl);
-            const previas = lista(base[campo]);
+            // En ArteFinal puede venir la línea «Publicado: link» (Nota de Prensa): no es un archivo, no se acumula ni se borra de Drive.
+            const previas = lista(campo === 'ArteFinal' ? window.nexusSepararArteFinal(base[campo]).archivos : base[campo]);
             const finales = replace ? nuevas : previas.concat(nuevas.filter(function (u) { return previas.indexOf(u) === -1; }));
 
             const ruta = 'solicitudes_vivas/' + nexusSanitizarClaveRTDB(base.Unidad) + '/' + solicitudId + '/';
             const up = {};
             const local = Object.assign({}, base);
-            up[ruta + campo] = finales.join(', ');
-            local[campo] = finales.join(', ');
+            let textoCampo = finales.join(', ');
+            if (campo === 'ArteFinal' && linkPublicacion) textoCampo += '\n' + window.nexusLineaLinkPublicacion(linkPublicacion);   // Nota de Prensa: link de publicación bajo los archivos
+            up[ruta + campo] = textoCampo;
+            local[campo] = textoCampo;
 
             // tipoCorreccion 'simple' (Voz en Off, Limpieza, Corrección de Video): no suma contadores;
             // la corrección queda solo como marca de tiempo en el historial del Sheet.
@@ -17104,7 +17157,19 @@ select.asx-fld { cursor: pointer; }
             const slot = input.closest('.igf-file-slot');
             if (info) {
                 info.innerHTML = '';
-                const ic = document.createElement('span'); ic.className = 'mi-icon'; ic.textContent = igfIcono(file);
+                if (input._igfThumbUrl) { try { URL.revokeObjectURL(input._igfThumbUrl); } catch (e) {} input._igfThumbUrl = null; }
+                let ic;
+                const esImg = /^image\//.test(file.type), esVideo = file.type === 'video/mp4';
+                if (esImg || esVideo) {
+                    // Miniatura de la imagen o del primer cuadro del video; si falla, vuelve al ícono
+                    input._igfThumbUrl = URL.createObjectURL(file);
+                    ic = document.createElement(esImg ? 'img' : 'video'); ic.className = 'mi-thumb';
+                    if (esImg) { ic.alt = file.name; ic.src = input._igfThumbUrl; }
+                    else { ic.muted = true; ic.preload = 'metadata'; ic.playsInline = true; ic.src = input._igfThumbUrl + '#t=0.1'; }
+                    ic.onerror = function () { const f = document.createElement('span'); f.className = 'mi-icon'; f.textContent = igfIcono(file); if (ic.parentNode) ic.parentNode.replaceChild(f, ic); };
+                } else {
+                    ic = document.createElement('span'); ic.className = 'mi-icon'; ic.textContent = igfIcono(file);
+                }
                 const nm = document.createElement('span'); nm.className = 'mi-name'; nm.textContent = file.name; nm.title = file.name;
                 const sz = document.createElement('span'); sz.className = 'mi-size'; sz.textContent = igfFormatearPeso(file.size);
                 info.appendChild(ic); info.appendChild(nm); info.appendChild(sz);
@@ -17121,6 +17186,7 @@ select.asx-fld { cursor: pointer; }
             const removeBtn = document.getElementById(removeBtnId);
             if (input) {
                 input.value = '';
+                if (input._igfThumbUrl) { try { URL.revokeObjectURL(input._igfThumbUrl); } catch (e) {} input._igfThumbUrl = null; }
                 const slot = input.closest('.igf-file-slot');
                 if (slot) slot.classList.remove('has-file');
             }
@@ -24544,7 +24610,7 @@ select.asx-fld { cursor: pointer; }
 
                 if (urls.length > 0) {
                     // Fotos para el visor con navegación (compartido con Extraer Información)
-                    const _tipoMedia = !!nexusTipoArchivoSimple(requestData.Solicitud || requestData.TipoSolicitud);
+                    const _tipoMedia = !!nexusTipoArchivoSimple(requestData.Solicitud || requestData.TipoSolicitud) || nexusTipoNotaPrensa(requestData.Solicitud || requestData.TipoSolicitud);   // Nota de Prensa: documentos, se ven con el reproductor/preview de Drive
                     const _usaReproductor = (nombre, url) => _tipoMedia || nexusEsVideoArchivo(nombre, url);
                     const fotosArteFinal = urls.map((url, idx) => {
                         const fid = nexusExtractFileIdFromUrl(url);
@@ -24608,6 +24674,20 @@ select.asx-fld { cursor: pointer; }
                 }
             } else if (filePreviewContainer) {
                 filePreviewContainer.innerHTML = '';
+            }
+
+            // Nota de Prensa: link donde se publicó la nota
+            const boxLinkPub = document.getElementById('nexusLinkPublicacionBox');
+            if (boxLinkPub) {
+                const linkPub = nexusTipoNotaPrensa(requestData.Solicitud || requestData.TipoSolicitud) ? window.nexusLinkPublicacion(requestData) : '';
+                if (linkPub && /^https?:\/\//i.test(linkPub)) {
+                    boxLinkPub.style.display = 'block';
+                    boxLinkPub.innerHTML = '<div style="font-size:0.75rem; font-weight:700; opacity:0.8; margin-bottom:4px;">🔗 Link de publicación</div>' +
+                        '<a href="' + nexusEscHtml(linkPub) + '" target="_blank" rel="noopener noreferrer" style="word-break:break-all; font-size:0.85rem; color: var(--color-secondary);">' + nexusEscHtml(linkPub) + '</a>';
+                } else {
+                    boxLinkPub.style.display = 'none';
+                    boxLinkPub.innerHTML = '';
+                }
             }
 
             nexusOpenSidePanel();
@@ -25373,22 +25453,45 @@ select.asx-fld { cursor: pointer; }
         // Solo asignar: sin revisión de workflow ni arte; el admin asigna directamente.
         const NEXUS_TIPOS_SOLO_ASIGNAR = ['Cobertura de Prensa', 'Asistencia Protocolar'];
         // Sin entregable: el responsable no adjunta nada; el admin cierra con Finalizar (publicada) o Rechazar.
-        const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Nota de Prensa', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar'];
+        // Corrección de Video: Finalizar abre un modal de correcciones por minuto y genera un documento en Drive (ver nexusCVConfirmar).
+        const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar', 'Corrección de Video'];
         // Tipos con entregable de audio/video: solo cuentan correcciones (sin especificaciones de diseño).
         const NEXUS_TIPOS_ARCHIVO_SIMPLE = {
-            'Corrección de Video':    { accept: '.mp4,.mov',         ext: ['mp4', 'mov'],                 label: 'MP4 · MOV' },
             'Voz en Off':             { accept: '.mp3,.wav,.m4a',    ext: ['mp3', 'wav', 'm4a'],          label: 'MP3 · WAV · M4A' },
             'Limpieza de Audio/Clip': { accept: '.mp3,.wav,.m4a,.aac,.ogg,.flac,.mp4,.mov', ext: ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac', 'mp4', 'mov'], label: 'Audio: MP3 · WAV · M4A · AAC · OGG · FLAC  |  Video: MP4 · MOV' }
         };
         const NEXUS_TIPOS_LINK = ['Diseño de Textiles']; // entregable = link de Drive + cantidad de piezas
+        // Nota de Prensa: entregable = archivos adjuntos + link de publicación (donde salió la nota).
+        // El link se guarda en ArteFinal, en una línea aparte «Publicado: https://…» debajo de los archivos.
+        const NEXUS_TIPOS_NOTA_PRENSA = ['Nota de Prensa'];
+        function nexusTipoNotaPrensa(t) { return NEXUS_TIPOS_NOTA_PRENSA.indexOf(t) !== -1; }
+        window.nexusTipoNotaPrensa = nexusTipoNotaPrensa;
+        // Separa el valor de ArteFinal en { archivos, link }: la línea «Publicado: …» NO es un archivo y no debe contarse ni previsualizarse.
+        function nexusSepararArteFinal(v) {
+            var link = '';
+            var archivos = String(v == null ? '' : v).replace(/(^|\n)[ \t]*Publicad[oa][ \t]*:[ \t]*(\S*)[ \t]*(?=\n|$)/gi, function (m, pre, l) {
+                if (l && !link) link = l;
+                return pre;
+            });
+            return { archivos: archivos, link: link };
+        }
+        function nexusLinkPublicacion(obj) {
+            var v = (obj && typeof obj === 'object') ? obj.ArteFinal : obj;
+            return nexusSepararArteFinal(v).link;
+        }
+        function nexusLineaLinkPublicacion(link) { return 'Publicado: ' + String(link || '').trim(); }
+        window.nexusSepararArteFinal = nexusSepararArteFinal;
+        window.nexusLinkPublicacion = nexusLinkPublicacion;
+        window.nexusLineaLinkPublicacion = nexusLineaLinkPublicacion;
         function nexusTipoSinWorkflow(t) { return NEXUS_TIPOS_SIN_WORKFLOW.indexOf(t) !== -1; }
         function nexusTipoSoloAsignar(t) { return NEXUS_TIPOS_SOLO_ASIGNAR.indexOf(t) !== -1; }
         function nexusTipoSinEntregable(t) { return NEXUS_TIPOS_SIN_ENTREGABLE.indexOf(t) !== -1; }
         function nexusTipoArchivoSimple(t) { return Object.prototype.hasOwnProperty.call(NEXUS_TIPOS_ARCHIVO_SIMPLE, t) ? NEXUS_TIPOS_ARCHIVO_SIMPLE[t] : null; }
         function nexusTipoLink(t) { return NEXUS_TIPOS_LINK.indexOf(t) !== -1; }
-        // Modo de adjunto: 'ninguno' | 'link' | 'simple' | 'diseno'
+        // Modo de adjunto: 'ninguno' | 'link' | 'nota' | 'simple' | 'diseno'
         function nexusModoAdjunto(t) {
             if (nexusTipoSinEntregable(t)) return 'ninguno';
+            if (nexusTipoNotaPrensa(t)) return 'nota';
             if (nexusTipoLink(t)) return 'link';
             if (nexusTipoArchivoSimple(t)) return 'simple';
             return 'diseno';
@@ -25397,6 +25500,7 @@ select.asx-fld { cursor: pointer; }
         function nexusPiezasArteFinal(obj) {
             // Textiles guarda «link\nN» en ArteFinal: la línea numérica bajo el link es la cantidad de piezas.
             var v = (obj && typeof obj === 'object') ? obj.ArteFinal : obj;
+            v = nexusSepararArteFinal(v).archivos;   // la línea «Publicado: …» no es un archivo
             var n = 0;
             String(v == null ? '' : v).split(/[,\n]/).forEach(function (t) { t = t.trim(); if (/^\d+$/.test(t)) n += parseInt(t, 10); });
             return n > 0 ? n : nexusUrlsArteFinal(obj).length;
@@ -25404,12 +25508,13 @@ select.asx-fld { cursor: pointer; }
         window.nexusPiezasArteFinal = nexusPiezasArteFinal;
         window.nexusTipoSinWorkflow = nexusTipoSinWorkflow; window.nexusTipoSoloAsignar = nexusTipoSoloAsignar;
         window.nexusTipoSinEntregable = nexusTipoSinEntregable; window.nexusModoAdjunto = nexusModoAdjunto;
-        const NEXUS_TIPOS_FECHA_AUTOMATICA = ['Obituario']; // tipos que fijan fecha al mismo día (solo Obituario genera arte)
+        const NEXUS_TIPOS_FECHA_AUTOMATICA = ['Obituario', 'Nota de Prensa', 'Corrección de Video']; // tipos que fijan fecha al mismo día: el arte vence 4 días después de finalizar
 
         // URLs reales del arte final. ArteFinal vale 'N/A' mientras no hay arte (así se crea la solicitud),
         // y 'N/A' no es un archivo: se descarta junto con vacíos y otros marcadores nulos.
         function nexusUrlsArteFinal(obj) {
             var v = (obj && typeof obj === 'object') ? obj.ArteFinal : obj;
+            v = nexusSepararArteFinal(v).archivos;   // la línea «Publicado: …» no es un archivo
             // Se separa por coma o salto de línea; una línea solo numérica es la cantidad de piezas (Textiles), no un archivo.
             return String(v == null ? '' : v).split(/[,\n]/).map(function (u) { return u.trim(); })
                 .filter(function (u) { return u && !/^\d+$/.test(u) && !/^(n\/a|n\/p|null|undefined|ninguno|ninguna)$/i.test(u); });
@@ -25619,6 +25724,7 @@ select.asx-fld { cursor: pointer; }
 
             const data = nexusRegistroVivoActual(nexusSelectedRequestId) || nexusSelectedRequestData;
             if ((data.Solicitud || '') === 'Copy RRSS') { showNexusRRSSModal(); return; }
+            if ((data.Solicitud || '') === 'Corrección de Video') { showNexusCVModal(); return; }
             await handleFinalizarEstado();
         }
 
@@ -25684,6 +25790,12 @@ select.asx-fld { cursor: pointer; }
                 showNexusRRSSModal();
                 return false;
             }
+            // Corrección de Video: no se finaliza sin las correcciones del modal (de ellas sale el documento que descarga el solicitante)
+            const cv = opciones.correccionVideo || null;
+            if (!esRechazo && tipo === 'Corrección de Video' && !cv) {
+                showNexusCVModal();
+                return false;
+            }
 
             window._nxCerrandoSolicitud = true;
             const mes = NexusData.mesKey();
@@ -25703,6 +25815,42 @@ select.asx-fld { cursor: pointer; }
                 const rStr = redes.length > 0 ? redes.join(', ') : 'N/A';
                 registro.RedesSociales = rStr;
                 registro.Redes = rStr;
+            }
+
+            // Corrección de Video: el documento es el entregable, así que se genera ANTES de cerrar.
+            // Si falla, la solicitud sigue viva y el modal conserva lo escrito para reintentar.
+            if (!esRechazo && tipo === 'Corrección de Video') {
+                try {
+                    showNexusLoadingOverlay('Generando documento...', 'Creando el documento de correcciones en Drive', true);
+                    const docRes = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'crearDocCorreccionVideo',
+                            id: id,
+                            Requerimiento: id,
+                            explicacion: cv.explicacion,
+                            filas: cv.filas,
+                            solicitante: base.Usuario || '',
+                            unidad: base.Unidad || '',
+                            responsable: responsable,
+                            fecha: (function () { const f = nexusFechaVenezuela(new Date()); return String(f.day).padStart(2, '0') + '/' + String(f.month).padStart(2, '0') + '/' + f.year; })()   // dd/mm/aaaa, como en el resto de NEXUS
+                        })
+                    }, 60000, 1);
+                    const urlDoc = docRes && (docRes.fileUrl || (docRes.data && docRes.data.fileUrl));
+                    if (!(docRes && docRes.success !== false && urlDoc)) {
+                        throw new Error((docRes && (docRes.error || (docRes.data && docRes.data.error))) || 'respuesta sin enlace del documento');
+                    }
+                    registro.ArteFinal = urlDoc;   // el flujo normal de arte final (artes_finales + descarga del solicitante) lo toma de aquí
+                } catch (docErr) {
+                    console.error('[NEXUS] No se pudo generar el documento de correcciones:', docErr);
+                    window._nxCerrandoSolicitud = false;
+                    showToast({ type: 'error', title: 'No se generó el documento',
+                        message: 'La solicitud sigue activa. Intenta de nuevo (' + (docErr.message || docErr) + ').', duration: 8000 });
+                    return false;
+                } finally {
+                    hideNexusLoadingOverlay();
+                }
             }
 
             const up = {};
@@ -25866,6 +26014,85 @@ select.asx-fld { cursor: pointer; }
             handleFinalizarEstado(redesSeleccionadas);
         }
 
+        // ============================================================
+        // MODAL DE CORRECCIONES (Corrección de Video)
+        // Explicación breve + NX_CV_FILAS filas «Minuto / Corrección». Al confirmar, nexusCerrarSolicitud genera
+        // el documento en Drive y lo deja como arte final; si algo falla, el modal conserva lo escrito.
+        // ============================================================
+        const NX_CV_FILAS = 15;
+
+        function nexusCVConstruirFilas() {
+            const cont = document.getElementById('nexusCVRows');
+            if (!cont || cont.childElementCount) return;
+            let html = '';
+            for (let i = 1; i <= NX_CV_FILAS; i++) {
+                html += '<div class="nx-cv-n">' + i + '</div>' +
+                    '<input type="text" class="nx-cv-in" data-cv="minuto" maxlength="12" autocomplete="off" placeholder="0:00" aria-label="Minuto de la corrección ' + i + '">' +
+                    '<input type="text" class="nx-cv-in" data-cv="correccion" maxlength="300" autocomplete="off" placeholder="Corrección" aria-label="Corrección ' + i + '">';
+            }
+            cont.innerHTML = html;
+        }
+
+        function showNexusCVModal() {
+            const modal = document.getElementById('nexusCVModal');
+            if (!modal) return;
+            nexusCVConstruirFilas();
+            const idEl = document.getElementById('nexusCVRequestId');
+            if (idEl) idEl.textContent = nexusSelectedRequestId || '-';
+            modal.querySelectorAll('input.nx-cv-in').forEach(function (i) { i.value = ''; i.classList.remove('nx-cv-err'); });
+            const ex = document.getElementById('nexusCVExplicacion');
+            if (ex) ex.value = '';
+            const btn = document.getElementById('nexusCVConfirmBtn');
+            if (btn) btn.disabled = false;
+            modal.classList.add('active');
+            if (ex) setTimeout(function () { ex.focus(); }, 150);
+        }
+
+        function closeNexusCVModal() {
+            const modal = document.getElementById('nexusCVModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Lee el modal. Devuelve { explicacion, filas:[{minuto, correccion}] } o null (con aviso) si hay algo por corregir.
+        function nexusCVLeer() {
+            const modal = document.getElementById('nexusCVModal');
+            if (!modal) return null;
+            const ins = Array.prototype.slice.call(modal.querySelectorAll('input.nx-cv-in'));
+            ins.forEach(function (i) { i.classList.remove('nx-cv-err'); });
+            const filas = [];
+            for (let i = 0; i < ins.length; i += 2) {
+                const minuto = ins[i].value.trim();
+                const correccion = ins[i + 1].value.trim();
+                if (!minuto && !correccion) continue;            // fila vacía: se ignora
+                if (!minuto || !correccion) {                    // media fila: se señala
+                    (minuto ? ins[i + 1] : ins[i]).classList.add('nx-cv-err');
+                    showToast({ type: 'warning', title: 'Fila incompleta', message: 'En la fila ' + (i / 2 + 1) + ' complete el minuto y la corrección (o déjela vacía).', duration: 4000 });
+                    return null;
+                }
+                filas.push({ minuto: minuto, correccion: correccion });
+            }
+            if (filas.length === 0) {
+                showToast({ type: 'warning', title: 'Correcciones requeridas', message: 'Anote al menos una corrección con su minuto.', duration: 3500 });
+                return null;
+            }
+            const ex = document.getElementById('nexusCVExplicacion');
+            return { explicacion: ex ? ex.value.trim() : '', filas: filas };
+        }
+
+        async function nexusCVConfirmar() {
+            if (window._nxCerrandoSolicitud) return;
+            const datos = nexusCVLeer();
+            if (!datos) return;
+            const btn = document.getElementById('nexusCVConfirmBtn');
+            if (btn) btn.disabled = true;
+            try {
+                const ok = await nexusCerrarSolicitud('FINALIZADA', { correccionVideo: datos });
+                if (ok) closeNexusCVModal();   // si falló, el modal queda abierto con lo escrito
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
         // Función para confirmar el rechazo
         async function confirmReject() {
             const textarea = document.getElementById('nexusRejectReason');
@@ -26007,7 +26234,7 @@ select.asx-fld { cursor: pointer; }
                 nexusUpdateProgress(10, 'Eliminando archivos de Drive...');
                 const ids = [];
                 [base.ArchivosDrive, base.DocumentoCorreccion, base.ArteFinal].forEach(function (campo) {
-                    String(campo || '').split(',').forEach(function (u) {
+                    String(window.nexusSepararArteFinal(campo).archivos || '').split(/[,\n]/).forEach(function (u) {   // sin la línea «Publicado: …» (el link de publicación nunca se borra)
                         u = u.trim();
                         const fid = (u.includes('drive.google.com') || u.includes('docs.google.com')) ? nexusExtraerFileIdDrive(u) : null;  // docs.google.com = Google Docs de Nota de Prensa / Voz en Off
                         if (fid && ids.indexOf(fid) === -1) ids.push(fid);
@@ -26571,7 +26798,10 @@ select.asx-fld { cursor: pointer; }
             img.dataset.sinMiniatura = '1';
             const t = document.createElement('div');
             t.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:100%;min-height:80px;padding:10px;box-sizing:border-box;color:#2a3a6b;font-weight:700;font-size:0.8rem;text-align:center;';
-            t.innerHTML = '<i class="fas fa-music" style="font-size:1.8rem;"></i><span>Audio · abrir para revisar</span>';
+            const _esDoc = typeof nexusTipoNotaPrensa === 'function' && nexusSelectedRequestData && nexusTipoNotaPrensa(nexusSelectedRequestData.Solicitud);
+            t.innerHTML = _esDoc
+                ? '<i class="fas fa-file-alt" style="font-size:1.8rem;"></i><span>Documento · abrir para revisar</span>'
+                : '<i class="fas fa-music" style="font-size:1.8rem;"></i><span>Audio · abrir para revisar</span>';
             const ov = img.parentNode && img.parentNode.querySelector('.nx-play-overlay');
             if (ov) ov.remove();
             img.replaceWith(t);
@@ -26630,6 +26860,13 @@ select.asx-fld { cursor: pointer; }
             };
             const mediaElement = htmlMedia(currentPhoto, isVideo);
 
+            // Nota de Prensa: el link de publicación se muestra en el visor para que el admin lo revise antes de aprobar
+            // Solo desde el panel (opts.correccion = archivos del responsable); el visor de «Extraer información» muestra los adjuntos del formulario y no lleva el link
+            const linkPubVisor = (opts && opts.correccion && nexusTipoNotaPrensa(datosVisor.Solicitud || datosVisor.TipoSolicitud)) ? window.nexusLinkPublicacion(datosVisor) : '';
+            const linkPubVisorHtml = (linkPubVisor && /^https?:\/\//i.test(linkPubVisor))
+                ? `<div id="nexus-viewer-linkpub" style="flex-shrink: 0; padding: 12px 24px; background: rgba(56,118,242,0.14); border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: #fff;"><span style="font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.85;"><i class="fas fa-link"></i> Link de publicación</span><a href="${nexusEscHtml(linkPubVisor)}" target="_blank" rel="noopener noreferrer" style="flex: 1; min-width: 0; word-break: break-all; color: #9cc2ff; font-size: 0.9rem;">${nexusEscHtml(linkPubVisor)}</a><a href="${nexusEscHtml(linkPubVisor)}" target="_blank" rel="noopener noreferrer" style="padding: 8px 16px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem;"><i class="fas fa-external-link-alt"></i> Abrir</a></div>`
+                : '';
+
             const estiloBtnZoom = 'width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;';
 
             const viewerHTML = `
@@ -26646,6 +26883,7 @@ select.asx-fld { cursor: pointer; }
                         ${mediaElement}
                         <button id="nexus-viewer-next-btn" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 1.6rem; padding: 16px 18px; cursor: pointer; border-radius: 50%; z-index: 10001; ${photos.length <= 1 ? 'display:none;' : ''}" ${currentIndex === photos.length - 1 ? 'disabled' : ''}>▶</button>
                     </div>
+                    ${linkPubVisorHtml}
                     <div style="flex-shrink: 0; padding: 18px 24px; background: rgba(255,255,255,0.04); border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
                             <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;" id="nexus-viewer-count">${currentIndex + 1} de ${photos.length}</div>
@@ -26654,6 +26892,7 @@ select.asx-fld { cursor: pointer; }
                                 <button type="button" id="nexus-zoom-label" title="Restablecer (0)" style="${estiloBtnZoom} width: auto; min-width: 58px; padding: 0 10px; font-size: 0.82rem; font-weight: 700;">100%</button>
                                 <button type="button" id="nexus-zoom-in" title="Acercar (+)" aria-label="Acercar" style="${estiloBtnZoom}"><i class="fas fa-search-plus"></i></button>
                             </div>
+                            <button type="button" id="nexus-viewer-completo-btn" title="Abre el archivo con el visor de Drive para recorrer todas las hojas" style="${estiloBtnZoom} width: auto; padding: 0 12px; font-size: 0.82rem; font-weight: 700; gap: 6px; display: ${(currentPhoto.isVideo || nexusEsVideoArchivo(currentPhoto.nombre, currentPhoto.url) || (opts && opts.correccion)) ? 'none' : 'inline-flex'};"><i class="fas fa-file-alt"></i> Ver todas las hojas</button>
                         </div>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             ${avisoAprobada ? `<span style="padding: 10px 14px; color: #7ee2b8; font-weight: 700; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-check-circle"></i> Aprobado${infoAprob && infoAprob.fecha ? ' · ' + nexusEscHtml(infoAprob.fecha) : ''}</span>` : ''}
@@ -26677,6 +26916,9 @@ select.asx-fld { cursor: pointer; }
             const countEl = document.getElementById('nexus-viewer-count');
             const zoomBar = document.getElementById('nexus-viewer-zoombar');
             const zoomLabel = document.getElementById('nexus-zoom-label');
+            // «Ver todas las hojas»: la miniatura de Drive solo trae la primera página; este botón abre el archivo con el visor de Drive (navegable)
+            const completoBtn = document.getElementById('nexus-viewer-completo-btn');
+            const completos = {};
 
             // ---------- ZOOM (rueda, botones, doble clic, arrastre y pellizco) ----------
             const ZMIN = 1, ZMAX = 6;
@@ -26789,7 +27031,9 @@ select.asx-fld { cursor: pointer; }
 
             function actualizarVisor() {
                 const photo = photos[currentIndex];
-                const isVideo = photo.isVideo || nexusEsVideoArchivo(photo.nombre, photo.url);
+                const yaEsIframe = photo.isVideo || nexusEsVideoArchivo(photo.nombre, photo.url);
+                const forzado = !!completos[currentIndex];
+                const isVideo = yaEsIframe || forzado;
                 const viewerImage = document.getElementById('nexus-viewer-image');
 
                 if (isVideo) {
@@ -26813,6 +27057,10 @@ select.asx-fld { cursor: pointer; }
                 zoom = 1; tx = 0; ty = 0;
                 aplicarZoom(false);
                 if (zoomBar) zoomBar.style.display = isVideo ? 'none' : 'inline-flex';
+                if (completoBtn) {
+                    completoBtn.style.display = (yaEsIframe || (opts && opts.correccion)) ? 'none' : 'inline-flex';   // el panel lateral ya abre los archivos de la nota en el visor de Drive
+                    completoBtn.innerHTML = forzado ? '<i class="fas fa-image"></i> Ver como imagen' : '<i class="fas fa-file-alt"></i> Ver todas las hojas';
+                }
 
                 downloadBtn.href = photo.downloadUrl;
                 downloadBtn.download = photo.nombre;
@@ -26823,6 +27071,12 @@ select.asx-fld { cursor: pointer; }
                 prevBtn.style.opacity = currentIndex === 0 ? '0.3' : '1';
                 nextBtn.style.opacity = currentIndex === photos.length - 1 ? '0.3' : '1';
             }
+
+            if (completoBtn) completoBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                completos[currentIndex] = !completos[currentIndex];
+                actualizarVisor();
+            });
 
             prevBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -27691,6 +27945,16 @@ select.asx-fld { cursor: pointer; }
             const modoAdj = nexusModoAdjunto(tipoAdj);
             const simpleCfg = nexusTipoArchivoSimple(tipoAdj);
             window._nxSimple = simpleCfg; // null en diseño
+            // Nota de Prensa: el modal pide además el link donde se publicó la nota (se precarga si ya había uno)
+            const notaBox = document.getElementById('nxNotaLinkBox');
+            const notaInput = document.getElementById('nxNotaLink');
+            window._nxNota = (modoAdj === 'nota');
+            window._nxNotaSoloLink = (modoAdj === 'nota') && window.nexusTieneArteFinal(nexusSelectedRequestData);   // ya hay archivos: se puede cambiar solo el link
+            if (notaBox) notaBox.style.display = (modoAdj === 'nota') ? 'block' : 'none';
+            if (notaInput) notaInput.value = (modoAdj === 'nota') ? (window.nexusLinkPublicacion(nexusSelectedRequestData) || '') : '';
+            if (modoAdj === 'nota' && subEl) subEl.textContent = window._nxNotaSoloLink
+                ? 'Pega el link donde se publicó la nota. Si no subes archivos nuevos, se conservan los actuales.'
+                : 'Sube los archivos de la nota y pega el link donde se publicó. Los archivos se suben a Drive y se renombran con el ID de la solicitud.';
             if (corrBox) {
                 const tieneArtePrevio = window.nexusTieneArteFinal(nexusSelectedRequestData);
                 // Las correcciones de diseño (texto/diseño + subtipos) solo aplican a Diseño
@@ -27702,7 +27966,7 @@ select.asx-fld { cursor: pointer; }
                 }
             }
             const corrSimple = document.getElementById('nxCorreccionSimple');
-            if (corrSimple) corrSimple.style.display = (modoAdj === 'simple' && window.nexusTieneArteFinal(nexusSelectedRequestData)) ? 'block' : 'none';
+            if (corrSimple) corrSimple.style.display = ((modoAdj === 'simple' || modoAdj === 'nota') && window.nexusTieneArteFinal(nexusSelectedRequestData)) ? 'block' : 'none';
             // Tipos de archivo permitidos según el tipo de solicitud
             nxInput.accept = simpleCfg ? simpleCfg.accept : '.jpg,.jpeg,.png,.gif,.pdf,.zip,.doc,.docx,.ppt,.pptx,.mp4';
 
@@ -27907,20 +28171,24 @@ select.asx-fld { cursor: pointer; }
             });
 
             nxCount.textContent = nxQueue.length + (nxQueue.length === 1 ? ' archivo seleccionado' : ' archivos seleccionados');
+            // Nota de Prensa con archivos ya adjuntos: se puede guardar solo el link (se conservan los archivos actuales)
+            const _soloLink = !!window._nxNotaSoloLink && nxQueue.length === 0;
+            if (_soloLink) nxCount.textContent = 'Sin archivos nuevos: se conservan los actuales';
+            nxSubmit.innerHTML = _soloLink ? '<i class="fas fa-link"></i> Guardar link' : 'Subir a Drive';
             // El botón permanece deshabilitado mientras haya una subida activa,
             // sin importar cuántas veces se vuelva a llamar nxRender().
-            nxSubmit.disabled = nxUploading || nxQueue.length === 0;
+            nxSubmit.disabled = nxUploading || (nxQueue.length === 0 && !_soloLink);
         }
 
         async function nxSubirCola() {
             if (nxUploading) return;
             const _tipoSub = (nexusSelectedRequestData && nexusSelectedRequestData.Solicitud) || '';
             const _modoSub = nexusModoAdjunto(_tipoSub);
-            const _puede = _modoSub === 'simple'
+            const _puede = (_modoSub === 'simple' || _modoSub === 'nota')
                 ? (nexusEsDisenador() || nexusEsPeriodista())
                 : nexusEsDisenador();
             if (!_puede) {
-                showToast({ type: 'error', title: 'Sin permiso', message: _modoSub === 'simple' ? 'Solo el personal asignado puede adjuntar este entregable.' : 'Solo el equipo de diseño puede adjuntar artes.' });
+                showToast({ type: 'error', title: 'Sin permiso', message: (_modoSub === 'simple' || _modoSub === 'nota') ? 'Solo el personal asignado puede adjuntar este entregable.' : 'Solo el equipo de diseño puede adjuntar artes.' });
                 return;
             }
             const id = nexusSelectedRequestId;
@@ -27929,12 +28197,25 @@ select.asx-fld { cursor: pointer; }
                 showToast({ type: 'warning', title: 'Solicitud no disponible', message: 'La solicitud ya no está activa.' });
                 return;
             }
-            if (nxQueue.length === 0) return;
+            // Nota de Prensa: el link de publicación es obligatorio y se valida antes de subir nada a Drive.
+            // Con archivos ya adjuntos y la cola vacía, solo se actualiza el link.
+            const esNota = nexusModoAdjunto(base.Solicitud) === 'nota';
+            const soloLink = esNota && nxQueue.length === 0 && window.nexusTieneArteFinal(base);
+            if (nxQueue.length === 0 && !soloLink) return;
+            let linkPublicacion = null;
+            if (esNota) {
+                linkPublicacion = String((document.getElementById('nxNotaLink') || {}).value || '').trim();
+                if (!/^https?:\/\/[^\s]+$/i.test(linkPublicacion)) {
+                    showToast({ type: 'error', title: 'Link de publicación inválido', message: 'Pega el link completo donde se publicó la nota (debe empezar por https://).' });
+                    return;
+                }
+            }
+            if (soloLink) { await nxGuardarSoloLinkNota(id, base, linkPublicacion); return; }
 
             // Si ya había arte, subir uno nuevo es una corrección: reemplaza el anterior y la cuenta.
             const esCorreccion = window.nexusTieneArteFinal(base);
             const tipoEl = document.getElementById('nxTipoCorreccionValue');
-            const esSimple = nexusModoAdjunto(base.Solicitud) === 'simple';
+            const esSimple = (nexusModoAdjunto(base.Solicitud) === 'simple' || esNota);   // Nota de Prensa: igual que archivo simple (sin tipos de corrección de diseño)
             // Archivo simple: el reemplazo cuenta una corrección simple, sin tipo ni subtipos
             const tipoCorreccion = esCorreccion ? (esSimple ? 'simple' : ((tipoEl && tipoEl.value) || 'texto')) : null;
             const detalle = (esCorreccion && !esSimple) ? nxObtenerDetalleCorreccion() : null;
@@ -27992,7 +28273,7 @@ select.asx-fld { cursor: pointer; }
             // Todo o nada: si algo falló (subida o guardado), se borra lo ya subido para no dejar huérfanos.
             if (!fallo) {
                 try {
-                    await nexusActualizarUrlFirebase(id, subidos.map(function (s) { return s.fileUrl; }).join(','), NX_FOLDER_TYPE, esCorreccion, tipoCorreccion, detalle, lineaSubida);
+                    await nexusActualizarUrlFirebase(id, subidos.map(function (s) { return s.fileUrl; }).join(','), NX_FOLDER_TYPE, esCorreccion, tipoCorreccion, detalle, lineaSubida, linkPublicacion);
                 } catch (err) {
                     fallo = err;
                     nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nxSubirCola', detalles: id });
@@ -28007,17 +28288,51 @@ select.asx-fld { cursor: pointer; }
                 return;
             }
 
-            nexusRegistrarSubidaEnSheet(id, subidos.map(function (x) { return x.fileUrl; }), esCorreccion, tipoCorreccion,
+            nexusRegistrarSubidaEnSheet(id, subidos.map(function (x) { return x.fileUrl; }).concat(esNota ? [window.nexusLineaLinkPublicacion(linkPublicacion)] : []), esCorreccion, tipoCorreccion,
                 detalle ? detalle.detalleTexto.concat(detalle.detalleDiseno) : [], lineaSubida);
             showToast({
                 type: 'success',
                 title: esCorreccion ? (esSimple ? 'Entregable corregido' : 'Arte corregido') : (esSimple ? 'Entregable adjuntado' : 'Arte adjuntado'),
-                message: subidos.length + ' archivo(s) · ID: ' + id,
+                message: subidos.length + ' archivo(s)' + (esNota ? ' + link de publicación' : '') + ' · ID: ' + id,
                 duration: 3500
             });
             nxClose();
         }
         
+        // Nota de Prensa: cambia solo el link de publicación y conserva los archivos adjuntos.
+        // Cuenta como una nueva «Subida_N» (invalida la aprobación previa) y como corrección simple, igual que subir archivos.
+        async function nxGuardarSoloLinkNota(id, base, link) {
+            if (!(nexusEsDisenador() || nexusEsPeriodista())) {
+                showToast({ type: 'error', title: 'Sin permiso', message: 'Solo el personal asignado puede adjuntar este entregable.' });
+                return;
+            }
+            if (window.nexusLinkPublicacion(base) === link) {
+                showToast({ type: 'info', title: 'Sin cambios', message: 'Ese link ya está guardado. Cámbialo o sube archivos nuevos.', duration: 3500 });
+                return;
+            }
+            nxUploading = true;
+            nxRender();
+            try {
+                const archivos = window.nexusUrlsArteFinal(base);
+                const texto = archivos.join(', ') + '\n' + window.nexusLineaLinkPublicacion(link);
+                const ruta = 'solicitudes_vivas/' + nexusSanitizarClaveRTDB(base.Unidad) + '/' + id + '/';
+                const up = {}; const local = Object.assign({}, base);
+                up[ruta + 'ArteFinal'] = texto; local.ArteFinal = texto;
+                const lineaSubida = nexusLineaHistorial(base, 'subida', { esCorreccion: true, tipoCorreccion: 'simple', subtipos: [] });
+                window.nexusAplicarSubidaArte(up, local, ruta, base, lineaSubida);
+                await window.fbRT.update(window.fbRT.ref(window.dbRT), up);
+                nexusRegistrarSubidaEnSheet(id, archivos.concat([window.nexusLineaLinkPublicacion(link)]), true, 'simple', [], lineaSubida);
+                if (nexusSelectedRequestId === id) nexusUpdatePanelContent(id, local);
+                showToast({ type: 'success', title: 'Link actualizado', message: 'Archivos conservados · ID: ' + id, duration: 3500 });
+                nxClose();
+            } catch (err) {
+                nexusRegistrarFallaEnvioRTDB(err, { operacion: 'nxGuardarSoloLinkNota', detalles: id });
+                nxUploading = false;
+                nxRender();
+                showToast({ type: 'error', title: 'No se pudo guardar el link', message: (err && err.message ? err.message : 'Error desconocido') + '. Puedes reintentar.' });
+            }
+        }
+
         // ============================================================
         // TEXTILES: ADJUNTAR LINK (carpeta de Drive + número de elementos)
         // El link queda en ArteFinal y la cantidad en la línea de abajo («link\nN»): sin nodos nuevos, RTDB y Sheet idénticos.
@@ -28851,6 +29166,7 @@ select.asx-fld { cursor: pointer; }
                         <div class="nexus-no-selection-text">No hay archivo adjunto</div>
                     </div>
                 </div>
+                <div id="nexusLinkPublicacionBox" style="display:none; margin-top:10px; padding:10px 12px; border-radius:10px; border:1px solid var(--color-tertiary);"></div>
             </div>
 
             <!-- Acciones de Archivo / Workflow -->
@@ -29416,6 +29732,16 @@ select.asx-fld { cursor: pointer; }
         <span>Ya hay un archivo adjunto. Al subir uno nuevo reemplaza al anterior y cuenta como <b>1 corrección</b>.</span>
       </div>
 
+      <!-- Solo Nota de Prensa: link donde se publicó la nota (se guarda junto a los archivos adjuntos) -->
+      <div id="nxNotaLinkBox" style="display:none; margin-bottom: 14px;">
+        <div class="nx-fields" style="grid-template-columns: 1fr;">
+          <div class="nx-field">
+            <label for="nxNotaLink">Link de publicación de la nota *</label>
+            <input type="url" id="nxNotaLink" placeholder="https://..." autocomplete="off">
+          </div>
+        </div>
+      </div>
+
       <div class="nx-drop" id="nxDrop" onclick="document.getElementById('nxInput').click()">
         <input type="file" id="nxInput" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.zip,.doc,.docx,.ppt,.pptx,.mp4" onclick="event.stopPropagation(); this.value = '';">
         <div class="nx-drop-inner">
@@ -29959,6 +30285,16 @@ select.asx-fld { cursor: pointer; }
                 return window.nexusUrlsArteFinal(sol);
             }
 
+            // Nota de Prensa: bloque con el link donde se publicó la nota ('' si no aplica)
+            function linkPubHtml(sol) {
+                if (!sol || !window.nexusTipoNotaPrensa || !window.nexusTipoNotaPrensa(sol.Solicitud)) return '';
+                var l = window.nexusLinkPublicacion(sol);
+                if (!l || !/^https?:\/\//i.test(l)) return '';
+                return '<div class="nx-arte-file" style="margin-top:10px;"><div class="nx-arte-thumb"><i class="fas fa-link"></i></div>' +
+                       '<div class="nx-arte-file-name">Link de publicación<small style="word-break:break-all;">' + esc(l) + '</small></div>' +
+                       '<a class="nx-btn nx-btn-ghost" href="' + esc(l) + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Abrir</a></div>';
+            }
+
             function idDrive(url) {
                 var m = String(url).match(/\/d\/([a-zA-Z0-9_-]+)/) || String(url).match(/[?&]id=([a-zA-Z0-9_-]+)/);
                 return m ? m[1] : null;
@@ -30000,6 +30336,7 @@ select.asx-fld { cursor: pointer; }
 
                 var esListo = (estado === 'LISTO');
                 var cerrada = (sol.SolicitudPurgada === true);   // solicitud ya purgada en un cierre: no admite correcciones
+                var esListaCorrecciones = (sol.Solicitud === 'Corrección de Video');   // el «arte» es la lista de correcciones del video: no se corrige, se aplica
                 eyebrow.textContent = esListo ? 'NEXUS · ARTE FINAL' : 'NEXUS · ARTE DESCARGADO';
                 title.innerHTML = '<i class="fas fa-eye"></i> Revisa tu arte';
 
@@ -30016,16 +30353,20 @@ select.asx-fld { cursor: pointer; }
                     : '<button class="nx-btn nx-btn-primary" onclick="nexusArteIrARedescarga()"><i class="fas fa-redo"></i> Solicitar descarga nuevamente</button>';
 
                 body.innerHTML = chip +
-                    '<p class="nx-arte-texto">Verifica que el arte esté correcto. Si todo está bien, ' +
-                        (esListo ? 'descárgalo' : 'puedes pedir que se habilite la descarga de nuevo') +
-                        (cerrada
-                            ? '. Esta solicitud ya fue cerrada, así que no admite correcciones: si algo debe cambiar, crea una nueva solicitud.</p>'
-                            : '; si algo debe cambiar, solicita una corrección.</p>') +
+                    (esListaCorrecciones
+                        ? '<p class="nx-arte-texto">Este documento lista las correcciones que debes aplicar a tu video, con el minuto de cada una. ' +
+                            (esListo ? 'Descárgalo para consultarlo.' : 'Puedes pedir que se habilite la descarga de nuevo.') + '</p>'
+                        : '<p class="nx-arte-texto">Verifica que el arte esté correcto. Si todo está bien, ' +
+                            (esListo ? 'descárgalo' : 'puedes pedir que se habilite la descarga de nuevo') +
+                            (cerrada
+                                ? '. Esta solicitud ya fue cerrada, así que no admite correcciones: si algo debe cambiar, crea una nueva solicitud.</p>'
+                                : '; si algo debe cambiar, solicita una corrección.</p>')) +
                     '<div class="nx-arte-previews">' + vistas + '</div>' +
+                    linkPubHtml(sol) +
                     '<div class="nx-foot">' +
                         '<span class="nx-count"></span>' +
                         '<div class="nx-actions nx-actions-review">' +
-                            (cerrada ? '' : '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>') +
+                            ((cerrada || esListaCorrecciones) ? '' : '<button class="nx-btn nx-btn-corr" onclick="nexusAbrirModalCorreccion()"><i class="fas fa-edit"></i> Solicitar corrección</button>') +
                             botonPrincipal +
                         '</div>' +
                     '</div>';
@@ -30065,10 +30406,13 @@ select.asx-fld { cursor: pointer; }
                 body.innerHTML = chip +
                     '<p class="nx-arte-texto">Descarga ' + (urls.length === 1 ? 'el archivo' : 'los ' + urls.length + ' archivos') + ' y luego confirma. Al confirmar, la solicitud quedará como descargada.</p>' +
                     filas +
+                    linkPubHtml(sol) +
                     '<div class="nx-arte-hint" id="nxArteHint" role="status" aria-live="polite"><i class="fas fa-circle-check"></i><span><b>¡Tu descarga ya inició!</b> Cuando el archivo termine de bajar, presiona <b>«Ya descargué mi arte»</b> para confirmar.</span></div>' +
                     (sol.SolicitudPurgada === true
                         ? '<p class="nx-arte-note"><b>Esta solicitud ya fue cerrada.</b> Al confirmar tu descarga, el arte se elimina del sistema: asegúrate de que el archivo bajó completo.</p>'
-                        : '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>') +
+                        : (((window.nexusTipoNotaPrensa && window.nexusTipoNotaPrensa(sol.Solicitud)) || (typeof NEXUS_TIPOS_FECHA_AUTOMATICA !== 'undefined' && NEXUS_TIPOS_FECHA_AUTOMATICA.indexOf(sol.Solicitud) !== -1))
+                            ? '<p class="nx-arte-note">Descarga tu arte a tiempo: <b>' + (typeof NEXUS_DIAS_VIDA_ARTE_FECHA_AUTOMATICA !== 'undefined' ? NEXUS_DIAS_VIDA_ARTE_FECHA_AUTOMATICA : 4) + ' días después de finalizada</b> se elimina del sistema.</p>'
+                            : '<p class="nx-arte-note">Descarga tu arte antes del cierre de mes: después se elimina del sistema.</p>')) +
                     '<div class="nx-foot">' +
                         '<span class="nx-count" id="nxArteCount">0 de ' + urls.length + ' descargados</span>' +
                         '<div class="nx-actions">' +
@@ -36168,6 +36512,7 @@ window.NEXUS_STATS_ENABLED = true;
         "El Vigía": "Edificio IPASME, sector Primero de Mayo, Av. Ppal. parroquia El Vigía, municipio Alberto Adriani, estado Mérida.",
         "Mérida": "Av. 16 de septiembre, Urb. Santa Elena, calle principal, sector Buena Vista, Edificio 5 (IPASME), parroquia Domingo Peña, estado Mérida.",
         "Tovar": "Edificio IPASME, Av. Táchira con carrera 4ta, Nro. 8-13, sector Jesús Obrero, parroquia El Llano, municipio Tovar, estado Mérida.",
+        "Hotel Valle Grande": "Hotel Valle Grande, kilómetro 10 vía al Páramo de la Culata, Sector Valle Grande, parroquia Gonzalo Picón Febres, municipio Libertador, estado Mérida.",
         "La Grita": "Edificio IPASME, Carretera Siete, entre calles 2 y 3, frente a la Plaza Jáuregui, municipio Jáuregui, parroquia La Grita, estado Táchira.",
         "Rubio": "Final de la Av. Manuel Pulido Méndez, frente al Hospital Padre Justo, parroquia Rubio, municipio Junín, estado Táchira.",
         "San Cristóbal": "Edificio IPASME, carrera 2 entre calles 13 y 14, sector La Ermita, parroquia San Juan Bautista, municipio San Cristóbal, estado Táchira.",
@@ -36211,7 +36556,7 @@ window.NEXUS_STATS_ENABLED = true;
 
         // PENDIENTE: faltan las direcciones de estas unidades, por eso su botón queda desactivado hasta que se agreguen
         // a DIRECCIONES_UNIDADES: Sede Administrativa, Gerencia de CRDT, CIFAP, C.E.I.A. Dr. Manuel Montero, Fondo Editorial,
-        // Gerencia de Cultura, Deporte y Recreación, Dirección de Comunicaciones y Relaciones Públicas, Club Villas Ipasmar y Hotel Valle Grande.
+        // Gerencia de Cultura, Deporte y Recreación, Dirección de Comunicaciones y Relaciones Públicas y Club Villas Ipasmar.
 
         // Campos de dirección donde se agrega el botón
         var CAMPOS = ['direccion-exacta', 'captacion-direccion-exacta', 'pediatrica-direccion-exacta', 'oftalmologica-direccion-exacta',
