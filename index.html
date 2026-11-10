@@ -3714,6 +3714,23 @@
         .asp-file-info .mi-icon { font-size: 1.6rem; line-height: 1; }
         .asp-file-info .mi-name { max-width: 100%; font-size: 0.7rem; font-weight: 600; color: var(--color-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .asp-file-info .mi-size { font-size: 0.65rem; color: #777; }
+        /* Vista previa real de la foto o del video elegido: llena la caja y el nombre queda en una franja abajo */
+        .asp-file-info.con-vista { padding: 0; gap: 0; justify-content: flex-end; align-items: stretch; background: #1b1530; }
+        .asp-file-info .mi-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #1b1530; }
+        .asp-file-info .mi-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.65); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; padding-left: 3px; }
+        .asp-file-info .mi-pie { position: relative; display: flex; flex-direction: column; align-items: center; padding: 4px 8px; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0)); }
+        .asp-file-info .mi-pie .mi-name { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+        .asp-file-info .mi-pie .mi-size { color: #e6e0f5; }
+        /* Fotos a cargar: un bloque por punto del evento, con una caja de foto y otra de video */
+        .asp-cat-block { margin-top: 14px; padding: 12px; border: 1px solid rgba(106, 46, 204, 0.25); border-radius: 12px; background: rgba(106, 46, 204, 0.04); }
+        .asp-cat-title { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.03em; color: #4b1fa3; margin-bottom: 10px; }
+        .asp-cat-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        @media (max-width: 420px) { .asp-cat-slots { gap: 8px; } }
+        /* Extraer información: archivos agrupados por punto del evento */
+        .nexus-extract-cat-group { margin-top: 16px; }
+        .nexus-extract-cat-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.86rem; font-weight: 700; margin-bottom: 8px; }
+        .nexus-extract-cat-title small { font-weight: 600; opacity: 0.7; }
+        .nexus-extract-tipo-badge { position: absolute; top: 6px; left: 6px; z-index: 2; padding: 2px 8px; border-radius: 999px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(0, 0, 0, 0.72); color: #fff; pointer-events: none; }
 
         /* Estilo específico para Corrección de Video (verde oliva/lima) */
         .correccion-video-item .item-overlay {
@@ -10675,7 +10692,7 @@ select.asx-fld { cursor: pointer; }
                             <div id="asp-programa-contador" class="copy-rrss-counter">0 / 4000</div>
                         </div>
                         <div id="asp-programa-adjuntar" class="asp-doc-bloque hidden">
-                            <input type="file" id="asp-programa-archivo" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
+                            <input type="file" id="asp-programa-archivo" data-cat="programa" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
                             <small style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;">⚠️ Solo se permiten archivos .DOC y .DOCX (máximo 10MB)</small>
                         </div>
                     </div>
@@ -10691,77 +10708,117 @@ select.asx-fld { cursor: pointer; }
                             <div id="asp-guion-contador" class="copy-rrss-counter">0 / 4000</div>
                         </div>
                         <div id="asp-guion-adjuntar" class="asp-doc-bloque hidden">
-                            <input type="file" id="asp-guion-archivo" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
+                            <input type="file" id="asp-guion-archivo" data-cat="guion" class="form-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onchange="aspValidarDoc(this)">
                             <small style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;">⚠️ Solo se permiten archivos .DOC y .DOCX (máximo 10MB)</small>
                         </div>
                     </div>
 
                     <div class="form-section">
-                        <h3 class="form-section-title">📸 Fotos y Videos del Lugar (opcional, máximo 10)</h3>
+                        <h3 class="form-section-title">📸 Fotos a cargar (opcional)</h3>
                         <div class="info-box">
-                            ⚠️ Puede adjuntar hasta 10 archivos entre fotos y videos para visualizar el lugar del evento, con un peso total máximo de 1 GB entre todos. Videos permitidos: MP4 y MOV.
+                            ⚠️ Para cada punto del evento puede cargar una foto y/o un video. Peso total máximo de 1 GB entre todos los archivos. Videos permitidos: MP4 y MOV.
                         </div>
-                        <div class="asp-files-resumen">Archivos: <span id="asp-files-count">0</span> / 10 · Peso total: <span id="asp-files-size">0.00</span> MB / 1024 MB</div>
-                        <div class="asp-files-grid">
-                            <div class="asp-file-slot" id="asp-slot1">
-                                <label for="asp-file1" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 1</span></label>
-                                <input type="file" id="asp-file1" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info1', 'asp-rm1')">
-                                <div id="asp-info1" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm1" class="remove-btn" onclick="aspClearMedia('asp-file1', 'asp-info1', 'asp-rm1')">×</button>
+                        <div class="asp-files-resumen">Archivos: <span id="asp-files-count">0</span> / 12 · Peso total: <span id="asp-files-size">0.00</span> MB / 1024 MB</div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">1. RECINTO DE LA ACTIVIDAD</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-recinto-foto">
+                                <label for="asp-file-recinto-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-recinto-foto" class="hidden" data-cat="recinto-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-recinto-foto', 'asp-rm-recinto-foto')">
+                                <div id="asp-info-recinto-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-recinto-foto" class="remove-btn" onclick="aspClearMedia('asp-file-recinto-foto', 'asp-info-recinto-foto', 'asp-rm-recinto-foto')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot2">
-                                <label for="asp-file2" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 2</span></label>
-                                <input type="file" id="asp-file2" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info2', 'asp-rm2')">
-                                <div id="asp-info2" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm2" class="remove-btn" onclick="aspClearMedia('asp-file2', 'asp-info2', 'asp-rm2')">×</button>
+                            <div class="asp-file-slot" id="asp-slot-recinto-video">
+                                <label for="asp-file-recinto-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-recinto-video" class="hidden" data-cat="recinto-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-recinto-video', 'asp-rm-recinto-video')">
+                                <div id="asp-info-recinto-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-recinto-video" class="remove-btn" onclick="aspClearMedia('asp-file-recinto-video', 'asp-info-recinto-video', 'asp-rm-recinto-video')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot3">
-                                <label for="asp-file3" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 3</span></label>
-                                <input type="file" id="asp-file3" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info3', 'asp-rm3')">
-                                <div id="asp-info3" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm3" class="remove-btn" onclick="aspClearMedia('asp-file3', 'asp-info3', 'asp-rm3')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot4">
-                                <label for="asp-file4" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 4</span></label>
-                                <input type="file" id="asp-file4" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info4', 'asp-rm4')">
-                                <div id="asp-info4" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm4" class="remove-btn" onclick="aspClearMedia('asp-file4', 'asp-info4', 'asp-rm4')">×</button>
+                        </div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">2. PRESIDIO (NOMBRE Y CARGO DE LAS AUTORIDADES)</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-presidio-foto">
+                                <label for="asp-file-presidio-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-presidio-foto" class="hidden" data-cat="presidio-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-presidio-foto', 'asp-rm-presidio-foto')">
+                                <div id="asp-info-presidio-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-presidio-foto" class="remove-btn" onclick="aspClearMedia('asp-file-presidio-foto', 'asp-info-presidio-foto', 'asp-rm-presidio-foto')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot5">
-                                <label for="asp-file5" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 5</span></label>
-                                <input type="file" id="asp-file5" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info5', 'asp-rm5')">
-                                <div id="asp-info5" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm5" class="remove-btn" onclick="aspClearMedia('asp-file5', 'asp-info5', 'asp-rm5')">×</button>
+                            <div class="asp-file-slot" id="asp-slot-presidio-video">
+                                <label for="asp-file-presidio-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-presidio-video" class="hidden" data-cat="presidio-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-presidio-video', 'asp-rm-presidio-video')">
+                                <div id="asp-info-presidio-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-presidio-video" class="remove-btn" onclick="aspClearMedia('asp-file-presidio-video', 'asp-info-presidio-video', 'asp-rm-presidio-video')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot6">
-                                <label for="asp-file6" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 6</span></label>
-                                <input type="file" id="asp-file6" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info6', 'asp-rm6')">
-                                <div id="asp-info6" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm6" class="remove-btn" onclick="aspClearMedia('asp-file6', 'asp-info6', 'asp-rm6')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot7">
-                                <label for="asp-file7" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 7</span></label>
-                                <input type="file" id="asp-file7" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info7', 'asp-rm7')">
-                                <div id="asp-info7" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm7" class="remove-btn" onclick="aspClearMedia('asp-file7', 'asp-info7', 'asp-rm7')">×</button>
+                        </div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">3. PODIO (MAESTRO DE CEREMONIA)</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-podio-foto">
+                                <label for="asp-file-podio-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-podio-foto" class="hidden" data-cat="podio-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-podio-foto', 'asp-rm-podio-foto')">
+                                <div id="asp-info-podio-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-podio-foto" class="remove-btn" onclick="aspClearMedia('asp-file-podio-foto', 'asp-info-podio-foto', 'asp-rm-podio-foto')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot8">
-                                <label for="asp-file8" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 8</span></label>
-                                <input type="file" id="asp-file8" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info8', 'asp-rm8')">
-                                <div id="asp-info8" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm8" class="remove-btn" onclick="aspClearMedia('asp-file8', 'asp-info8', 'asp-rm8')">×</button>
+                            <div class="asp-file-slot" id="asp-slot-podio-video">
+                                <label for="asp-file-podio-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-podio-video" class="hidden" data-cat="podio-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-podio-video', 'asp-rm-podio-video')">
+                                <div id="asp-info-podio-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-podio-video" class="remove-btn" onclick="aspClearMedia('asp-file-podio-video', 'asp-info-podio-video', 'asp-rm-podio-video')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot9">
-                                <label for="asp-file9" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 9</span></label>
-                                <input type="file" id="asp-file9" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info9', 'asp-rm9')">
-                                <div id="asp-info9" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm9" class="remove-btn" onclick="aspClearMedia('asp-file9', 'asp-info9', 'asp-rm9')">×</button>
                             </div>
-                            <div class="asp-file-slot" id="asp-slot10">
-                                <label for="asp-file10" class="upload-label asp-slot-label"><span>✚ FOTO O VIDEO 10</span></label>
-                                <input type="file" id="asp-file10" class="hidden" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info10', 'asp-rm10')">
-                                <div id="asp-info10" class="asp-file-info"></div>
-                                <button type="button" id="asp-rm10" class="remove-btn" onclick="aspClearMedia('asp-file10', 'asp-info10', 'asp-rm10')">×</button>
+                        </div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">4. BANDERA Y ESTANDARTE</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-bandera-foto">
+                                <label for="asp-file-bandera-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-bandera-foto" class="hidden" data-cat="bandera-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-bandera-foto', 'asp-rm-bandera-foto')">
+                                <div id="asp-info-bandera-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-bandera-foto" class="remove-btn" onclick="aspClearMedia('asp-file-bandera-foto', 'asp-info-bandera-foto', 'asp-rm-bandera-foto')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot-bandera-video">
+                                <label for="asp-file-bandera-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-bandera-video" class="hidden" data-cat="bandera-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-bandera-video', 'asp-rm-bandera-video')">
+                                <div id="asp-info-bandera-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-bandera-video" class="remove-btn" onclick="aspClearMedia('asp-file-bandera-video', 'asp-info-bandera-video', 'asp-rm-bandera-video')">×</button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">5. AFORO, PLANO GENERAL DEL AUDITORIO</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-aforo-foto">
+                                <label for="asp-file-aforo-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-aforo-foto" class="hidden" data-cat="aforo-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-aforo-foto', 'asp-rm-aforo-foto')">
+                                <div id="asp-info-aforo-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-aforo-foto" class="remove-btn" onclick="aspClearMedia('asp-file-aforo-foto', 'asp-info-aforo-foto', 'asp-rm-aforo-foto')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot-aforo-video">
+                                <label for="asp-file-aforo-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-aforo-video" class="hidden" data-cat="aforo-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-aforo-video', 'asp-rm-aforo-video')">
+                                <div id="asp-info-aforo-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-aforo-video" class="remove-btn" onclick="aspClearMedia('asp-file-aforo-video', 'asp-info-aforo-video', 'asp-rm-aforo-video')">×</button>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="asp-cat-block">
+                            <div class="asp-cat-title">6. CONSOLA DE SONIDO</div>
+                            <div class="asp-cat-slots">
+                            <div class="asp-file-slot" id="asp-slot-consola-foto">
+                                <label for="asp-file-consola-foto" class="upload-label asp-slot-label"><span>✚ FOTO</span></label>
+                                <input type="file" id="asp-file-consola-foto" class="hidden" data-cat="consola-foto" data-tipo="foto" accept="image/*" onchange="aspHandleMedia(this, 'asp-info-consola-foto', 'asp-rm-consola-foto')">
+                                <div id="asp-info-consola-foto" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-consola-foto" class="remove-btn" onclick="aspClearMedia('asp-file-consola-foto', 'asp-info-consola-foto', 'asp-rm-consola-foto')">×</button>
+                            </div>
+                            <div class="asp-file-slot" id="asp-slot-consola-video">
+                                <label for="asp-file-consola-video" class="upload-label asp-slot-label"><span>✚ VIDEO</span></label>
+                                <input type="file" id="asp-file-consola-video" class="hidden" data-cat="consola-video" data-tipo="video" accept="video/mp4,video/quicktime,.mp4,.mov" onchange="aspHandleMedia(this, 'asp-info-consola-video', 'asp-rm-consola-video')">
+                                <div id="asp-info-consola-video" class="asp-file-info"></div>
+                                <button type="button" id="asp-rm-consola-video" class="remove-btn" onclick="aspClearMedia('asp-file-consola-video', 'asp-info-consola-video', 'asp-rm-consola-video')">×</button>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -12140,6 +12197,9 @@ select.asx-fld { cursor: pointer; }
                     <span style="margin-left: auto;">Tipo: <b id="nexusRejectRequestType" style="color: #ffb4bb;">-</b></span>
                 </div>
 
+                <div id="nexusRejectTgNota" style="display:none; margin-bottom: 12px; padding: 9px 12px; border-radius: 9px; border: 1px solid rgba(156,210,211,0.3); background: rgba(156,210,211,0.08); color: #9cd2d3; font-size: 0.8rem;">
+                    <i class="fab fa-telegram-plane"></i> Este motivo lo escribió el responsable al marcar el rechazo desde Telegram. Puedes ajustarlo antes de confirmar.
+                </div>
                 <label style="display:block; font-size:0.85rem; color: var(--color-tertiary); margin-bottom:8px;">
                     <i class="fas fa-comment-dots"></i> Motivo del rechazo
                 </label>
@@ -12254,6 +12314,99 @@ select.asx-fld { cursor: pointer; }
                     <div class="nx-actions" style="margin-left: auto;">
                         <button class="nx-btn nx-btn-ghost" onclick="closeNexusRRSSModal()">Cancelar</button>
                         <button class="nx-btn nx-btn-primary" onclick="confirmRRSSSelection()">
+                            <i class="fas fa-check"></i> Finalizar y Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cobertura de Prensa: datos de lo cubierto, se piden al finalizar -->
+    <style>
+        #nexusCobModal .nx-cob-lbl { display: block; font-size: 0.85rem; color: var(--color-tertiary); margin-bottom: 8px; }
+        #nexusCobModal .nx-cob-in { width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel-2); color: var(--color-light); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; }
+        #nexusCobModal select.nx-cob-in { color-scheme: dark; cursor: pointer; }
+        #nexusCobModal select.nx-cob-in option { background: #14181f; color: #fff; }
+        #nexusCobModal .nx-cob-in:focus { outline: none; border-color: #9cd2d3; }
+        #nexusCobModal .nx-cob-in.nx-cob-err { border-color: #e5484d; }
+        #nexusCobModal .nx-cob-in:disabled { opacity: 0.4; cursor: not-allowed; }
+        #nexusCobModal .nx-cob-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: stretch; margin-bottom: 12px; }
+        #nexusCobModal .nx-cob-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+        #nexusCobModal .nx-cob-hora { display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem; color: var(--color-tertiary); }
+        #nexusCobModal .nx-cob-hora .nx-cob-in { color-scheme: dark; }
+        @media (max-width: 480px) { #nexusCobModal .nx-cob-row, #nexusCobModal .nx-cob-grid { gap: 8px; } }
+    </style>
+    <div id="nexusCobModal" class="nx-overlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 520px;">
+            <div class="nx-head" style="background: linear-gradient(135deg, rgba(156, 210, 211, 0.18) 0%, rgba(74, 110, 176, 0.03) 100%);">
+                <button class="nx-close" onclick="closeNexusCobModal()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · COBERTURA DE PRENSA</p>
+                <h2 class="nx-title"><i class="fas fa-microphone-alt" style="color: #9cd2d3;"></i> Datos de la cobertura</h2>
+                <p class="nx-sub">Indique quién cubrió y qué productos se generaron para finalizar la solicitud.</p>
+            </div>
+            <div class="nx-body">
+                <div class="nx-request-chip" style="border-color: rgba(156, 210, 211, 0.3); background: rgba(156, 210, 211, 0.08); color: #9cd2d3;">
+                    <span>Solicitud: <b id="nexusCobRequestId" style="color: #9cd2d3;">-</b></span>
+                </div>
+
+                <label for="nexusCobPeriodistaSel" class="nx-cob-lbl"><i class="fas fa-user-edit"></i> Periodista que cubrió</label>
+                <select id="nexusCobPeriodistaSel" class="nx-cob-in" aria-label="Periodista que cubrió" onchange="nexusCobPeriodistaCambio()"></select>
+                <input type="text" id="nexusCobPeriodista" class="nx-cob-in" maxlength="80" autocomplete="off" placeholder="Escriba el nombre" style="display: none; margin-top: 8px;">
+                <div style="height: 16px;"></div>
+
+                <label class="nx-cob-lbl"><i class="fas fa-photo-video"></i> Material generado</label>
+                <div class="nx-cob-row">
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" id="nexusCobVideo" onchange="nexusCobSincronizar()">
+                        <span class="nexus-rrss-label"><i class="fas fa-video"></i> Video</span>
+                    </label>
+                    <input type="text" id="nexusCobVideoTime" class="nx-cob-in" maxlength="8" autocomplete="off" inputmode="numeric" placeholder="Time (mm:ss)" aria-label="Time del video" disabled>
+                </div>
+                <div class="nx-cob-row">
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" id="nexusCobFotos" onchange="nexusCobSincronizar()">
+                        <span class="nexus-rrss-label"><i class="fas fa-camera"></i> Fotos</span>
+                    </label>
+                    <input type="number" id="nexusCobFotosCant" class="nx-cob-in" min="1" max="9999" step="1" inputmode="numeric" placeholder="Cantidad" aria-label="Cantidad de fotos" disabled>
+                </div>
+
+                <label class="nx-cob-lbl" style="margin-top: 4px;"><i class="fas fa-newspaper"></i> Género periodístico redactado</label>
+                <div class="nx-cob-grid">
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" name="cobProd" value="Noticia">
+                        <span class="nexus-rrss-label"><i class="fas fa-bullhorn"></i> Noticia</span>
+                    </label>
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" name="cobProd" value="Reseña">
+                        <span class="nexus-rrss-label"><i class="fas fa-align-left"></i> Reseña</span>
+                    </label>
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" name="cobProd" value="Entrevista">
+                        <span class="nexus-rrss-label"><i class="fas fa-comments"></i> Entrevista</span>
+                    </label>
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" name="cobProd" value="Reportaje">
+                        <span class="nexus-rrss-label"><i class="fas fa-book-open"></i> Reportaje</span>
+                    </label>
+                </div>
+
+                <label class="nx-cob-lbl" style="margin-top: 4px;"><i class="fas fa-clock"></i> Horas de cobertura</label>
+                <div class="nx-cob-row">
+                    <label class="nx-cob-hora">
+                        <span>Inicio</span>
+                        <input type="time" id="nexusCobHoraInicio" class="nx-cob-in" aria-label="Hora de inicio de la cobertura">
+                    </label>
+                    <label class="nx-cob-hora">
+                        <span>Fin</span>
+                        <input type="time" id="nexusCobHoraFin" class="nx-cob-in" aria-label="Hora de fin de la cobertura">
+                    </label>
+                </div>
+
+                <div class="nx-foot">
+                    <div class="nx-actions" style="margin-left: auto;">
+                        <button class="nx-btn nx-btn-ghost" onclick="closeNexusCobModal()">Cancelar</button>
+                        <button id="nexusCobConfirmBtn" class="nx-btn nx-btn-primary" onclick="nexusCobConfirmar()">
                             <i class="fas fa-check"></i> Finalizar y Guardar
                         </button>
                     </div>
@@ -13828,7 +13981,10 @@ select.asx-fld { cursor: pointer; }
             }
             for (let index = 0; index < fileArray.length && !falloInfo; index++) {
                 const file = fileArray[index];
-                const fileNumber = (index + 1).toString(); // Número de archivo: 1, 2, 3, etc.
+                // Número de archivo: 1, 2, 3, etc. Si el formulario le puso etiqueta (Asistencia Protocolar), el nombre
+                // en Drive lleva la etiqueta en vez del número: <ID>_recinto-foto.jpg. Así el archivo mismo dice a qué corresponde.
+                const etiquetaArchivo = (contexto && contexto.tipoSolicitud === 'Asistencia Protocolar' && Array.isArray(contexto.etiquetasArchivos)) ? String(contexto.etiquetasArchivos[index] || '').replace(/[^A-Za-z0-9_-]/g, '') : '';
+                const fileNumber = etiquetaArchivo || (index + 1).toString();
 
                 // nexusSubirArchivoDrive ya reintenta y retoma la subida a nivel
                 // de bytes (ver nexusSubirBinarioConReintentos). Si aun así falla
@@ -13975,9 +14131,14 @@ select.asx-fld { cursor: pointer; }
             const fileInputs = form.querySelectorAll('input[type="file"]');
             const filesToUpload = [];
 
+            // Solo Asistencia Protocolar nombra los archivos por punto (<ID>_recinto-foto.jpg). El resto de solicitudes
+            // conserva la numeración de siempre (<ID>_1.jpg), aunque algún input tuviera data-cat.
+            const nombraPorPunto = !!(contexto && contexto.tipoSolicitud === 'Asistencia Protocolar');
+            const categoriasArchivos = [];   // misma posición que filesToUpload: etiqueta que va en el nombre del archivo ('' = numeración normal)
             fileInputs.forEach(input => {
                 if (input.files && input.files.length > 0) {
                     filesToUpload.push(input.files[0]);
+                    categoriasArchivos.push(nombraPorPunto ? (input.getAttribute('data-cat') || '') : '');
                 }
             });
 
@@ -14012,7 +14173,8 @@ select.asx-fld { cursor: pointer; }
             }
 
             try {
-                const results = await nexusSubirMultiplesArchivos(filesToUpload, solicitudId, 'SOLICITUDES', contexto);
+                // etiquetasArchivos: cada archivo se guarda en Drive como <ID>_<etiqueta>.<ext> (p. ej. NEXUS-123_recinto-foto.jpg)
+                const results = await nexusSubirMultiplesArchivos(filesToUpload, solicitudId, 'SOLICITUDES', Object.assign({}, contexto, { etiquetasArchivos: categoriasArchivos }));
                 window._nexusLimiteArchivoBytes = null; window._nexusTipoSubida = null;
                 
                 // Ocultar loading overlay al completar exitosamente
@@ -14956,6 +15118,7 @@ select.asx-fld { cursor: pointer; }
                 programaAdjuntoNombre: '',
                 guionAdjuntoNombre: '',
                 fotosVideosResumen: '',
+                cargaCategorias: [],
                 igExtras: []
             };
 
@@ -15108,7 +15271,9 @@ select.asx-fld { cursor: pointer; }
             // Extraer información de medios
             if (formData.media) {
                 formData.media.forEach(item => {
-                    if (item.label.includes('Soportes') || item.label.includes('Fotos Adjuntas')) {
+                    if (item.label.indexOf('Carga · ') === 0) {
+                        plainData.cargaCategorias.push({ nombre: item.label.slice('Carga · '.length), value: item.value });
+                    } else if (item.label.includes('Soportes') || item.label.includes('Fotos Adjuntas')) {
                         plainData.soportes = item.value;
                     } else if (item.label.includes('Peso Total')) {
                         plainData.pesoTotal = item.value;
@@ -15120,7 +15285,7 @@ select.asx-fld { cursor: pointer; }
                         plainData.programaAdjuntoNombre = item.value;
                     } else if (item.label === 'Guion Adjunto') {
                         plainData.guionAdjuntoNombre = item.value;
-                    } else if (item.label === 'Fotos y Videos del Lugar') {
+                    } else if (item.label === 'Fotos y Videos a Cargar') {
                         plainData.fotosVideosResumen = item.value;
                     }
                 });
@@ -15421,6 +15586,10 @@ select.asx-fld { cursor: pointer; }
                     (plainData.docsTexto || []).forEach(d => otrosDatos.push(`• ${d.nombre}: Redactado en formulario (convertido a Google Doc en Drive)`));
                     if (plainData.programaAdjuntoNombre) otrosDatos.push(`• Programa: Documento adjunto`);
                     if (plainData.guionAdjuntoNombre) otrosDatos.push(`• Guion: Documento adjunto`);
+                    if ((plainData.cargaCategorias || []).length > 0) {
+                        otrosDatos.push('• Fotos y videos a cargar:');
+                        plainData.cargaCategorias.forEach(c => otrosDatos.push(`   – ${c.nombre}: ${c.value}`));
+                    }
                     if (plainData.tituloNota) otrosDatos.push(`• Título: ${plainData.tituloNota}`);
                     if (plainData.textoNota) otrosDatos.push(`• Documento: Redactado en formulario (convertido a Google Doc en Drive)`);
                     if (plainData.nombreEfemeride) otrosDatos.push(`• Nombre de la Efeméride: ${plainData.nombreEfemeride}`);
@@ -17608,7 +17777,21 @@ select.asx-fld { cursor: pointer; }
         // ============================================================
         let selectedAsistenciaProtocolarRegion = "";
         let selectedAsistenciaProtocolarUnidad = "";
-        const ASP_MAX_ARCHIVOS = 10;
+        // Fotos a cargar: por cada punto del evento hay una caja de foto y otra de video (6 puntos = 12 cajas).
+        const ASP_CATEGORIAS = [
+            { key: 'recinto', nombre: 'Recinto de la actividad' },
+            { key: 'presidio', nombre: 'Presidio (nombre y cargo de las autoridades)' },
+            { key: 'podio', nombre: 'Podio (maestro de ceremonia)' },
+            { key: 'bandera', nombre: 'Bandera y estandarte' },
+            { key: 'aforo', nombre: 'Aforo, plano general del auditorio' },
+            { key: 'consola', nombre: 'Consola de sonido' }
+        ];
+        const ASP_SLOTS = [];
+        ASP_CATEGORIAS.forEach(function(c) {
+            ASP_SLOTS.push({ key: c.key + '-foto',  cat: c.key, tipo: 'foto',  nombre: c.nombre });
+            ASP_SLOTS.push({ key: c.key + '-video', cat: c.key, tipo: 'video', nombre: c.nombre });
+        });
+        const ASP_MAX_ARCHIVOS = ASP_SLOTS.length;
         const ASP_MAX_BYTES = 1024 * 1024 * 1024;      // 1 GB en total entre fotos y videos
         const ASP_DOC_MAX_BYTES = 10 * 1024 * 1024;    // 10 MB por documento .doc/.docx
         const ASP_DOCS = {
@@ -17634,7 +17817,7 @@ select.asx-fld { cursor: pointer; }
             selectedAsistenciaProtocolarRegion = "";
             selectedAsistenciaProtocolarUnidad = "";
             Object.keys(ASP_DOCS).forEach(k => { aspSeleccionarModoDoc(k, ''); aspActualizarContadorDoc(k); });
-            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) aspClearMedia('asp-file' + i, 'asp-info' + i, 'asp-rm' + i);
+            ASP_SLOTS.forEach(function(sl) { aspClearMedia('asp-file-' + sl.key, 'asp-info-' + sl.key, 'asp-rm-' + sl.key); });
 
             showSection('asistencia-protocolar-form');
             generateAsistenciaProtocolarRegionButtons();
@@ -17749,35 +17932,49 @@ select.asx-fld { cursor: pointer; }
             return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
         }
 
+        function aspEsVideoPermitido(f) { return /^video\/(mp4|quicktime)$/i.test(f.type || '') || /\.(mp4|mov)$/i.test(f.name); }
+
+        // Cuenta archivos y peso; porCategoria = [{ nombre, fotos, videos }] solo de los puntos que tienen algo.
         function aspResumenMedia() {
             let count = 0, total = 0, fotos = 0, videos = 0;
-            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) {
-                const inp = document.getElementById('asp-file' + i);
-                const f = inp && inp.files && inp.files[0];
-                if (!f) continue;
-                count++; total += f.size;
-                if (aspEsVideo(f)) videos++; else fotos++;
-            }
+            const porCategoria = [];
+            ASP_CATEGORIAS.forEach(function(c) {
+                const cat = { nombre: c.nombre, fotos: 0, videos: 0 };
+                ['foto', 'video'].forEach(function(tipo) {
+                    const inp = document.getElementById('asp-file-' + c.key + '-' + tipo);
+                    const f = inp && inp.files && inp.files[0];
+                    if (!f) return;
+                    count++; total += f.size;
+                    if (tipo === 'video') { videos++; cat.videos++; } else { fotos++; cat.fotos++; }
+                });
+                if (cat.fotos || cat.videos) porCategoria.push(cat);
+            });
             const c = document.getElementById('asp-files-count');
             const s = document.getElementById('asp-files-size');
             if (c) c.textContent = count;
             if (s) s.textContent = (total / (1024 * 1024)).toFixed(2);
-            return { count: count, total: total, fotos: fotos, videos: videos };
+            return { count: count, total: total, fotos: fotos, videos: videos, porCategoria: porCategoria };
         }
 
         function aspHandleMedia(input, infoId, rmId) {
             const file = input.files && input.files[0];
             if (!file) return;
-            if (!aspEsImagen(file) && !aspEsVideo(file)) {
-                showToast({ type: 'error', title: 'Tipo de archivo no permitido', message: 'Solo se permiten fotos y videos (MP4 o MOV).' });
+            const tipo = input.getAttribute('data-tipo');   // 'foto' | 'video': cada caja admite solo lo suyo
+            if (tipo === 'foto' && !aspEsImagen(file)) {
+                showToast({ type: 'error', title: 'Tipo de archivo no permitido', message: 'Esta caja es solo para fotos.' });
+                input.value = '';
+                return;
+            }
+            if (tipo === 'video' && !aspEsVideoPermitido(file)) {
+                showToast({ type: 'error', title: 'Tipo de archivo no permitido', message: 'Esta caja es solo para videos MP4 o MOV.' });
                 input.value = '';
                 return;
             }
             let pesoOtros = 0;
-            for (let i = 1; i <= ASP_MAX_ARCHIVOS; i++) {
-                const otro = document.getElementById('asp-file' + i);
+            ASP_SLOTS.forEach(function(sl) {
+                const otro = document.getElementById('asp-file-' + sl.key);
                 if (otro && otro !== input && otro.files && otro.files[0]) pesoOtros += otro.files[0].size;
-            }
+            });
             if (pesoOtros + file.size > ASP_MAX_BYTES) {
                 showToast({ type: 'error', title: 'Límite de tamaño', message: 'El total de archivos no puede superar 1 GB. Con "' + file.name + '" (' + aspFormatearPeso(file.size) + ') se excedería.' });
                 input.value = '';
@@ -17787,11 +17984,41 @@ select.asx-fld { cursor: pointer; }
             const rm = document.getElementById(rmId);
             const slot = input.closest('.asp-file-slot');
             if (info) {
+                aspLiberarVista(info);
                 info.innerHTML = '';
-                const ic = document.createElement('span'); ic.className = 'mi-icon'; ic.textContent = aspEsVideo(file) ? '🎬' : '🖼️';
+                info.classList.remove('con-vista');
                 const nm = document.createElement('span'); nm.className = 'mi-name'; nm.textContent = file.name; nm.title = file.name;
                 const sz = document.createElement('span'); sz.className = 'mi-size'; sz.textContent = aspFormatearPeso(file.size);
-                info.appendChild(ic); info.appendChild(nm); info.appendChild(sz);
+                // Versión sin vista previa (icono + nombre): se usa de respaldo si el navegador no puede mostrar el archivo (p. ej. HEIC)
+                const sinVista = function () {
+                    aspLiberarVista(info);
+                    info.innerHTML = '';
+                    info.classList.remove('con-vista');
+                    const ic = document.createElement('span'); ic.className = 'mi-icon'; ic.textContent = tipo === 'video' ? '🎬' : '🖼️';
+                    info.appendChild(ic); info.appendChild(nm); info.appendChild(sz);
+                };
+                try {
+                    const url = URL.createObjectURL(file);
+                    info.dataset.blobUrl = url;
+                    let thumb;
+                    if (tipo === 'video') {
+                        thumb = document.createElement('video');
+                        thumb.muted = true; thumb.playsInline = true; thumb.preload = 'metadata';
+                        thumb.src = url + '#t=0.1';   // primer fotograma como miniatura
+                    } else {
+                        thumb = document.createElement('img');
+                        thumb.alt = file.name;
+                        thumb.src = url;
+                    }
+                    thumb.className = 'mi-thumb';
+                    thumb.onerror = sinVista;
+                    const pie = document.createElement('div'); pie.className = 'mi-pie';
+                    pie.appendChild(nm); pie.appendChild(sz);
+                    info.classList.add('con-vista');
+                    info.appendChild(thumb);
+                    if (tipo === 'video') { const pl = document.createElement('span'); pl.className = 'mi-play'; pl.textContent = '▶'; info.appendChild(pl); }
+                    info.appendChild(pie);
+                } catch (_) { sinVista(); }
                 info.style.display = 'flex';
             }
             if (rm) rm.style.display = 'flex';
@@ -17808,9 +18035,17 @@ select.asx-fld { cursor: pointer; }
                 const slot = input.closest('.asp-file-slot');
                 if (slot) slot.classList.remove('has-file');
             }
-            if (info) { info.innerHTML = ''; info.style.display = 'none'; }
+            if (info) { aspLiberarVista(info); info.innerHTML = ''; info.classList.remove('con-vista'); info.style.display = 'none'; }
             if (rm) rm.style.display = 'none';
             aspResumenMedia();
+        }
+
+        // Libera la URL temporal de la vista previa para no dejar archivos en memoria
+        function aspLiberarVista(info) {
+            if (info && info.dataset && info.dataset.blobUrl) {
+                try { URL.revokeObjectURL(info.dataset.blobUrl); } catch (_) {}
+                delete info.dataset.blobUrl;
+            }
         }
 
         // Valida Programa y Guion (modo elegido + contenido). Devuelve la lista de errores.
@@ -17896,7 +18131,14 @@ select.asx-fld { cursor: pointer; }
                 const partes = [];
                 if (m.fotos) partes.push(m.fotos + (m.fotos === 1 ? ' foto' : ' fotos'));
                 if (m.videos) partes.push(m.videos + (m.videos === 1 ? ' video' : ' videos'));
-                formData.media.push({ label: 'Fotos y Videos del Lugar', value: partes.join(', ') });
+                formData.media.push({ label: 'Fotos y Videos a Cargar', value: partes.join(', ') });
+                // Una línea por punto del evento («Carga · Recinto de la actividad» = «1 foto, 1 video»)
+                m.porCategoria.forEach(function(c) {
+                    const pp = [];
+                    if (c.fotos) pp.push(c.fotos + (c.fotos === 1 ? ' foto' : ' fotos'));
+                    if (c.videos) pp.push(c.videos + (c.videos === 1 ? ' video' : ' videos'));
+                    formData.media.push({ label: 'Carga · ' + c.nombre, value: pp.join(', ') });
+                });
                 formData.media.push({ label: 'Peso Total', value: (m.total / (1024 * 1024)).toFixed(2) + ' MB' });
             }
 
@@ -19431,8 +19673,11 @@ select.asx-fld { cursor: pointer; }
                 mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Guion Adjunto</span><span class="nexus-preview-value">${_esc(plainData.guionAdjuntoNombre)}</span></div>`;
             }
             if (plainData.fotosVideosResumen) {
-                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Fotos y Videos del Lugar</span><span class="nexus-preview-value">${_esc(plainData.fotosVideosResumen)}</span></div>`;
+                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Fotos y Videos a Cargar</span><span class="nexus-preview-value">${_esc(plainData.fotosVideosResumen)}</span></div>`;
             }
+            (plainData.cargaCategorias || []).forEach(c => {
+                mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">${_esc(c.nombre)}</span><span class="nexus-preview-value">${_esc(c.value)}</span></div>`;
+            });
             if (plainData.documentoAdjuntoNombre) {
                 mediaSectionContent += `<div class="nexus-preview-item"><span class="nexus-preview-label">Documento Adjunto</span><span class="nexus-preview-value">${plainData.documentoAdjuntoNombre}</span></div>`;
             }
@@ -25770,6 +26015,7 @@ select.asx-fld { cursor: pointer; }
             const data = nexusRegistroVivoActual(nexusSelectedRequestId) || nexusSelectedRequestData;
             if ((data.Solicitud || '') === 'Copy RRSS') { showNexusRRSSModal(); return; }
             if ((data.Solicitud || '') === 'Corrección de Video') { showNexusCVModal(); return; }
+            if ((data.Solicitud || '') === 'Cobertura de Prensa') { showNexusCobModal(); return; }
             await handleFinalizarEstado();
         }
 
@@ -25842,6 +26088,13 @@ select.asx-fld { cursor: pointer; }
                 return false;
             }
 
+            // Cobertura de Prensa: no se finaliza sin los datos de la cobertura (modal)
+            const cob = opciones.cobertura || null;
+            if (!esRechazo && tipo === 'Cobertura de Prensa' && !cob) {
+                showNexusCobModal();
+                return false;
+            }
+
             window._nxCerrandoSolicitud = true;
             const mes = NexusData.mesKey();
             const uKey = nexusSanitizarClaveRTDB(base.Unidad);
@@ -25860,6 +26113,12 @@ select.asx-fld { cursor: pointer; }
                 const rStr = redes.length > 0 ? redes.join(', ') : 'N/A';
                 registro.RedesSociales = rStr;
                 registro.Redes = rStr;
+            }
+
+            // Cobertura de Prensa: «Cobertura» va al Sheet (columna «Datos de Cobertura»); «CoberturaDatos» queda estructurado en RTDB.
+            if (!esRechazo && tipo === 'Cobertura de Prensa' && cob) {
+                registro.Cobertura = nexusCobTexto(cob);
+                registro.CoberturaDatos = cob;
             }
 
             // Corrección de Video: el documento es el entregable, así que se genera ANTES de cerrar.
@@ -25970,10 +26229,19 @@ select.asx-fld { cursor: pointer; }
                 if (typeEl) typeEl.textContent = (nexusSelectedRequestData && nexusSelectedRequestData.Solicitud) || 'No especificado';
 
                 modal.classList.add('active');
-                // Limpiar el textarea
+                // Si el responsable marcó el rechazo desde Telegram, su motivo está en el Post-it («Rechazo: ...»):
+                // se precarga para confirmarlo (o ajustarlo). Si no, el textarea empieza vacío.
+                let motivoTg = '';
+                try {
+                    const reg = (typeof nexusRegistroVivoActual === 'function' && nexusRegistroVivoActual(nexusSelectedRequestId)) || nexusSelectedRequestData || {};
+                    const mm = String(reg.PostIt || '').match(/^\s*Rechazo:\s*(.+)$/im);
+                    if (mm) motivoTg = mm[1].trim().slice(0, 200);
+                } catch (_) {}
+                const notaTg = document.getElementById('nexusRejectTgNota');
+                if (notaTg) notaTg.style.display = motivoTg ? 'block' : 'none';
                 const textarea = document.getElementById('nexusRejectReason');
                 if (textarea) {
-                    textarea.value = '';
+                    textarea.value = motivoTg;
                     setTimeout(() => textarea.focus(), 150);
                 }
             }
@@ -26057,6 +26325,164 @@ select.asx-fld { cursor: pointer; }
 
             // Finalizar la solicitud con las redes seleccionadas
             handleFinalizarEstado(redesSeleccionadas);
+        }
+
+        // ============================================================
+        // MODAL DE COBERTURA DE PRENSA
+        // Periodista que cubrió + Video (Time) + Fotos (Cantidad) + Nota/Noticia/Reseña/Entrevista/Reportaje.
+        // Al confirmar, nexusCerrarSolicitud guarda el texto en «Cobertura» (Sheet) y el objeto en «CoberturaDatos» (RTDB).
+        // ============================================================
+        function showNexusCobModal() {
+            const modal = document.getElementById('nexusCobModal');
+            if (!modal) return;
+            const idEl = document.getElementById('nexusCobRequestId');
+            if (idEl) idEl.textContent = nexusSelectedRequestId || '-';
+            // Listado del personal activo; siempre empieza sin elegir (quien cubre no siempre es el responsable asignado)
+            nexusCobLlenarPersonal();
+            const per = document.getElementById('nexusCobPeriodista');
+            if (per) per.value = '';
+            modal.querySelectorAll('input[type="checkbox"]').forEach(function (c) { c.checked = false; });
+            modal.querySelectorAll('.nx-cob-in').forEach(function (i) {
+                if (i.id !== 'nexusCobPeriodista' && i.id !== 'nexusCobPeriodistaSel') i.value = '';
+                i.classList.remove('nx-cob-err');
+            });
+            nexusCobPeriodistaCambio();
+            nexusCobSincronizar();
+            const btn = document.getElementById('nexusCobConfirmBtn');
+            if (btn) btn.disabled = false;
+            modal.classList.add('active');
+            const sel = document.getElementById('nexusCobPeriodistaSel');
+            if (sel) setTimeout(function () { sel.focus(); }, 150);
+        }
+
+        // Personal activo (sistema/personal): periodistas primero, luego el resto, cada grupo por orden alfabético.
+        function nexusCobLlenarPersonal() {
+            const sel = document.getElementById('nexusCobPeriodistaSel');
+            if (!sel) return;
+            const personal = window._nexusPersonal || {};
+            const lista = [];
+            Object.keys(personal).forEach(function (uid) {
+                const m = personal[uid];
+                if (!m || m.activo === false) return;
+                const nombre = String(m.nombre || '').trim();
+                if (!nombre) return;
+                if (lista.some(function (x) { return x.nombre.toLowerCase() === nombre.toLowerCase(); })) return;
+                lista.push({ nombre: nombre, periodista: m.esPeriodista === true || m.rol === 'Periodista' });
+            });
+            lista.sort(function (a, b) { return (b.periodista - a.periodista) || a.nombre.localeCompare(b.nombre, 'es'); });
+            sel.innerHTML = '';
+            const agrega = function (valor, texto, padre) {
+                const o = document.createElement('option');
+                o.value = valor; o.textContent = texto;
+                (padre || sel).appendChild(o);
+            };
+            agrega('', 'Seleccione el periodista…');
+            lista.forEach(function (x) { agrega(x.nombre, x.nombre); });
+            agrega('__otro__', 'Otro (escribir nombre)…');
+            sel.value = '';
+        }
+
+        // Muestra la caja de texto solo cuando se elige «Otro»
+        function nexusCobPeriodistaCambio() {
+            const sel = document.getElementById('nexusCobPeriodistaSel');
+            const per = document.getElementById('nexusCobPeriodista');
+            if (!sel || !per) return;
+            const otro = sel.value === '__otro__';
+            per.style.display = otro ? '' : 'none';
+            if (!otro) per.value = '';
+            else per.focus();
+        }
+
+        function closeNexusCobModal() {
+            const modal = document.getElementById('nexusCobModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Time solo se habilita con Video marcado; Cantidad solo con Fotos marcado.
+        function nexusCobSincronizar() {
+            [['nexusCobVideo', 'nexusCobVideoTime'], ['nexusCobFotos', 'nexusCobFotosCant']].forEach(function (par) {
+                const chk = document.getElementById(par[0]), inp = document.getElementById(par[1]);
+                if (!chk || !inp) return;
+                inp.disabled = !chk.checked;
+                if (!chk.checked) { inp.value = ''; inp.classList.remove('nx-cob-err'); }
+                else setTimeout(function () { if (document.activeElement === chk) inp.focus(); }, 0);
+            });
+        }
+
+        // '14:30' -> '02:30 p. m.' (mismo formato de hora que usa el formulario de solicitud)
+        function nexusCobHora12(hhmm) {
+            const m = String(hhmm || '').match(/^(\d{1,2}):(\d{2})/);
+            if (!m) return String(hhmm || '');
+            let h = parseInt(m[1], 10);
+            const suf = h >= 12 ? 'p. m.' : 'a. m.';
+            h = h % 12 || 12;
+            return String(h).padStart(2, '0') + ':' + m[2] + ' ' + suf;
+        }
+
+        // Texto para el Sheet (una línea por dato, solo lo marcado).
+        function nexusCobTexto(c) {
+            const l = [];
+            if (c.periodista) l.push('Periodista: ' + c.periodista);
+            if (c.video) l.push('Video: ' + c.video);
+            if (c.fotos) l.push('Fotos: ' + c.fotos);
+            if (c.productos && c.productos.length) l.push('Productos: ' + c.productos.join(', '));
+            if (c.horaInicio && c.horaFin) l.push('Horas de cobertura: ' + nexusCobHora12(c.horaInicio) + ' a ' + nexusCobHora12(c.horaFin));
+            return l.join('\n');
+        }
+
+        // Lee y valida el modal. Devuelve { periodista, video, fotos, productos } o null (con aviso).
+        function nexusCobLeer() {
+            const modal = document.getElementById('nexusCobModal');
+            if (!modal) return null;
+            modal.querySelectorAll('.nx-cob-err').forEach(function (i) { i.classList.remove('nx-cob-err'); });
+            const aviso = function (el, msg) {
+                if (el) { el.classList.add('nx-cob-err'); el.focus(); }
+                showToast({ type: 'warning', title: 'Falta información', message: msg, duration: 3500 });
+                return null;
+            };
+            const sel = document.getElementById('nexusCobPeriodistaSel');
+            const per = document.getElementById('nexusCobPeriodista');
+            const esOtro = !!sel && sel.value === '__otro__';
+            const periodista = esOtro
+                ? (per ? per.value.trim().replace(/\s+/g, ' ') : '')
+                : (sel ? sel.value.trim() : '');
+            if (!periodista) return aviso(esOtro ? per : sel, esOtro ? 'Escriba el nombre del periodista que cubrió.' : 'Seleccione el periodista que cubrió.');
+
+            let video = '';
+            if (document.getElementById('nexusCobVideo').checked) {
+                const t = document.getElementById('nexusCobVideoTime');
+                video = t.value.trim();
+                if (!/^(\d{1,2}:)?\d{1,2}:[0-5]\d$/.test(video)) return aviso(t, 'Indique el Time del video con formato mm:ss (ej. 02:30).');
+            }
+            let fotos = 0;
+            if (document.getElementById('nexusCobFotos').checked) {
+                const f = document.getElementById('nexusCobFotosCant');
+                fotos = parseInt(f.value, 10);
+                if (!(fotos >= 1)) return aviso(f, 'Indique la cantidad de fotos (mínimo 1).');
+            }
+            const productos = Array.prototype.slice.call(modal.querySelectorAll('input[name="cobProd"]:checked')).map(function (c) { return c.value; });
+            if (!video && !fotos && productos.length === 0) {
+                return aviso(null, 'Marque al menos una opción: video, fotos o algún género periodístico redactado.');
+            }
+            const hi = document.getElementById('nexusCobHoraInicio');
+            const hf = document.getElementById('nexusCobHoraFin');
+            if (!hi || !hi.value) return aviso(hi, 'Indique la hora de inicio de la cobertura.');
+            if (!hf || !hf.value) return aviso(hf, 'Indique la hora de fin de la cobertura.');
+            return { periodista: periodista, video: video || null, fotos: fotos || null, productos: productos, horaInicio: hi.value, horaFin: hf.value };
+        }
+
+        async function nexusCobConfirmar() {
+            if (window._nxCerrandoSolicitud) return;
+            const datos = nexusCobLeer();
+            if (!datos) return;
+            const btn = document.getElementById('nexusCobConfirmBtn');
+            if (btn) btn.disabled = true;
+            try {
+                const ok = await nexusCerrarSolicitud('FINALIZADA', { cobertura: datos });
+                if (ok) closeNexusCobModal();   // si falló, el modal queda abierto con lo escrito
+            } finally {
+                if (btn) btn.disabled = false;
+            }
         }
 
         // ============================================================
@@ -27226,6 +27652,56 @@ select.asx-fld { cursor: pointer; }
             }
         }
 
+        // Categorías de archivo (Asistencia Protocolar). La clave es la etiqueta que lleva el nombre del archivo en Drive.
+        const NEXUS_ARCH_CAT_GRUPOS = [
+            { grupo: 'programa', titulo: 'Programa', icono: '📋', claves: ['programa'] },
+            { grupo: 'guion', titulo: 'Guion', icono: '📜', claves: ['guion'] },
+            { grupo: 'recinto', titulo: 'Recinto de la actividad', icono: '🏟️' },
+            { grupo: 'presidio', titulo: 'Presidio (nombre y cargo de las autoridades)', icono: '🎖️' },
+            { grupo: 'podio', titulo: 'Podio (maestro de ceremonia)', icono: '🎤' },
+            { grupo: 'bandera', titulo: 'Bandera y estandarte', icono: '🚩' },
+            { grupo: 'aforo', titulo: 'Aforo, plano general del auditorio', icono: '👥' },
+            { grupo: 'consola', titulo: 'Consola de sonido', icono: '🎚️' }
+        ];
+        // 'recinto-foto' -> { orden, grupo, titulo, icono, tipo: 'Foto' }; null si la clave no se conoce
+        function nexusInfoCategoriaArchivo(clave) {
+            clave = String(clave || '').trim();
+            for (let g = 0; g < NEXUS_ARCH_CAT_GRUPOS.length; g++) {
+                const gr = NEXUS_ARCH_CAT_GRUPOS[g];
+                if (clave === gr.grupo) return { orden: g * 2, grupo: gr.grupo, titulo: gr.titulo, icono: gr.icono, tipo: '' };
+                if (clave === gr.grupo + '-foto') return { orden: g * 2, grupo: gr.grupo, titulo: gr.titulo, icono: gr.icono, tipo: 'Foto' };
+                if (clave === gr.grupo + '-video') return { orden: g * 2 + 1, grupo: gr.grupo, titulo: gr.titulo, icono: gr.icono, tipo: 'Video' };
+            }
+            return null;
+        }
+
+        // El punto del evento de cada archivo va en su NOMBRE en Drive: <ID>_<clave>.<ext>
+        // (NEXUS-1731..._recinto-foto.jpg; los Google Docs del Programa y el Guion se llaman <ID>_programa y <ID>_guion).
+        // No se guarda nada extra en RTDB ni en el Sheet: los nombres se piden al Apps Script y se recuerdan en memoria (fileId -> nombre).
+        window._nexusNombresArchivos = window._nexusNombresArchivos || {};
+        function nexusClaveCategoriaDeNombre(nombre) {
+            const base = String(nombre || '').replace(/\.[A-Za-z0-9]{1,5}$/, '');
+            const m = base.match(/^NEXUS-\d+_(.+)$/);
+            return m ? m[1] : '';
+        }
+        async function nexusCargarNombresArchivos(ids) {
+            const cache = window._nexusNombresArchivos;
+            try {
+                const res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'nombresArchivos', ids: ids })
+                }, 20000, 1);
+                const nombres = (res && (res.nombres || (res.data && res.data.nombres))) || {};
+                ids.forEach(id => { cache[id] = String(nombres[id] || ''); });
+            } catch (err) {
+                console.warn('[NEXUS] No se pudieron leer los nombres de los archivos:', err);
+                ids.forEach(id => { if (!(id in cache)) cache[id] = ''; });   // sin nombre: se muestran en lista plana
+            }
+        }
+
+        // Con Asistencia Protocolar los archivos se muestran agrupados por punto del evento, distinguiendo foto y video.
+        // Mientras llegan los nombres desde Drive se muestra la lista plana y, al llegar, se reemplaza por la agrupada.
         function nexusExtractArchivosHTML(archivosDriveStr, tipoSolicitud) {
             // Voz en Off / Limpieza de Audio / Corrección de Video: el adjunto es audio o video, se abre con el reproductor de Drive
             const _esMediaTipo = !!(tipoSolicitud && nexusTipoArchivoSimple(tipoSolicitud));
@@ -27233,28 +27709,52 @@ select.asx-fld { cursor: pointer; }
             const urls = archivosDriveStr.split(',').map(u => u.trim()).filter(Boolean);
             if (urls.length === 0) return '';
 
-            // Construir el arreglo de fotos para el visor con navegación
-            const photosParaVisor = urls.map((url, i) => {
-                const fileId = nexusExtraerFileIdDrive(url);
-                const isVideo = _esMediaTipo || nexusEsVideoArchivo(`Archivo ${i + 1}`, url);
+            const esProtocolar = /asistencia protocolar/i.test(tipoSolicitud || '');
+            const ids = urls.map(u => nexusExtraerFileIdDrive(u));
+            const nombres = window._nexusNombresArchivos;
+            let pendiente = false;
+            if (esProtocolar) {
+                const faltan = ids.filter(id => id && !(id in nombres));
+                if (faltan.length) {
+                    pendiente = true;
+                    nexusCargarNombresArchivos(faltan).then(() => {
+                        document.querySelectorAll('.nexus-arch-wrap').forEach(w => {
+                            w.outerHTML = nexusExtractArchivosHTML(w.getAttribute('data-urls'), w.getAttribute('data-tipo'));
+                        });
+                    });
+                }
+            }
+            const cats = ids.map(id => (esProtocolar && id) ? nexusInfoCategoriaArchivo(nexusClaveCategoriaDeNombre(nombres[id])) : null);
+            const conCats = cats.some(Boolean);
+            let entradas = urls.map((url, i) => ({ url: url, cat: cats[i], pos: i }));
+            if (conCats) {
+                entradas.sort((a, b) => ((a.cat ? a.cat.orden : 999) - (b.cat ? b.cat.orden : 999)) || (a.pos - b.pos));
+            }
+            const esVideoEntrada = (e, i) => (e.cat && e.cat.tipo) ? e.cat.tipo === 'Video' : (_esMediaTipo || nexusEsVideoArchivo(`Archivo ${i + 1}`, e.url));
+
+            // Arreglo para el visor con navegación (mismo orden en que se muestran las tarjetas)
+            const photosParaVisor = entradas.map((e, i) => {
+                const fileId = nexusExtraerFileIdDrive(e.url);
                 return {
-                    url: fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600` : url,
-                    downloadUrl: fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : url,
-                    nombre: `Archivo ${i + 1}`,
-                    isVideo: isVideo
+                    url: fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1600` : e.url,
+                    downloadUrl: fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : e.url,
+                    nombre: e.cat ? (e.cat.titulo + (e.cat.tipo ? ' · ' + e.cat.tipo : '')) : `Archivo ${i + 1}`,
+                    isVideo: esVideoEntrada(e, i)
                 };
             });
             window._nexusArchivosAdjuntosActuales = photosParaVisor;
 
-            const cards = urls.map((url, i) => {
-                const fileId = nexusExtraerFileIdDrive(url);
+            const tarjeta = (e, i) => {
+                const fileId = nexusExtraerFileIdDrive(e.url);
                 if (!fileId) return '';
                 const thumbUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w400`;
                 const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-                const isVideo = _esMediaTipo || nexusEsVideoArchivo(`Archivo ${i + 1}`, url);
+                const isVideo = esVideoEntrada(e, i);
+                const badge = (e.cat && e.cat.tipo) ? `<span class="nexus-extract-tipo-badge">${e.cat.tipo}</span>` : '';
                 return `
                     <div class="nexus-extract-photo-card">
                         <a href="javascript:void(0)" onclick="nexusOpenImageViewer(window._nexusArchivosAdjuntosActuales, ${i})" title="Clic para ampliar" style="position: relative; display: block;">
+                            ${badge}
                             <img class="nexus-extract-photo-frame" src="${thumbUrl}" loading="lazy" alt="Archivo adjunto ${i + 1}" onerror="nexusMediaSinMiniatura(this)">
                             ${isVideo ? '<div class="nx-play-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px;">▶</div>' : ''}
                         </a>
@@ -27263,11 +27763,42 @@ select.asx-fld { cursor: pointer; }
                             <a class="nx-download" href="${downloadUrl}" target="_blank" rel="noopener"><i class="fas fa-download"></i> Descargar</a>
                         </div>
                     </div>`;
-            }).join('');
+            };
 
-            return `
+            let html;
+            if (!conCats) {
+                html = `
                 <div class="nexus-extract-photos-title">📎 Archivos Adjuntos (${urls.length})</div>
-                <div class="nexus-extract-photos-grid">${cards}</div>`;
+                <div class="nexus-extract-photos-grid">${entradas.map((e, i) => tarjeta(e, i)).join('')}</div>`;
+            } else {
+                // Agrupar por punto del evento conservando el orden
+                const grupos = [];
+                entradas.forEach((e, i) => {
+                    const g = e.cat ? e.cat.grupo : '_otros';
+                    let grp = grupos.length ? grupos[grupos.length - 1] : null;
+                    if (!grp || grp.grupo !== g) {
+                        grp = { grupo: g, titulo: e.cat ? e.cat.titulo : 'Otros archivos', icono: e.cat ? e.cat.icono : '📎', items: [] };
+                        grupos.push(grp);
+                    }
+                    grp.items.push({ e: e, i: i });
+                });
+                html = `
+                <div class="nexus-extract-photos-title">📎 Archivos Adjuntos (${urls.length})</div>` + grupos.map(grp => {
+                    const nFotos = grp.items.filter(x => x.e.cat && x.e.cat.tipo === 'Foto').length;
+                    const nVideos = grp.items.filter(x => x.e.cat && x.e.cat.tipo === 'Video').length;
+                    const partes = [];
+                    if (nFotos) partes.push(nFotos + (nFotos === 1 ? ' foto' : ' fotos'));
+                    if (nVideos) partes.push(nVideos + (nVideos === 1 ? ' video' : ' videos'));
+                    return `
+                <div class="nexus-extract-cat-group">
+                    <div class="nexus-extract-cat-title"><span>${grp.icono} ${grp.titulo}</span>${partes.length ? `<small>${partes.join(' · ')}</small>` : ''}</div>
+                    <div class="nexus-extract-photos-grid">${grp.items.map(x => tarjeta(x.e, x.i)).join('')}</div>
+                </div>`;
+                }).join('');
+            }
+            return pendiente
+                ? `<div class="nexus-arch-wrap" data-urls="${nexusEscHtml(archivosDriveStr)}" data-tipo="${nexusEscHtml(tipoSolicitud || '')}">${html}</div>`
+                : html;
         }
 
         // Genera el texto plano (para copiar/compartir) a partir de los mismos campos
