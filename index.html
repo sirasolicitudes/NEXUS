@@ -22383,13 +22383,14 @@ select.asx-fld { cursor: pointer; }
         // SISTEMA DE SONIDO DE ENVÍO
         // ============================================================
 
-        // Qué voz suena en cada evento.
-        //   cruzada: true  -> usuario femenino escucha voz masculina y viceversa (regla original de "enviar").
-        //   cruzada: false -> la voz coincide con el sexo del usuario. Se usa en "bienvenida" porque la palabra
-        //                     cambia de género: Jori dice "Bienvenido" y Arlo "Bienvenida".
+        // Qué archivo suena en cada evento.
+        // El sufijo del archivo (_fem / _masc) indica a QUIÉN va dirigido, es decir, el sexo del usuario que lo escucha;
+        // la voz grabada es la del sexo contrario (Arlo = voz masculina para usuarias, Jori = voz femenina para usuarios).
+        // Por eso el usuario femenino reproduce *_fem y el masculino *_masc (cruzada: false).
+        // Si algún día los archivos se grabaran al revés, basta con poner cruzada: true en el evento afectado.
         var NX_VOZ_CONFIG = {
-            enviar:     { cruzada: true,  fem: 'soundFem',      masc: 'soundMasc' },
-            rechazada:  { cruzada: true,  fem: 'soundRechFem',  masc: 'soundRechMasc' },
+            enviar:     { cruzada: false, fem: 'soundFem',      masc: 'soundMasc' },
+            rechazada:  { cruzada: false, fem: 'soundRechFem',  masc: 'soundRechMasc' },
             bienvenida: { cruzada: false, fem: 'soundBienvFem', masc: 'soundBienvMasc' }
         };
         window._nxVozActual = null;
