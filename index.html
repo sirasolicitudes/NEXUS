@@ -96,17 +96,13 @@
 })();
     </script>
 
-    <!-- Elementos de audio para notificaciones por sexo -->
-    <audio id="soundFem" preload="auto">
-        <source src="assets/audio/enviar_gracux_fem.wav" type="audio/wav">
-        <source src="sonidos/Enviar gracux fem.wav" type="audio/wav">
-        <source src="sonidos/enviar_gracux_fem.wav" type="audio/wav">
-    </audio>
-    <audio id="soundMasc" preload="auto">
-        <source src="assets/audio/enviar_algenid_masc.wav" type="audio/wav">
-        <source src="sonidos/Enviar algenid masc.wav" type="audio/wav">
-        <source src="sonidos/enviar_algenid_masc.wav" type="audio/wav">
-    </audio>
+    <!-- Voces NEXUS (una por evento y por voz). La regla de qué voz escucha cada usuario vive en NX_VOZ_CONFIG. -->
+    <audio id="soundFem" preload="auto"><source src="assets/audio/arlo_enviar_fem.wav" type="audio/wav"></audio>
+    <audio id="soundMasc" preload="auto"><source src="assets/audio/jori_enviar_masc.wav" type="audio/wav"></audio>
+    <audio id="soundBienvFem" preload="auto"><source src="assets/audio/arlo_bienvenida_fem.wav" type="audio/wav"></audio>
+    <audio id="soundBienvMasc" preload="auto"><source src="assets/audio/jori_bienvenido_masc.wav" type="audio/wav"></audio>
+    <audio id="soundRechFem" preload="auto"><source src="assets/audio/arlo_rechazada_fem.wav" type="audio/wav"></audio>
+    <audio id="soundRechMasc" preload="auto"><source src="assets/audio/jori_rechazada_masc.wav" type="audio/wav"></audio>
     <!-- Pista musical exclusiva del modal de Cumpleaños (1:29 min) -->
     <audio id="nx-cumple-audio" preload="auto">
         <source src="assets/audio/cumplepiano.mp3" type="audio/mpeg">
@@ -1458,101 +1454,104 @@
             color: #999;
         }
 
-        /* Modal de Progreso de Eliminación */
+        /* Modal de Progreso de Eliminación (estilo NEXUS oscuro, acento rojo de acción irreversible) */
         .nexus-progress-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(6, 9, 13, 0.85);
-            backdrop-filter: blur(10px);
-            z-index: 20000;
+            inset: 0;
+            background: rgba(3, 5, 9, 0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 20100;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
+            padding: 16px 12px;
+            animation: nxProgFade .25s ease;
         }
-
-        .nexus-progress-modal.active {
-            display: flex;
-        }
+        .nexus-progress-modal.active { display: flex; }
+        @keyframes nxProgFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes nxProgIn { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         .nexus-progress-content {
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.4s ease;
-        }
-
-        .nexus-progress-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        .nexus-progress-title {
-            font-family: 'Sora', sans-serif; font-weight: 700;
-            font-size: 24px;
-            color: var(--color-dark);
-            margin-bottom: 15px;
-        }
-
-        .nexus-progress-message {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .nexus-progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background: #e9ecef;
-            border-radius: 6px;
+            width: min(440px, 94vw);
+            background: linear-gradient(180deg, var(--panel) 0%, #0a0f18 100%);
+            color: var(--color-light);
+            border: 1px solid rgba(230, 57, 70, 0.28);
+            border-radius: 18px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.55), 0 0 60px rgba(230,57,70,0.10);
             overflow: hidden;
-            margin-bottom: 15px;
+            text-align: left;
+            animation: nxProgIn .3s cubic-bezier(.2,.8,.2,1);
         }
-
-        .nexus-progress-bar {
-            height: 100%;
-            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-            border-radius: 6px;
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
-        .nexus-progress-steps {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-            margin-top: 10px;
-        }
-
-        .nexus-progress-step {
+        .nexus-progress-head {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 14px;
+            padding: 20px 24px 16px;
+            background: linear-gradient(135deg, rgba(230,57,70,0.22) 0%, rgba(230,57,70,0.04) 100%);
+            border-bottom: 1px solid rgba(230, 57, 70, 0.25);
         }
-
-        .nexus-progress-step.completed {
-            color: var(--color-primary);
+        .nexus-progress-icon {
+            width: 46px; height: 46px;
+            flex-shrink: 0;
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            color: #fff;
+            background: linear-gradient(135deg, #e63946 0%, #c82333 100%);
+            box-shadow: 0 8px 22px rgba(230,57,70,0.35);
         }
-
-        .nexus-progress-step.active {
-            color: var(--color-secondary);
+        .nexus-progress-eyebrow { font-size: 0.68rem; letter-spacing: .04em; color: var(--color-tertiary); margin: 0 0 4px; }
+        .nexus-progress-title {
+            font-family: 'Sora', sans-serif; font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--color-light);
+            margin: 0;
+        }
+        .nexus-progress-body { padding: 20px 24px 22px; }
+        .nexus-progress-message {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.86rem;
+            color: rgba(242,242,242,0.7);
+            margin-bottom: 14px;
+            min-height: 1.3em;
+            line-height: 1.5;
+        }
+        .nexus-progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .nexus-progress-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #c82333 0%, #e63946 60%, #ff6b78 100%);
+            box-shadow: 0 0 12px rgba(230,57,70,0.5);
+            transition: width 0.3s ease;
+        }
+        .nexus-progress-steps { display: flex; gap: 8px; }
+        .nexus-progress-step {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 8px 10px;
+            font-size: 0.76rem;
             font-weight: 600;
+            color: rgba(242,242,242,0.45);
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: color .2s, border-color .2s, background .2s;
         }
-
-        .nexus-progress-step i {
-            font-size: 10px;
-        }
+        .nexus-progress-step.active { color: #fff; border-color: rgba(230,57,70,0.5); background: rgba(230,57,70,0.10); }
+        .nexus-progress-step.completed { color: var(--ok); border-color: rgba(61,220,151,0.35); background: rgba(61,220,151,0.07); }
+        .nexus-progress-step i { font-size: 0.72rem; }
 
         /* Modal de Confirmación de Eliminación */
         .nexus-confirm-modal {
@@ -12389,6 +12388,10 @@ select.asx-fld { cursor: pointer; }
                         <input type="checkbox" name="cobProd" value="Reportaje">
                         <span class="nexus-rrss-label"><i class="fas fa-book-open"></i> Reportaje</span>
                     </label>
+                    <label class="nexus-rrss-checkbox">
+                        <input type="checkbox" name="cobProd" value="Redacción RRSS">
+                        <span class="nexus-rrss-label"><i class="fas fa-share-alt"></i> Redacción RRSS</span>
+                    </label>
                 </div>
 
                 <label class="nx-cob-lbl" style="margin-top: 4px;"><i class="fas fa-clock"></i> Horas de cobertura</label>
@@ -12463,6 +12466,174 @@ select.asx-fld { cursor: pointer; }
             </div>
         </div>
     </div>
+
+    <!-- Modal de Asistencia Protocolar: Pregira + Asesoría Protocolar + Guion y Programa. Al finalizar genera el .docx de la asesoría
+         y deja los tres archivos como descargables de la unidad solicitante. -->
+    <style>
+        #nexusAPModal .nx-ap-lbl { display: block; font-size: 0.85rem; color: var(--color-tertiary); margin-bottom: 8px; }
+        #nexusAPModal .nx-ap-pregira { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+        #nexusAPModal .nx-ap-opt { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; background: rgba(156, 210, 211, 0.05); border: 1.5px solid rgba(156, 210, 211, 0.2); border-radius: 10px; cursor: pointer; transition: all 0.2s ease; color: var(--color-light); font-size: 0.9rem; font-weight: 500; }
+        #nexusAPModal .nx-ap-opt:hover { background: rgba(156, 210, 211, 0.1); border-color: rgba(156, 210, 211, 0.4); }
+        #nexusAPModal .nx-ap-opt input { position: absolute; opacity: 0; pointer-events: none; }
+        #nexusAPModal .nx-ap-opt i { color: #9cd2d3; }
+        #nexusAPModal .nx-ap-opt:has(input:checked) { background: linear-gradient(135deg, rgba(156, 210, 211, 0.22) 0%, rgba(74, 110, 176, 0.18) 100%); border-color: #9cd2d3; color: #9cd2d3; }
+        #nexusAPModal .nx-ap-opt.nx-ap-err { border-color: #e5484d; }
+        #nexusAPModal .nx-ap-texto { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel-2); color: var(--color-light); font-family: inherit; font-size: 0.9rem; line-height: 1.5; resize: vertical; min-height: 220px; }
+        #nexusAPModal .nx-ap-texto:focus { outline: none; border-color: #9cd2d3; }
+        #nexusAPModal .nx-ap-texto.nx-ap-err { border-color: #e5484d; }
+        #nexusAPModal .nx-ap-count { text-align: right; font-size: 0.75rem; color: var(--color-tertiary); margin: 4px 0 18px; }
+        #nexusAPModal .nx-ap-files { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        #nexusAPModal .nx-ap-file { border: 1.5px dashed rgba(156, 210, 211, 0.35); border-radius: 10px; padding: 12px; background: rgba(156, 210, 211, 0.04); min-width: 0; }
+        #nexusAPModal .nx-ap-file.nx-ap-err { border-color: #e5484d; }
+        #nexusAPModal .nx-ap-file input[type="file"] { display: none; }
+        #nexusAPModal .nx-ap-file-btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 12px; border-radius: 8px; background: var(--panel-2); border: 1px solid var(--border); color: var(--color-light); font-size: 0.85rem; }
+        #nexusAPModal .nx-ap-file-btn:hover { border-color: #9cd2d3; }
+        #nexusAPModal .nx-ap-file-btn i { color: #9cd2d3; }
+        #nexusAPModal .nx-ap-file-name { display: block; margin-top: 8px; font-size: 0.78rem; color: var(--color-tertiary); word-break: break-all; }
+        #nexusAPModal .nx-ap-file-name.nx-ap-ok { color: #9cd2d3; }
+        @media (max-width: 480px) { #nexusAPModal .nx-ap-files, #nexusAPModal .nx-ap-pregira { grid-template-columns: 1fr; } }
+    </style>
+    <div id="nexusAPModal" class="nx-overlay" style="z-index: 20000;">
+        <div class="nx-modal" style="max-width: 640px;">
+            <div class="nx-head" style="background: linear-gradient(135deg, rgba(156, 210, 211, 0.18) 0%, rgba(74, 110, 176, 0.03) 100%);">
+                <button class="nx-close" onclick="closeNexusAPModal()" aria-label="Cerrar">✕</button>
+                <p class="nx-eyebrow">NEXUS · ASISTENCIA PROTOCOLAR</p>
+                <h2 class="nx-title"><i class="fas fa-user-tie" style="color: #9cd2d3;"></i> Asesoría protocolar</h2>
+                <p class="nx-sub">Indique la pregira, escriba la asesoría y adjunte el guion y el programa. Al finalizar se genera un documento con la asesoría y los tres archivos quedan disponibles para descarga de la unidad solicitante.</p>
+            </div>
+            <div class="nx-body">
+                <div class="nx-request-chip" style="border-color: rgba(156, 210, 211, 0.3); background: rgba(156, 210, 211, 0.08); color: #9cd2d3;">
+                    <span>Solicitud: <b id="nexusAPRequestId" style="color: #9cd2d3;">-</b></span>
+                </div>
+
+                <span class="nx-ap-lbl"><i class="fas fa-route"></i> Pregira</span>
+                <div class="nx-ap-pregira" id="nexusAPPregira">
+                    <label class="nx-ap-opt"><input type="radio" name="apPregira" value="Virtual"><i class="fas fa-video"></i> Virtual</label>
+                    <label class="nx-ap-opt"><input type="radio" name="apPregira" value="Presencial"><i class="fas fa-people-arrows"></i> Presencial</label>
+                </div>
+
+                <label for="nexusAPAsesoria" class="nx-ap-lbl"><i class="fas fa-align-left"></i> Asesoría Protocolar</label>
+                <textarea id="nexusAPAsesoria" class="nx-ap-texto" rows="10" maxlength="5000" placeholder="Escriba aquí la asesoría protocolar para la unidad..." oninput="nexusAPContar()"></textarea>
+                <div class="nx-ap-count"><span id="nexusAPCount">0</span> / 5000</div>
+
+                <div class="nx-ap-files">
+                    <div class="nx-ap-file" id="nexusAPFileGuion">
+                        <span class="nx-ap-lbl"><i class="fas fa-scroll"></i> Guion</span>
+                        <label class="nx-ap-file-btn"><i class="fas fa-paperclip"></i> Adjuntar guion
+                            <input type="file" id="nexusAPGuion" accept=".pdf,.doc,.docx,.ppt,.pptx" onchange="nexusAPArchivoCambio('guion')">
+                        </label>
+                        <span class="nx-ap-file-name" id="nexusAPGuionNombre">Ningún archivo seleccionado</span>
+                    </div>
+                    <div class="nx-ap-file" id="nexusAPFilePrograma">
+                        <span class="nx-ap-lbl"><i class="fas fa-clipboard-list"></i> Programa</span>
+                        <label class="nx-ap-file-btn"><i class="fas fa-paperclip"></i> Adjuntar programa
+                            <input type="file" id="nexusAPPrograma" accept=".pdf,.doc,.docx,.ppt,.pptx" onchange="nexusAPArchivoCambio('programa')">
+                        </label>
+                        <span class="nx-ap-file-name" id="nexusAPProgramaNombre">Ningún archivo seleccionado</span>
+                    </div>
+                </div>
+
+                <div class="nx-foot">
+                    <div class="nx-actions" style="margin-left: auto;">
+                        <button class="nx-btn nx-btn-ghost" onclick="closeNexusAPModal()">Cancelar</button>
+                        <button class="nx-btn nx-btn-primary" id="nexusAPConfirmBtn" onclick="nexusAPConfirmar()">
+                            <i class="fas fa-check"></i> Finalizar y generar entregables
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style id="nx-modales-v2">
+        /* ===== Modal de eliminación: acento rojo NEXUS ===== */
+        #nexusDeleteConfirmModal .nx-modal { border-color: rgba(230,57,70,0.28); box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(230,57,70,0.12); }
+        #nexusDeleteConfirmModal .nx-head { background: linear-gradient(135deg, rgba(230,57,70,0.22) 0%, rgba(230,57,70,0.04) 100%); border-bottom-color: rgba(230,57,70,0.25); }
+        .nx-del-hero { display: flex; align-items: center; gap: 14px; padding-right: 44px; }
+        .nx-del-badge { width: 46px; height: 46px; flex-shrink: 0; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; color: #fff; background: linear-gradient(135deg, #e63946 0%, #c82333 100%); box-shadow: 0 8px 22px rgba(230,57,70,0.35); }
+        .nx-del-hero .nx-eyebrow { margin-bottom: 4px; }
+        .nx-del-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+        .nx-del-list li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; font-size: 0.82rem; color: rgba(242,242,242,0.8); background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; }
+        .nx-del-list li i { width: 18px; text-align: center; color: #ff8a94; }
+
+        /* ===== Modales de finalización: fondo blanco + color del tipo de solicitud ===== */
+        #nexusCobModal  { --m1: #a4243b; --m2: #7f1d2d; --m3: #d6455d; --mtint: rgba(164,36,59,0.07);  --mline: rgba(164,36,59,0.30);  --mglow: rgba(164,36,59,0.30); }   /* Cobertura de Prensa: guinda */
+        #nexusAPModal   { --m1: #6a2ecc; --m2: #000177; --m3: #8f5be6; --mtint: rgba(106,46,204,0.07); --mline: rgba(106,46,204,0.30); --mglow: rgba(106,46,204,0.30); } /* Asistencia Protocolar: violeta medianoche */
+        #nexusCVModal   { --m1: #6b8e12; --m2: #4d6b0b; --m3: #a3c93a; --mtint: rgba(107,142,18,0.08); --mline: rgba(107,142,18,0.34); --mglow: rgba(107,142,18,0.30); } /* Corrección de Video: verde oliva */
+        #nexusRRSSModal { --m1: #4a6eb0; --m2: #2f4a80; --m3: #7fb7bd; --mtint: rgba(74,110,176,0.07); --mline: rgba(74,110,176,0.30); --mglow: rgba(74,110,176,0.30); }   /* Copy RRSS: turquesa / azul */
+
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-modal {
+            background: #ffffff; color: #1b2230;
+            border: 1px solid var(--mline);
+            box-shadow: 0 30px 80px rgba(3,5,9,0.45), 0 0 0 1px rgba(255,255,255,0.4);
+        }
+        /* Encabezado: bloque de color sólido del tipo */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-head {
+            background: linear-gradient(135deg, var(--m2) 0%, var(--m1) 60%, var(--m3) 130%) !important;
+            border-bottom: none;
+        }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) :is(.nx-title, .nx-title i) { color: #ffffff !important; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-eyebrow { color: rgba(255,255,255,0.78); }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-sub { color: rgba(255,255,255,0.88); }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-close { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.35); color: #fff; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-close:hover { background: rgba(255,255,255,0.3); color: #fff; }
+
+        /* Chip de solicitud */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-request-chip { background: var(--mtint) !important; border-color: var(--mline) !important; color: #3a4256 !important; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-request-chip b { color: var(--m2) !important; }
+
+        /* Etiquetas y textos de apoyo */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-body label[style*="color-tertiary"],
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) :is(.nx-cob-lbl, .nx-ap-lbl, .nx-cob-hora, .nx-cv-th, .nx-ap-count, .nx-ap-file-name) { color: #4a5368 !important; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-body label i,
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-ap-lbl i { color: var(--m1); }
+        #nexusCVModal .nx-cv-n { color: var(--m1); }
+        #nexusAPModal .nx-ap-file-name.nx-ap-ok { color: var(--m1) !important; font-weight: 600; }
+
+        /* Campos */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal) :is(.nx-cob-in, .nx-cv-in, .nx-cv-expl, .nx-ap-texto) {
+            background: #f6f7fa; border: 1px solid #d5d9e3; color: #1b2230; color-scheme: light;
+        }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal) :is(.nx-cob-in, .nx-cv-in, .nx-cv-expl, .nx-ap-texto)::placeholder { color: #9aa1b2; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal) :is(.nx-cob-in, .nx-cv-in, .nx-cv-expl, .nx-ap-texto):focus { border-color: var(--m1); box-shadow: 0 0 0 3px var(--mtint); outline: none; background: #fff; }
+        :is(#nexusCobModal, #nexusCVModal, #nexusAPModal) :is(.nx-cob-err, .nx-cv-err, .nx-ap-err) { border-color: #e5484d !important; }
+        #nexusCobModal select.nx-cob-in { color-scheme: light; }
+        #nexusCobModal select.nx-cob-in option { background: #fff; color: #1b2230; }
+        #nexusCobModal .nx-cob-hora .nx-cob-in { color-scheme: light; }
+
+        /* Casillas (Cobertura y Copy RRSS) */
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox { background: var(--mtint); border-color: var(--mline); }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox:hover { background: var(--mtint); border-color: var(--m1); }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox input[type="checkbox"] { background: #fff; border-color: var(--m1); }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox input[type="checkbox"]:checked { background: linear-gradient(135deg, var(--m2), var(--m1)); border-color: var(--m1); }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-label { color: #1b2230; }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-label i { color: var(--m1); }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox input[type="checkbox"]:checked + .nexus-rrss-label { color: var(--m2); font-weight: 600; }
+        :is(#nexusCobModal, #nexusRRSSModal) .nexus-rrss-checkbox input[type="checkbox"]:checked + .nexus-rrss-label i { color: var(--m1); }
+
+        /* Asistencia Protocolar: opciones de pregira y adjuntos */
+        #nexusAPModal .nx-ap-opt { background: var(--mtint); border-color: var(--mline); color: #1b2230; }
+        #nexusAPModal .nx-ap-opt:hover { background: var(--mtint); border-color: var(--m1); }
+        #nexusAPModal .nx-ap-opt i { color: var(--m1); }
+        #nexusAPModal .nx-ap-opt:has(input:checked) { background: linear-gradient(135deg, var(--m2), var(--m1)); border-color: var(--m1); color: #fff; }
+        #nexusAPModal .nx-ap-opt:has(input:checked) i { color: #fff; }
+        #nexusAPModal .nx-ap-opt.nx-ap-err { border-color: #e5484d; }
+        #nexusAPModal .nx-ap-file { background: var(--mtint); border-color: var(--mline); }
+        #nexusAPModal .nx-ap-file.nx-ap-err { border-color: #e5484d; }
+        #nexusAPModal .nx-ap-file-btn { background: #fff; border-color: #d5d9e3; color: #1b2230; }
+        #nexusAPModal .nx-ap-file-btn:hover { border-color: var(--m1); }
+        #nexusAPModal .nx-ap-file-btn i { color: var(--m1); }
+
+        /* Pie y botones */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-btn-ghost { background: #fff; border: 1px solid #cfd4e0; color: #4a5368; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-btn-ghost:hover { background: #f3f4f8; border-color: #aab1c3; color: #1b2230; }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-btn-primary { background: linear-gradient(135deg, var(--m2) 0%, var(--m1) 100%); box-shadow: 0 10px 24px var(--mglow); }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-btn-primary:not(:disabled):hover { box-shadow: 0 12px 28px var(--mglow); filter: brightness(1.06); }
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-btn-primary:disabled { opacity: .45; }
+
+        /* Scrollbar clara dentro de estos modales */
+        :is(#nexusCobModal, #nexusAPModal, #nexusCVModal, #nexusRRSSModal) .nx-body { scrollbar-color: var(--mline) transparent; }
+    </style>
 
     <!-- Loading Overlay NEXUS: solo desenfoque del fondo + progreso (sin capas ni animaciones) -->
     <!-- Anuncio: se abre desde el botón flotante (nxAnuncioFab). Vive fuera de las secciones para verse desde cualquier pantalla. -->
@@ -12706,6 +12877,7 @@ select.asx-fld { cursor: pointer; }
                             if (x.telefono) p.telefono = x.telefono;
                             p.correo = x.email || user.email || '';
                             p.fechaNacimiento = x.fechaNacimiento || null;
+                            p.bienvenida = x.bienvenida || null;   // fecha (AAAA-MM-DD) del último día que escuchó la bienvenida
                             p.favLeidos = true; p.favCol = 'usuarios'; p.favRaw = x.favoritos; p.favFechaRaw = x.favoritosFecha;
                         }
                     }
@@ -22211,32 +22383,122 @@ select.asx-fld { cursor: pointer; }
         // SISTEMA DE SONIDO DE ENVÍO
         // ============================================================
 
-        function playSubmitSound() {
-            // Regla cruzada: Usuario Femenino escucha Voz Masculina (soundMasc); Usuario Masculino escucha Voz Femenina (soundFem)
-            var sexo = (typeof NexusSession !== 'undefined' && NexusSession.sexo) ? NexusSession.sexo.trim().toLowerCase() : '';
-            var esFem = (sexo === 'femenino');
-            var targetId = esFem ? 'soundMasc' : 'soundFem';
-            var soundEl = document.getElementById(targetId) || document.getElementById('soundMasc') || document.getElementById('soundFem');
+        // Qué voz suena en cada evento.
+        //   cruzada: true  -> usuario femenino escucha voz masculina y viceversa (regla original de "enviar").
+        //   cruzada: false -> la voz coincide con el sexo del usuario. Se usa en "bienvenida" porque la palabra
+        //                     cambia de género: Jori dice "Bienvenido" y Arlo "Bienvenida".
+        var NX_VOZ_CONFIG = {
+            enviar:     { cruzada: true,  fem: 'soundFem',      masc: 'soundMasc' },
+            rechazada:  { cruzada: true,  fem: 'soundRechFem',  masc: 'soundRechMasc' },
+            bienvenida: { cruzada: false, fem: 'soundBienvFem', masc: 'soundBienvMasc' }
+        };
+        window._nxVozActual = null;
 
-            if (!soundEl) {
-                console.warn('Audio no encontrado:', targetId);
-                return;
-            }
+        // Reproduce la voz del evento. Devuelve una promesa que se resuelve cuando termina (true) o cuando no
+        // pudo sonar: bloqueada por el navegador, archivo ausente o modal de cumpleaños abierto (false).
+        // Nunca rechaza, así que se puede encadenar con await sin riesgo de dejar un flujo colgado.
+        function nxVozReproducir(evento) {
+            return new Promise(function (resolve) {
+                var cfg = NX_VOZ_CONFIG[evento];
+                if (!cfg) return resolve(false);
 
+                // La canción de cumpleaños manda: ninguna voz suena encima de ella.
+                var cumple = document.getElementById('nx-cumple-overlay');
+                if (cumple && cumple.classList.contains('nx-cumple-visible')) return resolve(false);
 
+                var sexo = (typeof NexusSession !== 'undefined' && NexusSession.sexo) ? NexusSession.sexo.trim().toLowerCase() : '';
+                var usuarioFem = (sexo === 'femenino');
+                var vozFem = cfg.cruzada ? !usuarioFem : usuarioFem;
+                var el = document.getElementById(vozFem ? cfg.fem : cfg.masc);
+                if (!el) { console.warn('Audio no encontrado para:', evento); return resolve(false); }
 
-            soundEl.currentTime = 0;
-            soundEl.volume = 1.0;
+                // Una sola voz a la vez
+                var previa = window._nxVozActual;
+                if (previa && previa !== el) { try { previa.pause(); previa.currentTime = 0; } catch (_) {} }
+                window._nxVozActual = el;
 
-            try {
-                soundEl.play().then(function() {
+                var timer = null;
+                function fin(ok) {
+                    clearTimeout(timer);
+                    el.removeEventListener('ended', onEnd);
+                    el.removeEventListener('error', onErr);
+                    if (window._nxVozActual === el) window._nxVozActual = null;
+                    resolve(ok);
+                }
+                function onEnd() { fin(true); }
+                function onErr() { fin(false); }
+                el.addEventListener('ended', onEnd);
+                el.addEventListener('error', onErr);
+                timer = setTimeout(function () { fin(false); }, 9000);   // red de seguridad
 
-                }).catch(function(error) {
-                    console.warn('No se pudo reproducir audio:', error);
+                try {
+                    el.muted = false;
+                    el.currentTime = 0;
+                    el.volume = 1.0;
+                    var pr = el.play();
+                    if (pr && typeof pr.catch === 'function') pr.catch(function (error) {
+                        console.warn('No se pudo reproducir audio:', error);
+                        fin(false);
+                    });
+                } catch (error) {
+                    console.error('Error al reproducir audio:', error);
+                    fin(false);
+                }
+            });
+        }
+
+        // Safari/iOS solo deja sonar un <audio> si ya fue "desbloqueado" dentro de un gesto del usuario.
+        // En el primer toque se reproduce cada voz en silencio y se pausa, para que luego pueda sonar
+        // sin gesto (p. ej. la bienvenida, que llega tras esperar la respuesta del servidor).
+        (function () {
+            var hecho = false;
+            function desbloquear() {
+                if (hecho) return; hecho = true;
+                ['soundFem','soundMasc','soundBienvFem','soundBienvMasc','soundRechFem','soundRechMasc'].forEach(function (id) {
+                    var el = document.getElementById(id); if (!el) return;
+                    try {
+                        el.muted = true;
+                        var pr = el.play();
+                        var devolver = function () {
+                            if (window._nxVozActual === el) return;   // ya está sonando de verdad: no tocarlo
+                            el.pause(); el.currentTime = 0; el.muted = false;
+                        };
+                        if (pr && pr.then) pr.then(devolver).catch(function () { el.muted = false; });
+                        else devolver();
+                    } catch (_) { el.muted = false; }
                 });
-            } catch (error) {
-                console.error('Error al reproducir audio:', error);
             }
+            ['pointerdown','touchstart','keydown'].forEach(function (ev) {
+                document.addEventListener(ev, desbloquear, { once: true, passive: true });
+            });
+        })();
+
+        function playSubmitSound() { nxVozReproducir('enviar'); }
+        window.nxVozReproducir = nxVozReproducir;   // lo usan también los scripts de Asistencia
+
+        // Bienvenida de los usuarios normales: una vez por día. La fecha (hora de Caracas, AAAA-MM-DD) vive en el
+        // campo "bienvenida" de su perfil (usuarios/{uid}), que se lee en cada inicio de sesión. Si la fecha guardada
+        // es la de hoy, ya la escuchó; si es otra o no existe, suena y se actualiza.
+        // Respaldo: la misma fecha se anota en este navegador, por si Firestore rechazara la escritura (reglas).
+        function nxHoyCaracas() {
+            var f = nexusFechaVenezuela();
+            return f.year + '-' + String(f.month).padStart(2, '0') + '-' + String(f.day).padStart(2, '0');
+        }
+        function nxBienvenidaPendiente(uid) {
+            var hoy = nxHoyCaracas();
+            if (window._nexusBienvenidaCargada === hoy) return false;
+            try { if (localStorage.getItem('nx_bienvenida_' + uid) === hoy) return false; } catch (_) {}
+            return true;
+        }
+        function nxBienvenidaMarcar(uid) {
+            var hoy = nxHoyCaracas();
+            window._nexusBienvenidaCargada = hoy;
+            try { localStorage.setItem('nx_bienvenida_' + uid, hoy); } catch (_) {}
+            if (!uid || !window.db || !window.fbStore) return;
+            try {
+                window.fbStore.setDoc(window.fbStore.doc(window.db, 'usuarios', uid), { bienvenida: hoy }, { merge: true })
+                    .catch(function (e) { console.warn('[NEXUS] No se pudo guardar "bienvenida" en el perfil:', e && e.message); });
+            } catch (e) { console.warn('[NEXUS] bienvenida:', e && e.message); }
         }
 
         // ============================================================
@@ -22816,6 +23078,7 @@ select.asx-fld { cursor: pointer; }
                 return;
             }
             nexusIsLoggingIn = true;
+            window._nxLoginExplicito = true;   // la bienvenida solo suena al iniciar sesión, no al restaurar una sesión guardada
             if (btn) { btn.disabled = true; btn.innerHTML = '<span class="auth-spinner"></span> Validando acceso...'; }
             try {
                 var cred = await window.fbAuth.signInWithEmailAndPassword(window.auth, email, password);
@@ -22840,6 +23103,7 @@ select.asx-fld { cursor: pointer; }
                 showToast({ type: 'error', title: 'Error de Autenticación', message: msg, duration: 6000 });
             } finally {
                 nexusIsLoggingIn = false;
+                window._nxLoginExplicito = false;
                 if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
             }
         }
@@ -22905,6 +23169,8 @@ select.asx-fld { cursor: pointer; }
                 showToast({ type: 'success', title: '¡Registro Exitoso!', message: '¡Hola ' + nombre + '! Tu cuenta ha sido creada exitosamente.', duration: 6000 });
                 nexusActualizarUIAuth();
                 if (typeof nexusIniciarPresenciaRTDB === 'function') nexusIniciarPresenciaRTDB();
+                var uidNuevo = cred.user.uid;   // cuenta nueva = primera entrada: suena la bienvenida y queda anotada
+                nxVozReproducir('bienvenida').then(function (ok) { if (ok) nxBienvenidaMarcar(uidNuevo); });
             } catch (err) {
                 var msg = 'Ocurrió un error al procesar el registro.';
                 if (err.code === 'auth/email-already-in-use') msg = 'Este correo electrónico ya se encuentra registrado en NEXUS.';
@@ -23251,6 +23517,7 @@ select.asx-fld { cursor: pointer; }
                         return;
                     }
                     window._nexusFechaNacCargada = p.fechaNacimiento;
+                    window._nexusBienvenidaCargada = p.bienvenida || null;
                     NexusSession.user = user; NexusSession.role = p.role; NexusSession.nombre = p.nombre;
                     NexusSession.sexo = p.sexo; NexusSession.unidad = p.unidad;
                     NexusSession.region = p.region;
@@ -23267,8 +23534,29 @@ select.asx-fld { cursor: pointer; }
                     if (typeof nexusUpdateMaintenanceUI === 'function') nexusUpdateMaintenanceUI();
                     _nxPresenciaUltimoGesto = Date.now(); _nxCerrandoPorInactividad = false;   // sesión nueva: la cuenta de inactividad arranca de cero
                     if (typeof nexusIniciarPresenciaRTDB === 'function') nexusIniciarPresenciaRTDB();
-                    if (typeof nexusRevisarAvisosRechazo === 'function') nexusRevisarAvisosRechazo();
-                    if (typeof nexusVerificarCumpleanios === 'function') setTimeout(nexusVerificarCumpleanios, 800);
+                    // Avisos de inicio en fila, para que nunca se pisen entre sí (audio ni pantallas):
+                    //   1) bienvenida (solo si el usuario acaba de iniciar sesión)  2) cumpleaños, hasta que se cierre
+                    //   3) avisos de solicitudes rechazadas.
+                    var esLoginExplicito = window._nxLoginExplicito === true;
+                    (async function () {
+                        try {
+                            // Usuarios normales: bienvenida solo la primera vez. Staff (admin, diseñador, periodista): no suena
+                            // al entrar; su bienvenida va ligada al inicio de jornada.
+                            if (esLoginExplicito && !nexusEsStaff()) {
+                                var uidBienv = NexusSession.user && NexusSession.user.uid;
+                                if (uidBienv && nxBienvenidaPendiente(uidBienv)) {
+                                    if (await nxVozReproducir('bienvenida')) nxBienvenidaMarcar(uidBienv);
+                                }
+                            }
+                            var mostroCumple = false;
+                            if (typeof nexusVerificarCumpleanios === 'function') {
+                                await new Promise(function (r) { setTimeout(r, esLoginExplicito ? 300 : 800); });
+                                mostroCumple = nexusVerificarCumpleanios() === true;
+                                if (mostroCumple) await nxEsperarCierreCumple();
+                            }
+                            if (typeof nexusRevisarAvisosRechazo === 'function') nexusRevisarAvisosRechazo();
+                        } catch (e) { console.warn('[NEXUS] Secuencia de avisos de inicio:', e && e.message); }
+                    })();
                 } finally {
                     delete NexusData._cargando[user.uid];
                 }
@@ -25744,6 +26032,7 @@ select.asx-fld { cursor: pointer; }
         const NEXUS_TIPOS_SOLO_ASIGNAR = ['Cobertura de Prensa', 'Asistencia Protocolar'];
         // Sin entregable: el responsable no adjunta nada; el admin cierra con Finalizar (publicada) o Rechazar.
         // Corrección de Video: Finalizar abre un modal de correcciones por minuto y genera un documento en Drive (ver nexusCVConfirmar).
+        // Asistencia Protocolar: Finalizar abre un modal (pregira, asesoría, guion y programa) y genera el .docx de la asesoría (ver nexusAPConfirmar).
         const NEXUS_TIPOS_SIN_ENTREGABLE = ['Copy RRSS', 'Corrección Nota de Prensa', 'Cobertura de Prensa', 'Asistencia Protocolar', 'Corrección de Video'];
         // Tipos con entregable de audio/video: solo cuentan correcciones (sin especificaciones de diseño).
         const NEXUS_TIPOS_ARCHIVO_SIMPLE = {
@@ -26016,6 +26305,7 @@ select.asx-fld { cursor: pointer; }
             if ((data.Solicitud || '') === 'Copy RRSS') { showNexusRRSSModal(); return; }
             if ((data.Solicitud || '') === 'Corrección de Video') { showNexusCVModal(); return; }
             if ((data.Solicitud || '') === 'Cobertura de Prensa') { showNexusCobModal(); return; }
+            if ((data.Solicitud || '') === 'Asistencia Protocolar') { showNexusAPModal(); return; }
             await handleFinalizarEstado();
         }
 
@@ -26095,6 +26385,13 @@ select.asx-fld { cursor: pointer; }
                 return false;
             }
 
+            // Asistencia Protocolar: no se finaliza sin pregira, asesoría, guion y programa (modal)
+            const ap = opciones.asistenciaProtocolar || null;
+            if (!esRechazo && tipo === 'Asistencia Protocolar' && !ap) {
+                showNexusAPModal();
+                return false;
+            }
+
             window._nxCerrandoSolicitud = true;
             const mes = NexusData.mesKey();
             const uKey = nexusSanitizarClaveRTDB(base.Unidad);
@@ -26153,6 +26450,67 @@ select.asx-fld { cursor: pointer; }
                         message: 'La solicitud sigue activa. Intenta de nuevo (' + (docErr.message || docErr) + ').', duration: 8000 });
                     return false;
                 } finally {
+                    hideNexusLoadingOverlay();
+                }
+            }
+
+            // Asistencia Protocolar: los entregables son el documento de la asesoría (.docx) + el guion + el programa.
+            // Se generan y suben ANTES de cerrar; si algo falla, la solicitud sigue viva y el modal conserva lo escrito.
+            if (!esRechazo && tipo === 'Asistencia Protocolar' && ap) {
+                const _tipoSubidaPrev = window._nexusTipoSubida, _limitePrev = window._nexusLimiteArchivoBytes;
+                try {
+                    showNexusLoadingOverlay('Generando entregables...', 'Creando el documento de la asesoría en Drive', true);
+                    updateNexusLoadingProgress(0);
+                    const docRes = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'crearDocAsesoriaProtocolar',
+                            id: id,
+                            Requerimiento: id,
+                            pregira: ap.pregira,
+                            asesoria: ap.asesoria,
+                            solicitante: base.Usuario || '',
+                            unidad: base.Unidad || '',
+                            responsable: responsable,
+                            fecha: (function () { const f = nexusFechaVenezuela(new Date()); return String(f.day).padStart(2, '0') + '/' + String(f.month).padStart(2, '0') + '/' + f.year; })()
+                        })
+                    }, 60000, 1);
+                    const urlDocAp = docRes && (docRes.fileUrl || (docRes.data && docRes.data.fileUrl));
+                    if (!(docRes && docRes.success !== false && urlDocAp)) {
+                        throw new Error((docRes && (docRes.error || (docRes.data && docRes.data.error))) || 'respuesta sin enlace del documento');
+                    }
+
+                    // Guion y programa a la carpeta de artes (<ARTE_ID>_guion.ext / <ARTE_ID>_programa.ext).
+                    // Lo ya subido se recuerda por archivo: si hay que reintentar, no se vuelve a subir.
+                    window._nexusTipoSubida = 'Asistencia Protocolar';
+                    window._nexusLimiteArchivoBytes = 1024 * 1024 * 1024;
+                    window._nxApSubidos = window._nxApSubidos || {};
+                    const piezas = [['guion', ap.guion], ['programa', ap.programa]];
+                    const urlsAp = [urlDocAp];
+                    for (let i = 0; i < piezas.length; i++) {
+                        const etiqueta = piezas[i][0], archivo = piezas[i][1];
+                        const clave = [id, etiqueta, archivo.name, archivo.size, archivo.lastModified].join('|');
+                        let urlSub = window._nxApSubidos[clave];
+                        if (!urlSub) {
+                            const r = await nexusSubirArchivoDrive(archivo, id, 'ARTES', etiqueta, piezas.length, i);
+                            urlSub = r && r.fileUrl;
+                            if (!urlSub) throw new Error('no se obtuvo el enlace del ' + etiqueta);
+                            window._nxApSubidos[clave] = urlSub;
+                        }
+                        urlsAp.push(urlSub);
+                    }
+                    registro.ArteFinal = urlsAp.join(', ');   // asesoría + guion + programa: el flujo normal de arte final los entrega a la unidad
+                    registro.AsesoriaProtocolar = { pregira: ap.pregira, asesoria: ap.asesoria };
+                } catch (apErr) {
+                    console.error('[NEXUS] No se pudieron generar los entregables de la asistencia protocolar:', apErr);
+                    window._nxCerrandoSolicitud = false;
+                    showToast({ type: 'error', title: 'No se generaron los entregables',
+                        message: 'La solicitud sigue activa. Intenta de nuevo (' + (apErr.message || apErr) + ').', duration: 8000 });
+                    return false;
+                } finally {
+                    window._nexusTipoSubida = _tipoSubidaPrev || null;
+                    window._nexusLimiteArchivoBytes = _limitePrev || null;
                     hideNexusLoadingOverlay();
                 }
             }
@@ -26329,7 +26687,7 @@ select.asx-fld { cursor: pointer; }
 
         // ============================================================
         // MODAL DE COBERTURA DE PRENSA
-        // Periodista que cubrió + Video (Time) + Fotos (Cantidad) + Nota/Noticia/Reseña/Entrevista/Reportaje.
+        // Periodista que cubrió + Video (Time) + Fotos (Cantidad) + Nota/Noticia/Reseña/Entrevista/Reportaje/Redacción RRSS.
         // Al confirmar, nexusCerrarSolicitud guarda el texto en «Cobertura» (Sheet) y el objeto en «CoberturaDatos» (RTDB).
         // ============================================================
         function showNexusCobModal() {
@@ -26564,6 +26922,104 @@ select.asx-fld { cursor: pointer; }
             }
         }
 
+        // ============================================================
+        // MODAL DE ASISTENCIA PROTOCOLAR
+        // Pregira (Virtual/Presencial) + Asesoría Protocolar (hasta 5000 caracteres) + Guion y Programa (adjuntos).
+        // Al confirmar, nexusCerrarSolicitud genera el .docx de la asesoría en Drive, sube el guion y el programa a la carpeta
+        // de artes y deja los tres como ArteFinal (lo que descarga la unidad). Si algo falla, el modal conserva lo escrito.
+        // ============================================================
+        const NX_AP_MAX_TEXTO = 5000;
+        const NX_AP_EXT_OK = ['pdf', 'doc', 'docx', 'ppt', 'pptx'];
+
+        function nexusAPContar() {
+            const t = document.getElementById('nexusAPAsesoria'), c = document.getElementById('nexusAPCount');
+            if (t && c) c.textContent = String(t.value.length);
+        }
+
+        function nexusAPArchivoCambio(cual) {
+            const inp = document.getElementById(cual === 'guion' ? 'nexusAPGuion' : 'nexusAPPrograma');
+            const nom = document.getElementById(cual === 'guion' ? 'nexusAPGuionNombre' : 'nexusAPProgramaNombre');
+            const caja = document.getElementById(cual === 'guion' ? 'nexusAPFileGuion' : 'nexusAPFilePrograma');
+            if (!inp || !nom) return;
+            const f = inp.files && inp.files[0];
+            if (f) {
+                const ext = (f.name.indexOf('.') !== -1 ? f.name.split('.').pop() : '').toLowerCase();
+                if (NX_AP_EXT_OK.indexOf(ext) === -1) {
+                    inp.value = '';
+                    nom.textContent = 'Ningún archivo seleccionado';
+                    nom.classList.remove('nx-ap-ok');
+                    showToast({ type: 'warning', title: 'Formato no permitido', message: 'Adjunte un archivo PDF, Word (.doc, .docx) o PowerPoint (.ppt, .pptx).', duration: 4000 });
+                    return;
+                }
+                nom.textContent = f.name + ' (' + (f.size >= 1048576 ? (f.size / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(f.size / 1024)) + ' KB') + ')';
+                nom.classList.add('nx-ap-ok');
+                if (caja) caja.classList.remove('nx-ap-err');
+            } else {
+                nom.textContent = 'Ningún archivo seleccionado';
+                nom.classList.remove('nx-ap-ok');
+            }
+        }
+
+        function showNexusAPModal() {
+            const modal = document.getElementById('nexusAPModal');
+            if (!modal) return;
+            const idEl = document.getElementById('nexusAPRequestId');
+            if (idEl) idEl.textContent = nexusSelectedRequestId || '-';
+            modal.querySelectorAll('input[name="apPregira"]').forEach(function (r) { r.checked = false; });
+            modal.querySelectorAll('.nx-ap-err').forEach(function (e) { e.classList.remove('nx-ap-err'); });
+            const t = document.getElementById('nexusAPAsesoria'); if (t) t.value = '';
+            ['nexusAPGuion', 'nexusAPPrograma'].forEach(function (i) { const el = document.getElementById(i); if (el) el.value = ''; });
+            nexusAPArchivoCambio('guion'); nexusAPArchivoCambio('programa');
+            nexusAPContar();
+            const btn = document.getElementById('nexusAPConfirmBtn'); if (btn) btn.disabled = false;
+            modal.classList.add('active');
+        }
+
+        function closeNexusAPModal() {
+            const modal = document.getElementById('nexusAPModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        // Lee y valida el modal. Devuelve { pregira, asesoria, guion: File, programa: File } o null (con aviso).
+        function nexusAPLeer() {
+            const modal = document.getElementById('nexusAPModal');
+            if (!modal) return null;
+            modal.querySelectorAll('.nx-ap-err').forEach(function (e) { e.classList.remove('nx-ap-err'); });
+            const aviso = function (el, msg) {
+                if (el) el.classList.add('nx-ap-err');
+                showToast({ type: 'warning', title: 'Falta información', message: msg, duration: 3500 });
+                return null;
+            };
+            const sel = modal.querySelector('input[name="apPregira"]:checked');
+            if (!sel) {
+                modal.querySelectorAll('.nx-ap-opt').forEach(function (o) { o.classList.add('nx-ap-err'); });
+                return aviso(null, 'Seleccione la pregira: Virtual o Presencial.');
+            }
+            const t = document.getElementById('nexusAPAsesoria');
+            const asesoria = t ? t.value.trim() : '';
+            if (!asesoria) return aviso(t, 'Escriba la asesoría protocolar.');
+            if (asesoria.length > NX_AP_MAX_TEXTO) return aviso(t, 'La asesoría excede los ' + NX_AP_MAX_TEXTO + ' caracteres (tiene ' + asesoria.length + ').');
+            const g = document.getElementById('nexusAPGuion'), pr = document.getElementById('nexusAPPrograma');
+            const guion = g && g.files && g.files[0], programa = pr && pr.files && pr.files[0];
+            if (!guion) return aviso(document.getElementById('nexusAPFileGuion'), 'Adjunte el guion.');
+            if (!programa) return aviso(document.getElementById('nexusAPFilePrograma'), 'Adjunte el programa.');
+            return { pregira: sel.value, asesoria: asesoria, guion: guion, programa: programa };
+        }
+
+        async function nexusAPConfirmar() {
+            if (window._nxCerrandoSolicitud) return;
+            const datos = nexusAPLeer();
+            if (!datos) return;
+            const btn = document.getElementById('nexusAPConfirmBtn');
+            if (btn) btn.disabled = true;
+            try {
+                const ok = await nexusCerrarSolicitud('FINALIZADA', { asistenciaProtocolar: datos });
+                if (ok) closeNexusAPModal();   // si falló, el modal queda abierto con lo escrito
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
         // Función para confirmar el rechazo
         async function confirmReject() {
             const textarea = document.getElementById('nexusRejectReason');
@@ -26653,7 +27109,7 @@ select.asx-fld { cursor: pointer; }
             
             if (progressBar) progressBar.style.width = '0%';
             if (progressMessage) progressMessage.textContent = 'Procesando eliminación...';
-            if (progressIcon) progressIcon.textContent = '🗑️';
+            if (progressIcon) progressIcon.innerHTML = '<i class="fas fa-trash-alt"></i>';
         }
 
         // Actualizar progreso
@@ -29835,26 +30291,36 @@ select.asx-fld { cursor: pointer; }
     <!-- ============================================================
          MODAL DE CONFIRMACIÓN DE ELIMINACIÓN - NEXUS
          ============================================================ -->
-    <div id="nexusDeleteConfirmModal" class="nx-overlay" style="z-index: 20000;">
-        <div class="nx-modal" style="max-width: 440px;">
+    <div id="nexusDeleteConfirmModal" class="nx-overlay" style="z-index: 20000;" onclick="if(event.target===this) nexusHideConfirmModal()">
+        <div class="nx-modal" style="max-width: 460px;">
             <div class="nx-head">
                 <button class="nx-close" onclick="nexusHideConfirmModal()" aria-label="Cerrar">✕</button>
-                <p class="nx-eyebrow">NEXUS · ACCIÓN IRREVERSIBLE</p>
-                <h2 class="nx-title"><i class="fas fa-trash"></i> ¿Eliminar Solicitud?</h2>
+                <div class="nx-del-hero">
+                    <div class="nx-del-badge"><i class="fas fa-trash-alt"></i></div>
+                    <div>
+                        <p class="nx-eyebrow">NEXUS · ACCIÓN IRREVERSIBLE</p>
+                        <h2 class="nx-title">¿Eliminar solicitud?</h2>
+                    </div>
+                </div>
             </div>
             <div class="nx-body">
                 <div class="nx-request-chip" style="border-color: rgba(230,57,70,0.3); background: rgba(230,57,70,0.08); color: #ffb4bb;">
                     <i class="fas fa-exclamation-triangle" style="color: var(--err);"></i>
                     <span>Esta acción no se puede deshacer</span>
                 </div>
-                <p style="font-size: 0.88rem; color: rgba(242,242,242,0.75); line-height: 1.6; margin: 0;">
-                    Esta acción eliminará la solicitud junto con sus archivos asociados en Google Drive. ¿Estás seguro de continuar?
+                <p style="font-size: 0.88rem; color: rgba(242,242,242,0.75); line-height: 1.6; margin: 0 0 12px;">
+                    Se eliminará la solicitud de forma permanente junto con todo lo asociado a ella:
                 </p>
+                <ul class="nx-del-list">
+                    <li><i class="fab fa-google-drive"></i> Archivos adjuntos en Google Drive</li>
+                    <li><i class="fas fa-fire"></i> Registros en Firestore (arte final)</li>
+                    <li><i class="fas fa-bolt"></i> La solicitud en tiempo real y su fila en la hoja</li>
+                </ul>
                 <div class="nx-foot">
                     <div class="nx-actions" style="margin-left: auto;">
                         <button class="nx-btn nx-btn-ghost" onclick="nexusHideConfirmModal()">Cancelar</button>
                         <button class="nx-btn nx-btn-danger" onclick="nexusConfirmarEliminacion()">
-                            <i class="fas fa-trash"></i> Eliminar
+                            <i class="fas fa-trash-alt"></i> Sí, eliminar
                         </button>
                     </div>
                 </div>
@@ -29948,21 +30414,22 @@ select.asx-fld { cursor: pointer; }
          ============================================================ -->
     <div id="nexusProgressModal" class="nexus-progress-modal">
         <div class="nexus-progress-content">
-            <div class="nexus-progress-icon" id="progressIcon">🗑️</div>
-            <div class="nexus-progress-title" id="progressTitle">Eliminando Solicitud</div>
-            <div class="nexus-progress-message" id="progressMessage">Procesando eliminación...</div>
-            <div class="nexus-progress-bar-container">
-                <div class="nexus-progress-bar" id="progressBar"></div>
+            <div class="nexus-progress-head">
+                <div class="nexus-progress-icon" id="progressIcon"><i class="fas fa-trash-alt"></i></div>
+                <div>
+                    <p class="nexus-progress-eyebrow">NEXUS · ACCIÓN IRREVERSIBLE</p>
+                    <h2 class="nexus-progress-title" id="progressTitle">Eliminando solicitud</h2>
+                </div>
             </div>
-            <div class="nexus-progress-steps">
-                <div class="nexus-progress-step" id="step1">
-                    <i class="fas fa-circle"></i> Archivos
+            <div class="nexus-progress-body">
+                <div class="nexus-progress-message" id="progressMessage">Procesando eliminación...</div>
+                <div class="nexus-progress-bar-container">
+                    <div class="nexus-progress-bar" id="progressBar"></div>
                 </div>
-                <div class="nexus-progress-step" id="step2">
-                    <i class="fas fa-circle"></i> Firestore
-                </div>
-                <div class="nexus-progress-step" id="step3">
-                    <i class="fas fa-circle"></i> RTDB
+                <div class="nexus-progress-steps">
+                    <div class="nexus-progress-step" id="step1"><i class="fas fa-circle"></i> Archivos</div>
+                    <div class="nexus-progress-step" id="step2"><i class="fas fa-circle"></i> Firestore</div>
+                    <div class="nexus-progress-step" id="step3"><i class="fas fa-circle"></i> RTDB</div>
                 </div>
             </div>
         </div>
@@ -33244,7 +33711,9 @@ select.asx-fld { cursor: pointer; }
                 document.getElementById('nxRechazoMotivo').textContent = sol.MotivoRechazo;
                 const btn = document.getElementById('nxRechazoBtn');
                 if (btn) { btn.disabled = false; btn.textContent = 'Entendido'; }
+                var estabaVisible = overlay.style.display === 'flex';
                 overlay.style.display = 'flex';
+                if (!estabaVisible) nxVozReproducir('rechazada');   // una vez por tanda, no por cada aviso de la fila
                 return null;
             }
             overlay.style.display = 'none';
@@ -33300,6 +33769,7 @@ select.asx-fld { cursor: pointer; }
                 // Primera vez en el día: mostrar modal completo con globos interactivos
                 nexusMostrarModalCumpleanios(NexusSession.nombre || 'Amig@');
                 localStorage.setItem(storageKey, '1');
+                return true;   // abrió el modal: el que llama espera a que se cierre
             } else {
                 // Ya vio el modal hoy: activar oleadas periódicas de globos clicables
                 // (cada 60s) fuera del modal, para que siga divirtiéndose reventándolos.
@@ -34041,7 +34511,17 @@ select.asx-fld { cursor: pointer; }
 
             // Detener el confeti al cerrar el modal (ya no se usa en ningún otro lugar)
             nexusDetenerConfettiSvensson();
+
+            // Avisar a quien esté esperando (p. ej. los avisos de rechazo, que van después del cumpleaños)
+            document.dispatchEvent(new Event('nx:cumple-cerrado'));
         }
+
+        function nxEsperarCierreCumple() {
+            return new Promise(function (resolve) {
+                document.addEventListener('nx:cumple-cerrado', function () { resolve(); }, { once: true });
+            });
+        }
+        window.nxEsperarCierreCumple = nxEsperarCierreCumple;
 
         function nexusGenerarGlobos() {
             var container = document.getElementById('nx-cumple-globos');
@@ -35036,12 +35516,16 @@ select.asx-fld { cursor: pointer; }
                 : '<div class="asx-md-time"><small>Primer ingreso</small><b>' + esc(hora(t)) + '</b></div>' +
                   '<div>Te deseamos una <b>excelente jornada laboral</b>. ' + sal.cierre + '</div>' + cita +
                   '<div class="asx-md-note">Tu jornada ordinaria va de 7:30 a. m. a 3:30 p. m.</div>';
-            return modal({
+            var r = await modal({
                 icono: sal.ico, eyebrow: cruce ? 'NEXUS · Nueva jornada' : 'NEXUS · Primer ingreso',
                 titulo: '¡' + sal.txt + (nom ? ', ' + nom : '') + '!',
                 html: cuerpo,
                 botones: [{ k: 'ok', t: 'Empezar mi jornada', c: 'p' }]
             });
+            // Admin, diseñadores y periodistas: la voz de bienvenida suena al pulsar «Empezar mi jornada»
+            // (un clic real, así el navegador no la bloquea). No espera: la jornada arranca sin demora.
+            try { if (typeof window.nexusEsStaff === 'function' && window.nexusEsStaff() && window.nxVozReproducir) window.nxVozReproducir('bienvenida'); } catch (e) {}
+            return r;
         }
 
         // ── Modales ─────────────────────────────────────────────────
