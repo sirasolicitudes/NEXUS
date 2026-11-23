@@ -32881,7 +32881,7 @@
 
             let archivoSubido = null;   // para deshacer si GAS no guarda el anuncio
             try {
-                const payload = { action: 'guardarAnuncio', tipo: nxAnuncioTipo, fecha_inicio: fechaInicio, fecha_fin: fechaFin };
+                const payload = { action: 'guardarAnuncio', tipo: nxAnuncioTipo, fecha_inicio: fechaInicio, fecha_fin: fechaFin, idToken: await window.nexusIdToken() };
 
                 if (nxAnuncioTipo === 'texto') {
                     payload.titulo = document.getElementById('nxAnuncioTitulo').value.trim();
