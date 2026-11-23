@@ -6402,30 +6402,172 @@
             box-shadow: 0 0 18px rgba(5, 84, 242, 0.3);
         }
     
-        /* ===== Reportes mensuales ===== */
-        .rpt-barra { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:18px; }
-        .rpt-label { font-weight:600; color:#023047; }
-        .rpt-select { padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:0.95rem; background:#fff; color:#023047; min-width:180px; }
-        .rpt-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:16px; }
-        .rpt-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:18px; display:flex; flex-direction:column; gap:10px; box-shadow:0 2px 10px rgba(2,48,71,.05); }
-        .rpt-card.rpt-off { background:#f8fafc; opacity:.8; }
-        .rpt-card h3 { margin:0; font-size:1.05rem; color:#023047; }
-        .rpt-estado { display:inline-block; align-self:flex-start; font-size:.75rem; font-weight:700; padding:3px 9px; border-radius:999px; }
-        .rpt-estado.ok { background:#dcfce7; color:#166534; }
-        .rpt-estado.pend { background:#fef3c7; color:#92400e; }
-        .rpt-estado.off { background:#e2e8f0; color:#475569; }
-        .rpt-estado.err { background:#fee2e2; color:#991b1b; }
-        .rpt-meta { font-size:.8rem; color:#64748b; line-height:1.4; word-break:break-word; }
-        .rpt-acciones { display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; }
-        .rpt-btn { border:0; border-radius:8px; padding:9px 14px; font-weight:600; font-size:.85rem; cursor:pointer; background:#3876F2; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-        .rpt-btn:hover { filter:brightness(1.08); }
-        .rpt-btn[disabled] { opacity:.55; cursor:not-allowed; }
-        .rpt-btn-sec { background:#e8efff; color:#1e4fc2; }
-        .rpt-error { background:#fee2e2; color:#991b1b; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:.9rem; }
-        .rpt-error.hidden { display:none; }
-        .rpt-info { background:#e8efff; color:#1e4fc2; border-radius:8px; padding:10px 14px; margin-bottom:14px; font-size:.9rem; font-weight:600; }
-        .rpt-info.hidden { display:none; }
-        .rpt-nota { margin-top:18px; font-size:.82rem; color:#64748b; }
+        /* ===== Reportes · cierre mensual e histórico =====
+           Lienzo oscuro incrustado en la sección clara: mismo lenguaje visual que Estadísticas (prefijo nxr-). */
+        #reportes .reportes-container { max-width: 1240px; }
+        .nxr, .nxr-modal {
+            --nxr-bg: #06090D; --nxr-p1: #0D1420; --nxr-p2: #101A2B; --nxr-bd: rgba(172, 195, 242, .14);
+            --nxr-tx: #E6ECF8; --nxr-mu: #93A4C6; --nxr-ok: #3DDC97; --nxr-bad: #FF5C6C; --nxr-warn: #F5B454;
+            --nxr-az: #3876F2; --nxr-azc: #ACC3F2;
+            font-family: 'DM Sans', system-ui, sans-serif; color: var(--nxr-tx);
+        }
+        .nxr {
+            position: relative; isolation: isolate; font-variant-numeric: tabular-nums; background-color: var(--nxr-bg);
+            border-radius: 22px; padding: 22px; border: 1px solid var(--nxr-bd); box-shadow: 0 18px 50px rgba(6, 9, 13, .35); overflow: hidden;
+            background-image:
+                radial-gradient(900px 420px at 85% -10%, rgba(5, 84, 242, .20), transparent 60%),
+                linear-gradient(rgba(172, 195, 242, .045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(172, 195, 242, .045) 1px, transparent 1px);
+            background-size: auto, 38px 38px, 38px 38px;
+        }
+        .nxr *, .nxr *::before, .nxr *::after, .nxr-modal *, .nxr-modal *::before, .nxr-modal *::after { box-sizing: border-box; }
+        .nxr h3, .nxr h4, .nxr h5, .nxr p, .nxr-modal h4, .nxr-modal p { margin: 0; }
+        .nxr .hidden { display: none !important; }
+
+        /* Barra superior */
+        .nxr-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+        .nxr-eyebrow { display: block; font: 600 .7rem/1 'DM Sans', sans-serif; letter-spacing: .18em; color: var(--nxr-azc); margin-bottom: 8px; }
+        .nxr-titulo { font: 800 1.9rem/1.05 'Sora', 'DM Sans', sans-serif; color: #fff; letter-spacing: -.01em; }
+        .nxr-sub { display: inline-block; margin-top: 6px; font-size: .85rem; color: var(--nxr-mu); }
+
+        /* Botones */
+        .nxr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font: 600 .85rem 'DM Sans', sans-serif; color: var(--nxr-tx); background: var(--nxr-p2); border: 1px solid var(--nxr-bd); border-radius: 12px; padding: 10px 16px; text-decoration: none; transition: border-color .2s, background .2s, box-shadow .2s, transform .2s; }
+        .nxr-btn:hover { border-color: rgba(56, 118, 242, .7); box-shadow: 0 0 0 3px rgba(56, 118, 242, .15); }
+        .nxr-btn:focus-visible, .nxr-select:focus-visible { outline: 2px solid var(--nxr-azc); outline-offset: 2px; }
+        .nxr-btn:disabled, .nxr-btn:disabled:hover { opacity: .55; cursor: not-allowed; border-color: var(--nxr-bd); box-shadow: none; }
+        .nxr-btn-p { background: var(--nxr-az); border-color: var(--nxr-az); color: #fff; }
+        .nxr-btn-p:not(:disabled):hover { box-shadow: 0 0 0 3px rgba(56, 118, 242, .25), 0 8px 24px rgba(56, 118, 242, .35); }
+        .nxr-btn-danger { background: var(--nxr-bad); border-color: var(--nxr-bad); color: #fff; }
+        .nxr-btn-danger:not(:disabled):hover { border-color: var(--nxr-bad); box-shadow: 0 0 0 3px rgba(255, 92, 108, .22); }
+        .nxr-btn-lg { padding: 13px 20px; font-size: .92rem; }
+
+        /* Tarjetas */
+        .nxr-card { background: linear-gradient(180deg, var(--nxr-p2), var(--nxr-p1)); border: 1px solid var(--nxr-bd); border-radius: 18px; padding: 20px; margin-bottom: 18px; position: relative; min-width: 0; }
+        .nxr-card:last-child { margin-bottom: 0; }
+        .nxr-card::before { content: ''; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-left: 2px solid var(--nxr-az); border-top: 2px solid var(--nxr-az); border-top-left-radius: 8px; opacity: .8; }
+        .nxr-ch { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+        .nxr-ch-l { display: flex; gap: 14px; align-items: flex-start; min-width: 0; }
+        .nxr-ch h4 { font: 700 1.15rem/1.2 'Sora', 'DM Sans', sans-serif; color: #fff; }
+        .nxr-ch p { margin-top: 4px; font-size: .84rem; color: var(--nxr-mu); max-width: 64ch; line-height: 1.45; }
+        .nxr-ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; flex: none; font-size: 1rem; color: var(--nxr-c, var(--nxr-azc)); background: color-mix(in srgb, var(--nxr-c, var(--nxr-azc)) 15%, transparent); }
+        .nxr-pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 700; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--nxr-bd); background: var(--nxr-p2); color: var(--nxr-mu); white-space: nowrap; }
+        .nxr-p-ok { color: var(--nxr-ok); border-color: rgba(61, 220, 151, .35); background: rgba(61, 220, 151, .1); }
+        .nxr-p-bad { color: #FF9AA5; border-color: rgba(255, 92, 108, .4); background: rgba(255, 92, 108, .1); }
+        .nxr-p-az { color: var(--nxr-azc); border-color: rgba(56, 118, 242, .45); background: rgba(56, 118, 242, .12); }
+        .nxr-p-warn { color: #FFD58A; border-color: rgba(245, 180, 84, .4); background: rgba(245, 180, 84, .1); }
+
+        /* Cierre mensual */
+        .nxr-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 16px; }
+        .nxr-ventana { border: 1px solid var(--nxr-bd); border-left: 3px solid var(--nxr-c); background: rgba(6, 9, 13, .35); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px; min-width: 0; }
+        .nxr-v-lbl { display: flex; align-items: center; gap: 8px; font-size: .72rem; font-weight: 700; letter-spacing: .14em; color: var(--nxr-c); margin-bottom: 10px; }
+        .nxr-v-big { font: 800 3.2rem/1 'Sora', 'DM Sans', sans-serif; color: var(--nxr-c); letter-spacing: -.02em; text-shadow: 0 0 26px color-mix(in srgb, var(--nxr-c) 45%, transparent); overflow-wrap: anywhere; }
+        .nxr-v-big small { font: 600 1rem 'DM Sans', sans-serif; color: var(--nxr-mu); margin-left: 8px; letter-spacing: 0; text-shadow: none; }
+        .nxr-v-big.nxr-v-mes { font-size: 2.1rem; }
+        .nxr-v-txt { font-size: .84rem; color: var(--nxr-mu); line-height: 1.5; }
+        .nxr-v-txt b { color: #fff; font-weight: 700; }
+        .nxr-v-acc { display: flex; flex-wrap: wrap; gap: 10px; }
+        .nxr-v-acc .nxr-btn { flex: 1 1 200px; }
+        .nxr-pasos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .nxr-paso { display: flex; gap: 11px; align-items: flex-start; border: 1px solid var(--nxr-bd); background: rgba(6, 9, 13, .3); border-radius: 14px; padding: 13px; min-width: 0; }
+        .nxr-paso .nxr-ico { width: 34px; height: 34px; border-radius: 10px; font-size: .85rem; }
+        .nxr-paso b { display: block; font-size: .88rem; color: #fff; margin-bottom: 3px; }
+        .nxr-paso span { font-size: .78rem; color: var(--nxr-mu); line-height: 1.4; }
+        .nxr-nota { display: flex; gap: 8px; align-items: flex-start; font-size: .8rem; color: var(--nxr-azc); background: rgba(56, 118, 242, .1); border: 1px solid rgba(56, 118, 242, .25); border-radius: 10px; padding: 9px 12px; margin-top: 10px; line-height: 1.4; }
+        .nxr-nota i { margin-top: 2px; }
+
+        /* Progreso del cierre */
+        .nxr-run { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--nxr-bd); }
+        .nxr-run-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+        .nxr-run-h b { font: 700 1rem 'Sora', 'DM Sans', sans-serif; color: #fff; }
+        .nxr-bar { height: 6px; border-radius: 999px; background: rgba(172, 195, 242, .12); overflow: hidden; margin-bottom: 12px; }
+        .nxr-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--nxr-az), var(--nxr-azc)); box-shadow: 0 0 12px rgba(56, 118, 242, .6); transition: width .6s ease; }
+        .nxr-bar.ok i { background: var(--nxr-ok); box-shadow: 0 0 12px rgba(61, 220, 151, .5); }
+        .nxr-bar.bad i { background: var(--nxr-bad); box-shadow: 0 0 12px rgba(255, 92, 108, .5); }
+        .nxr-fases { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+        .nxr-fase { display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; font-size: .7rem; font-weight: 600; color: var(--nxr-mu); padding: 10px 4px; border-radius: 12px; border: 1px solid var(--nxr-bd); background: rgba(6, 9, 13, .3); min-width: 0; }
+        .nxr-fase i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(147, 164, 198, .12); font-size: .7rem; }
+        .nxr-fase span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .nxr-fase.hecha { color: var(--nxr-ok); border-color: rgba(61, 220, 151, .3); }
+        .nxr-fase.hecha i { background: rgba(61, 220, 151, .15); }
+        .nxr-fase.actual { color: #fff; border-color: rgba(56, 118, 242, .7); box-shadow: 0 0 0 3px rgba(56, 118, 242, .15); }
+        .nxr-fase.actual i { background: var(--nxr-az); color: #fff; animation: nxrPulso 1.6s ease-in-out infinite; }
+        .nxr-fase.error { color: #FF9AA5; border-color: rgba(255, 92, 108, .5); }
+        .nxr-fase.error i { background: rgba(255, 92, 108, .2); }
+        @keyframes nxrPulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(56, 118, 242, .6); } 50% { box-shadow: 0 0 0 7px rgba(56, 118, 242, 0); } }
+        .nxr-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+        .nxr-mini { border: 1px solid var(--nxr-bd); border-left: 3px solid var(--nxr-c); background: rgba(6, 9, 13, .35); border-radius: 12px; padding: 11px 13px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        .nxr-mini span { font-size: .76rem; color: var(--nxr-mu); font-weight: 600; }
+        .nxr-mini b { font: 800 1.5rem/1.1 'Sora', 'DM Sans', sans-serif; color: var(--nxr-c); }
+        .nxr-log { margin-top: 12px; font: 500 .76rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--nxr-mu); background: rgba(6, 9, 13, .55); border: 1px solid var(--nxr-bd); border-radius: 12px; padding: 10px 12px; white-space: pre-wrap; max-height: 230px; overflow: auto; }
+        .nxr-prog { margin-top: 14px; border: 1px solid rgba(56, 118, 242, .35); background: rgba(56, 118, 242, .08); border-radius: 12px; padding: 11px 13px; }
+        .nxr-prog-t { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; font-size: .82rem; color: #fff; font-weight: 600; margin-bottom: 8px; }
+        .nxr-prog-t em { font-style: normal; font-weight: 500; color: var(--nxr-mu); font-size: .76rem; }
+        .nxr-prog .nxr-bar { margin: 0; }
+        .nxr-log-h { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-size: .72rem; font-weight: 700; letter-spacing: .12em; color: var(--nxr-azc); }
+        .nxr-log-h span { margin-left: auto; font-weight: 500; letter-spacing: 0; color: var(--nxr-mu); }
+        .nxr-log-h + .nxr-log { margin-top: 8px; }
+        .nxr-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .nxr-alert { display: flex; gap: 9px; align-items: flex-start; font-size: .84rem; line-height: 1.4; border-radius: 10px; padding: 10px 13px; margin-bottom: 14px; }
+        .nxr-alert-bad { color: #FFB3BB; background: rgba(255, 92, 108, .1); border: 1px solid rgba(255, 92, 108, .3); }
+        .nxr-run .nxr-alert { margin: 12px 0 0; }
+
+        /* Histórico */
+        .nxr-sel-wrap { position: relative; display: inline-flex; align-items: center; }
+        .nxr-sel-wrap i { position: absolute; pointer-events: none; font-size: .8rem; color: var(--nxr-azc); }
+        .nxr-sel-wrap .nxr-i-l { left: 14px; }
+        .nxr-sel-wrap .nxr-i-r { right: 14px; opacity: .8; }
+        .nxr-select { appearance: none; -webkit-appearance: none; cursor: pointer; font: 600 .9rem 'DM Sans', sans-serif; color: var(--nxr-tx); background: var(--nxr-p2); border: 1px solid var(--nxr-bd); border-radius: 12px; padding: 10px 38px; min-width: 230px; color-scheme: dark; transition: border-color .2s, box-shadow .2s; }
+        .nxr-select:hover:not(:disabled) { border-color: rgba(56, 118, 242, .7); box-shadow: 0 0 0 3px rgba(56, 118, 242, .15); }
+        .nxr-select:disabled { opacity: .6; cursor: not-allowed; }
+        .nxr-select option { background: #0D1420; color: #E6ECF8; }
+        .nxr-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+        .nxr-rgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .nxr-rep { display: flex; align-items: center; gap: 12px; border: 1px solid var(--nxr-bd); border-left: 3px solid var(--nxr-c); background: rgba(6, 9, 13, .35); border-radius: 14px; padding: 14px; min-width: 0; transition: border-color .2s, transform .2s; }
+        .nxr-rep:hover { border-color: color-mix(in srgb, var(--nxr-c) 60%, transparent); transform: translateY(-2px); }
+        .nxr-rep-b { flex: 1; min-width: 0; }
+        .nxr-rep-b h5 { font: 700 .95rem 'DM Sans', sans-serif; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .nxr-rep-m { display: block; font-size: .74rem; color: var(--nxr-mu); margin-top: 3px; line-height: 1.3; }
+        .nxr-rep .nxr-btn { padding: 8px 12px; flex: none; }
+        .nxr-rep.off { opacity: .55; border-left-color: rgba(147, 164, 198, .45); }
+        .nxr-rep.off:hover { transform: none; border-color: var(--nxr-bd); }
+        .nxr-rep.off .nxr-ico { color: var(--nxr-mu); background: rgba(147, 164, 198, .12); }
+        .nxr-vacio { text-align: center; padding: 38px 16px; border: 1px dashed var(--nxr-bd); border-radius: 16px; color: var(--nxr-mu); font-size: .86rem; line-height: 1.5; }
+        .nxr-vacio i { display: block; font-size: 2rem; color: var(--nxr-azc); margin-bottom: 12px; }
+        .nxr-vacio b { display: block; font: 700 1rem 'Sora', 'DM Sans', sans-serif; color: #fff; margin-bottom: 4px; }
+        .nxr-skel { height: 120px; border-radius: 14px; border: 1px solid var(--nxr-bd); background: linear-gradient(100deg, rgba(172, 195, 242, .04) 30%, rgba(172, 195, 242, .10) 50%, rgba(172, 195, 242, .04) 70%); background-size: 200% 100%; animation: nxrBrillo 1.4s linear infinite; }
+        @keyframes nxrBrillo { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+        /* Confirmación */
+        .nxr-modal { position: fixed; inset: 0; z-index: 20100; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(6, 9, 13, .74); backdrop-filter: blur(6px); animation: nxrAparece .18s ease; }
+        @keyframes nxrAparece { from { opacity: 0; } to { opacity: 1; } }
+        .nxr-modal-box { width: 100%; max-width: 480px; max-height: calc(100vh - 32px); overflow: auto; background: linear-gradient(180deg, #101A2B, #0D1420); border: 1px solid rgba(172, 195, 242, .22); border-radius: 20px; padding: 24px; box-shadow: 0 24px 70px rgba(0, 0, 0, .55); }
+        .nxr-modal-box .nxr-ico { width: 48px; height: 48px; border-radius: 15px; font-size: 1.15rem; margin-bottom: 14px; }
+        .nxr-modal-box h4 { font: 700 1.25rem/1.2 'Sora', 'DM Sans', sans-serif; color: #fff; margin-bottom: 8px; }
+        .nxr-modal-box p { font-size: .88rem; color: var(--nxr-mu); line-height: 1.5; }
+        .nxr-modal-box ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+        .nxr-modal-box li { display: flex; gap: 10px; align-items: flex-start; font-size: .84rem; color: var(--nxr-tx); line-height: 1.4; }
+        .nxr-modal-box li i { color: var(--nxr-azc); margin-top: 3px; width: 14px; text-align: center; }
+        .nxr-modal-acc { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+
+        @media (max-width: 1000px) {
+            .nxr-cols { grid-template-columns: 1fr; }
+            .nxr-fases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .nxr-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 600px) {
+            .nxr { padding: 14px; border-radius: 18px; }
+            .nxr-card { padding: 16px; }
+            .nxr-titulo { font-size: 1.5rem; }
+            .nxr-pasos { grid-template-columns: 1fr; }
+            .nxr-v-big { font-size: 2.6rem; }
+            .nxr-v-big.nxr-v-mes { font-size: 1.8rem; }
+            .nxr-sel-wrap, .nxr-select { width: 100%; min-width: 0; }
+            .nxr-modal-acc .nxr-btn { flex: 1 1 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .nxr-fase.actual i, .nxr-skel, .nxr-modal { animation: none; }
+            .nxr-bar i, .nxr-rep, .nxr-btn { transition: none; }
+        }
         </style>
     <!-- ============================================================
          ESTILOS: TARJETAS VERTICALES DE SOLICITUDES NEXUS (5 POR FILA)
@@ -11652,22 +11794,59 @@
         </section>
 
 
-        <!-- Reportes Section — informes mensuales en PDF (se generan en Apps Script y se guardan en Drive) -->
+        <!-- Reportes Section — cierre mensual (solo el día 1) e histórico de informes guardados en Firestore -->
         <section id="reportes" class="section hidden">
             <div class="section-header">
                 <h2 class="section-title">Reportes</h2>
-                <p class="section-subtitle">Informes mensuales en PDF · exclusivos para Administradores</p>
+                <p class="section-subtitle">Cierre mensual e histórico de informes · exclusivos para Administradores</p>
             </div>
             <div class="reportes-container">
-                <div class="rpt-barra">
-                    <label for="rptMes" class="rpt-label">Mes</label>
-                    <select id="rptMes" class="rpt-select" disabled><option>Cargando…</option></select>
-                    <button type="button" id="rptRecargar" class="rpt-btn rpt-btn-sec" onclick="NexusReportes.cargar()"><i class="fas fa-rotate"></i> Actualizar lista</button>
+                <div class="nxr" id="nxrRoot">
+                    <div class="nxr-top">
+                        <div>
+                            <span class="nxr-eyebrow">REPORTES · CIERRE DE MES</span>
+                            <h3 class="nxr-titulo">Cierre e histórico</h3>
+                            <span class="nxr-sub" id="nxrHoy"></span>
+                        </div>
+                        <button type="button" id="nxrRecargar" class="nxr-btn" onclick="NexusReportes.recargar()"><i class="fas fa-rotate"></i> Actualizar</button>
+                    </div>
+
+                    <div id="nxrError" class="nxr-alert nxr-alert-bad hidden" role="alert"></div>
+
+                    <!-- Cierre mensual -->
+                    <div class="nxr-card" id="nxrCierre">
+                        <div class="nxr-ch">
+                            <div class="nxr-ch-l">
+                                <div class="nxr-ico"><i class="fas fa-calendar-check"></i></div>
+                                <div>
+                                    <h4>Cierre mensual</h4>
+                                    <p>El día 1 se congelan las estadísticas y se respalda la hoja automáticamente. Cuando esa preparación termina se habilita el botón, y los reportes y la depuración solo arrancan cuando tú inicias el cierre. Corre en segundo plano: puedes salir de esta pestaña.</p>
+                                </div>
+                            </div>
+                            <span class="nxr-pill" id="nxrPill"><i class="fas fa-spinner fa-spin"></i> Consultando…</span>
+                        </div>
+                        <div id="nxrCierreBody" aria-live="polite"><div class="nxr-skel"></div></div>
+                    </div>
+
+                    <!-- Histórico -->
+                    <div class="nxr-card" id="nxrHist">
+                        <div class="nxr-ch">
+                            <div class="nxr-ch-l">
+                                <div class="nxr-ico" style="--nxr-c:#72D7E1"><i class="fas fa-clock-rotate-left"></i></div>
+                                <div>
+                                    <h4>Histórico de reportes</h4>
+                                    <p>Los informes guardados de cada mes cerrado. Elige un mes para descargarlos.</p>
+                                </div>
+                            </div>
+                            <label class="nxr-sel-wrap" for="nxrMes">
+                                <i class="fas fa-calendar-days nxr-i-l"></i>
+                                <select id="nxrMes" class="nxr-select" disabled aria-label="Mes del histórico"><option>Cargando…</option></select>
+                                <i class="fas fa-chevron-down nxr-i-r"></i>
+                            </label>
+                        </div>
+                        <div id="nxrHistBody" aria-live="polite"><div class="nxr-skel"></div></div>
+                    </div>
                 </div>
-                <div id="rptInfo" class="rpt-info hidden" role="status"></div>
-                <div id="rptError" class="rpt-error hidden" role="alert"></div>
-                <div id="rptGrid" class="rpt-grid" aria-live="polite"></div>
-                <p class="rpt-nota">Generar un informe puede tardar hasta un minuto. Si el PDF del mes ya existe, se reemplaza por el nuevo. El día 1 de cada mes se generan solos los informes del mes anterior.</p>
             </div>
         </section>
 
@@ -12419,14 +12598,17 @@
                           favLeidos: false, favCol: null, favRaw: null, favFechaRaw: null };
                 try {
                     // 1. Cargar el documento único de Personal (1 sola lectura para todo el staff)
-                    var snapPersonal = await S.getDoc(S.doc(db, 'sistema', 'personal'));
-                    if (snapPersonal.exists()) {
-                        window._nexusPersonal = snapPersonal.data() || {};
-                    } else {
+                    // REGLAS: solo el staff puede leer el documento de personal; para un solicitante la
+                    // lectura devuelve permission-denied y se trata como "no es staff".
+                    var miStaff = null;
+                    try {
+                        var snapPersonal = await S.getDoc(S.doc(db, 'sistema', 'personal'));
+                        window._nexusPersonal = snapPersonal.exists() ? (snapPersonal.data() || {}) : {};
+                        miStaff = window._nexusPersonal[user.uid];
+                    } catch (ePers) {
                         window._nexusPersonal = {};
+                        if (!ePers || ePers.code !== 'permission-denied') console.warn('[NexusData] personal:', ePers);
                     }
-
-                    var miStaff = window._nexusPersonal[user.uid];
                     if (miStaff) {
                         p.nombre = miStaff.nombre || p.nombre;
                         p.role = miStaff.rol || p.role; // sin rol guardado: no se inventa uno (queda como Usuario)
@@ -12459,15 +12641,11 @@
                 return p;
             },
             // Cupos: cuenta los usuarios de la unidad (consulta de conteo: 1 lectura por cada 1.000 docs).
+            // REGLAS: los cupos viven en RTDB (cupos/<unidad>), de lectura pública.
             leerCupos: async function (unidad) {
-                var S = window.fbStore;
-                var q = S.query(S.collection(window.db, 'usuarios'), S.where('unidad', '==', unidad));
-                if (typeof S.getCountFromServer === 'function') {
-                    var r = await S.getCountFromServer(q);
-                    return { usados: r.data().count };
-                }
-                var snap = await S.getDocs(q);
-                return { usados: snap.size };
+                var RT = window.fbRT;
+                var s = await RT.get(RT.ref(window.dbRT, 'cupos/' + window.NexusData.unidadKey(unidad)));
+                return { usados: s.exists() ? Number(s.val()) : 0 };
             }
         };
 
@@ -22073,10 +22251,23 @@
             try { if (localStorage.getItem('nx_bienvenida_' + uid) === hoy) return false; } catch (_) {}
             return true;
         }
+        // REGLAS: espejo del personal en RTDB (personal/<uid>) para que las reglas de RTDB sepan quién es staff.
+        window.nexusEspejarPersonal = async function (uid, datos) {
+            var RT = window.fbRT, ref = RT.ref(window.dbRT, 'personal/' + uid);
+            if (!datos) return RT.remove(ref);
+            return RT.set(ref, {
+                rol: String(datos.rol || 'Sin rol'),
+                activo: datos.activo !== false,
+                esDisenador: datos.esDisenador === true,
+                esPeriodista: datos.esPeriodista === true
+            });
+        };
+
         function nxBienvenidaMarcar(uid) {
             var hoy = nxHoyCaracas();
             window._nexusBienvenidaCargada = hoy;
             try { localStorage.setItem('nx_bienvenida_' + uid, hoy); } catch (_) {}
+            if (uid && window._nexusPersonal && window._nexusPersonal[uid]) return;   // staff: no tiene doc en "usuarios"
             if (!uid || !window.db || !window.fbStore) return;
             try {
                 window.fbStore.setDoc(window.fbStore.doc(window.db, 'usuarios', uid), { bienvenida: hoy }, { merge: true })
@@ -22422,12 +22613,12 @@
 
         /**
          * Calcula el cupo máximo por unidad:
-         * Sede Administrativa permite 20 usuarios.
+         * Sede Administrativa permite 5 usuarios.
          * El resto de las unidades IPASME permite 2 usuarios.
          */
         function nexusGetLimiteUnidad(unidad) {
             if (!unidad) return 2;
-            return (unidad.trim().toLowerCase() === "sede administrativa") ? 20 : 2;
+            return (unidad.trim().toLowerCase() === "sede administrativa") ? 5 : 2;
         }
 
         // ─── Helpers de apertura/cierre ───────────────────────────────
@@ -22727,6 +22918,19 @@
                 if (btn) btn.innerHTML = '<span class="auth-spinner"></span> Creando usuario...';
                 var cred = await window.fbAuth.createUserWithEmailAndPassword(window.auth, email, password);
                 if (btn) btn.innerHTML = '<span class="auth-spinner"></span> Guardando perfil...';
+
+                // REGLAS: reservar el cupo y guardar la unidad en RTDB (la regla rechaza si ya está lleno)
+                try {
+                    var RTc = window.fbRT, uKeyReg = NexusData.unidadKey(unidad);
+                    var refCupo = RTc.ref(window.dbRT, 'cupos/' + uKeyReg);
+                    var cupoActual = Number((await RTc.get(refCupo)).val() || 0);
+                    await RTc.set(refCupo, cupoActual + 1);
+                    await RTc.set(RTc.ref(window.dbRT, 'perfiles/' + cred.user.uid), { unidadKey: uKeyReg });
+                } catch (eCupo) {
+                    try { await cred.user.delete(); } catch (_) {}
+                    throw new Error('La unidad se llenó mientras te registrabas. Elige otra o contacta al administrador.');
+                }
+
 
                 // Formatear fecha de nacimiento a DD/MM/YYYY
                 var fechaNacFormateada = fechaNac;
@@ -29344,7 +29548,7 @@
 
     <!-- ============================================================
          MODAL: REGISTRARSE (Solo usuarios solicitantes)
-         Límite: Máximo 2 por unidad (Sede Administrativa: 20).
+         Límite: Máximo 2 por unidad (Sede Administrativa: 5).
          El staff (Diseñadores / ADMIN) es creado por Admin Principal.
          ============================================================ -->
     <div id="nexus-register-modal" class="auth-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="register-modal-title">
@@ -32382,6 +32586,7 @@
                 var updateObj = {};
                 updateObj[targetUid] = datos;
                 await Store.updateDoc(docRef, updateObj);
+                try { await window.nexusEspejarPersonal(targetUid, datos); } catch (eEsp) { console.warn('[NEXUS Personal] espejo RTDB:', eEsp); }
 
                 // Actualizar caché local
                 if (!window._nexusPersonal) window._nexusPersonal = {};
@@ -32397,19 +32602,10 @@
         }
 
         // Eliminar miembro con doble confirmación
-        // Documentos de Firestore que guardan el UID de una persona (los usan migrar y eliminar).
-        // dias_libres: un documento por día con el campo uid · guardias / pautas: arreglo uids.
-        async function nexusPersonalRefsUid(uid) {
-            var Store = window.fbStore, db = window.db;
-            function q(col, campo, op) { return Store.getDocs(Store.query(Store.collection(db, col), Store.where(campo, op, uid))); }
-            var r = await Promise.all([q('dias_libres', 'uid', '=='), q('guardias', 'uids', 'array-contains'), q('pautas', 'uids', 'array-contains')]);
-            return { libres: r[0].docs, guard: r[1].docs, pautas: r[2].docs };
-        }
-
         var _nxPersonalEliminarTimer = null;
         var _nxPersonalEliminarUid = null;
         var _nxPersonalEliminando = false;
-        // Elimina TODO del miembro menos sus solicitudes: días libres, guardias y pautas, vínculo de Telegram,
+        // Elimina TODO del miembro menos sus solicitudes: vínculo de Telegram,
         // cuenta de Firebase Authentication y su entrada en el personal. Doble confirmación.
         async function nexusPersonalEliminar(uid) {
             if (!nexusEsAdminPrincipal() || _nxPersonalEliminando) return;
@@ -32428,23 +32624,7 @@
                 var Store = window.fbStore, db = window.db;
                 try {
                     showToast({ type: 'warning', title: 'Eliminando a ' + nombre + '…', message: 'No cierres esta ventana hasta que termine.', duration: 3500 });
-                    // 1. Días libres; y se le quita de guardias y pautas
-                    var refsU = await nexusPersonalRefsUid(uid);
-                    var borrar = [];
-                    refsU.libres.forEach(function (d) { borrar.push(d.ref); });
-                    for (var i = 0; i < borrar.length; i += 15) {
-                        await Promise.all(borrar.slice(i, i + 15).map(function (r) { return Store.deleteDoc(r); }));
-                    }
-                    var otros = refsU.guard.concat(refsU.pautas);
-                    for (var k = 0; k < otros.length; k += 15) {
-                        await Promise.all(otros.slice(k, k + 15).map(async function (d) {
-                            var dat = d.data() || {}, resto = (dat.uids || []).filter(function (x) { return x !== uid; });
-                            var esGuardia = d.ref.parent && d.ref.parent.id === 'guardias';
-                            if (esGuardia && !resto.length) { await Store.deleteDoc(d.ref); return; }   // guardia que quedó sin nadie
-                            await Store.updateDoc(d.ref, { uids: resto });
-                        }));
-                    }
-                    // 2. Apps Script: quita el vínculo de Telegram y borra la cuenta de Authentication
+                    // 1. Apps Script: quita el vínculo de Telegram y borra la cuenta de Authentication
                     var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
                         method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({ action: 'eliminarCuentaPersonal', uid: uid, idToken: await window.nexusIdToken() })
@@ -32452,10 +32632,11 @@
                     if (!res || res.success === false) throw new Error((res && res.error) || 'El script no respondió');
                     var r = res.data || res, aviso = '';
                     if (r.auth === 'error') aviso = ' Ojo: la cuenta de acceso no se pudo borrar (' + (r.authError || 'sin detalle') + '). Bórrala a mano en Firebase → Authentication.';
-                    // 3. Por último, su entrada en el personal
+                    // 2. Por último, su entrada en el personal
                     var updateObj = {};
                     updateObj[uid] = Store.deleteField();
                     await Store.updateDoc(Store.doc(db, 'sistema', 'personal'), updateObj);
+                    try { await window.nexusEspejarPersonal(uid, null); } catch (eEsp) { console.warn('[NEXUS Personal] espejo RTDB:', eEsp); }
                     if (window._nexusPersonal) delete window._nexusPersonal[uid];
 
                     showToast({ type: aviso ? 'warning' : 'success', title: 'Miembro eliminado', message: nombre + ' fue eliminado del sistema (las solicitudes se conservan).' + aviso, duration: aviso ? 10000 : 4000 });
@@ -32474,11 +32655,11 @@
                 _nxPersonalEliminarTimer = null;
                 _nxPersonalEliminarUid = null;
             }, 6000);
-            showToast({ type: 'warning', title: '¿Eliminar a ' + nombre + '?', message: 'Se borrará todo: días libres, guardias, Telegram y su cuenta de acceso. Las solicitudes se conservan. Toca el botón rojo otra vez para confirmar.', duration: 6000 });
+            showToast({ type: 'warning', title: '¿Eliminar a ' + nombre + '?', message: 'Se borrará todo: Telegram y su cuenta de acceso. Las solicitudes se conservan. Toca el botón rojo otra vez para confirmar.', duration: 6000 });
         }
 
         // ============================================================
-        // MIGRAR A UNA CUENTA NUEVA: mismo miembro con otro UID (perfil + Telegram + días libres, guardias y pautas)
+        // MIGRAR A UNA CUENTA NUEVA: mismo miembro con otro UID (perfil + Telegram)
         // La cuenta anterior no se toca hasta el final; si algo falla se puede repetir con el mismo UID.
         // ============================================================
         function nexusPersonalAbrirMigrar(uidViejo) {
@@ -32496,7 +32677,7 @@
                 '<div style="font-size:.7rem;color:#888;font-family:monospace;margin-bottom:12px;word-break:break-all;">UID actual: <span id="nxMigrarViejo"></span></div>' +
                 '<label style="font-size:.78rem;color:#aaa;display:block;margin-bottom:4px;">UID de la cuenta nueva (Firebase Authentication)</label>' +
                 '<input id="nxMigrarUid" type="text" autocomplete="off" spellcheck="false" style="width:100%;padding:8px 10px;background:#1e1e2e;border:1px solid #444;border-radius:8px;color:#fff;font-size:.9rem;box-sizing:border-box;font-family:monospace;">' +
-                '<div style="font-size:.74rem;color:#999;margin-top:10px;line-height:1.45;">Se pasan a la cuenta nueva el perfil, el vínculo de Telegram, los días libres, las guardias y las pautas. Las solicitudes (asignadas o en proceso) no se tocan: siguen ligadas al nombre, así que no cambies el nombre al migrar. La cuenta anterior se quita del personal solo al final, cuando todo se pasó bien. La cuenta nueva no debe estar en el personal todavía.</div>' +
+                '<div style="font-size:.74rem;color:#999;margin-top:10px;line-height:1.45;">Se pasan a la cuenta nueva el perfil y el vínculo de Telegram. Las solicitudes (asignadas o en proceso) no se tocan: siguen ligadas al nombre, así que no cambies el nombre al migrar. La cuenta anterior se quita del personal solo al final, cuando todo se pasó bien. La cuenta nueva no debe estar en el personal todavía.</div>' +
                 '<div id="nxMigrarPropia" style="display:none;font-size:.76rem;margin-top:10px;padding:8px 10px;border-radius:8px;background:rgba(255,209,102,.12);border:1px solid #ffd166;color:#ffd166;line-height:1.4;">Es tu propia cuenta: al terminar se cerrará tu sesión y deberás entrar con la cuenta nueva.</div>' +
                 '<div id="nxMigrarEstado" style="font-size:.8rem;margin-top:10px;min-height:1.2em;color:#c084fc;"></div>' +
                 '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">' +
@@ -32533,49 +32714,19 @@
             var Store = window.fbStore, db = window.db;
             var docRef = Store.doc(db, 'sistema', 'personal');
             var nombreMiembro = (personal[uidViejo] && personal[uidViejo].nombre) || 'El miembro';
-            var copiados = [], conflictos = 0, sinMover = 0, dias = 0, tg = 0, otros = 0;
-
-            // Copia un documento a otro id; si el destino ya tenía datos propios (no copiados por esta migración), no lo pisa.
-            async function copiar(refViejo, datos, refNuevo) {
-                var ex = await Store.getDoc(refNuevo);
-                if (ex.exists() && (ex.data() || {}).migradoDe !== uidViejo) { conflictos++; return false; }
-                var dat = Object.assign({}, datos, { migradoDe: uidViejo });
-                if ('uid' in dat) dat.uid = uidNuevo;
-                if (dat.asignadoUid === uidViejo) dat.asignadoUid = uidNuevo;
-                await Store.setDoc(refNuevo, dat);
-                copiados.push(refViejo);
-                return true;
-            }
-            async function porLotes(lista, fn) { for (var a = 0; a < lista.length; a += 15) await Promise.all(lista.slice(a, a + 15).map(fn)); }
+            var tg = 0;
 
             try {
                 // 1. Perfil (rol, asignable, color, emoji…): con una marca temporal que permite reanudar si algo se corta
-                msg('1/5 Copiando el perfil…');
+                msg('1/3 Copiando el perfil…');
                 var datos = Object.assign({}, personal[uidViejo], { migradoDe: uidViejo });
                 var up = {}; up[uidNuevo] = datos;
                 await Store.updateDoc(docRef, up);
                 window._nexusPersonal[uidNuevo] = datos;
+                try { await window.nexusEspejarPersonal(uidNuevo, datos); } catch (eEsp) { console.warn('[NEXUS Personal] espejo RTDB:', eEsp); }
 
-                // 2. Documentos propios de la persona: días libres
-                msg('2/5 Copiando días libres…');
-                var refs = await nexusPersonalRefsUid(uidViejo);
-                await porLotes(refs.libres, async function (d) {
-                    if (d.id.indexOf(uidViejo + '_') !== 0) { sinMover++; return; }
-                    if (await copiar(d.ref, d.data(), Store.doc(db, 'dias_libres', uidNuevo + d.id.slice(uidViejo.length)))) dias++;
-                });
-
-                // 3. Guardias y pautas: se cambia el UID dentro del arreglo de personas (se actualiza en el mismo documento)
-                msg('3/5 Pasando guardias y pautas…');
-                await porLotes(refs.guard.concat(refs.pautas), async function (d) {
-                    var dat = d.data() || {}, arr = (dat.uids || []).map(function (x) { return x === uidViejo ? uidNuevo : x; })
-                        .filter(function (x, i, t) { return t.indexOf(x) === i; });
-                    var cambio = { uids: arr };
-                    if (dat.asignadoUid === uidViejo) cambio.asignadoUid = uidNuevo;
-                    await Store.updateDoc(d.ref, cambio); otros++;
-                });
-
-                // 4. Telegram (Apps Script)
-                msg('4/5 Pasando el vínculo de Telegram…');
+                // 2. Telegram (Apps Script)
+                msg('2/3 Pasando el vínculo de Telegram…');
                 var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
                     method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: 'migrarPersonalUid', uidViejo: uidViejo, uidNuevo: uidNuevo, idToken: await window.nexusIdToken() })
@@ -32583,21 +32734,20 @@
                 if (!res || res.success === false) throw new Error((res && res.error) || 'El script no respondió');
                 tg = Number((res.data && res.data.telegram) != null ? res.data.telegram : res.telegram) || 0;
 
-                // 5. Limpieza: solo ahora se borra lo anterior
-                msg('5/5 Quitando la cuenta anterior…');
-                await porLotes(copiados, function (r) { return Store.deleteDoc(r); });
+                // 3. Limpieza: solo ahora se borra lo anterior
+                msg('3/3 Quitando la cuenta anterior…');
                 var fin = {};
                 fin[uidViejo] = Store.deleteField();
                 fin[uidNuevo + '.migradoDe'] = Store.deleteField();
                 await Store.updateDoc(docRef, fin);
                 delete window._nexusPersonal[uidViejo];
+                try { await window.nexusEspejarPersonal(uidViejo, null); } catch (eEsp) { console.warn('[NEXUS Personal] espejo RTDB:', eEsp); }
                 if (window._nexusPersonal[uidNuevo]) delete window._nexusPersonal[uidNuevo].migradoDe;
 
                 var ov = document.getElementById('nxMigrarOverlay'); if (ov) ov.remove();
                 nexusPersonalRenderizarLista();
-                var extra = (conflictos || sinMover) ? ' ' + (conflictos + sinMover) + ' registro(s) no se movieron porque la cuenta nueva ya tenía datos ese día.' : '';
-                showToast({ type: conflictos || sinMover ? 'warning' : 'success', title: 'Migración completa',
-                    message: nombreMiembro + ' ahora usa la cuenta nueva. Días libres: ' + dias + ' · guardias/pautas: ' + otros + ' · Telegram: ' + (tg ? 'vínculo actualizado' : 'no tenía vínculo') + '.' + extra + (esPropia ? ' Se cerrará tu sesión: entra con la cuenta nueva.' : ''), duration: 9000 });
+                showToast({ type: 'success', title: 'Migración completa',
+                    message: nombreMiembro + ' ahora usa la cuenta nueva. Telegram: ' + (tg ? 'vínculo actualizado' : 'no tenía vínculo') + '.' + (esPropia ? ' Se cerrará tu sesión: entra con la cuenta nueva.' : ''), duration: 9000 });
                 if (esPropia) {
                     // se cierra la sesión para que entre con la cuenta nueva
                     setTimeout(function () { nexusLogout(); }, 2500);
@@ -35801,36 +35951,50 @@ window.NEXUS_STATS_ENABLED = true;
     </script>
 
     <script>
-    /* Reportes mensuales: lista los informes (Firestore reportes_mensuales/AAAA_MM) y lanza su generación en Apps Script.
-       Las acciones getReportes / generarReporte validan en el servidor que quien llama sea Admin. */
+    /* Reportes · cierre mensual e histórico.
+       · El cierre SOLO se puede pedir el día 1 de cada mes (el servidor lo valida; aquí solo se refleja en pantalla).
+       · El histórico sale de Firestore (reportes_mensuales/AAAA_MM): solo meses ya cerrados. Ya no se generan reportes sueltos.
+       · La web solo PIDE y consulta el cierre; lo ejecuta Apps Script en segundo plano. */
     var NexusReportes = (function () {
-        var S = { datos: null, cargando: false, generando: {}, mes: 0 };
+        var S = { hist: null, cie: null, mes: '', cargandoH: false, cargandoC: false, lanzando: false, timer: null, enlazado: false };
+        var MESES = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        var FASES = {
+            ESTADISTICAS: ['Estadísticas', 'fa-chart-line'], COPIA: ['Copia', 'fa-copy'], REPORTES: ['Reportes', 'fa-file-pdf'],
+            PLAN: ['Plan', 'fa-list-check'], SOLICITUDES: ['Solicitudes', 'fa-inbox'], ARCHIVOS: ['Archivos', 'fa-folder-open'],
+            ESPERA: ['Tu inicio', 'fa-hand-pointer'], ARTES: ['Artes', 'fa-palette'], VERIFICAR: ['Verificación', 'fa-shield-halved'], LIMPIEZA: ['Limpieza', 'fa-broom']
+        };
+        var MOD_UI = {
+            general: { ic: 'fa-chart-pie', c: '#3876F2' }, rechazadas: { ic: 'fa-ban', c: '#FF5C6C' }, diseno: { ic: 'fa-palette', c: '#72D7E1' },
+            prensa: { ic: 'fa-newspaper', c: '#F5B454' }, audiovisual: { ic: 'fa-film', c: '#B58CFF' }, protocolo: { ic: 'fa-handshake', c: '#3DDC97' }
+        };
+        var PASOS = [
+            ['fa-chart-line', 'Congela las estadísticas', 'Automático el día 1 a las 12:00 a. m. El mes queda guardado para compararlo con el siguiente.'],
+            ['fa-copy', 'Respalda las solicitudes', 'Automático el día 1. Copia verificada de la hoja, junto a los PDF en Drive.'],
+            ['fa-file-pdf', 'Genera los reportes', 'Al iniciar tú el cierre. Un PDF por área, que pasa al histórico.'],
+            ['fa-broom', 'Depura lo cerrado', 'Al iniciar tú el cierre. Elimina finalizadas y rechazadas del mes con sus archivos, solo si todo quedó verificado.']
+        ];
+
         function $(id) { return document.getElementById(id); }
         function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
         function urlPdfSegura(u) { return /^https:\/\/drive\.google\.com\//.test(String(u || '')) ? u : ''; }
         function toast(tipo, titulo, msg) { try { showToast({ type: tipo, title: titulo, message: msg, duration: 5000 }); } catch (_) {} }
-        function norm(t) { return String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
-
-        function mostrarError(msg) {
-            var e = $('rptError');
-            if (!e) return;
-            if (msg) { e.textContent = msg; e.classList.remove('hidden'); } else { e.classList.add('hidden'); }
+        function claveTexto(c) { var m = /^(\d{4})[_-](\d{2})$/.exec(String(c || '')); return m ? (MESES[Number(m[2])] || '') + ' ' + m[1] : String(c || ''); }
+        function cap(t) { t = String(t || ''); return t.charAt(0).toUpperCase() + t.slice(1); }
+        function fechaHora(v) {
+            var d = new Date(v);
+            if (!v || isNaN(d.getTime())) return '';
+            try { return d.toLocaleString('es-VE', { timeZone: 'America/Caracas', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (_) { return d.toLocaleString(); }
         }
-
-        function mostrarInfo(msg) {
-            var e = $('rptInfo');
-            if (!e) return;
-            if (msg) { e.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + esc(msg); e.classList.remove('hidden'); } else { e.classList.add('hidden'); }
+        function mostrarError(msg) {
+            var e = $('nxrError'); if (!e) return;
+            if (msg) { e.innerHTML = '<i class="fas fa-triangle-exclamation"></i><span>' + esc(msg) + '</span>'; e.classList.remove('hidden'); } else { e.classList.add('hidden'); }
         }
 
         async function llamar(cuerpo, timeoutMs, reintentos) {
-            console.log('[Reportes] pidiendo token de sesión…');
-            // El token no tenía tiempo límite: si Firebase no respondía, la lista se quedaba en «Cargando…» sin error
             cuerpo.idToken = await Promise.race([
                 window.nexusIdToken(),
                 new Promise(function (_, rechazar) { setTimeout(function () { rechazar(new Error('No se pudo obtener la sesión (token). Cierra sesión y vuelve a entrar.')); }, 12000); })
             ]);
-            console.log('[Reportes] token listo, llamando a', cuerpo.action);
             var res = await nexusFetchJSON(NEXUS_SCRIPT_URL, {
                 method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(cuerpo)
             }, timeoutMs, reintentos);
@@ -35838,109 +36002,256 @@ window.NEXUS_STATS_ENABLED = true;
             return res.data || res;
         }
 
-        async function cargar() {
-            console.log('[Reportes] cargar()', S.cargando ? '(ya había una carga en curso)' : '');
-            if (S.cargando) return;
-            S.cargando = true; mostrarError('');
-            var btn = $('rptRecargar'); if (btn) btn.disabled = true;
-            // Vigía: si en 100 s no hubo ni lista ni error, se libera el botón y se avisa
-            var vigia = setTimeout(function () {
-                if (!S.cargando) return;
-                S.cargando = false; if (btn) btn.disabled = false;
-                mostrarError('La carga tardó demasiado. Pulsa «Actualizar lista»; si sigue igual, abre la consola (F12) y revisa los mensajes [Reportes].');
-            }, 100000);
+        function actualizando() {
+            var b = $('nxrRecargar'); if (!b) return;
+            var ocupado = S.cargandoH || S.cargandoC;
+            b.disabled = ocupado;
+            b.innerHTML = '<i class="fas fa-rotate' + (ocupado ? ' fa-spin' : '') + '"></i> ' + (ocupado ? 'Actualizando…' : 'Actualizar');
+        }
+
+        /* ---------------- Histórico ---------------- */
+        async function cargarHistorial() {
+            if (S.cargandoH) return;
+            S.cargandoH = true; actualizando();
             try {
-                S.datos = await llamar({ action: 'getReportes', cantidad: 7 }, 25000, 2);
-                if (!S.datos || !Array.isArray(S.datos.meses)) throw new Error('El servidor no devolvió la lista de meses');
-                // Primera carga: se propone el último mes terminado (el mes en curso queda primero en la lista, para pruebas)
-                if (!S.iniciado) { S.mes = S.datos.meses.length > 1 ? 1 : 0; S.iniciado = true; }
-                if (S.mes >= S.datos.meses.length) S.mes = 0;
-                pintar();
+                S.hist = await llamar({ action: 'getReportes' }, 25000, 2);
+                if (!S.hist || !Array.isArray(S.hist.meses)) throw new Error('El servidor no devolvió el histórico');
+                mostrarError('');
+                pintarHistorial();
             } catch (err) {
-                mostrarError('No se pudo cargar la lista de reportes: ' + ((err && err.message) || 'error de red'));
+                mostrarError('No se pudo cargar el histórico: ' + ((err && err.message) || 'error de red'));
                 try { if (typeof nexusRegistrarFallaEnvioRTDB === 'function') nexusRegistrarFallaEnvioRTDB(err, { operacion: 'Reportes: getReportes' }); } catch (_) {}
-            } finally {
-                clearTimeout(vigia);
-                S.cargando = false; if (btn) btn.disabled = false;
-            }
+            } finally { S.cargandoH = false; actualizando(); }
         }
 
-        function pintar() {
-            var d = S.datos; if (!d) return;
-            var sel = $('rptMes');
-            sel.innerHTML = d.meses.map(function (m, i) { return '<option value="' + i + '"' + (i === S.mes ? ' selected' : '') + '>' + esc(m.mesTexto) + '</option>'; }).join('');
+        function pintarHistorial() {
+            var h = S.hist, sel = $('nxrMes'), body = $('nxrHistBody');
+            if (!h || !sel || !body) return;
+            if (!S.enlazado) { sel.addEventListener('change', function () { S.mes = sel.value; pintarHistorial(); }); S.enlazado = true; }
+            var meses = h.meses || [];
+            if (!meses.length) {
+                sel.innerHTML = '<option>Sin históricos</option>'; sel.disabled = true;
+                var px = S.cie && S.cie.ventana && S.cie.ventana.proximo;
+                body.innerHTML = '<div class="nxr-vacio"><i class="fas fa-box-open"></i><b>Aún no hay reportes guardados</b>' +
+                    'Aparecerán aquí después del primer cierre mensual' + (px && px.texto ? ' (se habilita el ' + esc(px.texto) + ')' : '') + '.</div>';
+                return;
+            }
+            if (!S.mes || !meses.some(function (m) { return m.clave === S.mes; })) S.mes = meses[0].clave;
             sel.disabled = false;
-            sel.onchange = function () { S.mes = Number(sel.value) || 0; pintar(); };
-            var mes = d.meses[S.mes];
-            if (mes && mes.error) mostrarError('No se pudo leer el mes ' + mes.mesTexto + ' en Firestore: ' + mes.error);
-            $('rptGrid').innerHTML = d.modulos.map(function (mod) { return tarjeta(mod, mes); }).join('');
+            sel.innerHTML = meses.map(function (m) { return '<option value="' + esc(m.clave) + '"' + (m.clave === S.mes ? ' selected' : '') + '>' + esc(m.mesTexto) + '</option>'; }).join('');
+            var mes = meses.filter(function (m) { return m.clave === S.mes; })[0];
+
+            // Áreas: las activas y cualquiera que ya tenga informe guardado en ese mes
+            var ids = [], vistos = {};
+            (h.modulos || []).forEach(function (mo) { if (mo.activo && !vistos[mo.id]) { vistos[mo.id] = true; ids.push(mo.id); } });
+            Object.keys(mes.reportes || {}).forEach(function (id) { if (!vistos[id]) { vistos[id] = true; ids.push(id); } });
+            var nombres = {}; (h.modulos || []).forEach(function (mo) { nombres[mo.id] = mo.nombre; });
+
+            var disponibles = 0;
+            var tiles = ids.map(function (id) {
+                var rep = (mes.reportes || {})[id] || null;
+                var pdf = rep && rep.disponible ? urlPdfSegura(rep.pdfUrl) : '';
+                var ui = MOD_UI[id] || { ic: 'fa-file-lines', c: '#ACC3F2' };
+                var nombre = nombres[id] || (rep && rep.nombre) || cap(id);
+                if (pdf) disponibles++;
+                return '<div class="nxr-rep' + (pdf ? '' : ' off') + '" style="--nxr-c:' + ui.c + '">' +
+                    '<div class="nxr-ico"><i class="fas ' + ui.ic + '"></i></div>' +
+                    '<div class="nxr-rep-b"><h5 title="' + esc(nombre) + '">' + esc(nombre) + '</h5><span class="nxr-rep-m">' +
+                    (pdf ? (rep.generadoEl ? 'Generado: ' + esc(fechaHora(rep.generadoEl)) : 'Informe disponible') : 'Sin informe este mes (sin actividad)') + '</span></div>' +
+                    (pdf ? '<a class="nxr-btn nxr-btn-p" href="' + esc(pdf) + '" target="_blank" rel="noopener"><i class="fas fa-download"></i> PDF</a>' : '') +
+                    '</div>';
+            }).join('');
+
+            var cerrado = !!(S.cie && (S.cie.cerrados || []).indexOf(mes.clave) !== -1);
+            body.innerHTML = '<div class="nxr-chips">' +
+                '<span class="nxr-pill nxr-p-az"><i class="fas fa-file-pdf"></i> ' + disponibles + ' informe' + (disponibles === 1 ? '' : 's') + ' disponible' + (disponibles === 1 ? '' : 's') + '</span>' +
+                (cerrado ? '<span class="nxr-pill nxr-p-ok"><i class="fas fa-lock"></i> Mes cerrado</span>' : '') +
+                '</div>' + (tiles ? '<div class="nxr-rgrid">' + tiles + '</div>' : '<div class="nxr-vacio"><i class="fas fa-folder-open"></i><b>Sin informes</b>Este mes no tiene informes guardados.</div>');
         }
 
-        function filaControl(mod) {
-            var clave = mod.id === 'general' ? 'general' : mod.id === 'rechazadas' ? 'rechazad' : norm(mod.nombre);
-            var r = null;
-            ((S.datos && S.datos.control) || []).forEach(function (c) { if (!r && norm(c.reporte).indexOf(clave) !== -1) r = c; });
-            return r;
-        }
-
-        function tarjeta(mod, mes) {
-            var rep = (mes && mes.reportes && mes.reportes[mod.id]) || null;
-            var pdf = rep && rep.disponible ? urlPdfSegura(rep.pdfUrl) : '';
-            var ctl = mod.activo ? filaControl(mod) : null;
-            // Respaldo: si Firestore no tiene el enlace (p. ej. falló la escritura), se toma de Control_Reportes
-            if (!pdf && ctl && mes && ctl.mes === (mes.anio + '-' + ('0' + mes.mes).slice(-2)) && /^ok/i.test(ctl.estado)) {
-                var enlace = String(ctl.avisos || '').match(/https:\/\/drive\.google\.com\/[^\s·]+/);
-                if (enlace) pdf = urlPdfSegura(enlace[0]);
-            }
-            var estado, cls;
-            if (!mod.activo) { estado = 'Próximamente'; cls = 'off'; }
-            else if (pdf) { estado = 'Disponible'; cls = 'ok'; }
-            else { estado = 'Sin generar'; cls = 'pend'; }
-            var meta = '';
-            if (mod.activo && mes && mes.enCurso) meta += '<b>Mes en curso:</b> el informe será parcial.<br>';
-            if (pdf && rep.generadoEl) meta += 'Generado: ' + esc(new Date(rep.generadoEl).toLocaleString('es-VE')) + '<br>';
-            if (ctl && ctl.estado) {
-                if (/error/i.test(ctl.estado)) cls = 'err';
-                meta += 'Última ejecución (' + esc(ctl.mes) + '): <b>' + esc(ctl.estado) + '</b>' + (ctl.avisos && !/^PDF generado/.test(ctl.avisos) ? '<br>' + esc(ctl.avisos) : (/Firestore falló/.test(ctl.avisos) ? '<br>' + esc(ctl.avisos.replace(/^.*·\s*/, '')) : ''));
-            }
-            var gen = S.generando[mod.id];
-            var acciones = '';
-            if (pdf) acciones += '<a class="rpt-btn" href="' + esc(pdf) + '" target="_blank" rel="noopener"><i class="fas fa-download"></i> Descargar PDF</a>';
-            if (mod.activo) acciones += '<button type="button" class="rpt-btn rpt-btn-sec" ' + (gen ? 'disabled' : '') + ' onclick="NexusReportes.generar(\'' + esc(mod.id) + '\')">' +
-                (gen ? '<i class="fas fa-spinner fa-spin"></i> Generando…' : '<i class="fas fa-gears"></i> ' + (pdf ? 'Regenerar' : 'Generar')) + '</button>';
-            return '<div class="rpt-card' + (mod.activo ? '' : ' rpt-off') + '"><h3>' + esc(mod.nombre) + '</h3>' +
-                '<span class="rpt-estado ' + cls + '">' + estado + (cls === 'err' ? ' · con error' : '') + '</span>' +
-                (meta ? '<div class="rpt-meta">' + meta + '</div>' : '') +
-                '<div class="rpt-acciones">' + acciones + '</div></div>';
-        }
-
-        async function generar(id) {
-            if (S.generando[id] || !S.datos) return;
-            var mes = S.datos.meses[S.mes], mod = S.datos.modulos.filter(function (m) { return m.id === id; })[0];
-            if (!mes || !mod) return;
-            S.generando[id] = true; mostrarError(''); pintar();
-            mostrarInfo('Generando «' + mod.nombre + '» de ' + mes.mesTexto + '… puede tardar hasta un minuto. No cierres esta pestaña.');
-            console.log('[Reportes] generando', id, mes.anio, mes.mes);
+        /* ---------------- Cierre mensual ---------------- */
+        async function cierreEstado(manual) {
+            if (S.cargandoC) return;
+            S.cargandoC = true; actualizando();
+            var antes = !!(S.cie && (S.cie.enMarcha || S.cie.pedido));
             try {
-                // reintentos = 0: repetir la llamada generaría el informe dos veces
-                var r = await llamar({ action: 'generarReporte', modulo: id, anio: mes.anio, mes: mes.mes }, 170000, 0);
-                console.log('[Reportes] respuesta', r);
-                if (r.ok === false) toast('warning', mod.nombre, r.mensaje || 'Sin actividad en ' + mes.mesTexto);
-                else toast('success', mod.nombre, 'Informe de ' + mes.mesTexto + ' generado.' + (mes.enCurso ? ' (parcial)' : '') + (r.mensaje ? ' ' + r.mensaje : ''));
+                S.cie = await llamar({ action: 'cierreEstado' }, 25000, 1);
+                mostrarError('');
+                pintarCierre();
+                pintarHistorial();
+                clearTimeout(S.timer);
+                var sec = $('reportes');
+                var visible = sec && !sec.classList.contains('hidden');
+                if (visible && S.cie && (S.cie.enMarcha || S.cie.pedido)) S.timer = setTimeout(function () { cierreEstado(false); }, 5000);
+                if (antes && S.cie && S.cie.terminado) {
+                    toast('success', 'Cierre mensual', 'El cierre de ' + claveTexto(S.cie.clave) + ' terminó.');
+                    cargarHistorial();   // el mes recién cerrado entra al histórico
+                }
             } catch (err) {
-                var msg = (err && err.message) || 'error de red';
-                console.error('[Reportes] error', err);
-                toast('error', mod.nombre, msg);
-                mostrarError('No se pudo generar «' + mod.nombre + '» (' + mes.mesTexto + '): ' + msg + '. Revisa la hoja Control_Reportes para ver el detalle.');
-                try { if (typeof nexusRegistrarFallaEnvioRTDB === 'function') nexusRegistrarFallaEnvioRTDB(err, { operacion: 'Reportes: generarReporte ' + id }); } catch (_) {}
-            } finally {
-                S.generando[id] = false; mostrarInfo('');
-                await cargar();   // trae el enlace nuevo y el estado de Control_Reportes
-                pintar();
-            }
+                if (manual || !S.cie) mostrarError('No se pudo consultar el cierre: ' + ((err && err.message) || 'error de red'));
+            } finally { S.cargandoC = false; actualizando(); }
         }
 
-        return { abrir: function () { console.log('[Reportes] abrir()'); cargar(); }, cargar: cargar, generar: generar };
+        function pintarCierre() {
+            var e = S.cie, body = $('nxrCierreBody'), pill = $('nxrPill');
+            if (!e || !body || !pill) return;
+            var v = e.ventana || {}, mc = v.mesCierre || {}, px = v.proximo || {};
+            var enMarcha = !!(e.enMarcha || e.pedido), detenido = !!e.detenido;
+            var esperando = !!e.esperando;
+            
+            var fases = (e.fases && e.fases.length) ? e.fases : Object.keys(FASES);
+            var idx = fases.indexOf(e.fase);
+
+            // Píldora de estado
+            var pc, pt;
+            if (detenido) { pc = 'nxr-p-bad'; pt = '<i class="fas fa-circle-exclamation"></i> Detenido'; }
+            else if (enMarcha) { pc = 'nxr-p-az'; pt = '<i class="fas fa-spinner fa-spin"></i> ' + (e.autorizado || e.pedido ? 'En marcha' : 'Preparando'); }
+            else if (v.yaCerrado && v.esDia1) { pc = 'nxr-p-ok'; pt = '<i class="fas fa-circle-check"></i> Mes cerrado'; }
+            else if (esperando) { pc = 'nxr-p-warn'; pt = '<i class="fas fa-hourglass-half"></i> Listo para iniciar'; }
+            else { pc = ''; pt = '<i class="fas fa-lock"></i> Bloqueado hasta el día 1'; }
+            pill.className = 'nxr-pill ' + pc; pill.innerHTML = pt;
+
+            // Bloque izquierdo: ventana del cierre
+            var izq;
+            if (detenido) {
+                izq = '<div class="nxr-ventana" style="--nxr-c:#FF5C6C"><div><div class="nxr-v-lbl"><i class="fas fa-circle-exclamation"></i> CIERRE DETENIDO</div>' +
+                    '<div class="nxr-v-big nxr-v-mes">' + esc(claveTexto(e.clave)) + '</div></div>' +
+                    '<div class="nxr-v-txt">Se detuvo en la fase <b>' + esc((FASES[e.fase] || [e.fase])[0]) + '</b>. No se eliminó nada más. Corrige la causa y reanuda: continúa desde donde quedó.</div>' +
+                    '<div class="nxr-v-acc"><button type="button" class="nxr-btn nxr-btn-p nxr-btn-lg" onclick="NexusReportes.cierreReanudar()"><i class="fas fa-play"></i> Reanudar cierre</button></div></div>';
+            } else if (enMarcha) {
+                izq = '<div class="nxr-ventana" style="--nxr-c:#3876F2"><div><div class="nxr-v-lbl"><i class="fas fa-gears"></i> ' + (e.autorizado || e.pedido ? 'CIERRE EN MARCHA' : 'PREPARANDO') + '</div>' +
+                    '<div class="nxr-v-big nxr-v-mes">' + esc(e.clave && !e.terminado ? claveTexto(e.clave) : (e.pedido ? claveTexto(String(e.pedido).replace(/^(\d{4})(\d{2})$/, '$1_$2')) : '…')) + '</div></div>' +
+                    '<div class="nxr-v-txt">' + (e.autorizado || e.pedido ? 'Funciona en segundo plano: puedes cerrar esta pestaña. Al terminar llega un aviso por Telegram.' : 'Preparando: congelando estadísticas y respaldando la hoja. El botón de iniciar se habilita al terminar.') + '</div>' +
+                    '<div class="nxr-v-acc"><button type="button" class="nxr-btn nxr-btn-lg" disabled><i class="fas fa-spinner fa-spin"></i> ' + (e.autorizado || e.pedido ? 'Cierre en curso…' : 'Preparando…') + '</button></div></div>';
+            } else if (v.yaCerrado && v.esDia1) {
+                izq = '<div class="nxr-ventana" style="--nxr-c:#3DDC97"><div><div class="nxr-v-lbl"><i class="fas fa-circle-check"></i> MES CERRADO</div>' +
+                    '<div class="nxr-v-big nxr-v-mes">' + esc(mc.texto || '') + '</div></div>' +
+                    '<div class="nxr-v-txt">El cierre de este mes ya se completó. El siguiente se habilita el <b>' + esc(px.texto || 'día 1') + '</b>.</div>' +
+                    '<div class="nxr-v-acc"><button type="button" class="nxr-btn nxr-btn-lg" disabled><i class="fas fa-check"></i> Ya está cerrado</button></div></div>';
+            } else if (esperando) {
+                izq = '<div class="nxr-ventana" style="--nxr-c:#F5B454"><div><div class="nxr-v-lbl"><i class="fas fa-hourglass-half"></i> LISTO PARA INICIAR</div>' +
+                    '<div class="nxr-v-big nxr-v-mes">' + esc(claveTexto(e.clave)) + '</div></div>' +
+                    '<div class="nxr-v-txt">Las estadísticas ya están congeladas y la copia de solicitudes está verificada. <b>Todavía no se generó ni se eliminó nada.</b> Inicia el cierre cuando estés listo.</div>' +
+                    '<div class="nxr-v-acc"><button type="button" class="nxr-btn nxr-btn-p nxr-btn-lg" onclick="NexusReportes.cierreLanzar()"><i class="fas fa-play"></i> Iniciar cierre de ' + esc(claveTexto(e.clave)) + '</button></div></div>';
+            } else {
+                var d = Number(px.dias);
+                var big = d === 1 ? 'Mañana' : (isNaN(d) ? '—' : d + '<small>días</small>');
+                izq = '<div class="nxr-ventana" style="--nxr-c:#ACC3F2"><div><div class="nxr-v-lbl"><i class="fas fa-lock"></i> CIERRE BLOQUEADO</div>' +
+                    '<div class="nxr-v-big">' + big + '</div></div>' +
+                    '<div class="nxr-v-txt">El <b>' + esc(px.texto || 'día 1') + '</b> a las 12:00 a. m. el sistema congela las estadísticas y respalda la hoja de <b>' + esc(px.cierra || 'el mes en curso') + '</b>. Cuando termine, aquí se habilita el botón para que tú inicies el cierre.</div>' +
+                    '<div class="nxr-v-acc"><button type="button" class="nxr-btn nxr-btn-lg" disabled><i class="fas fa-lock"></i> Se habilita tras la preparación del día 1</button></div></div>';
+            }
+
+            var der = '<ul class="nxr-pasos">' + PASOS.map(function (p) {
+                return '<li class="nxr-paso"><div class="nxr-ico"><i class="fas ' + p[0] + '"></i></div><div><b>' + esc(p[1]) + '</b><span>' + esc(p[2]) + '</span></div></li>';
+            }).join('') + '</ul><div class="nxr-nota"><i class="fas fa-circle-info"></i><span>Las solicitudes pendientes y en proceso se conservan. Nada se elimina hasta que las estadísticas, la copia y los reportes están verificados.</span></div>';
+
+            // Progreso del último cierre / el que está en curso
+            var run = '';
+            if (e.clave) {
+                var hecho = !!e.terminado;
+                var pct = hecho ? 100 : Math.max(4, Math.round(((idx < 0 ? 0 : idx) + (enMarcha ? 0.5 : 0)) / fases.length * 100));
+                var chips = fases.map(function (f, i) {
+                    var c = hecho || i < idx ? 'hecha' : (i === idx ? (detenido ? 'error' : 'actual') : '');
+                    var ui = FASES[f] || [f, 'fa-circle'];
+                    var ic = c === 'hecha' ? 'fa-check' : (c === 'error' ? 'fa-xmark' : ui[1]);
+                    return '<div class="nxr-fase ' + c + '"><i class="fas ' + ic + '"></i><span>' + esc(ui[0]) + '</span></div>';
+                }).join('');
+                var r = e.resumen;
+                var stats = (hecho && r) ? '<div class="nxr-stats">' +
+                    '<div class="nxr-mini" style="--nxr-c:#3DDC97"><span>Solicitudes eliminadas</span><b>' + (r.solicitudesEliminar || 0) + '</b></div>' +
+                    '<div class="nxr-mini" style="--nxr-c:#3876F2"><span>Pendientes conservadas</span><b>' + (r.abiertasConservadas || 0) + '</b></div>' +
+                    '<div class="nxr-mini" style="--nxr-c:#F5B454"><span>Archivos eliminados</span><b>' + ((r.adjuntos || 0) + (r.artesEliminar || 0)) + '</b></div>' +
+                    '<div class="nxr-mini" style="--nxr-c:#B58CFF"><span>Artes conservados 3 días</span><b>' + (r.artesConservar || 0) + '</b></div></div>' : '';
+                var prog = '';
+                if (enMarcha && !hecho) {
+                    var pr = e.prog, seg = e.actualizado ? Math.max(0, Math.round(((e.ahora || Date.now()) - e.actualizado) / 1000)) : null;
+                    var pp = pr && pr.total ? Math.min(100, Math.round(pr.hecho / pr.total * 100)) : null;
+                    prog = '<div class="nxr-prog"><div class="nxr-prog-t"><span>' + esc(pr ? pr.texto : 'Trabajando en la fase ' + (FASES[e.fase] || [e.fase])[0]) + (pr && pr.total ? ' · ' + pr.hecho + ' de ' + pr.total : '') + '</span>' +
+                        '<em>' + (seg === null ? '' : 'Última señal hace ' + (seg < 60 ? seg + ' s' : Math.round(seg / 60) + ' min') + (seg > 300 ? ' · si pasa de 10 min se retoma solo' : '')) + '</em></div>' +
+                        '<div class="nxr-bar"><i style="width:' + (pp === null ? 35 : pp) + '%"></i></div></div>';
+                }
+                var links = '';
+                if (e.copiaUrl && /^https:\/\/docs\.google\.com\//.test(e.copiaUrl)) links += '<a class="nxr-btn" href="' + esc(e.copiaUrl) + '" target="_blank" rel="noopener"><i class="fas fa-table"></i> Copia de solicitudes</a>';
+                if (e.detalleUrl && /^https:\/\/drive\.google\.com\//.test(e.detalleUrl)) links += '<a class="nxr-btn" href="' + esc(e.detalleUrl) + '" target="_blank" rel="noopener"><i class="fas fa-file-csv"></i> Detalle (CSV)</a>';
+                run = '<div class="nxr-run"><div class="nxr-run-h"><b>' + (hecho ? 'Último cierre · ' : 'Cierre de ') + esc(claveTexto(e.clave)) + '</b>' +
+                    '<span class="nxr-pill ' + (hecho ? 'nxr-p-ok' : detenido ? 'nxr-p-bad' : 'nxr-p-az') + '">' + (hecho ? '<i class="fas fa-circle-check"></i> Completado' : detenido ? '<i class="fas fa-circle-exclamation"></i> Detenido' : esperando ? '<i class="fas fa-hourglass-half"></i> Esperando tu inicio' : '<i class="fas fa-spinner fa-spin"></i> En marcha') + '</span></div>' +
+                    '<div class="nxr-bar ' + (hecho ? 'ok' : detenido ? 'bad' : '') + '"><i style="width:' + pct + '%"></i></div>' +
+                    '<div class="nxr-fases">' + chips + '</div>' + stats +
+                    (detenido && e.error ? '<div class="nxr-alert nxr-alert-bad" role="alert"><i class="fas fa-triangle-exclamation"></i><span>' + esc(e.error) + '</span></div>' : '') +
+                    prog + ((e.log && e.log.length) ? '<div class="nxr-log-h"><i class="fas fa-terminal"></i> BITÁCORA<span>' + (enMarcha ? 'en vivo · se actualiza cada 5 s' : 'últimos movimientos') + '</span></div><div class="nxr-log" id="nxrLog">' + esc(e.log.join('\n')) + '</div>' : '') +
+                    (links ? '<div class="nxr-links">' + links + '</div>' : '') + '</div>';
+            } else if (e.pedido) {
+                run = '<div class="nxr-run"><div class="nxr-nota" style="margin:0"><i class="fas fa-spinner fa-spin"></i><span>Cierre solicitado, arrancando…</span></div></div>';
+            }
+            body.innerHTML = '<div class="nxr-cols">' + izq + '<div>' + der + '</div></div>' + run;
+            var lg = $('nxrLog'); if (lg) lg.scrollTop = lg.scrollHeight;
+        }
+
+        function confirmar(mesTexto) {
+            return new Promise(function (resolver) {
+                var previo = document.activeElement;
+                var m = document.createElement('div');
+                m.className = 'nxr-modal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); m.setAttribute('aria-labelledby', 'nxrMTit');
+                m.innerHTML = '<div class="nxr-modal-box"><div class="nxr-ico" style="--nxr-c:#FF5C6C"><i class="fas fa-lock"></i></div>' +
+                    '<h4 id="nxrMTit">¿Iniciar el cierre de ' + esc(mesTexto) + '?</h4>' +
+                    '<p>Esta acción elimina información y no se puede deshacer desde Nexus. Solo se borra si todo queda verificado.</p>' +
+                    '<ul><li><i class="fas fa-chart-line"></i><span>Las estadísticas ya están congeladas y la hoja respaldada (no se repite).</span></li>' +
+                    '<li><i class="fas fa-file-pdf"></i><span>Genera los reportes y los guarda en el histórico.</span></li>' +
+                    '<li><i class="fas fa-trash-can"></i><span>Elimina las solicitudes <b>finalizadas y rechazadas</b> del mes, con sus archivos de Drive.</span></li>' +
+                    '<li><i class="fas fa-shield-halved"></i><span>Las pendientes y en proceso se conservan.</span></li></ul>' +
+                    '<div class="nxr-modal-acc"><button type="button" class="nxr-btn" data-r="0">Cancelar</button>' +
+                    '<button type="button" class="nxr-btn nxr-btn-danger" data-r="1"><i class="fas fa-play"></i> Sí, iniciar el cierre</button></div></div>';
+                function fin(r) { document.removeEventListener('keydown', tecla, true); m.remove(); try { if (previo && previo.focus) previo.focus(); } catch (_) {} resolver(r); }
+                function tecla(ev) { if (ev.key === 'Escape') { ev.stopPropagation(); fin(false); } }
+                m.addEventListener('click', function (ev) {
+                    if (ev.target === m) return fin(false);
+                    var b = ev.target.closest && ev.target.closest('button[data-r]');
+                    if (b) fin(b.getAttribute('data-r') === '1');
+                });
+                document.addEventListener('keydown', tecla, true);
+                document.body.appendChild(m);
+                var cancelar = m.querySelector('button[data-r="0"]'); if (cancelar) cancelar.focus();   // el foco empieza en lo seguro
+            });
+        }
+
+        async function cierreLanzar() {
+            var e = S.cie; if (!e || S.lanzando) return;
+            var v = e.ventana || {}, mc = v.mesCierre;
+            if (e.esperando) { var mm = /^(\d{4})_(\d{2})$/.exec(e.clave || ''); mc = mm ? { anio: Number(mm[1]), mes: Number(mm[2]), texto: claveTexto(e.clave) } : null; }
+            if (!mc || !e.esperando || e.enMarcha || e.detenido || e.pedido) { toast('warning', 'Cierre mensual', 'El cierre se habilita cuando el trigger del día 1 termina la preparación.'); return; }
+            if (!(await confirmar(mc.texto))) return;
+            S.lanzando = true;
+            try {
+                var r = await llamar({ action: 'cierreLanzar', anio: mc.anio, mes: mc.mes }, 25000, 0);
+                toast('success', 'Cierre mensual', r.mensaje || 'Cierre solicitado.');
+                S.cie.pedido = String(mc.anio * 100 + mc.mes);
+                pintarCierre();
+                clearTimeout(S.timer);
+                S.timer = setTimeout(function () { cierreEstado(false); }, 8000);
+            } catch (err) {
+                toast('error', 'Cierre mensual', (err && err.message) || 'error de red');
+                cierreEstado(false);
+            } finally { S.lanzando = false; }
+        }
+
+        async function cierreReanudar() {
+            try {
+                var r = await llamar({ action: 'cierreReanudar' }, 25000, 0);
+                toast('success', 'Cierre mensual', r.mensaje || 'Reanudado.');
+                clearTimeout(S.timer);
+                S.timer = setTimeout(function () { cierreEstado(false); }, 5000);
+            } catch (err) { toast('error', 'Cierre mensual', (err && err.message) || 'error de red'); }
+        }
+
+        function pintarFecha() {
+            var h = $('nxrHoy'); if (!h) return;
+            try { h.textContent = 'Hoy: ' + cap(new Date().toLocaleDateString('es-VE', { timeZone: 'America/Caracas', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })); } catch (_) { h.textContent = ''; }
+        }
+        function recargar() { cargarHistorial(); cierreEstado(true); }
+        function abrir() { pintarFecha(); cargarHistorial(); cierreEstado(false); }
+
+        return { abrir: abrir, recargar: recargar, cierreEstado: cierreEstado, cierreLanzar: cierreLanzar, cierreReanudar: cierreReanudar };
     })();
     </script>
 </body>
